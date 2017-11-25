@@ -7,6 +7,10 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## Blog Posts
 
-Here I will write occasionally about interesting things. 
+#### 2017/11/22
+ 
+ 
+[Some European Soccer Players and their BMI](2019-11-19-european-soccer-players--bmi.html)
+
+![histogram](/blog/2019-11-19-european-soccer-players--bmi_files/figure-html/histogram_all-1.png)
