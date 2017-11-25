@@ -1,22 +1,19 @@
 ---
-title: European Soccer Players and their BMI
 author: Knut Behrends
-date: '2017-11-22'
 categories:
-  - blog-post
-tags:
-  - fun
-  - R
+- blog-post
+date: 2017-11-22
 output:
   html_document:
-    fig_caption: yes
-    keep_md: yes
-summary: Players in European soccer leagues have a Body Mass Index (BMI) that is normally distributed
-  with a mean of 23 and an sd of 1.3. This is independent of body size.
+    fig_caption: true
+    keep_md: true
+summary: Players in European soccer leagues have a Body Mass Index (BMI) that is normally
+  distributed with a mean of 23 and an sd of 1.3. This is independent of body size.
+tags:
+- fun
+- R
+title: European Soccer Players and their BMI
 ---
-
-
-
 
 ## Playing with a Soccer Database from Kaggle.com
 

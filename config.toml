@@ -10,7 +10,7 @@ ignoreFiles = ["\\.Rmd$", "\\.Rmarkdown$", "_files$", "_cache$"]
 
 [permalinks]
 #  with RStudio, publish only to blog subdirectory
-    post = "/blog/:year/:month/:day/:slug/"
+    post = "/:sections/:year/:month/:slug/"
 
 [params]
   # Style options: default (pink), blue, green, pink, red, sea, violet
@@ -18,7 +18,7 @@ ignoreFiles = ["\\.Rmd$", "\\.Rmarkdown$", "_files$", "_cache$"]
   style = "green"
   description = "Knut Behrends' personal blog. A website built through Hugo and blogdown."
   copyright = "&copy;2017 Knut Behrends"
-  sidebarAbout = ["<b id='motto'>Travels through grey nothingness</b>",
+  sidebarAbout = ["<b id='motto'>Travels through grey nothingness...</b>",
     "Currently based in Potsdam, near Berlin, Germany."
   ]
 
