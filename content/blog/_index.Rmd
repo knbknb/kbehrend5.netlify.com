@@ -1,6 +1,9 @@
 ---
 title: "Blog Posts"
 output: html_document
+aliases:
+    - /portfolio/work10/
+
 ---
 
 ```{r setup, include=FALSE}

@@ -21,7 +21,7 @@ dateFormat = "2006-01-02"
   description = "Knut Behrends' personal blog. A website built through Hugo and blogdown."
   copyright = "&copy;2017 Knut Behrends"
   sidebarAbout = ["<b id='motto'>Travels through grey nothingness...</b>",
-    "Currently based in Potsdam, near Berlin, Germany."
+    "Currently based near Berlin, Germany."
   ]
 
   # Contact page
