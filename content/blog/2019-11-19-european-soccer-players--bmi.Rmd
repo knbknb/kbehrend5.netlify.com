@@ -26,11 +26,11 @@ knit: (function(inputFile, encoding) {
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
-## Playing with a Soccer Database from Kaggle.com
+### Playing with a Soccer Database from Kaggle.com
 
-### This post is also available - maybe in a better, more readable version at [my Github Repo for this site](https://github.com/knbknb/kbehrends.netlify.com/blob/master/content/blog/post/2019-11-19-european-soccer-players--bmi.md).
+This post is also available - maybe in a better, more readable version at [my Github Repo for this site](https://github.com/knbknb/kbehrend5.netlify.com/blob/master/content/blog/2019-11-19-european-soccer-players--bmi.md).
 
-My blog: <a href="https://kbehrends.netlify.com">https://kbehrends.netlify.com</a>.
+My blog: <a href="https://kbehrend5.netlify.com">https://kbehrend5.netlify.com</a>.
 
 Recently I've downloaded as a [zipfile (36 MB)](https://www.kaggle.com/hugomathien/soccer/downloads/soccer.zip) from data science community [Kaggle.com](https://www.kaggle.com/hugomathien/soccer).
 
