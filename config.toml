@@ -1,4 +1,4 @@
-baseurl = "http://kbehrends.netlify.com/"
+baseurl = "/"
 title = "Knut Behrends Personal Blog, v3"
 theme = "hugo-creative-portfolio-theme"
 languageCode = "en-us"
