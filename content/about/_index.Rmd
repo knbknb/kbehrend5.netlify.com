@@ -1,0 +1,15 @@
+---
+title: "About me"
+output: html_document
+
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+#### (More info coming soon)
+
+I decided to start a blog because it's cool. 
+![My Logo](/img/logo-knutbehrends-square-circle.72x72.png)
+

@@ -1,0 +1,15 @@
+      <footer class="footer">
+        <ul class="footer-links">
+          <li>
+            <a href="{{ .Site.RSSLink | relURL }}" type="application/rss+xml" target="_blank">RSS feed</a>
+          </li>
+        </ul>
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-38728498-3"></script>
+
+
+      </footer>
+
+  <!-- highlightjs, mathjax -->
+  {{ partial "footer_highlightjs.html" . }}
+  {{ partial "footer_mathjax.html" . }}
