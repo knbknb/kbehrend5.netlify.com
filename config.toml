@@ -7,6 +7,8 @@ disqusShortname = "knbnetlify"
 # Enable Google Analytics by entering your tracking code
 googleAnalytics = "UA-38728498-3"
 ignoreFiles = ["\\.Rmd$", "\\.Rmarkdown$", "_files$", "_cache$"]
+author = "Knut Behrends"
+dateFormat = "2006/01/02"
 
 [permalinks]
 #  with RStudio, publish only to blog subdirectory
