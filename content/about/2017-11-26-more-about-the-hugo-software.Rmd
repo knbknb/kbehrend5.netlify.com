@@ -1,0 +1,24 @@
+---
+title: "More about the Hugo Software"
+author: "Knut Behrends"
+date: '2017-11-26'
+image: img/hugo-logo.png
+slug: more-about-the-hugo-software
+categories:
+- Reference
+- External
+weight: 10
+output:
+  html_document:
+    fig_caption: yes
+    keep_md: no
+---
+
+#### Links important to me
+
+
+- [Hugo Documentation:: predefined variables](https://gohugo.io/variables/page/) 
+Click on the link to go to the Hugo Documentation, (predefined variables).
+- [Hugo Documentation: Content Management](https://gohugo.io/content-management/) 
+- [RMarkdown Cheat Sheet](https://www.rstudio.com/wp-content/uploads/2016/03/rmarkdown-cheatsheet-2.0.pdf) 
+

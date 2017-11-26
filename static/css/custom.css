@@ -377,6 +377,10 @@ h1, h2, h3, h4, h5, h6, .nav, #sidebar, .footer {
   display: block;
 }
 
-pre.r {
+pre, pre.r {
   font-size: 19px;
+}
+
+.hljs-string {
+  color: #191970;
 }
