@@ -1,6 +1,6 @@
 ---
 date: 2017-11-23T20:23:59+05:30
-draft: true
+draft: false
 image: img/hugo-logo.png
 showonlyimage: false
 title: More about the Hugo Software
