@@ -30,9 +30,6 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ### Playing with a Soccer Database from Kaggle.com
 
-This post is also available - maybe in a better, more readable version at [my Github Repo for this site](https://github.com/knbknb/kbehrend5.netlify.com/blob/master/content/blog/2019-11-19-european-soccer-players--bmi.md).
-
-My blog: <a href="https://kbehrend5.netlify.com">https://kbehrend5.netlify.com</a>.
 
 Recently I've downloaded as a [zipfile (36 MB)](https://www.kaggle.com/hugomathien/soccer/downloads/soccer.zip) from data science community [Kaggle.com](https://www.kaggle.com/hugomathien/soccer).
 
@@ -299,3 +296,11 @@ Player %>%
 
 
 So we see that the BMI of soccer players in the top European Leagues fits pretty well a normal distribution with parameters mean = `r round(dnorm_fit$estimate["mean"], 1)` and standard deviation =  `r round(dnorm_fit$estimate["sd"],1)`.
+
+
+
+### Appendix 
+
+This post is also available - maybe in a better, more readable version at [my Github Repo for this site](https://github.com/knbknb/kbehrend5.netlify.com/blob/master/content/post/.
+
+My blog: <a href="https://kbehrend5.netlify.com">https://kbehrend5.netlify.com</a>.
