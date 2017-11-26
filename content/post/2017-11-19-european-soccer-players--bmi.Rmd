@@ -301,6 +301,6 @@ So we see that the BMI of soccer players in the top European Leagues fits pretty
 
 ### Appendix 
 
-This post is also available - maybe in a better, more readable version at [my Github Repo for this site](https://github.com/knbknb/kbehrend5.netlify.com/blob/master/content/post/.
+This post is also available - maybe in a better, more readable version at [my Github Repo for this site](https://github.com/knbknb/kbehrends.netlify.com/blob/master/content/post/.
 
-My blog: <a href="https://kbehrend5.netlify.com">https://kbehrend5.netlify.com</a>.
+My blog: <a href="https://kbehrends.netlify.com">https://kbehrends.netlify.com</a>.
