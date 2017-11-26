@@ -242,7 +242,7 @@ wiese_bmi <- players_large %>%
         filter(player_name == "Tim Wiese") %>%  select(bmi)
 ```
 
-Surprisingly, German goalie [Tim Wiese](https://en.wikipedia.org/wiki/Tim_Wiese) has the highest BMI. His career in the Bundesliga has ended, but he made some headlines in 2014-2016 because did bodybuilding, an tried -temporarily- to pursue a career in Wrestling.
+Surprisingly, German goalie [Tim Wiese](https://en.wikipedia.org/wiki/Tim_Wiese) has the highest BMI. His career in the Bundesliga has ended, but he made some headlines in 2014-2016 because he did bodybuilding, an tried -temporarily- to pursue a career in Wrestling. See German Wikipedia.
 
 His BMI is `r sprintf("%.1f", wiese_bmi)` m/kg². How large an outlier is this? Let's plot some histograms:
 
@@ -260,7 +260,6 @@ Player %>%
 
 
 In the plot above, the BMIs of the players of table 1 are shown as dotted lines.
-
 
 
 ```{r histogram_facets}
