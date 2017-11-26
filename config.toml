@@ -58,9 +58,9 @@ dateFormat = "2006-01-02"
   name = "Home"
   url = ""
 
-  [[params.navlinks]]
-  name = "Blog"
-  url = "blog/"
+#  [[params.navlinks]]
+#  name = "Blog"
+#  url = ""
 
 
   [[params.navlinks]]

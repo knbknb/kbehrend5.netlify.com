@@ -1,0 +1,36 @@
+---
+title: "Scratch area"
+date: "2017-11-26"
+keywords: ["fun", "scratch"]
+output:
+  html_document:
+    fig_caption: yes
+    keep_md: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Some notes 
+
+#### Shortcodes
+```{r shortcode1}
+library(blogdown)
+shortcode("figure", src = "/img/hugo-logo.png", alt = "A nice figure")
+
+```
+
+```{r shortcode2}
+
+shortcode("highlight", "bash", .content = "echo hello world;")
+
+```
+
+```{r shortcode3}
+
+shortcode_html("<font size='+4'>🐣</font>.")
+
+```
+
+
