@@ -1,6 +1,11 @@
 <!DOCTYPE html>
 <html lang="{{ .Site.LanguageCode }}">
-<head>{{ partial "head.html" . }}</head>
+<head>{{"<!-- themes/.../_default/baseof.html //-->" | safeHTML }}
+        {{ partial "head.html" . }}
+
+  {{ partial "head_favicon" . }}
+  {{ partial "head_highlightjs" . }}
+</head>
 <body>
   <div id="all">
       <div class="container-fluid">
@@ -14,6 +19,5 @@
   {{ partial "footer" . }}
   {{ partial "scripts.html" . }}
 
-  <script id="dsq-count-scr" src="//knbnetlify.disqus.com/count.js" async></script>
 </body>
 </html>

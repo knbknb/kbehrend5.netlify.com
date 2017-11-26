@@ -2,10 +2,7 @@
 title: "Scratch area"
 date: "2017-11-26"
 keywords: ["fun", "scratch"]
-output:
-  html_document:
-    fig_caption: yes
-    keep_md: yes
+output: md_document
 ---
 
 
@@ -14,14 +11,8 @@ output:
 <h2>Some notes</h2>
 <div id="shortcodes" class="section level4">
 <h4>Shortcodes</h4>
-<pre class="r"><code>library(blogdown)
-shortcode(&quot;figure&quot;, src = &quot;/img/hugo-logo.png&quot;, alt = &quot;A nice figure&quot;)</code></pre>
-{{% figure src="/img/hugo-logo.png" alt="A nice figure" %}}
-<pre class="r"><code>shortcode(&quot;highlight&quot;, &quot;bash&quot;, .content = &quot;echo hello world;&quot;)</code></pre>
-{{% highlight "bash" %}}
-echo hello world;
-{{% /highlight %}}
-<pre class="r"><code>shortcode_html(&quot;&lt;font size=&#39;+4&#39;&gt;🐣&lt;/font&gt;.&quot;)</code></pre>
-{{< <font size='+4'>🐣</font>. >}}
+<pre class="r"><code># shortcode(&quot;figure&quot;, src = &quot;img/hugo-logo.png&quot;, alt = &quot;A nice figure&quot;)</code></pre>
+<pre class="r"><code># shortcode(&quot;highlight&quot;, &quot;bash&quot;, .content = &quot;echo hello world;&quot;)</code></pre>
+<pre class="r"><code># blogdown::shortcode_html(&quot;&lt;font size=&#39;+4&#39;&gt;🐣&lt;/font&gt;.&quot;)</code></pre>
 </div>
 </div>

@@ -365,6 +365,15 @@ code {
 body {
   font-family: 'Merriweather', serif;
 }
-h1, h2, h3, h4, h5, h6, .nav, .article-duration, .archive-item-link, .footer {
+h1, h2, h3, h4, h5, h6, .nav, #sidebar, .footer {
   font-family: 'Lato', sans-serif;
 }
+
+.box-masonry-date {
+  color: #ccc;
+  font-size: 14px;
+  padding: 10px 0;
+  margin-top: 5px;
+  display: block;
+}
+
