@@ -12,7 +12,7 @@ output:
   html_document:
     fig_caption: yes
     keep_md: yes
-summary: In Kaggle Dataset "European Soccer Database", the oldest (by year of birth) Player in major European soccer leagues was Tugay Kerimoğlu, from Turkey. Born in 1970, he ended his career in the English Premier League in 2009. There he still played some matches as a member of the starting formation of the squad. 
+summary: While doing some quality-checks in Kaggle Dataset "[European Soccer Database](https://www.kaggle.com/hugomathien/soccer)", I found that in the late 2000s the oldest player active in top clubs was Tugay Kerimoğlu, from Turkey. Born in 1970, he played the English Premier League until... when, exactly? 
 keywords: ["Personal-Blog", "Fun", "rstats", "Sports-Data", "Soccer", "Kaggle.com"]  
 ---
 
@@ -28,7 +28,7 @@ keywords: ["Personal-Blog", "Fun", "rstats", "Sports-Data", "Soccer", "Kaggle.co
 con &lt;- dbConnect(odbc::odbc(), &quot;well-sqlite-footballdb&quot;)</code></pre>
 <p>For the sake of brevity, to see the R packages I’ve included to process the data, see the <a href="/post/2017/11/european-soccer-players-and-their-bmi/">previous blogpost</a>. Only the <code>tidyr</code> package is new here.</p>
 <pre class="r"><code>library(tidyr)   # gather</code></pre>
-<p>The database consists of 7 tables. We’ll read in all of them. The Player table contains basic data of ~10000 soccer players from the top leagues of 14 European countries. They are not strictly “European soccer players”, but players from all over the globe, competing in the top Leagues of certain Western European countries.</p>
+<p>The database consists of 7 tables. We’ll read in all of them. The Player table contains basic data of ~10000 soccer players from the top leagues of 14 European countries. They are not strictly “European soccer players”, but players from all over the globe, competing in the top leagues of certain Western European countries.</p>
 <p>Tables in the Sqlite database:</p>
 <pre><code>##                     Rows Columns
 ## Player_Attributes 183978      42
@@ -60,11 +60,11 @@ con &lt;- dbConnect(odbc::odbc(), &quot;well-sqlite-footballdb&quot;)</code></pr
         inner_join(Match_players, by = c(&quot;id&quot; = &quot;player_api_id&quot;)) %&gt;%
         mutate(year_of_birth = year(birthday)) %&gt;%
         rename(&quot;player_id&quot; = id)</code></pre>
-<p>This table, <code>Player_in_match</code> is a 5333 x 12 table. Remember, the original, standalone <code>Player</code> table had 11060 records. The join reduced this to ~5000 athletes. Hence, many players didn’t actually play, or the screenscraping process did not yield any information about the matches they ’ve participated in; or the parse-process of many downloaded files containing the Matches data failed.</p>
+<p>This table, <code>Player_in_match</code> is a 5333 x 12 table. Remember, the original, standalone <code>Player</code> table had 11060 records. The join reduced this to 5333 athletes. Hence, many players didn’t actually play, or the screenscraping process did not yield any information about the matches they ’ve participated in; or the parse-process of many downloaded files containing the matches data failed. In any case, they actually played or were nominated for the starting formation of their squads.</p>
 </div>
 <div id="histogram-of-year-of-births-of-players-that-actually-played" class="section level3">
 <h3>Histogram of year of births of players that actually played</h3>
-<p>This is the “age distribution” of players in the dataset. I think the axes are pretty self-explanatory. The bumpy distribution is not, however.</p>
+<p>This code generates a histogram of the “age distribution” of players in the dataset. These are players for which match data is known. I think the axes are pretty self-explanatory.</p>
 <pre class="r"><code>Pl_lbl &lt;- Player_in_match %&gt;%
         select(year_of_birth, player_name) %&gt;% 
         group_by(year_of_birth) %&gt;% 
@@ -110,23 +110,24 @@ Player_in_match %&gt;%
 <li>the database does not keep track of accents and special characters of the Turkish alphabet, so I better use the correctly encoded string from Wikipedia/Google.</li>
 </ul>
 <pre class="r"><code>oldest.2 &lt;- map(oldest$player_name, 
-                            kgapi_lookup_kv, apikey=Sys.getenv(&quot;GOO_KGR_KEY&quot;))
+                kgapi_lookup_kv, 
+                apikey=Sys.getenv(&quot;GOO_KGR_KEY&quot;))
 
 oldest.3 &lt;- oldest.2[[1]] %&gt;% 
-        as_data_frame( ) %&gt;% 
-        filter(str_detect(key , &quot;result.name|detailedDescription&quot; ) == TRUE) %&gt;% 
-        select(key, value) %&gt;% 
-        mutate(key = str_replace(key, &quot;result.detailedDescription.&quot;, &quot;&quot;), 
-               value = unlist(value)) %&gt;% 
-        spread(key=key, value=value) %&gt;% 
-        select(-license) %&gt;% 
-        mutate(Name =str_c(&quot;[&quot;, result.name, &quot;](&quot;, url, &quot;)&quot;),
-               Description = articleBody) %&gt;% 
-        select(Name,  Description) %&gt;% 
-        cbind(oldest) %&gt;% 
-        rename(&quot;Born&quot; = &quot;year_of_birth&quot;) %&gt;% 
-        select(-player_name)</code></pre>
-<p>More Info:</p>
+    as_data_frame( ) %&gt;% 
+    filter(str_detect(key, &quot;result.name|detailedDescription&quot;) == TRUE) %&gt;% 
+    select(key, value) %&gt;% 
+    mutate(key = str_replace(key, &quot;result.detailedDescription.&quot;, &quot;&quot;), 
+           value = unlist(value)) %&gt;% 
+    spread(key=key, value=value) %&gt;% 
+    select(-license) %&gt;% 
+    mutate(Name =str_c(&quot;[&quot;, result.name, &quot;](&quot;, url, &quot;)&quot;),
+           Description = articleBody) %&gt;% 
+    select(Name,  Description) %&gt;% 
+    cbind(oldest) %&gt;% 
+    rename(&quot;Born&quot; = &quot;year_of_birth&quot;) %&gt;% 
+    select(-player_name)</code></pre>
+<p>Click on the Wikipedia link below for more information:</p>
 <table style="width:100%;">
 <colgroup>
 <col width="29%" />
@@ -190,7 +191,7 @@ oldest_augm2 %&gt;%
 <p>So the database says that Tugay Kerimoğlu has played for Everton, and did so until the 2011/2012 season (I’ve omitted a few matches in the table above). According to the <a href="https://en.wikipedia.org/wiki/Tugay_Kerimo%C4%9Flu">Wikipedia article about him</a>, this is clearly wrong.</p>
 <div id="my-take-home-message" class="section level3">
 <h3>My take home-message</h3>
-<p>So the take-home message is that the Kaggle database has some quality issues. Needless to say, the creators of the database still did a great job in compiling this dataset. The database design is pretty clean, and the fact that there are even some Primary-Foreign Key Constraints between the table inside the database make it stand out. However the mappings seem to be wrong, or I did a mistake in the analysis.</p>
+<p>So the take-home message is that the Kaggle database has some quality issues. Needless to say, the creators of the database still did a great job in compiling this dataset. The database design is pretty clean, and the fact that there are even some Primary-Foreign Key Constraints between the table inside the database make it stand out. However the mappings of team-ids to match-ids seem to be wrong in places, or I did a mistake in the analysis.</p>
 </div>
 <div id="minor-quality-problem-players-with-digits-in-their-names" class="section level3">
 <h3>Minor quality problem: players with digits in their names</h3>

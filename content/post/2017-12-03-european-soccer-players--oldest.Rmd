@@ -12,7 +12,7 @@ output:
   html_document:
     fig_caption: yes
     keep_md: yes
-summary: In Kaggle Dataset "European Soccer Database", the oldest (by year of birth) Player in major European soccer leagues was Tugay Kerimoğlu, from Turkey. Born in 1970, he ended his career in the English Premier League in 2009. There he still played some matches as a member of the starting formation of the squad. 
+summary: While doing some quality-checks in Kaggle Dataset "[European Soccer Database](https://www.kaggle.com/hugomathien/soccer)", I found that in the late 2000s the oldest player active in top clubs was Tugay Kerimoğlu, from Turkey. Born in 1970, he played the English Premier League until... when, exactly? 
 keywords: ["Personal-Blog", "Fun", "rstats", "Sports-Data", "Soccer", "Kaggle.com"]  
 ---
 
@@ -53,7 +53,7 @@ theme_set(theme_bw())
 library(tidyr)   # gather
 ```
 
-The database consists of 7 tables. We'll read in all of them. The Player table contains basic data of ~10000 soccer players from the top leagues of 14 European countries. They are not strictly "European soccer players", but players from all over the globe, competing in the top Leagues of certain Western European countries.
+The database consists of 7 tables. We'll read in all of them. The Player table contains basic data of ~10000 soccer players from the top leagues of 14 European countries. They are not strictly "European soccer players", but players from all over the globe, competing in the top leagues of certain Western European countries.
 
 ```{r, echo=FALSE, results='hide'}
 table_names <- dbListTables(con)
@@ -126,11 +126,11 @@ Player_in_match <- Player %>%
 ```
 
 This table, `Player_in_match` is a `r nrow(Player_in_match)` x `r ncol(Player_in_match)` table. Remember, the original, standalone `Player` table had `r nrow(Player)` records.
-The join reduced this to ~5000 athletes. Hence, many players didn't actually play, or the screenscraping process did not yield any information about the matches they 've participated in; or the parse-process of many downloaded files containing the Matches data failed.
+The join reduced this to `r nrow(Player_in_match)` athletes. Hence, many players didn't actually play, or the screenscraping process did not yield any information about the matches they 've participated in; or the parse-process of many downloaded files containing the matches data failed. In any case, they actually played or were nominated for the starting formation of their squads. 
 
 ### Histogram of year of births of players that actually played  
 
-This is the "age distribution" of players in the dataset. I think the axes are pretty self-explanatory. The bumpy distribution is not, however.
+This code generates a histogram of the "age distribution" of players in the dataset. These are players for which match data is known. I think the axes are pretty self-explanatory. 
 
 ```{r histogram, fig.width=7}
 Pl_lbl <- Player_in_match %>%
@@ -188,27 +188,29 @@ The  calculation in the following code block is a bit awkward and verbose, becau
 ```{r, googlekg, result='hide', echo=TRUE, warning=FALSE, message=FALSE}
 
 oldest.2 <- map(oldest$player_name, 
-                            kgapi_lookup_kv, apikey=Sys.getenv("GOO_KGR_KEY"))
+                kgapi_lookup_kv, 
+                apikey=Sys.getenv("GOO_KGR_KEY"))
 
 oldest.3 <- oldest.2[[1]] %>% 
-        as_data_frame( ) %>% 
-        filter(str_detect(key , "result.name|detailedDescription" ) == TRUE) %>% 
-        select(key, value) %>% 
-        mutate(key = str_replace(key, "result.detailedDescription.", ""), 
-               value = unlist(value)) %>% 
-        spread(key=key, value=value) %>% 
-        select(-license) %>% 
-        mutate(Name =str_c("[", result.name, "](", url, ")"),
-               Description = articleBody) %>% 
-        select(Name,  Description) %>% 
-        cbind(oldest) %>% 
-        rename("Born" = "year_of_birth") %>% 
-        select(-player_name)
+    as_data_frame( ) %>% 
+    filter(str_detect(key, "result.name|detailedDescription") == TRUE) %>% 
+    select(key, value) %>% 
+    mutate(key = str_replace(key, "result.detailedDescription.", ""), 
+           value = unlist(value)) %>% 
+    spread(key=key, value=value) %>% 
+    select(-license) %>% 
+    mutate(Name =str_c("[", result.name, "](", url, ")"),
+           Description = articleBody) %>% 
+    select(Name,  Description) %>% 
+    cbind(oldest) %>% 
+    rename("Born" = "year_of_birth") %>% 
+    select(-player_name)
   
 ```
 
 
-More Info: 
+Click on the Wikipedia link below for more information: 
+
 
 ```{r echo=FALSE}
 knitr::kable(oldest.3, table.attr = "id=\"oldestkg\"",
@@ -251,7 +253,7 @@ So the database says that Tugay Kerimoğlu has played for Everton, and did so un
 ### My take home-message
 
 So the take-home message is that the Kaggle database has some quality issues. Needless to say, the creators of the database still did a great job in compiling this dataset.
-The database design is pretty clean, and the fact that there are even some Primary-Foreign Key Constraints between the table inside the database make it stand out. However the mappings seem to be wrong, or I did a mistake in the analysis.
+The database design is pretty clean, and the fact that there are even some Primary-Foreign Key Constraints between the table inside the database make it stand out. However the mappings of team-ids to match-ids seem to be wrong in places, or I did a mistake in the analysis.
 
 ### Minor quality problem: players with digits in their names
 
