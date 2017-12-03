@@ -132,7 +132,7 @@ The join reduced this to `r nrow(Player_in_match)` athletes. Hence, many players
 
 This code generates a histogram of the "age distribution" of players in the dataset. These are players for which match data is known. I think the axes are pretty self-explanatory. 
 
-```{r histogram, fig.width=7}
+```{r histogram, fig.width=8}
 Pl_lbl <- Player_in_match %>%
         select(year_of_birth, player_name) %>% 
         group_by(year_of_birth) %>% 
@@ -145,7 +145,7 @@ Player_in_match %>%
         geom_text(data = Pl_lbl, 
                   aes(x=I(year_of_birth+1.5), y=I(150), 
                       label = player_name, angle = 45), size=3) +
-        ggtitle(sprintf("Match appearances by %s soccer players in top leagues in Europe, 2008-2016", nrow(Player_in_match)),
+        ggtitle(sprintf("Matches by %s soccer players in top leagues in Europe, 2008-2016", nrow(Player_in_match)),
                 subtitle="By year of birth. Histogram shows players for which match participation data is known.") +
         xlab("Year of Birth") +
         ylab("Appearances in Matches")
