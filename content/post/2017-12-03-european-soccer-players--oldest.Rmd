@@ -12,7 +12,7 @@ output:
   html_document:
     fig_caption: yes
     keep_md: yes
-summary: While doing some quality-checks in Kaggle Dataset "[European Soccer Database](https://www.kaggle.com/hugomathien/soccer)", I found that in the late 2000s the oldest player active in top clubs was Tugay Kerimoğlu, from Turkey. Born in 1970, he played the English Premier League until... when, exactly? 
+summary: While doing some quality-checks in Kaggle Dataset "[European Soccer Database](https://www.kaggle.com/hugomathien/soccer)", I found that in the late 2000s one of the oldest players active in top clubs was Tugay Kerimoğlu, from Turkey. Born in 1970, he played the English Premier League until... when, exactly? 
 keywords: ["Personal-Blog", "Fun", "rstats", "Sports-Data", "Soccer", "Kaggle.com"]  
 ---
 
@@ -23,7 +23,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ### Still playing with a Soccer Database from Kaggle.com
 
-> As an exercise, I wanted to find the oldest player participating in any match. My analysis also revealed a lot about the data quality of this Kaggle dataset.
+> As an exercise, I wanted to find the oldest players participating in any match. During my analysis I also learned something about the data quality of this Kaggle dataset.
 
 As mentioned in a [previous blogpost](/post/2017/11/european-soccer-players-and-their-bmi/), I've downloaded a [zipfile (36 MB)](https://www.kaggle.com/hugomathien/soccer/downloads/soccer.zip) with Football data from data science community [Kaggle.com](https://www.kaggle.com/hugomathien/soccer). The archive contained an SQLite Database. 
 
@@ -120,7 +120,7 @@ This table can now be joined with the `Player` table:
 
 ```{r}
 Player_in_match <- Player %>%
-        inner_join(Match_players, by = c("id" = "player_api_id")) %>%
+        inner_join(Match_players, by = c("player_api_id" = "player_api_id")) %>%
         mutate(year_of_birth = year(birthday)) %>%
         rename("player_id" = id)
 ```
@@ -128,22 +128,50 @@ Player_in_match <- Player %>%
 This table, `Player_in_match` is a `r nrow(Player_in_match)` x `r ncol(Player_in_match)` table. Remember, the original, standalone `Player` table had `r nrow(Player)` records.
 The join reduced this to `r nrow(Player_in_match)` athletes. Hence, many players didn't actually play, or the screenscraping process did not yield any information about the matches they 've participated in; or the parse-process of many downloaded files containing the matches data failed. In any case, they actually played or were nominated for the starting formation of their squads. 
 
+```{r fig.width=8}
+
+
+Player_distinct_by_year <- Player_in_match %>%
+        select(year_of_birth, season, player_api_id) %>%
+        group_by(year_of_birth, season) %>%
+        summarize(distinct_players =n_distinct(player_api_id))
+
+Player_distinct_by_year %>%
+        ggplot(aes(year_of_birth, distinct_players, color=season)) +
+        geom_point( size=.4) +
+        geom_smooth(method="loess", se=FALSE, size=0.5) +
+        ylab("Number of distinct Players in Database") +
+        xlab("Player's Year of Birth") +
+        ggtitle("Number of distinct Players in the 'European Soccer Database",
+                subtitle = "Counting Players' appearances in the squads. Seasons 2008-2016.\n
+Each player is counted once per season no matter how often he played.")
+```
+
+Some players were rarely nominated for the squad of any match. This can best be seen at the left side of the graph. These data points represent older players born before 1970. Did they play at all? Probably, yes. 
+
+Why do the humps have differnt heights? I think for older seasons, there is simply less data available from commercial data vendors.  
+
 ### Histogram of matches played, by year of birth  
 
 This code generates a histogram of the "age distribution" of players in the dataset. These are players for which match data is known. I think the axes are pretty self-explanatory. 
 
 ```{r histogram, fig.width=8}
 Pl_lbl <- Player_in_match %>%
-        select(year_of_birth, player_name) %>% 
+        arrange(birthday) %>% 
+        select(year_of_birth, player_name) %>%
+        filter(year_of_birth <= 1970) %>% 
         group_by(year_of_birth) %>% 
-        arrange(year_of_birth) %>% head(1)
+        arrange(year_of_birth) %>% 
+        unique()
+
+Pl_lbl  <- Pl_lbl %>% unique() %>% head(1)
 
 
 Player_in_match %>%
         ggplot(aes(year_of_birth)) + 
         geom_histogram(binwidth=1, fill="maroon") +
         geom_text(data = Pl_lbl, 
-                  aes(x=I(year_of_birth+1.5), y=I(150), 
+                  aes(x=I(year_of_birth+3.5), y=I(4500), 
                       label = player_name, angle = 45), size=3) +
         ggtitle(sprintf("Matches by %s soccer players in top leagues in Europe, 2008-2016", nrow(Player_in_match)),
                 subtitle="By year of birth. Histogram shows players for which match participation data is known.") +
@@ -154,7 +182,7 @@ Player_in_match %>%
 
 ### Find the oldest player in any match
 
-We can use the `Player_in_match` table to find the oldest player who participated in any match. This corresponds to the leftmost bar in the histogram above. This bar corresponds to the matches of a single soccer player, born in 1970.
+We can use the `Player_in_match` table to find the oldest players who participated in any match. This corresponds to the leftmost bars in the histogram above. This bar corresponds to the matches of a the oldest soccer players, born in 1970 or earlier.
 
 ```{r oldest, results='hide'}
 oldest_players_in_any_match <- Player_in_match %>%
@@ -163,7 +191,7 @@ oldest_players_in_any_match <- Player_in_match %>%
         select(year_of_birth, season, player_name, match_id, name) %>%
         group_by(year_of_birth, season, player_name, match_id) %>%
         summarize(n_matches = n()) %>%
-        arrange(season, match_id) %>%
+        arrange(season) %>%
         ungroup()
 ```
 
@@ -172,12 +200,17 @@ Result:
 ```{r tab1}
 
 (oldest <- oldest_players_in_any_match %>% 
-        select(player_name, year_of_birth) %>% 
-        head(1))
+        select(player_name, year_of_birth, n_matches) %>% 
+        group_by(player_name, year_of_birth) %>% 
+         summarize(n_matches=sum(n_matches)) %>% 
+         arrange(year_of_birth, player_name) %>% 
+         ungroup())
+
+
 
 ```
 
-Before I studied this dataset, the oldest player, Tugay Kerimoğlu, was completely unknown to me. So let's lookup some metadata about this player in the Google Knowledge Graph.
+Before I studied this dataset, the oldest player, `r oldest[1,]$player_name`, was completely unknown to me. So let's lookup some metadata about this player in the Google Knowledge Graph.
 
 The  calculation in the following code block is a bit awkward and verbose, because
 
@@ -186,13 +219,18 @@ The  calculation in the following code block is a bit awkward and verbose, becau
  - the database does not keep track of accents and special characters of the Turkish alphabet, so I better use the correctly encoded string from Wikipedia/Google.
  
 ```{r, googlekg, result='hide', echo=TRUE, warning=FALSE, message=FALSE}
+# set/replace this one manually. Google returned another wrong athlete (wheelchair)
+oldest[oldest$player_name == "David Weir", "player_name"] <- "David Gillespie Weir"
 
 oldest.2 <- map(oldest$player_name, 
                 kgapi_lookup_kv, 
                 apikey=Sys.getenv("GOO_KGR_KEY"))
 
-oldest.3 <- oldest.2[[1]] %>% 
-    as_data_frame( ) %>% 
+
+
+oldest.3 <- map_df(oldest.2, function(x) { 
+        
+    as_data_frame(x ) %>% 
     filter(str_detect(key, "result.name|detailedDescription") == TRUE) %>% 
     select(key, value) %>% 
     mutate(key = str_replace(key, "result.detailedDescription.", ""), 
@@ -200,28 +238,37 @@ oldest.3 <- oldest.2[[1]] %>%
     spread(key=key, value=value) %>% 
     select(-license) %>% 
     mutate(Name =str_c("[", result.name, "](", url, ")"),
-           Description = articleBody) %>% 
-    select(Name,  Description) %>% 
-    cbind(oldest) %>% 
-    rename("Born" = "year_of_birth") %>% 
-    select(-player_name)
-  
+           Description = str_replace_all(articleBody, "\n", "")) %>% 
+    select(result.name, Name,  Description) })
+
+
+
+oldest.3 <- oldest.3 %>% 
+   left_join(oldest, by=c("result.name" = "player_name")) %>%
+   rename("Born" = "year_of_birth", "n" = "n_matches") %>%
+   select(-result.name)
+
+
 ```
 
+It is quite common that goalkeepers have long careers.
 
-Click on the Wikipedia link below for more information: 
+Click on the Wikipedia links below for more information. 
+(The link David Weir is wrong, set it manually) 
 
 
 ```{r echo=FALSE}
+
 knitr::kable(oldest.3, table.attr = "id=\"oldestkg\"",
-             row.names = FALSE,  format = "markdown" )
+             row.names = TRUE,  format = "markdown" )
 ```
 
 ## More quality checks: Tugay's last matches
 
-So Wikipedia says Tugay played for the Blackburn Rovers.
+One of the older player is Tugay Kerimoğlu, born 1970. I didn't know him before. 
+ Wikipedia says Tugay played for the Blackburn Rovers during his last years.
 
-Does the database also say that? Sadly, no:
+Does the database also say that? Luckily, yes:
 
 Let's find out which teams Tugay played for during his last seasons. For each record in the Match table, there exists an entry with `home_team_api_id` and `away_team_api_id`. In order to resolve anonymous team-ids to the actual team names, I 
 join the team-ids *twice* to the oldest_players_in_any_match table. This yields two augmented temporary tables.
@@ -234,7 +281,8 @@ oldest_augm <- oldest_players_in_any_match %>%
         select(-season) %>%
         inner_join(Match, by = c("match_id" = "match_api_id")) %>%
         inner_join(Team_sm, by = c("home_team_api_id" = "team_api_id")) %>%
-        rename("home_team" = "team_long_name")
+        rename("home_team" = "team_long_name") %>% 
+        filter(player_name == "Tugay Kerimoglou")
 
 
 oldest_augm2 <- oldest_augm %>%
@@ -248,12 +296,12 @@ oldest_augm2 %>%
 
 ```
 
-So the database says that Tugay Kerimoğlu has played for Everton, and did so until the 2011/2012 season (I've omitted a few of his "matches" in the table above). According to the [Wikipedia article about him](https://en.wikipedia.org/wiki/Tugay_Kerimo%C4%9Flu), this is clearly wrong. 
+So the database says that Tugay Kerimoğlu has played for Blackburn rovers, and did so until the 2008/2009 season. According to the [Wikipedia article about him](https://en.wikipedia.org/wiki/Tugay_Kerimo%C4%9Flu), this is true. 
 
 ### My take home-message
 
-So the take-home message is that the Kaggle database has some quality issues. Needless to say, the creators of the database still did a great job in compiling this dataset.
-The database design is pretty clean, and the fact that there are even some Primary-Foreign Key Constraints between the table inside the database make it stand out. However the mappings of team-ids to match-ids seem to be wrong in places, or I did a mistake in the analysis.
+Needless to say, the creators of the database did a great job in compiling this dataset.
+The database design is pretty clean, and the fact that there are even some Primary-Foreign Key Constraints between the table inside the database make it stand out. The mappings of player-ids to match-ids seem to be correct in most places.
 
 ### Minor quality problem: players with digits in their names
 
@@ -266,15 +314,15 @@ players_weird_names <- Player %>%
         select(player_name) %>% 
         filter(str_detect(player_name, "\\d") == TRUE)
 
-plw <- players_weird_names %>% head(4)
-plw <- plw %>% bind_rows(data_frame(player_name = "..."))
-plw <- plw %>% bind_rows(tail(players_weird_names, 4))
 ```
 
 ```{r echo=FALSE}
+plw <- players_weird_names %>% head(4)
+plw <- plw %>% bind_rows(data_frame(player_name = "..."))
+plw <- plw %>% bind_rows(tail(players_weird_names, 4))
+
 knitr::kable(plw)
 ```
 
 There are `r nrow(players_weird_names)` Players with digits in their names. I've only shown a few of them in the table above. This formatting issue looks so systematic that I suspect that it is the result of an incorrect parse, and maybe a misplaced age calculation.
-
 
