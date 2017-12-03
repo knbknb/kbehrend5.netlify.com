@@ -247,14 +247,14 @@ oldest.3 <- oldest.3 %>%
    left_join(oldest, by=c("result.name" = "player_name")) %>%
    rename("Born" = "year_of_birth", "N" = "n_matches") %>%
    select(-result.name) %>% 
-        mutate(Goalie = ifelse(str_detect( Description, "goal"), "Y", "")) %>% 
+        mutate(IsG = ifelse(str_detect( Description, "goal"), "Y", "")) %>% 
         mutate_if(is.numeric, function(x) ifelse(is.na(x), "", x)) %>% 
-  select(Name, Description, Born, Goalie, N)
+  select(Name, Description, Born, IsG, N)
    
 
 ```
 
-In the table below, column 'N' means number of matches in Database.
+In the table below, column 'IsG' means "Is Goalie", 'N' means number of matches in Database.
 
 It seems to be quite common that goalkeepers have long careers:
 
@@ -266,7 +266,7 @@ It seems to be quite common that goalkeepers have long careers:
 
 knitr::kable(oldest.3, table.attr = "id=\"oldestkg\"",
              row.names = TRUE,  format = "markdown", 
-             align = c(rep("l", ncol(oldest.3)-1 ), "r"))
+             align = c(rep("l", ncol(oldest.3)-2 ), "c", "r"))
 ```
 
 ## More quality checks: Tugay's last matches
