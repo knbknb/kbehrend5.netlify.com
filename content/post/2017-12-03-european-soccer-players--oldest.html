@@ -1,5 +1,5 @@
 ---
-title: The oldest active European Soccer Player in season 2008
+title: The oldest European Soccer Player in the late 2000s
 author: Knut Behrends
 date: '2017-12-03'
 image: /static/img/football.png
@@ -188,14 +188,14 @@ oldest_augm2 %&gt;%
 ## 10 2011/2012  1024834 Bolton Wanderers Everton                
 ## 11 2011/2012  1024891 Everton          Stoke City             
 ## 12 2011/2012  1024920 Arsenal          Everton</code></pre>
-<p>So the database says that Tugay Kerimoğlu has played for Everton, and did so until the 2011/2012 season (I’ve omitted a few matches in the table above). According to the <a href="https://en.wikipedia.org/wiki/Tugay_Kerimo%C4%9Flu">Wikipedia article about him</a>, this is clearly wrong.</p>
+<p>So the database says that Tugay Kerimoğlu has played for Everton, and did so until the 2011/2012 season (I’ve omitted a few of his “matches” in the table above). According to the <a href="https://en.wikipedia.org/wiki/Tugay_Kerimo%C4%9Flu">Wikipedia article about him</a>, this is clearly wrong.</p>
 <div id="my-take-home-message" class="section level3">
 <h3>My take home-message</h3>
 <p>So the take-home message is that the Kaggle database has some quality issues. Needless to say, the creators of the database still did a great job in compiling this dataset. The database design is pretty clean, and the fact that there are even some Primary-Foreign Key Constraints between the table inside the database make it stand out. However the mappings of team-ids to match-ids seem to be wrong in places, or I did a mistake in the analysis.</p>
 </div>
 <div id="minor-quality-problem-players-with-digits-in-their-names" class="section level3">
 <h3>Minor quality problem: players with digits in their names</h3>
-<p>Further examination revealed that another small problem with the Players table.</p>
+<p>Further examination revealed that another small problem with the Players table. I mention this here because it is not worth an independent blog-post.</p>
 <p>This R code reveals that some player names have been parsed incorrectly.</p>
 <pre class="r"><code>players_weird_names &lt;- Player %&gt;% 
         select(player_name) %&gt;% 

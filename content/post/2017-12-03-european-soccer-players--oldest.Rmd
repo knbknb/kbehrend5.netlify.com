@@ -1,5 +1,5 @@
 ---
-title: The oldest active European Soccer Player in season 2008
+title: The oldest European Soccer Player in the late 2000s
 author: Knut Behrends
 date: '2017-12-03'
 image: /static/img/football.png
@@ -248,7 +248,7 @@ oldest_augm2 %>%
 
 ```
 
-So the database says that Tugay Kerimoğlu has played for Everton, and did so until the 2011/2012 season (I've omitted a few matches in the table above). According to the [Wikipedia article about him](https://en.wikipedia.org/wiki/Tugay_Kerimo%C4%9Flu), this is clearly wrong. 
+So the database says that Tugay Kerimoğlu has played for Everton, and did so until the 2011/2012 season (I've omitted a few of his "matches" in the table above). According to the [Wikipedia article about him](https://en.wikipedia.org/wiki/Tugay_Kerimo%C4%9Flu), this is clearly wrong. 
 
 ### My take home-message
 
@@ -257,7 +257,7 @@ The database design is pretty clean, and the fact that there are even some Prima
 
 ### Minor quality problem: players with digits in their names
 
-Further examination revealed that another small problem with the Players table. 
+Further examination revealed that another small problem with the Players table. I mention this here because it is not worth an independent blog-post.
 
 This R code reveals that some player names have been parsed incorrectly. 
 
