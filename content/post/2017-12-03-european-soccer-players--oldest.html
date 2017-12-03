@@ -77,7 +77,7 @@ Player_in_match %&gt;%
         geom_text(data = Pl_lbl, 
                   aes(x=I(year_of_birth+1.5), y=I(150), 
                       label = player_name, angle = 45), size=3) +
-        ggtitle(sprintf(&quot;Match appearances by %s soccer players in top leagues in Europe, 2008-2016&quot;, nrow(Player_in_match)),
+        ggtitle(sprintf(&quot;Matches by %s soccer players in top leagues in Europe, 2008-2016&quot;, nrow(Player_in_match)),
                 subtitle=&quot;By year of birth. Histogram shows players for which match participation data is known.&quot;) +
         xlab(&quot;Year of Birth&quot;) +
         ylab(&quot;Appearances in Matches&quot;)</code></pre>
