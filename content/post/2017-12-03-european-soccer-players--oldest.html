@@ -182,7 +182,8 @@ oldest.3 &lt;- oldest.3 %&gt;%
    rename(&quot;Born&quot; = &quot;year_of_birth&quot;, &quot;N&quot; = &quot;n_matches&quot;) %&gt;%
    select(-result.name) %&gt;% 
         mutate(Goalie = ifelse(str_detect( Description, &quot;goal&quot;), &quot;Y&quot;, &quot;&quot;)) %&gt;% 
-        mutate_if(is.numeric, function(x) ifelse(is.na(x), &quot;&quot;, x))</code></pre>
+        mutate_if(is.numeric, function(x) ifelse(is.na(x), &quot;&quot;, x)) %&gt;% 
+  select(Name, Description, Born, Goalie, N)</code></pre>
 <p>In the table below, column ‘N’ means number of matches in Database.</p>
 <p>It seems to be quite common that goalkeepers have long careers:</p>
 <p>(Click on the Wikipedia links below for more information).</p>
@@ -192,8 +193,8 @@ oldest.3 &lt;- oldest.3 %&gt;%
 <col width="18%" />
 <col width="77%" />
 <col width="1%" />
-<col width="0%" />
 <col width="1%" />
+<col width="0%" />
 </colgroup>
 <thead>
 <tr class="header">
@@ -201,8 +202,8 @@ oldest.3 &lt;- oldest.3 %&gt;%
 <th align="left">Name</th>
 <th align="left">Description</th>
 <th align="left">Born</th>
-<th align="left">N</th>
 <th align="left">Goalie</th>
+<th align="right">N</th>
 </tr>
 </thead>
 <tbody>
@@ -211,88 +212,88 @@ oldest.3 &lt;- oldest.3 %&gt;%
 <td align="left"><a href="https://en.wikipedia.org/wiki/Alberto_Fontana_(footballer,_born_1967)">Alberto Fontana</a></td>
 <td align="left">Alberto Fontana is an Italian retired footballer who played as a goalkeeper.During his career, in which he represented nine different clubs, he played until the age of 42.</td>
 <td align="left">1967</td>
-<td align="left">4</td>
 <td align="left">Y</td>
+<td align="right">4</td>
 </tr>
 <tr class="even">
 <td align="left">2</td>
 <td align="left"><a href="https://en.wikipedia.org/wiki/Paolo_Maldini">Paolo Maldini</a></td>
 <td align="left">Paolo Cesare Maldini is an Italian former professional footballer who played as a left back and central defender for A.C. Milan and the Italy national team.</td>
 <td align="left">1968</td>
-<td align="left">30</td>
 <td align="left"></td>
+<td align="right">30</td>
 </tr>
 <tr class="odd">
 <td align="left">3</td>
 <td align="left"><a href="https://en.wikipedia.org/wiki/Dean_Windass">Dean Windass</a></td>
 <td align="left">Dean Windass is an English former professional footballer who played as a striker. He is best known for his spells at Bradford City and contributing to his hometown team Hull City’s promotion to the Premier League in 2008. He currently plays for AFC.</td>
 <td align="left">1969</td>
-<td align="left">1</td>
 <td align="left"></td>
+<td align="right">1</td>
 </tr>
 <tr class="even">
 <td align="left">4</td>
 <td align="left"><a href="https://en.wikipedia.org/wiki/Francesco_Antonioli">Francesco Antonioli</a></td>
 <td align="left">Francesco Antonioli is an ex-Italian footballer and goalkeeper. He was the oldest footballer in Serie A until his club Cesena were relegated to Serie B at the end of the 2011–12 season, after which he retired from professional football.</td>
 <td align="left">1969</td>
-<td align="left">98</td>
 <td align="left">Y</td>
+<td align="right">98</td>
 </tr>
 <tr class="odd">
 <td align="left">5</td>
 <td align="left"><a href="https://en.wikipedia.org/wiki/Jens_Lehmann">Jens Lehmann</a></td>
 <td align="left">Jens Gerhard Lehmann is a retired German footballer who played as a goalkeeper. He was voted UEFA Club Goalkeeper of the Year for the 1996–97 and 2005–06 seasons, and was selected for three World Cup squads.</td>
 <td align="left">1969</td>
-<td align="left">66</td>
 <td align="left">Y</td>
+<td align="right">66</td>
 </tr>
 <tr class="even">
 <td align="left">6</td>
 <td align="left"><a href="https://en.wikipedia.org/wiki/Luca_Bucci">Luca Bucci</a></td>
 <td align="left">Luca Bucci is a retired Italian football goalkeeper. Bucci played for several Italian clubs throughout his career; he is mostly remembered for his successful spell with Parma, where he won various domestic and European titles.</td>
 <td align="left">1969</td>
-<td align="left">1</td>
 <td align="left">Y</td>
+<td align="right">1</td>
 </tr>
 <tr class="odd">
 <td align="left">7</td>
 <td align="left"><a href="https://en.wikipedia.org/wiki/Michael_Tarnat">Michael Tarnat</a></td>
 <td align="left">Michael Tarnat is a German former footballer, currently employed by Bayern Munich as the leader of the U12–U16 youth teams. He is a left-footed full-back who has also played wingback and defensive midfield.</td>
 <td align="left">1969</td>
-<td align="left">6</td>
 <td align="left"></td>
+<td align="right">6</td>
 </tr>
 <tr class="even">
 <td align="left">8</td>
 <td align="left"><a href="https://en.wikipedia.org/wiki/Rob_van_Dijk">Rob van Dijk</a></td>
 <td align="left">Robert ‘Rob’ van Dijk is a Dutch retired footballer who played as a goalkeeper.Over the course of exactly 20 seasons as a professional, he appeared in 364 Eredivisie games, mainly with RKC and Feyenoord. He retired at the age of 43.</td>
 <td align="left">1969</td>
-<td align="left">59</td>
 <td align="left">Y</td>
+<td align="right">59</td>
 </tr>
 <tr class="odd">
 <td align="left">9</td>
 <td align="left"><a href="https://en.wikipedia.org/wiki/Antonio_Chimenti">Antonio Chimenti</a></td>
 <td align="left">Antonio Chimenti is a retired Italian football goalkeeper.</td>
 <td align="left">1970</td>
-<td align="left">2</td>
 <td align="left">Y</td>
+<td align="right">2</td>
 </tr>
 <tr class="even">
 <td align="left">10</td>
 <td align="left"><a href="https://en.wikipedia.org/wiki/Chris_Swailes">Chris Swailes</a></td>
 <td align="left">Christopher William Swailes is an English former professional footballer. He is currently manager of Dunston UTS.</td>
 <td align="left">1970</td>
-<td align="left">22</td>
 <td align="left"></td>
+<td align="right">22</td>
 </tr>
 <tr class="odd">
 <td align="left">11</td>
 <td align="left"><a href="https://en.wikipedia.org/wiki/David_James_(footballer,_born_1970)">David James</a></td>
 <td align="left">David Benjamin James MBE is an English former footballer who played as a goalkeeper. He most recently served as the player–manager at Kerala Blasters FC in the Indian Super League. He is currently a regular pundit on BT Sport’s football coverage.</td>
 <td align="left">1970</td>
-<td align="left">61</td>
 <td align="left">Y</td>
+<td align="right">61</td>
 </tr>
 <tr class="even">
 <td align="left">12</td>
@@ -300,39 +301,39 @@ oldest.3 &lt;- oldest.3 %&gt;%
 <td align="left">David Gillespie Weir is a Scottish football player and coach, who is the assistant manager of Nottingham Forest.Born in Falkirk, Weir began his professional career with his home-town club, Falkirk, after having attended the University of Evansville in the United States.</td>
 <td align="left"></td>
 <td align="left"></td>
-<td align="left"></td>
+<td align="right"></td>
 </tr>
 <tr class="odd">
 <td align="left">13</td>
 <td align="left"><a href="https://en.wikipedia.org/wiki/Dean_Kiely">Dean Kiely</a></td>
 <td align="left">Dean Laurence Kiely is a former professional footballer who played as a goalkeeper. He is the goalkeeping coach at Championship club Preston North End. He won eleven caps for the Republic of Ireland as a player. Kiely has previously worked as the goalkeeping coach at West Bromwich Albion and Norwich City.</td>
 <td align="left">1970</td>
-<td align="left">3</td>
 <td align="left">Y</td>
+<td align="right">3</td>
 </tr>
 <tr class="even">
 <td align="left">14</td>
 <td align="left"><a href="https://en.wikipedia.org/wiki/Edwin_van_der_Sar">Edwin van der Sar</a></td>
 <td align="left">Edwin van der Sar OON is a Dutch former professional footballer who played as a goalkeeper. During his career he played for Ajax, Juventus, Fulham and Manchester United. He is the second most capped player in the Netherlands national team’s history. He currently works as the chief executive officer at Ajax. He came out of retirement to play for Dutch amateur team VV Noordwijk.</td>
 <td align="left">1970</td>
-<td align="left">87</td>
 <td align="left">Y</td>
+<td align="right">87</td>
 </tr>
 <tr class="odd">
 <td align="left">15</td>
 <td align="left"><a href="https://en.wikipedia.org/wiki/Eugenio_Corini">Eugenio Corini</a></td>
 <td align="left">Eugenio Corini is an Italian association football coach and former player. He was also captained as a player in the 1990s. He is currently the head coach of Novara.</td>
 <td align="left">1970</td>
-<td align="left">12</td>
 <td align="left"></td>
+<td align="right">12</td>
 </tr>
 <tr class="even">
 <td align="left">16</td>
 <td align="left"><a href="https://en.wikipedia.org/wiki/Hans_Vonk_(footballer)">Hans Vonk</a></td>
 <td align="left">Johannes Adrianus “Hans” Vonk is a retired South African professional football goalkeeper of Dutch parentage who last played for Ajax Cape Town FC.</td>
 <td align="left">1970</td>
-<td align="left">4</td>
 <td align="left">Y</td>
+<td align="right">4</td>
 </tr>
 <tr class="odd">
 <td align="left">17</td>
@@ -340,23 +341,23 @@ oldest.3 &lt;- oldest.3 %&gt;%
 <td align="left">Nicolas “Nico” Van Kerckhoven is a retired Belgian football left fullback, last on the books of K.V.C. Westerlo where he was also the captain of the team. His former clubs include Lierse and FC Schalke 04. Van Kerckhoven was part of the Belgian national team for the 1998 and 2002 World Cups.</td>
 <td align="left"></td>
 <td align="left"></td>
-<td align="left"></td>
+<td align="right"></td>
 </tr>
 <tr class="even">
 <td align="left">18</td>
 <td align="left"><a href="https://en.wikipedia.org/wiki/Pedro_Roma">Pedro Roma</a></td>
 <td align="left">Pedro Miguel da Mota Roma is a retired Portuguese footballer who played as a goalkeeper.Having played with Académica for over 15 years, he later worked with his main club as a goalkeepers’ coach.</td>
 <td align="left">1970</td>
-<td align="left">2</td>
 <td align="left">Y</td>
+<td align="right">2</td>
 </tr>
 <tr class="odd">
 <td align="left">19</td>
 <td align="left"><a href="https://en.wikipedia.org/wiki/Sander_Boschker">Sander Boschker</a></td>
 <td align="left">Sander Bernard Jozef Boschker is a Dutch former footballer who played as a goalkeeper.During a professional career which spanned 25 years he played mostly for Twente, appearing in 555 Eredivisie games and winning four major titles.</td>
 <td align="left">1970</td>
-<td align="left">58</td>
 <td align="left">Y</td>
+<td align="right">58</td>
 </tr>
 <tr class="even">
 <td align="left">20</td>
@@ -364,7 +365,7 @@ oldest.3 &lt;- oldest.3 %&gt;%
 <td align="left">Tugay Kerimoğlu is a Turkish former footballer who is a current manager of Şanlıurfaspor and played the majority of his career for Galatasaray and Blackburn Rovers.</td>
 <td align="left"></td>
 <td align="left"></td>
-<td align="left"></td>
+<td align="right"></td>
 </tr>
 </tbody>
 </table>

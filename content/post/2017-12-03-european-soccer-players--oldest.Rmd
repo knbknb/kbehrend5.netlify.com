@@ -248,8 +248,9 @@ oldest.3 <- oldest.3 %>%
    rename("Born" = "year_of_birth", "N" = "n_matches") %>%
    select(-result.name) %>% 
         mutate(Goalie = ifelse(str_detect( Description, "goal"), "Y", "")) %>% 
-        mutate_if(is.numeric, function(x) ifelse(is.na(x), "", x))
-
+        mutate_if(is.numeric, function(x) ifelse(is.na(x), "", x)) %>% 
+  select(Name, Description, Born, Goalie, N)
+   
 
 ```
 
@@ -264,7 +265,8 @@ It seems to be quite common that goalkeepers have long careers:
 ```{r echo=FALSE}
 
 knitr::kable(oldest.3, table.attr = "id=\"oldestkg\"",
-             row.names = TRUE,  format = "markdown" )
+             row.names = TRUE,  format = "markdown", 
+             align = c(rep("l", ncol(oldest.3)-1 ), "r"))
 ```
 
 ## More quality checks: Tugay's last matches
