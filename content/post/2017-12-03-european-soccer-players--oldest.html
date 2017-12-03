@@ -77,8 +77,8 @@ Player_in_match %&gt;%
         geom_text(data = Pl_lbl, 
                   aes(x=I(year_of_birth+1.5), y=I(150), 
                       label = player_name, angle = 45), size=3) +
-        ggtitle(sprintf(&quot;Years of Births of %s athletes in the &#39;Players&#39; database table&quot;, nrow(Player_in_match)),
-                subtitle=&quot;All have entries in &#39;Matches&#39; table (2008-2016), nominated for squad&quot;) +
+        ggtitle(sprintf(&quot;Soccer matches played by %s soccer players in top leagues in Europe, 2008-2016&quot;, nrow(Player_in_match)),
+                subtitle=&quot;Histogram shows players for which match participation data is known.&quot;) +
         xlab(&quot;Year of Birth&quot;) +
         ylab(&quot;Appearances in Matches&quot;)</code></pre>
 <p><img src="/post/2017-12-03-european-soccer-players--oldest_files/figure-html/histogram-1.png" width="672" /></p>
