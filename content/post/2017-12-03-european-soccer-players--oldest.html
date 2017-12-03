@@ -1,0 +1,244 @@
+---
+title: The oldest active European Soccer Player in season 2008
+author: Knut Behrends
+date: '2017-12-03'
+image: /static/img/football.png
+categories:
+  - blog-post
+tags:
+  - fun
+  - R
+output:
+  html_document:
+    fig_caption: yes
+    keep_md: yes
+summary: In Kaggle Dataset "European Soccer Database", the oldest (by year of birth) Player in major European soccer leagues was Tugay Kerimoğlu, from Turkey. Born in 1970, he ended his career in the English Premier League in 2009. There he still played some matches as a member of the starting formation of the squad. 
+keywords: ["Personal-Blog", "Fun", "rstats", "Sports-Data", "Soccer", "Kaggle.com"]  
+---
+
+
+
+<div id="still-playing-with-a-soccer-database-from-kaggle.com" class="section level3">
+<h3>Still playing with a Soccer Database from Kaggle.com</h3>
+<blockquote>
+<p>As an exercise, I wanted to find the oldest player participating in any match. My analysis also revealed a lot about the data quality of this Kaggle dataset.</p>
+</blockquote>
+<p>As mentioned in a <a href="/post/2017/11/european-soccer-players-and-their-bmi/">previous blogpost</a>, I’ve downloaded a <a href="https://www.kaggle.com/hugomathien/soccer/downloads/soccer.zip">zipfile (36 MB)</a> with Football data from data science community <a href="https://www.kaggle.com/hugomathien/soccer">Kaggle.com</a>. The archive contained an SQLite Database.</p>
+<pre class="r"><code>library(DBI)
+con &lt;- dbConnect(odbc::odbc(), &quot;well-sqlite-footballdb&quot;)</code></pre>
+<p>For the sake of brevity, to see the R packages I’ve included to process the data, see the <a href="/post/2017/11/european-soccer-players-and-their-bmi/">previous blogpost</a>. Only the <code>tidyr</code> package is new here.</p>
+<pre class="r"><code>library(tidyr)   # gather</code></pre>
+<p>The database consists of 7 tables. We’ll read in all of them. The Player table contains basic data of ~10000 soccer players from the top leagues of 14 European countries. They are not strictly “European soccer players”, but players from all over the globe, competing in the top Leagues of certain Western European countries.</p>
+<p>Tables in the Sqlite database:</p>
+<pre><code>##                     Rows Columns
+## Player_Attributes 183978      42
+## Player             11060       7
+## Match              25979     115
+## League                11       3
+## Country               11       2
+## Team                 299       5
+## Team_Attributes     1458      25</code></pre>
+<p>The <code>Player</code> table lists the soccer players’ data.</p>
+<p>The <code>Match</code> table contains data from 25979 matches, played between 2008-07-18 and 2016-05-25. The table contains 115 columns.</p>
+<p>The names of the players comprising the teams are listed in 22 columns named <code>home_player_1</code> to <code>home_player_11</code>, and <code>away_player_1</code> to <code>away_player_11</code>. The substitute players nominated for the match are not known.</p>
+<p>This database table has an untidy format. Let’s tidy it with the <code>tidyr::gather()</code> function:</p>
+<pre class="r"><code>Match_players  &lt;- Match %&gt;%
+        select(match_api_id, season, league_id, 
+               home_player_1:away_player_11) %&gt;%
+        rename(&quot;match_id&quot; = match_api_id)  %&gt;%
+        gather( k, player_api_id,  -match_id, -season, -league_id)</code></pre>
+<p>This table now looks like this:</p>
+<pre class="r"><code>head(Match_players %&gt;% filter(!is.na(player_api_id)), 5)</code></pre>
+<pre><code>##   match_id    season league_id             k player_api_id
+## 1   493016 2008/2009         1 home_player_1         39890
+## 2   493017 2008/2009         1 home_player_1         38327
+## 3   493018 2008/2009         1 home_player_1         95597
+## 4   493020 2008/2009         1 home_player_1         30934
+## 5   493021 2008/2009         1 home_player_1         37990</code></pre>
+<p>I’ve only shown 5 rows of this 571538 x 5 table. This table can now be joined with the <code>Player</code> table:</p>
+<pre class="r"><code>Player_in_match &lt;- Player %&gt;%
+        inner_join(Match_players, by = c(&quot;id&quot; = &quot;player_api_id&quot;)) %&gt;%
+        mutate(year_of_birth = year(birthday)) %&gt;%
+        rename(&quot;player_id&quot; = id)</code></pre>
+<p>This table, <code>Player_in_match</code> is a 5333 x 12 table. Remember, the original, standalone <code>Player</code> table had 11060 records. The join reduced this to ~5000 athletes. Hence, many players didn’t actually play, or the screenscraping process did not yield any information about the matches they ’ve participated in; or the parse-process of many downloaded files containing the Matches data failed.</p>
+</div>
+<div id="histogram-of-year-of-births-of-players-that-actually-played" class="section level3">
+<h3>Histogram of year of births of players that actually played</h3>
+<p>This is the “age distribution” of players in the dataset. I think the axes are pretty self-explanatory. The bumpy distribution is not, however.</p>
+<pre class="r"><code>Pl_lbl &lt;- Player_in_match %&gt;%
+        select(year_of_birth, player_name) %&gt;% 
+        group_by(year_of_birth) %&gt;% 
+        arrange(year_of_birth) %&gt;% head(1)
+
+
+Player_in_match %&gt;%
+        ggplot(aes(year_of_birth)) + 
+        geom_histogram(binwidth=1, fill=&quot;maroon&quot;) +
+        geom_text(data = Pl_lbl, 
+                  aes(x=I(year_of_birth+1.5), y=I(150), 
+                      label = player_name, angle = 45), size=3) +
+        ggtitle(sprintf(&quot;Years of Births of %s athletes in the &#39;Players&#39; database table&quot;, nrow(Player_in_match)),
+                subtitle=&quot;All have entries in &#39;Matches&#39; table (2008-2016), nominated for squad&quot;) +
+        xlab(&quot;Year of Birth&quot;) +
+        ylab(&quot;Appearances in Matches&quot;)</code></pre>
+<p><img src="/post/2017-12-03-european-soccer-players--oldest_files/figure-html/histogram-1.png" width="672" /></p>
+</div>
+<div id="find-the-oldest-player-in-any-match" class="section level3">
+<h3>Find the oldest player in any match</h3>
+<p>We can use the <code>Player_in_match</code> table to find the oldest player who participated in any match. This corresponds to the leftmost bar in the histogram above.</p>
+<pre class="r"><code>oldest_players_in_any_match &lt;- Player_in_match %&gt;%
+        inner_join(League, by = c(&quot;league_id&quot; = &quot;id&quot;) ) %&gt;%
+        filter(year_of_birth &lt; 1971) %&gt;%
+        select(year_of_birth, season, player_name, match_id, name) %&gt;%
+        group_by(year_of_birth, season, player_name, match_id) %&gt;%
+        summarize(n_matches = n()) %&gt;%
+        arrange(season, match_id) %&gt;%
+        ungroup()</code></pre>
+<p>Result:</p>
+<pre class="r"><code>(oldest &lt;- oldest_players_in_any_match %&gt;% 
+        select(player_name, year_of_birth) %&gt;% 
+        head(1))</code></pre>
+<pre><code>## # A tibble: 1 x 2
+##   player_name      year_of_birth
+##   &lt;chr&gt;                    &lt;dbl&gt;
+## 1 Tugay Kerimoglou          1970</code></pre>
+<p>Before I studied this dataset, the oldest player, Tugay Kerimoğlu, was completely unknown to me. So let’s lookup some metadata about this player in the Google Knowledge Graph.</p>
+<p>The calculation in the following code block is a bit awkward and verbose, because</p>
+<ul>
+<li>Google Knowledge Graph does <em>not</em> return records with a perfectly consistent structure. I have to transform it to a consistent 2-column (key-value) table.</li>
+<li>the Google Knowledge Graph data contains irrelevant info such as license data about photographs etc that I had too filter out.</li>
+<li>the database does not keep track of accents and special characters of the Turkish alphabet, so I better use the correctly encoded string from Wikipedia/Google.</li>
+</ul>
+<pre class="r"><code>oldest.2 &lt;- map(oldest$player_name, 
+                            kgapi_lookup_kv, apikey=Sys.getenv(&quot;GOO_KGR_KEY&quot;))
+
+oldest.3 &lt;- oldest.2[[1]] %&gt;% 
+        as_data_frame( ) %&gt;% 
+        filter(str_detect(key , &quot;result.name|detailedDescription&quot; ) == TRUE) %&gt;% 
+        select(key, value) %&gt;% 
+        mutate(key = str_replace(key, &quot;result.detailedDescription.&quot;, &quot;&quot;), 
+               value = unlist(value)) %&gt;% 
+        spread(key=key, value=value) %&gt;% 
+        select(-license) %&gt;% 
+        mutate(Name =str_c(&quot;[&quot;, result.name, &quot;](&quot;, url, &quot;)&quot;),
+               Description = articleBody) %&gt;% 
+        select(Name,  Description) %&gt;% 
+        cbind(oldest) %&gt;% 
+        rename(&quot;Born&quot; = &quot;year_of_birth&quot;) %&gt;% 
+        select(-player_name)</code></pre>
+<p>More Info:</p>
+<table style="width:100%;">
+<colgroup>
+<col width="29%" />
+<col width="68%" />
+<col width="2%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">Name</th>
+<th align="left">Description</th>
+<th align="right">Born</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left"><a href="https://en.wikipedia.org/wiki/Tugay_Kerimo%C4%9Flu">Tugay Kerimoğlu</a></td>
+<td align="left">Tugay Kerimoğlu is a Turkish former footballer who is a current manager of Şanlıurfaspor and played the majority of his career for Galatasaray and Blackburn Rovers.</td>
+<td align="right">1970</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="more-quality-checks-tugays-last-matches" class="section level2">
+<h2>More quality checks: Tugay’s last matches</h2>
+<p>So Wikipedia says Tugay played for the Blackburn Rovers.</p>
+<p>Does the database also say that? Sadly, no:</p>
+<p>Let’s find out which teams Tugay played for during his last seasons. For each record in the Match table, there exists an entry with <code>home_team_api_id</code> and <code>away_team_api_id</code>. In order to resolve anonymous team-ids to the actual team names, I join the team-ids <em>twice</em> to the oldest_players_in_any_match table. This yields two augmented temporary tables.</p>
+<pre class="r"><code># get a smaller version of the Team table
+Team_sm &lt;- Team %&gt;%  select(id, team_api_id, team_long_name)
+
+oldest_augm &lt;- oldest_players_in_any_match %&gt;%
+        select(-season) %&gt;%
+        inner_join(Match, by = c(&quot;match_id&quot; = &quot;match_api_id&quot;)) %&gt;%
+        inner_join(Team_sm, by = c(&quot;home_team_api_id&quot; = &quot;team_api_id&quot;)) %&gt;%
+        rename(&quot;home_team&quot; = &quot;team_long_name&quot;)
+
+
+oldest_augm2 &lt;- oldest_augm %&gt;%
+        inner_join(Team_sm, by = c(&quot;away_team_api_id&quot; = &quot;team_api_id&quot;)) %&gt;%
+        rename(&quot;away_team&quot; = &quot;team_long_name&quot;)
+
+oldest_augm2 %&gt;%
+        select(season, match_id, home_team, away_team) %&gt;%
+        arrange(season, match_id) %&gt;% 
+        ht()           # head() and tail()</code></pre>
+<pre><code>## # A tibble: 12 x 4
+##    season    match_id home_team        away_team              
+##    &lt;chr&gt;        &lt;int&gt; &lt;chr&gt;            &lt;chr&gt;                  
+##  1 2009/2010   658682 Everton          Stoke City             
+##  2 2009/2010   658692 Everton          Wolverhampton Wanderers
+##  3 2009/2010   658712 Everton          Aston Villa            
+##  4 2009/2010   658804 Everton          Liverpool              
+##  5 2009/2010   658815 Everton          Tottenham Hotspur      
+##  6 2009/2010   658825 Chelsea          Everton                
+##  7 2011/2012  1024403 Everton          Aston Villa            
+##  8 2011/2012  1024445 Everton          Wigan Athletic         
+##  9 2011/2012  1024675 Everton          Manchester United      
+## 10 2011/2012  1024834 Bolton Wanderers Everton                
+## 11 2011/2012  1024891 Everton          Stoke City             
+## 12 2011/2012  1024920 Arsenal          Everton</code></pre>
+<p>So the database says that Tugay Kerimoğlu has played for Everton, and did so until the 2011/2012 season (I’ve omitted a few matches in the table above). According to the <a href="https://en.wikipedia.org/wiki/Tugay_Kerimo%C4%9Flu">Wikipedia article about him</a>, this is clearly wrong.</p>
+<div id="my-take-home-message" class="section level3">
+<h3>My take home-message</h3>
+<p>So the take-home message is that the Kaggle database has some quality issues. Needless to say, the creators of the database still did a great job in compiling this dataset. The database design is pretty clean, and the fact that there are even some Primary-Foreign Key Constraints between the table inside the database make it stand out. However the mappings seem to be wrong, or I did a mistake in the analysis.</p>
+</div>
+<div id="minor-quality-problem-players-with-digits-in-their-names" class="section level3">
+<h3>Minor quality problem: players with digits in their names</h3>
+<p>Further examination revealed that another small problem with the Players table.</p>
+<p>This R code reveals that some player names have been parsed incorrectly.</p>
+<pre class="r"><code>players_weird_names &lt;- Player %&gt;% 
+        select(player_name) %&gt;% 
+        filter(str_detect(player_name, &quot;\\d&quot;) == TRUE)
+
+plw &lt;- players_weird_names %&gt;% head(4)
+plw &lt;- plw %&gt;% bind_rows(data_frame(player_name = &quot;...&quot;))
+plw &lt;- plw %&gt;% bind_rows(tail(players_weird_names, 4))</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">player_name</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Abdoulaye Diallo Sadio,22</td>
+</tr>
+<tr class="even">
+<td align="left">Afonso Alves,24</td>
+</tr>
+<tr class="odd">
+<td align="left">Alberto Frison,18</td>
+</tr>
+<tr class="even">
+<td align="left">Alberto Luque,21</td>
+</tr>
+<tr class="odd">
+<td align="left">…</td>
+</tr>
+<tr class="even">
+<td align="left">Theo Weeks,24</td>
+</tr>
+<tr class="odd">
+<td align="left">Yazid Mansouri,30</td>
+</tr>
+<tr class="even">
+<td align="left">Yohan Hautcoeur,17</td>
+</tr>
+<tr class="odd">
+<td align="left">Yohan Lachor,29</td>
+</tr>
+</tbody>
+</table>
+<p>There are 80 Players with digits in their names. I’ve only shown a few of them in the table above. This formatting issue looks so systematic that I suspect that it is the result of an incorrect parse, and maybe a misplaced age calculation.</p>
+</div>
+</div>

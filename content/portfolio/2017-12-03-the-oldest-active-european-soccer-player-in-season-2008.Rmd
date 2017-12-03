@@ -1,0 +1,18 @@
+---
+title: The oldest active European Soccer Player in season 2008
+author: Knut Behrends
+date: '2017-12-03'
+image: img/football.png
+slug: the-oldest-active-european-soccer-player-in-season-2008
+categories:
+  - blog-post
+tags:
+  - fun
+  - R
+output:
+  html_document:
+    fig_caption: yes
+    keep_md: yes
+summary: While oing some quality-checks in Kaggle Dataset "European Soccer Database", I found that the oldest (by year of birth) Player in major European soccer leagues was Tugay Kerimoğlu, from Turkey. Born in 1970, he ended his career in the English Premier League in 2009. There he still played some matches as a member of the starting formation of the squad. 
+keywords: ["Personal-Blog", "Fun", "rstats", "Sports-Data", "Soccer", "Kaggle.com"]  
+---
