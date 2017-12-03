@@ -50,11 +50,11 @@ Still experimenting with the Hugo software.</description>
     </item>
     
     <item>
-      <title>The oldest European Soccer Player in the late 2000s</title>
-      <link>/post/2017/12/the-oldest-european-soccer-player-in-the-late-2000s/</link>
+      <title>The oldest active European Soccer Player in season 2008</title>
+      <link>/post/2017/12/the-oldest-active-european-soccer-player-in-season-2008/</link>
       <pubDate>Sun, 03 Dec 2017 00:00:00 +0000</pubDate>
       
-      <guid>/post/2017/12/the-oldest-european-soccer-player-in-the-late-2000s/</guid>
+      <guid>/post/2017/12/the-oldest-active-european-soccer-player-in-season-2008/</guid>
       <description>Still playing with a Soccer Database from Kaggle.com  As an exercise, I wanted to find the oldest player participating in any match. My analysis also revealed a lot about the data quality of this Kaggle dataset.
  As mentioned in a previous blogpost, I’ve downloaded a zipfile (36 MB) with Football data from data science community Kaggle.com. The archive contained an SQLite Database.
 library(DBI) con &amp;lt;- dbConnect(odbc::odbc(), &amp;quot;well-sqlite-footballdb&amp;quot;) For the sake of brevity, to see the R packages I’ve included to process the data, see the previous blogpost.</description>
