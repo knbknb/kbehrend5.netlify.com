@@ -245,16 +245,20 @@ oldest.3 <- map_df(oldest.2, function(x) {
 
 oldest.3 <- oldest.3 %>% 
    left_join(oldest, by=c("result.name" = "player_name")) %>%
-   rename("Born" = "year_of_birth", "n" = "n_matches") %>%
-   select(-result.name)
+   rename("Born" = "year_of_birth", "N" = "n_matches") %>%
+   select(-result.name) %>% 
+        mutate(Goalie = ifelse(str_detect( Description, "goal"), "Y", "")) %>% 
+        mutate_if(is.numeric, function(x) ifelse(is.na(x), "", x))
 
 
 ```
 
-It is quite common that goalkeepers have long careers.
+In the table below, column 'N' means number of matches in Database.
 
-Click on the Wikipedia links below for more information. 
-(The link David Weir is wrong, set it manually) 
+It seems to be quite common that goalkeepers have long careers:
+
+(Click on the Wikipedia links below for more information). 
+
 
 
 ```{r echo=FALSE}
