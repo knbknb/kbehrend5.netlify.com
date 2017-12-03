@@ -128,7 +128,7 @@ Player_in_match <- Player %>%
 This table, `Player_in_match` is a `r nrow(Player_in_match)` x `r ncol(Player_in_match)` table. Remember, the original, standalone `Player` table had `r nrow(Player)` records.
 The join reduced this to `r nrow(Player_in_match)` athletes. Hence, many players didn't actually play, or the screenscraping process did not yield any information about the matches they 've participated in; or the parse-process of many downloaded files containing the matches data failed. In any case, they actually played or were nominated for the starting formation of their squads. 
 
-### Histogram of year of births of players that actually played  
+### Histogram of matches played, by year of birth  
 
 This code generates a histogram of the "age distribution" of players in the dataset. These are players for which match data is known. I think the axes are pretty self-explanatory. 
 
@@ -154,7 +154,7 @@ Player_in_match %>%
 
 ### Find the oldest player in any match
 
-We can use the `Player_in_match` table to find the oldest player who participated in any match. This corresponds to the leftmost bar in the histogram above.
+We can use the `Player_in_match` table to find the oldest player who participated in any match. This corresponds to the leftmost bar in the histogram above. This bar corresponds to the matches of a single soccer player, born in 1970.
 
 ```{r oldest, results='hide'}
 oldest_players_in_any_match <- Player_in_match %>%

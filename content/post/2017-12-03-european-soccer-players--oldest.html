@@ -62,8 +62,8 @@ con &lt;- dbConnect(odbc::odbc(), &quot;well-sqlite-footballdb&quot;)</code></pr
         rename(&quot;player_id&quot; = id)</code></pre>
 <p>This table, <code>Player_in_match</code> is a 5333 x 12 table. Remember, the original, standalone <code>Player</code> table had 11060 records. The join reduced this to 5333 athletes. Hence, many players didn’t actually play, or the screenscraping process did not yield any information about the matches they ’ve participated in; or the parse-process of many downloaded files containing the matches data failed. In any case, they actually played or were nominated for the starting formation of their squads.</p>
 </div>
-<div id="histogram-of-year-of-births-of-players-that-actually-played" class="section level3">
-<h3>Histogram of year of births of players that actually played</h3>
+<div id="histogram-of-matches-played-by-year-of-birth" class="section level3">
+<h3>Histogram of matches played, by year of birth</h3>
 <p>This code generates a histogram of the “age distribution” of players in the dataset. These are players for which match data is known. I think the axes are pretty self-explanatory.</p>
 <pre class="r"><code>Pl_lbl &lt;- Player_in_match %&gt;%
         select(year_of_birth, player_name) %&gt;% 
