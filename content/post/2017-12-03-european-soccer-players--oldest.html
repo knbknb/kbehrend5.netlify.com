@@ -85,7 +85,7 @@ Player_in_match %&gt;%
 </div>
 <div id="find-the-oldest-player-in-any-match" class="section level3">
 <h3>Find the oldest player in any match</h3>
-<p>We can use the <code>Player_in_match</code> table to find the oldest player who participated in any match. This corresponds to the leftmost bar in the histogram above.</p>
+<p>We can use the <code>Player_in_match</code> table to find the oldest player who participated in any match. This corresponds to the leftmost bar in the histogram above. This bar corresponds to the matches of a single soccer player, born in 1970.</p>
 <pre class="r"><code>oldest_players_in_any_match &lt;- Player_in_match %&gt;%
         inner_join(League, by = c(&quot;league_id&quot; = &quot;id&quot;) ) %&gt;%
         filter(year_of_birth &lt; 1971) %&gt;%
