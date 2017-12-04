@@ -209,7 +209,7 @@ Player_bmi_by_year %>%
         xlab("Player's Year of Birth") +
         geom_vline(xintercept = c(yob_thresh_max, yob_thresh_min),
                    color="maroon") +
-        ggtitle("Number of distinct Players in the 'European Soccer Database",
+        ggtitle("European Soccer Database: Players' Appearances in Matches",
                 subtitle = "By year of birth. Double counted for each season. Seasons 2008-2016.")
 
 # remove players where we have too few counts 
