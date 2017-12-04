@@ -250,7 +250,6 @@ Player_bmi_by_season %>%
         ggtitle("Body Mass Index of Soccer Players over years")
 
 
-
 ```
 
-These violin plots show the distributions of players' BMIs *per season*. They appear to be very much alike. You might think that the range of values goes down - indicating that players get more uniform with respect to BMI. I also think clubs prefer thinner, younger, more agile players. Or the residence time of players in clubs has gone down, younger players get into top clubs at an earlier age.
+These violin plots show the distributions of players' BMIs *per season*. They appear to be very much alike. You might think that the range of values goes down - indicating that players get more uniform with respect to BMI. I also think clubs prefer thinner, younger, more agile players. Or the residence time of players in clubs has gone down, or younger players get into top clubs at an earlier age.
