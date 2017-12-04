@@ -12,7 +12,7 @@ output:
   html_document:
     fig_caption: yes
     keep_md: yes
-summary: While doing some quality-checks in Kaggle Dataset "[European Soccer Database](https://www.kaggle.com/hugomathien/soccer)", I found that in the late 2000s one of the oldest players active in top clubs was Tugay Kerimoğlu, from Turkey. Born in 1970, he played the English Premier League until... when, exactly? 
+summary: While doing some quality-checks in Kaggle Dataset "[European Soccer Database](https://www.kaggle.com/hugomathien/soccer)", I found that in the late 2000s one of the oldest players who was not a goalkeeper and active in top clubs was Tugay Kerimoğlu, from Turkey. Born in 1970, he played the English Premier League until... when, exactly? 
 keywords: ["Personal-Blog", "Fun", "rstats", "Sports-Data", "Soccer", "Kaggle.com"]  
 ---
 
@@ -125,7 +125,7 @@ Player_in_match <- Player %>%
         rename("player_id" = id)
 ```
 
-This table, `Player_in_match` is a `r nrow(Player_in_match)` x `r ncol(Player_in_match)` table. Remember, the original, standalone `Player` table had `r nrow(Player)` records.
+This table, `Player_in_match` is a `r nrow(Player_in_match)` x `r ncol(Player_in_match)` table. Remember, the original, standalone `Match_players` table had `r nrow(Match_players)` records.
 The join reduced this to `r nrow(Player_in_match)` athletes. Hence, many players didn't actually play, or the screenscraping process did not yield any information about the matches they 've participated in; or the parse-process of many downloaded files containing the matches data failed. In any case, they actually played or were nominated for the starting formation of their squads. 
 
 ```{r fig.width=8}
@@ -147,9 +147,9 @@ Player_distinct_by_year %>%
 Each player is counted once per season no matter how often he played.")
 ```
 
-Some players were rarely nominated for the squad of any match. This can best be seen at the left side of the graph. These data points represent older players born before 1970. Did they play at all? Probably, yes. 
+Some players were rarely nominated for the squad of any match. This can best be seen at the left side of the graph. These data points represent older players born before 1970. 
 
-Why do the humps have differnt heights? I think for older seasons, there is simply less data available from commercial data vendors.  
+Why do the humps have different heights? I think for older seasons, there is simply less data available at the websites of the commercial data vendors, where the data was scraped from.  
 
 ### Histogram of matches played, by year of birth  
 
@@ -210,12 +210,12 @@ Result:
 
 ```
 
-Before I studied this dataset, the oldest player, `r oldest[1,]$player_name`, was completely unknown to me. So let's lookup some metadata about this player in the Google Knowledge Graph.
+Before I studied this dataset, the oldest player, `r oldest[1,]$player_name`, was completely unknown to me. So let's lookup some metadata about this player, and the other players born before 1971, in the Google Knowledge Graph.
 
 The  calculation in the following code block is a bit awkward and verbose, because
 
  - Google Knowledge Graph does *not* return records with a perfectly consistent structure. I have to transform it to a consistent 2-column (key-value) table.
- - the Google Knowledge Graph data contains irrelevant info such as license data about photographs etc that I had too filter out. 
+ - the Google Knowledge Graph data contains -in this context- irrelevant info such as license data about photographs etc that I had too filter out. 
  - the database does not keep track of accents and special characters of the Turkish alphabet, so I better use the correctly encoded string from Wikipedia/Google.
  
 ```{r, googlekg, result='hide', echo=TRUE, warning=FALSE, message=FALSE}
@@ -271,7 +271,7 @@ knitr::kable(oldest.3, table.attr = "id=\"oldestkg\"",
 
 ## More quality checks: Tugay's last matches
 
-One of the older player is Tugay Kerimoğlu, born 1970. I didn't know him before. 
+One of the older players is Tugay Kerimoğlu, born 1970. I didn't know anything about him before. 
  Wikipedia says Tugay played for the Blackburn Rovers during his last years.
 
 Does the database also say that? Luckily, yes:

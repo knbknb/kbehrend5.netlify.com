@@ -1,0 +1,256 @@
+---
+title: Body Height and BMI in European Soccer Players over the years 2008-2016
+author: Knut Behrends
+date: '2017-12-04'
+image: /static/img/football.png
+categories:
+  - blog-post
+tags:
+  - fun
+  - R
+output:
+  html_document:
+  fig_caption: yes
+keep_md: yes
+summary: How did 
+keywords: ["Personal-Blog", "Fun", "rstats", "Sports-Data", "Soccer", "Kaggle.com"]
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### Change of body parameters in soccer players
+
+> How did body mass index and body size of professional football players change over the years? Body size, not so much. It has stayed rather constant between 2008 and 2016. Average height might have even *fallen* a little  bit. Body weight and, correspondingly, Body Mass Index on the other hand, have fallen even more. This means the top clubs want thinner players, unlike Icehockey. It also means, in soccer, possibilities to increase the athleticism of players is limited. 
+
+
+As mentioned in [previous blogposts](/post/2017/11/european-soccer-players-and-their-bmi/), I've downloaded a [zipfile (36 MB)](https://www.kaggle.com/hugomathien/soccer/downloads/soccer.zip) with Football data from data science community [Kaggle.com](https://www.kaggle.com/hugomathien/soccer). The archive contained an SQLite Database.
+
+```{r DBI, message=FALSE, warning=FALSE}
+
+library(DBI)
+con <- dbConnect(odbc::odbc(), "well-sqlite-footballdb")
+
+```
+
+For the sake of brevity, to see the R packages I've included to process the data, see the [previous blogpost](/post/2017/11/european-soccer-players-and-their-bmi/). Only the `tidyr` package is new here.
+
+```{r message=FALSE, warning=FALSE, results='hide', echo=FALSE}
+# tidyverse packages
+library(dplyr, warn.conflicts = FALSE) #
+library(tidyr)   # gather
+library(purrr)   # functional programming
+library(stringr)
+library(lubridate) # strings to datetime
+library(ggplot2)
+
+theme_set(theme_bw())
+
+```
+
+```{r message=FALSE, warning=FALSE}
+library(tidyr)   # gather
+```
+
+The database consists of 7 tables. We'll read in all of them. The Player table contains basic data of ~10000 soccer players from the top leagues of 14 European countries. They are not strictly "European soccer players", but players from all over the globe, competing in the top leagues of certain Western European countries.
+
+```{r, echo=FALSE, results='hide'}
+table_names <- dbListTables(con)
+
+good <- !  str_detect(table_names, "sqlite_sequence")
+table_names <- table_names[good]
+
+# Import all tables as data frames, 308MB
+# feasible with lots of RAM
+walk(table_names,function(x) assign(x,
+dbReadTable(x, conn=con),
+envir = globalenv()))
+dbDisconnect(con)
+```
+
+Tables in the Sqlite database:
+
+```{r tables, echo=FALSE, results='hide'}
+
+tab <- data.frame(Rows=map_dbl(table_names, ~nrow(get(.))))
+tab2 <- data.frame(Rows=map_dbl(table_names, ~ncol(get(.))))
+colnames(tab2) <- "Columns"
+tab <- cbind(tab, tab2)
+rownames(tab) <- table_names
+
+```
+```{r echo=FALSE}
+tab
+```
+
+
+The `Player` table lists the soccer players' data.
+
+Add some new attributes to the table.
+
+```{r}
+
+
+pounds_per_kg <- 0.453592
+sizes <- c("large" = 190, "small" = 175)
+
+Player <- Player %>%
+        mutate(birthday = ymd(as_datetime(birthday))) %>% # was string
+        mutate(weight = weight * pounds_per_kg) %>%
+        mutate(bmi = weight /((height/100)^2)) %>%
+        mutate(size = factor(
+                if_else(height >= sizes["large"], "large",
+                        if_else(height >= sizes["small"], "medium", "small"))))
+
+# from sqlite database foreign key constraints
+# 	FOREIGN KEY(`home_player_1`) REFERENCES `Player`(`player_api_id`),
+
+```
+
+```{r echo=FALSE}
+# match range
+mrng <- Match %>%  select(date) %>% mutate(date = as.Date(date)) %>% summarize(min= min(date), max=max(date))
+```
+
+The `Match` table contains data from  `r nrow(Match)`  matches, played between `r mrng$min` and `r mrng$max`. The table contains `r length( colnames(Match))` columns.
+
+
+
+The names of the players comprising the teams are  listed in
+22 columns named `home_player_1` to `home_player_11`, and `away_player_1` to `away_player_11`. The substitute players nominated for the match are not known.
+
+This database table has an untidy format. Let's tidy it with the `tidyr::gather()` function:
+
+```{r}
+
+Match_players  <- Match %>%
+        select(match_api_id, season, league_id,
+        home_player_1:away_player_11) %>%
+        rename("match_id" = match_api_id)  %>%
+        gather( k, player_api_id,  -match_id, -season, -league_id)
+```
+
+This table now looks like this:
+
+```{r}
+head(Match_players %>% filter(!is.na(player_api_id)), 5)
+```
+
+I've only shown 5 rows of this `r nrow(Match_players)` x `r ncol(Match_players)` table.
+This table can now be joined with the `Player` table:
+
+```{r}
+
+Player_in_match <- Player %>%
+        inner_join(Match_players, by = c("player_api_id" = "player_api_id")) %>%
+        mutate(year_of_birth = year(birthday)) %>%
+        rename("player_id" = id)
+
+```
+
+We'll start with body size, because it is an easier quantity to understand.
+
+
+```{r}
+Player_height_by_year <- Player_in_match %>%
+        select(year_of_birth, size, height ) %>%
+        filter(year_of_birth >= yob_thresh_max) %>%
+        filter(year_of_birth <= yob_thresh_min) %>%
+        group_by(year_of_birth) %>%
+        summarize( avg_height = mean(height))
+
+# average body height seems to go down a little bit
+Player_height_by_year %>%
+        ggplot(aes(year_of_birth, avg_height)) +
+        geom_point() +
+        geom_smooth(method="loess", span=1, se=FALSE) +
+        ylab("Average Player Height [cm]") +
+        xlab("Player's Year of Birth") +
+        ylim(c(175, 190))
+
+
+```
+
+Plot BMI per year.
+
+```{r}
+
+Player_bmi_by_year <- Player_in_match %>%
+        select(year_of_birth, season, player_api_id, bmi) %>%
+        group_by(year_of_birth, season) %>%
+        #        summarize(distinct_players = n())
+        summarize(distinct_players =n_distinct(player_api_id)) %>% 
+        ungroup()
+
+
+## there are too few players in the dataset
+# born earlier than 1975, and after 1998
+yob_thresh_max <- 1975
+yob_thresh_min <- 1997
+
+
+Player_bmi_by_year %>%
+        group_by(year_of_birth) %>%
+        summarize(distinct_players = sum(distinct_players)) %>%
+        ggplot(aes(year_of_birth, distinct_players)) +
+        geom_point() +
+        geom_smooth(method="loess", se=FALSE) +
+        ylab("Number of BMI by  Players in Database") +
+        xlab("Player's Year of Birth") +
+        geom_vline(xintercept = c(yob_thresh_max, yob_thresh_min),
+                   color="maroon") +
+        ggtitle("Number of distinct Players in the 'European Soccer Database",
+                subtitle = "By year of birth. Double counted for each season. Seasons 2008-2016.")
+
+# remove players where we have too few counts 
+Player_bmi_by_year <- Player_in_match %>%
+        select(year_of_birth, bmi ) %>%
+        filter(year_of_birth >= yob_thresh_max) %>%
+        filter(year_of_birth <= yob_thresh_min) 
+
+Player_bmi_by_season <- Player_in_match %>%
+        select(season, bmi ) 
+
+Player_bmi_by_year.2 <- Player_bmi_by_year %>%
+        group_by(year_of_birth) %>%
+        summarize( avg_bmi = mean(bmi))
+
+# average BMI over the years
+Player_bmi_by_year.2 %>%
+        ggplot(aes(year_of_birth, avg_bmi)) +
+        geom_point() +
+        geom_smooth(method="loess", span=1, se=FALSE) +
+        ylab("Average Player BMI") +
+        xlab("Player's Year of Birth")
+
+# 1 boxplot per year - trend is less obvious
+Player_bmi_by_year %>%  
+        mutate(year_of_birth = factor(year_of_birth)) %>%  
+        ggplot(aes(year_of_birth, bmi)) +
+        geom_boxplot() +
+        ylab("BMI") +
+        ggtitle("Body Mass Index of Soccer Players over years")
+        
+# BMI per season
+Player_bmi_by_season %>%  
+        ggplot(aes(season, bmi)) +
+        geom_violin() +
+        ylab("BMI") +
+        theme(axis.text.x=element_text(angle=60,hjust=1)) +
+        ggtitle("Body Mass Index of Soccer Players over years")
+
+
+# Player_bmi_by_year %>%
+#         group_by(season, year_of_birth) %>%
+#         ggplot(aes(season, distinct_players)) +
+#         geom_boxplot() +
+# #        geom_point(size=0.5, color="red") +
+#         theme(axis.text.x=element_text(angle=60,hjust=1)) +
+#         ylab("Number of distinct Players in Database") +
+#         xlab("Season") +
+#         ggtitle("Number of distinct Players in the European Soccer Database",
+#                 subtitle = "Boxplots are summarizing year-of-birth cohorts.")
+
+```
