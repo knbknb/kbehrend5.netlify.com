@@ -250,16 +250,6 @@ Player_bmi_by_season %>%
         ggtitle("Body Mass Index of Soccer Players over years")
 
 
-# Player_bmi_by_year %>%
-#         group_by(season, year_of_birth) %>%
-#         ggplot(aes(season, distinct_players)) +
-#         geom_boxplot() +
-# #        geom_point(size=0.5, color="red") +
-#         theme(axis.text.x=element_text(angle=60,hjust=1)) +
-#         ylab("Number of distinct Players in Database") +
-#         xlab("Season") +
-#         ggtitle("Number of distinct Players in the European Soccer Database",
-#                 subtitle = "Boxplots are summarizing year-of-birth cohorts.")
 
 ```
 
