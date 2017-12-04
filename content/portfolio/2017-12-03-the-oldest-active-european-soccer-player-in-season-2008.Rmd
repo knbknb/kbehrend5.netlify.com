@@ -1,5 +1,5 @@
 ---
-title: The oldest European Soccer Player in the late 2000s
+title: The oldest European Soccer Players in the late 2000s
 author: Knut Behrends
 date: '2017-12-03'
 image: img/football.png
@@ -17,4 +17,4 @@ url: '/post/2017/12/the-oldest-active-european-soccer-player-in-season-2008/'
 keywords: ["Personal-Blog", "Fun", "rstats", "Sports-Data", "Soccer", "Kaggle.com"]  
 ---
 
-While doing some quality-checks in Kaggle Dataset "[European Soccer Database](https://www.kaggle.com/hugomathien/soccer)", I found that in the late 2000s one of the oldest players active in top clubs was Tugay Kerimoğlu, from Turkey. Born in 1970, he played the English Premier League until... when, exactly? 
+While doing some quality-checks in Kaggle Dataset "[European Soccer Database](https://www.kaggle.com/hugomathien/soccer)", I found that in the late 2000s most of the oldest professional players active in top clubs were goalkeepers. Another veteran midfielder was Tugay Kerimoğlu, from Turkey. Born in 1970, he played the English Premier League until... when, exactly? 

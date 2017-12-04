@@ -142,7 +142,7 @@ Player_distinct_by_year %>%
         geom_smooth(method="loess", se=FALSE, size=0.5) +
         ylab("Number of distinct Players in Database") +
         xlab("Player's Year of Birth") +
-        ggtitle("European Soccer Database: Players' appearances in Matches",
+        ggtitle("European Soccer Database: Players' appearances",
                 subtitle = "Counting Players' appearances in the squads. Seasons 2008-2016.\n
 Each player is counted once per season no matter how often he played.")
 ```
