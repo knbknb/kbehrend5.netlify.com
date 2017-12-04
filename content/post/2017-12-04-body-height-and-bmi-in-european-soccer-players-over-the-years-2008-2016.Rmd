@@ -153,7 +153,7 @@ Player_in_match <- Player %>%
 We'll start with body size, because it is an easier quantity to understand.
 
 
-```{r}
+```{r fig.width=8}
 ## there are too few players in the dataset
 # born earlier than 1975, and after 1998
 yob_thresh_max <- 1975
