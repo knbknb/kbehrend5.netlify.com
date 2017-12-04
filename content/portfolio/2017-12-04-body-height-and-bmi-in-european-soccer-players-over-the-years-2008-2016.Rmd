@@ -1,0 +1,24 @@
+---
+title: Body Height and BMI in European Soccer Players over the years 2008-2016
+author: Knut Behrends
+date: '2017-12-04'
+image: img/football.png
+categories:
+  - blog-post
+tags:
+  - fun
+  - R
+output:
+  html_document:
+  fig_caption: yes
+keep_md: yes
+keywords: ["Personal-Blog", "Fun", "rstats", "Sports-Data", "Soccer", "Kaggle.com"]
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+How did body mass index and body size of professional football players change over the years 2008-2016? Body size, not so much. It has stayed rather constant. Average height, body weight and Body Mass Index have fallen. 

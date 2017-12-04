@@ -23,7 +23,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ### Change of body parameters in soccer players
 
-> How did body mass index and body size of professional football players change over the years? Body size, not so much. It has stayed rather constant between 2008 and 2016. Average height might have even *fallen* a little  bit. Body weight and, correspondingly, Body Mass Index on the other hand, have fallen even more. This means the top clubs want thinner players, unlike Icehockey. It also means, in soccer, possibilities to increase the athleticism of players is limited. 
+> How did body mass index and body size of professional football players change over the years? Body size, not so much. It has stayed rather constant between 2008 and 2016. Average height might have even *fallen* a little  bit. Body weight and, correspondingly, Body Mass Index on the other hand, have fallen even more. This means the top clubs want thinner players. It also means, in soccer, possibilities to increase the athleticism of players is limited. 
 
 
 As mentioned in [previous blogposts](/post/2017/11/european-soccer-players-and-their-bmi/), I've downloaded a [zipfile (36 MB)](https://www.kaggle.com/hugomathien/soccer/downloads/soccer.zip) with Football data from data science community [Kaggle.com](https://www.kaggle.com/hugomathien/soccer). The archive contained an SQLite Database.
@@ -154,6 +154,12 @@ We'll start with body size, because it is an easier quantity to understand.
 
 
 ```{r}
+## there are too few players in the dataset
+# born earlier than 1975, and after 1998
+yob_thresh_max <- 1975
+yob_thresh_min <- 1997
+
+
 Player_height_by_year <- Player_in_match %>%
         select(year_of_birth, size, height ) %>%
         filter(year_of_birth >= yob_thresh_max) %>%
@@ -165,7 +171,7 @@ Player_height_by_year <- Player_in_match %>%
 Player_height_by_year %>%
         ggplot(aes(year_of_birth, avg_height)) +
         geom_point() +
-        geom_smooth(method="loess", span=1, se=FALSE) +
+        geom_smooth(method="loess", span=1, se=TRUE) +
         ylab("Average Player Height [cm]") +
         xlab("Player's Year of Birth") +
         ylim(c(175, 190))
@@ -173,7 +179,13 @@ Player_height_by_year %>%
 
 ```
 
-Plot BMI per year.
+Average body size might have even fallen a bit in professional soccer. This trend is unlike Icehockey, where another data scientist has collected evidence in a [blogpost](https://ikashnitsky.github.io/2017/ice-hockey-players-height/) that professional players have an average body size 183 cm in 2010, and this increases about 0.1 cm per year. 
+
+### BMI per year
+
+How did Body Mass Index change over the years?
+
+The following plots show that BMI seems to fall. Maybe this is an artifact, because for the years 2016 the database contains much more younger players who are not fully grown up biologically and have less massive bodies.
 
 ```{r}
 
@@ -185,10 +197,6 @@ Player_bmi_by_year <- Player_in_match %>%
         ungroup()
 
 
-## there are too few players in the dataset
-# born earlier than 1975, and after 1998
-yob_thresh_max <- 1975
-yob_thresh_min <- 1997
 
 
 Player_bmi_by_year %>%
@@ -254,3 +262,4 @@ Player_bmi_by_season %>%
 #                 subtitle = "Boxplots are summarizing year-of-birth cohorts.")
 
 ```
+
