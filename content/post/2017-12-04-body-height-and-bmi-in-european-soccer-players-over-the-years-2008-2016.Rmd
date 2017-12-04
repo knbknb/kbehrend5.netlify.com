@@ -206,7 +206,7 @@ Player_bmi_by_year %>%
         geom_point() +
         geom_smooth(method="loess", se=FALSE) +
         ylab("Number of BMI by  Players in Database") +
-        xlab("Player's Year of Birth") +
+        xlab("Players' Year of Birth") +
         geom_vline(xintercept = c(yob_thresh_max, yob_thresh_min),
                    color="maroon") +
         ggtitle("European Soccer Database: Players' Appearances in Matches",
@@ -231,7 +231,7 @@ Player_bmi_by_year.2 %>%
         geom_point() +
         geom_smooth(method="loess", span=1, se=FALSE) +
         ylab("Average Player BMI") +
-        xlab("Player's Year of Birth")
+        xlab("Players' Year of Birth")
 
 # 1 boxplot per year - trend is less obvious
 Player_bmi_by_year %>%  
@@ -263,3 +263,4 @@ Player_bmi_by_season %>%
 
 ```
 
+These violin plots show the distributions of players' BMIs *per season*. They appear to be very much alike. You might think that the range of values goes down - indicating that players get more uniform with respect to BMI. I also think clubs prefer thinner, younger, more agile players. Or the residence time of players in clubs has gone down, younger players get into top clubs at an earlier age.
