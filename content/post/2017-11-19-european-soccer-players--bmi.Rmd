@@ -160,9 +160,15 @@ decorate <- function(x) {
     )
   )
 }
+
+```
+
+```{r fig.width=6}
 Player %>%
   ggplot(aes(bmi, fill=size)) + 
-    geom_histogram(alpha=0.5, bins = diff_bmi*2) +
+#    geom_histogram(alpha=0.5, bins = diff_bmi*2) +
+    geom_histogram(alpha=0.5, bins = diff_bmi*2, position="identity") +
+        
     decorate(np) +
     geom_vline(xintercept=med_bmi, size=0.3, 
                color="darkgrey") +
