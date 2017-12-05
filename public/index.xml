@@ -97,7 +97,7 @@ library(DBI) con &amp;lt;- dbConnect(odbc::odbc(), &amp;quot;well-sqlite-footbal
 This zipfile contains a single file, a 313 MB sqlite Database. Let’s take a peek what’s inside:
 Create connection to football DB
 library(DBI) con &amp;lt;- dbConnect(odbc::odbc(), &amp;quot;well-sqlite-footballdb&amp;quot;) Read in R packages necessary to load the data:
-# tidyverse packages library(dplyr, warn.conflicts = FALSE) # library(purrr) # functional programming library(stringr) library(lubridate) # strings to datetime library(ggplot2) theme_set(theme_bw()) The database consists of 7 tables.</description>
+# tidyverse packages library(dplyr, warn.conflicts = FALSE) # library(purrr) # functional programming library(stringr) library(lubridate) # strings to datetime library(ggplot2) library(NHANES) # US health data data(NHANES) theme_set(theme_bw()) The database consists of 7 tables.</description>
     </item>
     
   </channel>

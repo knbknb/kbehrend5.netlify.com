@@ -53,7 +53,8 @@ library(purrr)   # functional programming
 library(stringr)
 library(lubridate) # strings to datetime
 library(ggplot2)
-
+library(NHANES)  # US health data
+data(NHANES)
 theme_set(theme_bw())
 
 ```
@@ -139,11 +140,12 @@ Display raw histogram with absolute counts:
 ```{r playerclasses_stacked}
 
 # function common to most plots
+# following convention in H.Wickham's ggplot2 Book, Ch 12
 decorate <- function(x) {
   list(
     ggtitle(
       "Body Mass Index of Soccer Players",
-      subtitle = sprintf("%s Players from Europe's Top Leagues, 2008-2016", x)
+      subtitle = sprintf("%s Players from Europe's Top Leagues, 2008-2016\n", x)
     ),
     xlab("Player Body Mass Index"),
     theme(legend.justification = c(1.25, 0.95), legend.position = c(1, 0.95)),
@@ -163,11 +165,15 @@ decorate <- function(x) {
 
 ```
 
-```{r fig.width=6}
-Player %>%
+Code for the second plot in the panel below,  right half of figure:
+
+```{r fig.width=9, message=FALSE, warning=FALSE}
+
+playerhist <- Player %>%
   ggplot(aes(bmi, fill=size)) + 
 #    geom_histogram(alpha=0.5, bins = diff_bmi*2) +
     geom_histogram(alpha=0.5, bins = diff_bmi*2, position="identity") +
+    #xlim(c(0,70)) +
         
     decorate(np) +
     geom_vline(xintercept=med_bmi, size=0.3, 
@@ -180,10 +186,43 @@ Player %>%
            label = sprintf("<- BMI %.1f:\n \"overweight\"", 25.5), 
            color="darkgrey")
 
+# add size classes to NHANES data set
+NHANES <- NHANES %>%
+        mutate(size = factor(
+                if_else(Height >= sizes["large"], "large",
+                        if_else(Height >= sizes["small"], "medium", "small"))))
+us_males <- NHANES %>%
+        filter(Age >= 19 , Age <= 35, Gender == "male")
+nusm <- nrow(us_males)
+usmalehist <- us_males %>%
+        ggplot(aes(BMI, fill=size)) +
+        #    geom_histogram(alpha=0.5, bins = diff_bmi*2) +
+        geom_histogram(alpha=0.5, bins = diff_bmi*2, position="identity") +
+        ggtitle("Body Mass Index of US Males",
+                subtitle = str_c(
+                        sprintf("%s Persons, Aged 19-35, in 2009-2912", nusm),
+                         "from the US National Health and Nutrition Examination Study",
+                        sep = "\n")) +
+        xlab("Body Mass Index") +
+        #ylim(c(0,1500)) +
+        theme(legend.justification = c(1.25, 0.95),
+              legend.position = c(1, 0.95)) +
+        scale_fill_discrete(name = "Height",
+                            labels = c(sprintf("> %s cm)", sizes["large"]),
+                                        sprintf(">= %s cm)", sizes["small"]),
+                                        sprintf("< %s cm)", sizes["small"])))
+
+gridExtra::marrangeGrob(list(playerhist, usmalehist), nrow=1, ncol=2, top = "")
 ```
 
+For comparison, I've added the BMI distribution of the general population, American males in this case. I've used the NHANES dataset, because it is available as a CRAN package, hence easily installed in R. 
 
-Who are the largest players with the highest BMI?
+The axes in both plots are scaled differently, but I still prefer to have both plots side-by-side. 
+
+Of course the BMI range is much, much wider for the US men.
+
+
+#### Who are the largest players with the highest BMI?
 
 ```{r}
 players_large <- Player %>%
@@ -267,6 +306,7 @@ Player %>%
 
 In the plot above, the BMIs of the players of table 1 are shown as dotted lines.
 
+(Here the age classes have been stacked on top of each other, in contrast to the previous histogram with the US men)
 
 ```{r histogram_facets}
 

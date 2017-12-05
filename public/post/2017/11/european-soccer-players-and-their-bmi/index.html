@@ -123,7 +123,7 @@ ga('send', 'pageview');
 
   <article class="article">
     
-    <span class="article-duration">5 min read</span>
+    <span class="article-duration">7 min read</span>
     
 
     <h1 class="article-title">European Soccer Players and their BMI</h1>
@@ -147,7 +147,8 @@ library(purrr)   # functional programming
 library(stringr)
 library(lubridate) # strings to datetime
 library(ggplot2)
-
+library(NHANES)  # US health data
+data(NHANES)
 theme_set(theme_bw())</code></pre>
 <p>The database consists of 7 tables. We’ll read in all of them although we need only one, the Player table, which contains basic data of ~10000 soccer players from the top leagues of 14 European countries. They are not strictly “European soccer players”, but players from all over the globe, competing in the European Leagues.</p>
 <pre class="r"><code>table_names &lt;- dbListTables(con)
@@ -193,11 +194,12 @@ rng_seas  &lt;- range(Match$season)
 np        &lt;- nrow(Player)</code></pre>
 <p>Display raw histogram with absolute counts:</p>
 <pre class="r"><code># function common to most plots
+# following convention in H.Wickham&#39;s ggplot2 Book, Ch 12
 decorate &lt;- function(x) {
   list(
     ggtitle(
       &quot;Body Mass Index of Soccer Players&quot;,
-      subtitle = sprintf(&quot;%s Players from Europe&#39;s Top Leagues, 2008-2016&quot;, x)
+      subtitle = sprintf(&quot;%s Players from Europe&#39;s Top Leagues, 2008-2016\n&quot;, x)
     ),
     xlab(&quot;Player Body Mass Index&quot;),
     theme(legend.justification = c(1.25, 0.95), legend.position = c(1, 0.95)),
@@ -214,10 +216,12 @@ decorate &lt;- function(x) {
     )
   )
 }</code></pre>
-<pre class="r"><code>Player %&gt;%
+<p>Code for the second plot in the panel below, right half of figure:</p>
+<pre class="r"><code>playerhist &lt;- Player %&gt;%
   ggplot(aes(bmi, fill=size)) + 
 #    geom_histogram(alpha=0.5, bins = diff_bmi*2) +
     geom_histogram(alpha=0.5, bins = diff_bmi*2, position=&quot;identity&quot;) +
+    #xlim(c(0,70)) +
         
     decorate(np) +
     geom_vline(xintercept=med_bmi, size=0.3, 
@@ -228,9 +232,41 @@ decorate &lt;- function(x) {
     geom_vline(xintercept=25.5, size=0.3, color=&quot;darkgrey&quot;) +
     annotate(geom = &quot;text&quot;, x = 27.5, y = 750, 
            label = sprintf(&quot;&lt;- BMI %.1f:\n \&quot;overweight\&quot;&quot;, 25.5), 
-           color=&quot;darkgrey&quot;)</code></pre>
-<p><img src="/post/2017-11-19-european-soccer-players--bmi_files/figure-html/unnamed-chunk-7-1.png" width="576" /></p>
-<p>Who are the largest players with the highest BMI?</p>
+           color=&quot;darkgrey&quot;)
+
+# add size classes to NHANES data set
+NHANES &lt;- NHANES %&gt;%
+        mutate(size = factor(
+                if_else(Height &gt;= sizes[&quot;large&quot;], &quot;large&quot;,
+                        if_else(Height &gt;= sizes[&quot;small&quot;], &quot;medium&quot;, &quot;small&quot;))))
+us_males &lt;- NHANES %&gt;%
+        filter(Age &gt;= 19 , Age &lt;= 35, Gender == &quot;male&quot;)
+nusm &lt;- nrow(us_males)
+usmalehist &lt;- us_males %&gt;%
+        ggplot(aes(BMI, fill=size)) +
+        #    geom_histogram(alpha=0.5, bins = diff_bmi*2) +
+        geom_histogram(alpha=0.5, bins = diff_bmi*2, position=&quot;identity&quot;) +
+        ggtitle(&quot;Body Mass Index of US Males&quot;,
+                subtitle = str_c(
+                        sprintf(&quot;%s Persons, Aged 19-35, in 2009-2912&quot;, nusm),
+                         &quot;from the US National Health and Nutrition Examination Study&quot;,
+                        sep = &quot;\n&quot;)) +
+        xlab(&quot;Body Mass Index&quot;) +
+        #ylim(c(0,1500)) +
+        theme(legend.justification = c(1.25, 0.95),
+              legend.position = c(1, 0.95)) +
+        scale_fill_discrete(name = &quot;Height&quot;,
+                            labels = c(sprintf(&quot;&gt; %s cm)&quot;, sizes[&quot;large&quot;]),
+                                        sprintf(&quot;&gt;= %s cm)&quot;, sizes[&quot;small&quot;]),
+                                        sprintf(&quot;&lt; %s cm)&quot;, sizes[&quot;small&quot;])))
+
+gridExtra::marrangeGrob(list(playerhist, usmalehist), nrow=1, ncol=2, top = &quot;&quot;)</code></pre>
+<p><img src="/post/2017-11-19-european-soccer-players--bmi_files/figure-html/unnamed-chunk-7-1.png" width="864" /></p>
+<p>For comparison, I’ve added the BMI distribution of the general population, American males in this case. I’ve used the NHANES dataset, because it is available as a CRAN package, hence easily installed in R.</p>
+<p>The axes in both plots are scaled differently, but I still prefer to have both plots side-by-side.</p>
+<p>Of course the BMI range is much, much wider for the US men.</p>
+<div id="who-are-the-largest-players-with-the-highest-bmi" class="section level4">
+<h4>Who are the largest players with the highest BMI?</h4>
 <pre class="r"><code>players_large &lt;- Player %&gt;%
   filter(size == &quot;large&quot;) %&gt;%
   arrange(desc(bmi))
@@ -315,6 +351,7 @@ Player %&gt;%
   decorate(np)</code></pre>
 <p><img src="/post/2017-11-19-european-soccer-players--bmi_files/figure-html/histogram_all-1.png" width="480" /></p>
 <p>In the plot above, the BMIs of the players of table 1 are shown as dotted lines.</p>
+<p>(Here the age classes have been stacked on top of each other, in contrast to the previous histogram with the US men)</p>
 <pre class="r"><code>dnorm_fit &lt;- MASS::fitdistr(Player$bmi, densfun = &quot;normal&quot;)
 
 Player %&gt;%
@@ -341,6 +378,7 @@ Player %&gt;%
   theme(legend.position = &quot;none&quot;)</code></pre>
 <p><img src="/post/2017-11-19-european-soccer-players--bmi_files/figure-html/histogram_facets-1.png" width="480" /></p>
 <p>So we see that the BMI of soccer players in the top European Leagues fits pretty well a normal distribution with parameters mean = 23.2 and standard deviation = 1.3.</p>
+</div>
 </div>
 <div id="appendix" class="section level3">
 <h3>Appendix</h3>
