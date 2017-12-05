@@ -99,10 +99,12 @@ decorate &lt;- function(x) {
       )
     )
   )
-}
-Player %&gt;%
+}</code></pre>
+<pre class="r"><code>Player %&gt;%
   ggplot(aes(bmi, fill=size)) + 
-    geom_histogram(alpha=0.5, bins = diff_bmi*2) +
+#    geom_histogram(alpha=0.5, bins = diff_bmi*2) +
+    geom_histogram(alpha=0.5, bins = diff_bmi*2, position=&quot;identity&quot;) +
+        
     decorate(np) +
     geom_vline(xintercept=med_bmi, size=0.3, 
                color=&quot;darkgrey&quot;) +
@@ -113,7 +115,7 @@ Player %&gt;%
     annotate(geom = &quot;text&quot;, x = 27.5, y = 750, 
            label = sprintf(&quot;&lt;- BMI %.1f:\n \&quot;overweight\&quot;&quot;, 25.5), 
            color=&quot;darkgrey&quot;)</code></pre>
-<p><img src="/post/2017-11-19-european-soccer-players--bmi_files/figure-html/playerclasses_stacked-1.png" width="480" /></p>
+<p><img src="/post/2017-11-19-european-soccer-players--bmi_files/figure-html/unnamed-chunk-7-1.png" width="576" /></p>
 <p>Who are the largest players with the highest BMI?</p>
 <pre class="r"><code>players_large &lt;- Player %&gt;%
   filter(size == &quot;large&quot;) %&gt;%
