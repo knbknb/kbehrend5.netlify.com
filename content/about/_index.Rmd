@@ -8,9 +8,17 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-#### (More info coming soon)
-
-I decided to start a blog because it's cool. 
 ![My Logo](/img/logo-knutbehrends-square-circle.72x72.png)
+
+#### About this blog
+
+
 This Blog will include musings about my personal interests:  geosciences, datasciences, coding, photography, and more.
 
+- Over the last years I've slowly realized that I want to get more practice to write clearly.
+- Towards my long term goal of establishing a reproducible-research workflow for myself, having a personal blog is a nice warm-up exercise, or routine.
+- On my hard drive I have many older documents and side projects. As long as they are not on the net, they are "dead".
+- I've contributed stuff to a few forums and online exchanges, but in the long-term this is too widely dispersed to have any impact. Often I cannot recover it myself, when I need to look something up that I once knew in greater detail, and wrote about.
+- For example, documents on RPubs.com (the default site where you can publish/upload to, from within the Rstudio IDE), for instance, are also not really under version control. In fact they are not under anyone's control.  
+ 
+ 
