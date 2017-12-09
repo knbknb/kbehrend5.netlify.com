@@ -50,12 +50,10 @@ keywords: ["Personal-Blog", "Fun", "rstats", "Sports-Data", "Soccer", "Kaggle.co
 <h2>Data analysis</h2>
 <p>Load precalculated objects into global environment:</p>
 <pre class="r"><code>datadir &lt;- &quot;../../data/gfzock/&quot;
-assertthat::see_if(assertthat::is.readable(datadir))</code></pre>
-<pre><code>## [1] TRUE</code></pre>
-<pre class="r"><code>infile &lt;- file.path(datadir, &quot;gfzock_euro2016_preprocessed.RData&quot;)
-assertthat::see_if(assertthat::is.readable(infile))</code></pre>
-<pre><code>## [1] TRUE</code></pre>
-<pre class="r"><code>load(infile)        </code></pre>
+#assertthat::see_if(assertthat::is.readable(datadir))
+infile &lt;- file.path(datadir, &quot;gfzock_euro2016_preprocessed.RData&quot;)
+#assertthat::see_if(assertthat::is.readable(infile))
+load(infile)        </code></pre>
 <div id="r-packages-needed" class="section level4">
 <h4>R packages needed</h4>
 <pre class="r"><code>library(tidyr)
@@ -75,10 +73,10 @@ theme_set(theme_bw())</code></pre>
 <p>Some players registered with the website, but failed to pay the registration fee in time, thus they were never able to to predict anything.</p>
 <p>There was a bump in participation during the transition from group stage to KO-stage, because, again, many players missed to register their bets before the many KO-stage submission deadlines. Here the deadlines were much stricter than at the beginning of the tournament.</p>
 <p>The plot also shows that many people did not bother to place a bet for the last game, the final.</p>
-<pre class="r"><code>games_players &lt;- euro16bets_per_game %&gt;%
-        inner_join(euro16games, by = c(&quot;game_nr&quot;))
-
-glimpse(games_players, width=30)</code></pre>
+</div>
+<div id="more-detailed-analysis-of-bets-made" class="section level3">
+<h3>More detailed analysis of bets made</h3>
+<p>Create joint table of players and their bets.</p>
 <pre><code>## Observations: 13,474
 ## Variables: 11
 ## $ player_last_name  &lt;chr&gt; ...
@@ -92,6 +90,7 @@ glimpse(games_players, width=30)</code></pre>
 ## $ team_b            &lt;chr&gt; ...
 ## $ game_date         &lt;dttm&gt; ...
 ## $ stage             &lt;chr&gt; ...</code></pre>
+<p>This table has its 13474 entries made by 286 players.</p>
 </div>
 <div id="home-team-vs-away-team" class="section level3">
 <h3>“Home team” vs “Away Team”</h3>
@@ -116,18 +115,10 @@ glimpse(games_players, width=30)</code></pre>
 <div id="which-games-were-preferred-for-jokers" class="section level3">
 <h3>Which games were preferred for ‘Jokers’?</h3>
 <p>Participants can pick a few ‘Joker games’, doubling the betting scores. Players scoring Jokers can reap huge amounts of reward points, making the leaderboard much more dynamic over the course of the tournament.</p>
-<pre class="r"><code>jokers_top &lt;- games_players %&gt;%
-        
-  filter(is_joker == TRUE) %&gt;%
-  unite(col = &quot;game_name&quot;,team_a, team_b, sep =  &quot;-&quot;) %&gt;% 
-  select(game_name, is_joker) %&gt;%
-  group_by(game_name) %&gt;%
-  summarize(n = n()) </code></pre>
 <pre class="r"><code>jokers_top %&gt;%
         arrange(n, game_name) %&gt;% 
 ggplot( aes(reorder(game_name, -n),n)) +
         geom_bar(stat=&quot;identity&quot;, color=&quot;grey&quot;, fill=&quot;skyblue&quot;) +
-        #geom_col() +
         geom_text(aes(label =  n), vjust = &quot;inward&quot;, size=2.5) +
         theme(axis.text.y = element_text(size=10)) +
         theme(axis.text.x = element_text(size=8)) +
@@ -136,10 +127,10 @@ ggplot( aes(reorder(game_name, -n),n)) +
         coord_flip() +
         ggtitle(&quot;Most popular soccer matches for &#39;Joker&#39; bets&quot;,
                 subtitle = &quot;Most popular choices are at the bottom of the figure&quot;)</code></pre>
-<p><img src="/post/2017-12-09-soccer-world-cup-2016-betting-at-my-workplace-part-2_files/figure-html/unnamed-chunk-6-1.png" width="480" /></p>
+<p><img src="/post/2017-12-09-soccer-world-cup-2016-betting-at-my-workplace-part-2_files/figure-html/unnamed-chunk-5-1.png" width="480" /></p>
 <p>Of course, Germany’s games (from group stage as well as K.O. stage) were preferred by the players. Additionally player apparently prefer teams participating in the quarter- and semi-finals. Choices to place joker bets for KO-round games are limited. All participants have to pick some of these. Therefore, I guess, Portugal’s games stand out - people saw it as the favourite for the semifinal game Portugal-Wales.</p>
 <p>However, games from early in the tournament (FRA-ROU, FRA-ALB) were also picked relatively often.</p>
-<p>Surprisingly, games of the former Euro 2012 champion, Spain, were not particularly popular as ‘joker’ games. Maybe the community didn’t expect them to win clearly. Spain had tough competitors, (CZE, TUR, CRO).</p>
+<p>Surprisingly, games of the former Euro 2012 champion, Spain, were not particularly popular as ‘joker’ games. Maybe the community didn’t expect them to win clearly. Spain had tough competitors (CZE, TUR, CRO).</p>
 </div>
 </div>
 <div id="winning-players-of-the-betting-game" class="section level2">
@@ -628,5 +619,5 @@ n_draw_median &lt;- median(players_prefer_draw$n)</code></pre>
 </div>
 <div id="conclusion" class="section level2">
 <h2>Conclusion</h2>
-<p>In the next run of the betting game, I’ll predict more draws, and also put my jokers on draws. Otherwise I won’t make it into the ranks that win some of that prize money.</p>
+<p>In the next run of the betting game, I’ll predict more draws, and also put my jokers on draws. When I predict non-draw games, I will carefully look that my scores will be in favor of the “B” team, on the right side of the scoresheet. This alone will distance myself from the majority of the players. Otherwise, I won’t make it into the ranks that win some of that prize money.</p>
 </div>

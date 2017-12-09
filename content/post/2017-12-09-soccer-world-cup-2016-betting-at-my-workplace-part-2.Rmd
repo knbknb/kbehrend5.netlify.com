@@ -55,9 +55,9 @@ Load precalculated objects into global environment:
 
 ```{r loadData}
 datadir <- "../../data/gfzock/"
-assertthat::see_if(assertthat::is.readable(datadir))
+#assertthat::see_if(assertthat::is.readable(datadir))
 infile <- file.path(datadir, "gfzock_euro2016_preprocessed.RData")
-assertthat::see_if(assertthat::is.readable(infile))
+#assertthat::see_if(assertthat::is.readable(infile))
 load(infile)        
 
 
@@ -132,20 +132,21 @@ The plot also shows that many people did not bother to place a bet for the last 
 kable(players_winners %>%
         left_join(players,  by=c( "player_last_name", "player_first_name")) 
 
-```x
+```
 
 ### More detailed analysis of bets made
 
 
-Create joint table of players and their bets
+Create joint table of players and their bets.
 
-```{r}
+```{r games_pl, echo=FALSE}
 games_players <- euro16bets_per_game %>%
         inner_join(euro16games, by = c("game_nr"))
 
 glimpse(games_players, width=30)
 ```
 
+This table has its `r nrow(games_players)` entries made by `r nrow(players)` players.
 
 ### "Home team" vs "Away Team"
 
@@ -251,7 +252,7 @@ People have been expecting that.
 
 Participants can pick a few 'Joker games', doubling the betting scores. Players scoring Jokers can reap huge amounts of reward points, making the leaderboard much more dynamic over the course of the tournament. 
 
-```{r jok, eval=TRUE}
+```{r jok, eval=TRUE, echo=FALSE}
 
 jokers_top <- games_players %>%
         
@@ -268,7 +269,6 @@ jokers_top %>%
         arrange(n, game_name) %>% 
 ggplot( aes(reorder(game_name, -n),n)) +
         geom_bar(stat="identity", color="grey", fill="skyblue") +
-        #geom_col() +
         geom_text(aes(label =  n), vjust = "inward", size=2.5) +
         theme(axis.text.y = element_text(size=10)) +
         theme(axis.text.x = element_text(size=8)) +
@@ -284,7 +284,7 @@ Of course,  Germany's games (from group stage as well as K.O. stage) were prefer
 
 However, games from early in the tournament (FRA-ROU, FRA-ALB) were also picked relatively often.
 
-Surprisingly, games of the former Euro 2012 champion, Spain, were not particularly popular as 'joker' games. Maybe the community didn't expect them to win clearly. Spain had tough competitors, (CZE, TUR, CRO).
+Surprisingly, games of the former Euro 2012 champion, Spain, were not particularly popular as 'joker' games. Maybe the community didn't expect them to win clearly. Spain had tough competitors (CZE, TUR, CRO).
 
 ## Winning Players of the betting game
 
@@ -497,4 +497,4 @@ Half of these games were draws.
 
 ## Conclusion
 
-In the next run of the betting game, I'll predict more draws, and also put my jokers on draws. Otherwise I won't make it into the ranks that win some of that prize money.
+In the next run of the betting game, I'll predict more draws, and also put my jokers on draws. When I predict non-draw games, I will carefully look that my scores will be in favor of the "B" team, on the right side of the scoresheet. This alone will distance myself from the majority of the players. Otherwise, I won't make it into the ranks that win some of that prize money.
