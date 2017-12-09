@@ -167,9 +167,9 @@ Indeed, the 'home' team seems to be preferred by the participants. They think th
 
 #### Visualisation of aggregated scores 
 
-The following set of histograms show that the "away" teams (shown in red) have their maximum mouch more often on the left side (near zero goals) than on the right side.
+The following set of histograms demonstrates the same as before. The "away" teams (shown in red) have their maximum much more often on the left side (near zero goals) than on the right side.
 
-```{r histo1, warning=FALSE, fig.height=14, fig.with=8, echo=FALSE}
+```{r histo1, warning=FALSE, fig.height=14, echo=FALSE}
 
 games_players_plottable <- games_players %>%
         select(game_nr, team_a, team_a_goals, team_b_goals, team_b ) %>%
@@ -361,9 +361,9 @@ There were  `r cs <- sum(corr_pred_by$corr_pred_by); cs` games were predicted co
 
 #### Which game scores did nobody predict correctly?
 
-```{r surprise, echo=FALSE}
-nm <- c("#", "Team A", "Team B", "Score", "Draw", 
-         "Correct")
+```{r surprise, echo=FALSE, warning=FALSE}
+nm <- c("Game #", "Team A", "Team B", "Score", "Draw", 
+         "Correct by #")
 surprise_results_ids <- setdiff(euro16games$game_nr,corr_pred_by$game_nr)
 surprise_results <- euro16games_final %>%
         filter(game_nr %in% surprise_results_ids) %>% 
@@ -372,10 +372,12 @@ surprise_results <- euro16games_final %>%
         mutate(is_draw = ifelse(is_draw == TRUE, "draw", "")) %>%
         mutate(corr_pred_by = 0) 
                        
-kable(surprise_results)
+kable(surprise_results, col.names = nm, row.names = 1)
 
 
 ```
+
+These were the only `r length(surprise_results_ids)` games  where nobody did guess the correct scores.
 
 #### What about getting the 'tendency' right?
 
@@ -401,16 +403,16 @@ corr_pred_by <- tendency_pred_by %>%
 
 ```
 
-Most accurately predicted tendencies
+Most accurately predicted 'tendencies'. The two rightmost columns indicate the number of people who got it right.
 
 ```{r echo=FALSE}
-nm <- c("#", "Team A", "Team B", "Score", "Draw", 
+nm <- c("Game #", "Team A", "Team B", "Score", "Draw", 
         "Tendency", "Correct")
 knitr::kable(head(corr_pred_by, 5), col.names = nm) # %>% filter(tend_pred_by %in% 80:200))
 
 ```
 
-Least accurately predicted tendencies
+Least accurately predicted 'tendencies'. The two rightmost columns indicate the number of people who got it right.
 
 ```{r echo=FALSE}
 
@@ -420,9 +422,9 @@ knitr::kable(tail(corr_pred_by, 5), col.names = nm) # %>% filter(tend_pred_by %i
 
 #### Plot all of them together
 
-Note that in the first plot below, the prediction frequencies in columns 'Tendency' and 'Correct' have been ranked twice, independently of each other. In the second plot below, the prediction freqencies from rows on the table above plot on vertical lines in the plot. 
+In the plot below, the matches from  above plot on in the lower right corner of plot, they were 'less predictable' by the wisdom of the participants. 
 
-```{r tend1, echo=FALSE, fig.width=8}
+```{r tend1, echo=FALSE, fig.width=8, results='hide'}
 corr_pred_by.2 <- corr_pred_by %>% 
         arrange(desc(corr_pred_by)) 
 
@@ -438,12 +440,20 @@ ggplot(corr_pred_by, aes(seq_along(game_nr),tend_pred_by)) +
                    color="darkgreen") +
         xlab("Matches, ranked by 'predictability'") +
         ylab("# of people who got it right") +
+        annotate(geom = "text", x = 5, y = 155, 
+           label = sprintf("More predictable%s", ""), 
+           color="darkgrey") +
+        annotate(geom = "text", x = 48, y = 155, 
+           label = sprintf("Less predictable%s", ""), 
+           color="darkgrey") +
         ggtitle("Yellow: Tendency right\nGreen: Score right")
 
 ```
 
+Surprisingly, Germany-Poland (0:0) is also in the region of 'low predictability'.
+
 ```{r blackcirc, fig.width=8, echo=FALSE}
-subt <- str_c("Yellow: Tendency right\nGreen: Score right",
+subt <- str_c("Yellow: Tendency right\nGreen: Score right\n",
               "Black encircled: Surprising games",
                collapse = "\n")
 ggplot(corr_pred_by.2, aes(seq_along(game_nr),corr_pred_by)) +
@@ -458,22 +468,33 @@ ggplot(corr_pred_by.2, aes(seq_along(game_nr),corr_pred_by)) +
         xlab("Matches, ranked by 'predictability'") +
         ylab("# of people who got it right") +
         ggtitle(subt) +
+        annotate(geom = "text", x = 5, y = 20, 
+           label = sprintf("More predictable%s", ""), 
+           color="darkgrey") +
+        annotate(geom = "text", x = 49, y = 20, 
+           label = sprintf("Less predictable%s", ""), 
+           color="darkgrey") +
         geom_text_repel(data = corr_pred_by.2,
                         aes(seq_along(game_nr), 
                             tend_pred_by, 
-                            label=str_c(team_a_name, 
-                                        team_b_name, sep =  ":")),
+                            label=str_c(str_c(team_a_name, 
+                                        team_b_name, sep =  "-"), score, sep=" ")),
                         size=2)
 
 ```
 
-#### Closing words about surprising games
+#### A second look at about surprising games
 
 In the plot above, a few games (those closest to the green line) are marked with a black circle. 
-This table shows these marked games. They were surprising: Few participants got the tendency right. 
+This table shows these marked games. They were similar to the 4 games in the table that nobody got right: very few participants also got the tendency right. 
 
 
 ```{r echo=FALSE}
 kable(surprise_results_tend, col.names=c(nm, "Pos on X-Axis"))
 ```
 
+Half of these games were draws.
+
+## Conclusion
+
+In the next run of the betting game, I'll predict more draws, and also put my jokers on draws. Otherwise I won't make it into the ranks that win some of that prize money.

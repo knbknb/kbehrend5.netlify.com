@@ -100,7 +100,7 @@ glimpse(games_players, width=30)</code></pre>
 <p>Indeed, the ‘home’ team seems to be preferred by the participants. They think the home teams will, on average, score more goals than the ‘away’ team.</p>
 <div id="visualisation-of-aggregated-scores" class="section level4">
 <h4>Visualisation of aggregated scores</h4>
-<p>The following set of histograms show that the “away” teams (shown in red) have their maximum mouch more often on the left side (near zero goals) than on the right side.</p>
+<p>The following set of histograms demonstrates the same as before. The “away” teams (shown in red) have their maximum much more often on the left side (near zero goals) than on the right side.</p>
 <p><img src="/post/2017-12-09-soccer-world-cup-2016-betting-at-my-workplace-part-2_files/figure-html/histo1-1.png" width="480" /></p>
 </div>
 <div id="a-better-visualisation" class="section level4">
@@ -362,16 +362,18 @@ n_draw_median &lt;- median(players_prefer_draw$n)</code></pre>
 <table>
 <thead>
 <tr class="header">
-<th align="right">game_nr</th>
-<th align="left">team_a_name</th>
-<th align="left">team_b_name</th>
-<th align="left">score</th>
-<th align="left">is_draw</th>
-<th align="right">corr_pred_by</th>
+<th></th>
+<th align="right">Game #</th>
+<th align="left">Team A</th>
+<th align="left">Team B</th>
+<th align="left">Score</th>
+<th align="left">Draw</th>
+<th align="right">Correct by #</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
+<td>1</td>
 <td align="right">48</td>
 <td align="left">FRA</td>
 <td align="left">ISL</td>
@@ -380,6 +382,7 @@ n_draw_median &lt;- median(players_prefer_draw$n)</code></pre>
 <td align="right">0</td>
 </tr>
 <tr class="even">
+<td>2</td>
 <td align="right">42</td>
 <td align="left">HUN</td>
 <td align="left">BEL</td>
@@ -388,6 +391,7 @@ n_draw_median &lt;- median(players_prefer_draw$n)</code></pre>
 <td align="right">0</td>
 </tr>
 <tr class="odd">
+<td>3</td>
 <td align="right">33</td>
 <td align="left">HUN</td>
 <td align="left">POR</td>
@@ -396,6 +400,7 @@ n_draw_median &lt;- median(players_prefer_draw$n)</code></pre>
 <td align="right">0</td>
 </tr>
 <tr class="even">
+<td>4</td>
 <td align="right">28</td>
 <td align="left">RUS</td>
 <td align="left">WAL</td>
@@ -405,14 +410,15 @@ n_draw_median &lt;- median(players_prefer_draw$n)</code></pre>
 </tr>
 </tbody>
 </table>
+<p>These were the only 4 games where nobody did guess the correct scores.</p>
 </div>
 <div id="what-about-getting-the-tendency-right" class="section level4">
 <h4>What about getting the ‘tendency’ right?</h4>
-<p>Most accurately predicted tendencies</p>
+<p>Most accurately predicted ‘tendencies’. The two rightmost columns indicate the number of people who got it right.</p>
 <table>
 <thead>
 <tr class="header">
-<th align="right">#</th>
+<th align="right">Game #</th>
 <th align="left">Team A</th>
 <th align="left">Team B</th>
 <th align="left">Score</th>
@@ -469,11 +475,11 @@ n_draw_median &lt;- median(players_prefer_draw$n)</code></pre>
 </tr>
 </tbody>
 </table>
-<p>Least accurately predicted tendencies</p>
+<p>Least accurately predicted ‘tendencies’. The two rightmost columns indicate the number of people who got it right.</p>
 <table>
 <thead>
 <tr class="header">
-<th align="right">#</th>
+<th align="right">Game #</th>
 <th align="left">Team A</th>
 <th align="left">Team B</th>
 <th align="left">Score</th>
@@ -533,17 +539,18 @@ n_draw_median &lt;- median(players_prefer_draw$n)</code></pre>
 </div>
 <div id="plot-all-of-them-together" class="section level4">
 <h4>Plot all of them together</h4>
-<p>Note that in the first plot below, the prediction frequencies in columns ‘Tendency’ and ‘Correct’ have been ranked twice, independently of each other. In the second plot below, the prediction freqencies from rows on the table above plot on vertical lines in the plot.</p>
+<p>In the plot below, the matches from above plot on in the lower right corner of plot, they were ‘less predictable’ by the wisdom of the participants.</p>
 <p><img src="/post/2017-12-09-soccer-world-cup-2016-betting-at-my-workplace-part-2_files/figure-html/tend1-1.png" width="768" /></p>
+<p>Surprisingly, Germany-Poland (0:0) is also in the region of ‘low predictability’.</p>
 <p><img src="/post/2017-12-09-soccer-world-cup-2016-betting-at-my-workplace-part-2_files/figure-html/blackcirc-1.png" width="768" /></p>
 </div>
-<div id="closing-words-about-surprising-games" class="section level4">
-<h4>Closing words about surprising games</h4>
-<p>In the plot above, a few games (those closest to the green line) are marked with a black circle. This table shows these marked games. They were surprising: Few participants got the tendency right.</p>
+<div id="a-second-look-at-about-surprising-games" class="section level4">
+<h4>A second look at about surprising games</h4>
+<p>In the plot above, a few games (those closest to the green line) are marked with a black circle. This table shows these marked games. They were similar to the 4 games in the table that nobody got right: very few participants also got the tendency right.</p>
 <table>
 <thead>
 <tr class="header">
-<th align="right">#</th>
+<th align="right">Game #</th>
 <th align="left">Team A</th>
 <th align="left">Team B</th>
 <th align="left">Score</th>
@@ -616,5 +623,10 @@ n_draw_median &lt;- median(players_prefer_draw$n)</code></pre>
 </tr>
 </tbody>
 </table>
+<p>Half of these games were draws.</p>
 </div>
+</div>
+<div id="conclusion" class="section level2">
+<h2>Conclusion</h2>
+<p>In the next run of the betting game, I’ll predict more draws, and also put my jokers on draws. Otherwise I won’t make it into the ranks that win some of that prize money.</p>
 </div>
