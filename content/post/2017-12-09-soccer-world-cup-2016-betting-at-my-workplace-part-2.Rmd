@@ -1,0 +1,479 @@
+---
+title: Soccer World Cup 2016 - Betting At My Workplace - Part 2 
+author: Knut Behrends
+date: '2017-12-09'
+slug: Soccer World Cup Bets, part II
+output: 
+  html_document:
+    toc: true
+    toc_depth: 1
+    css: styles.css
+    fig_caption: yes
+    keep_md: yes
+image: /static/img/football.png
+categories:
+  - blog-post
+tags:
+  - fun
+  - R
+summary: weekend project from Summer 2016
+keywords: ["Personal-Blog", "Fun", "rstats", "Sports-Data", "Soccer", "Kaggle.com"]      
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+####  Soccer championship Euro 2016 - A weekend project, from July 2016
+
+Continued from a [previous blog post](/post/2017/12/soccer-world-cup-bets-part-i), that explained the data preprocessing steps. 
+
+> I wrote this in July 2016, to make myself familiar with the R package `ggplot2`, and other tidyverse packages. This post contains exploratory analysis of an Euro 2016 Betting Game. Predictions were made, just for fun and a small amount of prize money, by a group of players at my workplace. Participants in the betting game were about 300 colleagues, their friends and family members. 
+
+Some definition of terms: In this context, 
+
+- *Player* means 'Participant in the Betting Game', **not** 'Professional Soccer Player' in one of the matches played during Euro 2016.  
+- *Bet* means 'Score' (in goals, e.g. "Germany-France, 0:2"). The predicted result of a match at Euro 2016.
+- *Prediction* means 'more or less educated guess' made by some colleague of mine, or one of his/her friends, or family member. It does **not** mean 'prediction' in a machine-learning sense (e.g, as a result of fitting a model)
+
+In 2016 I submitted [the original version of this post](https://rpubs.com/knb/euro2016bets) to RPubs.com, the default website to upload to from within the Rstudio IDE, but the RPubs website has evolved to a dump of countless low-quality submissions of student homework, and I want my content at a central place. Therefore, I've reposted it here.
+
+## About the dataset
+
+There were ~300 players predicting scores of the ~50 games during the Euro2016. This means there are `300 * 50 = 15000` predicions  to analyze, but in fact there are only around 13000. This is because many players dropped out of the game, or lost interest during the Euro 2016, which lasted for 30 days. Nearly all players made full predctions for the group stage, but during the Knock-Out Stage of the Euro 2016, there were only brief periods of about 2 to 4 days, when players had to make their bets. Apparently, many people simply missed their deadlines.    
+
+The rules of the betting game are too complicated to explain here. Probably the most important rule is that each successful prediction gets some reward points. Predicting the exact end result gets more points that getting just the tendency (win/draw/loss) right. All players had a set of 10 'Joker' games available, which double the reward points earned. Players were free to assign this 'doubling' reward to any upcoming soccer game. Of course people used their favorite teams, and/or those games  they were most certain about with respect to the end result. 
+
+## Data preparation -See part 1
+
+The dataset of the player's bets/predictions is not public, because there are full names of real people inside. Maybe I'll show anonymized results of a small part of it at the end of this post. In 2016, I've used a little script to screen-scraped the data from the (internal) website, and then I copied it all together into a big csv-file. 
+See [part 1]() of this blog post for details. Here I read in everything from an `.RData`-File, R's proprietary storage format. This populates our workspace with a lot of precalculated objects. The most important is the `euro16_bets_per_game` data frame.
+
+## Data analysis
+
+Load precalculated objects into global environment:
+
+```{r loadData}
+datadir <- "../../data/gfzock/"
+assertthat::see_if(assertthat::is.readable(datadir))
+infile <- file.path(datadir, "gfzock_euro2016_preprocessed.RData")
+assertthat::see_if(assertthat::is.readable(infile))
+load(infile)        
+
+
+```
+
+
+#### R packages needed
+
+```{r libs, message=FALSE}
+library(tidyr)
+library(dplyr)
+library(lubridate)
+library(purrr)  # functional programming
+library(stringr)
+library(readr)
+library(ggplot2)
+library(ggrepel) # better labelling of datapoints
+library(knitr) 
+library(assertthat)
+theme_set(theme_bw())
+```
+
+
+```{r results='hide', echo=FALSE}
+#### Current working directory:
+getwd()
+```
+
+```{r eval=FALSE, echo=FALSE, results='hide'}
+#### Where to find this code and data
+        
+# well: 
+if("well" == system("hostnamectl --static", intern = TRUE)){
+        #setwd("~/code/git/_my/kbehrends.netlify.creative-theme/content/post")
+                #setwd("/home/knut/code/git/_my/R_stuff/euro2016/gfzock")
+
+}
+
+```
+
+
+There are `r nrow(players)` players predicting scores for `r nrow(bets)` games.
+
+How many players *actually* participated over the course of the tournament?
+
+```{r plot1, echo=FALSE, fig.width=8}
+bets <- data.frame(game_no = 1:length(num_of_bets), 
+                   bets = rev(num_of_bets))
+ggplot(bets, aes(game_no, bets)) + 
+        geom_line() + 
+        ylim(c(0, 300)) +
+        xlab("Euro 2016 Game #") +
+        ylab("Number of Participants") + theme_bw() +
+        ggtitle("Participation over time") +
+        annotate(geom = "text", x = 5, y = 210, 
+           label = sprintf("| Opening game%s", ""), 
+           color="darkgrey")        + 
+        annotate(geom = "text", x = 47, y = 210, 
+           label = sprintf("Final in Paris%s", ""), 
+           color="darkgrey")
+```
+
+Some players registered with the website, but failed to pay the registration fee in time, thus they were never able to to predict anything.
+
+There was a bump in participation during the transition from group stage to KO-stage, because, again, many players missed to register their bets before the many KO-stage submission deadlines. Here the deadlines were much stricter than at the beginning of the tournament.
+
+
+The plot also shows that many people did not bother to place a bet for the last game, the final.
+
+```{r results='hide', echo=FALSE, eval=FALSE}
+
+kable(players_winners %>%
+        left_join(players,  by=c( "player_last_name", "player_first_name")) 
+
+```x
+
+### More detailed analysis of bets made
+
+
+Create joint table of players and their bets
+
+```{r}
+games_players <- euro16bets_per_game %>%
+        inner_join(euro16games, by = c("game_nr"))
+
+glimpse(games_players, width=30)
+```
+
+
+### "Home team" vs "Away Team"
+
+Is there a bias of position ("Home team" vs "Away Team")? Needless to say, during the Euro 2016, *all* teams were actually 'Away' teams, except for the hosting country's team, France. I'll just stick to the naming convention, because of it would be awkward to talk about the "first/second" or the "Left/right team".
+
+```{r density, warning=FALSE, echo=FALSE, fig.width=8}
+ggplot(games_players, aes(team_a_goals, color="Team A")) +
+        geom_density(color="blue") +
+        geom_density(data=games_players, 
+                     aes(team_b_goals, color="Team B"), color="red") +
+        ggtitle("Scores of 'home' team (blue) vs 'away' team (red)",
+                subtitle = "People consistently assigned more points to the home teams")
+
+```
+
+Indeed, the 'home' team seems to be preferred by the participants. They think the home teams will, on average, score more goals than the 'away' team. 
+
+
+
+#### Visualisation of aggregated scores 
+
+The following set of histograms show that the "away" teams (shown in red) have their maximum mouch more often on the left side (near zero goals) than on the right side.
+
+```{r histo1, warning=FALSE, fig.height=14, fig.with=8, echo=FALSE}
+
+games_players_plottable <- games_players %>%
+        select(game_nr, team_a, team_a_goals, team_b_goals, team_b ) %>%
+        gather(key, value, -game_nr, -team_a, -team_b) %>%
+        unite(col = "game_name",team_a, team_b, sep =  "-")
+
+ggplot(games_players_plottable, 
+       aes( value, fill=key, color = key, show.legend = FALSE)) +
+        geom_bar(alpha = 0.3, position = "nudge",show.legend = FALSE) +
+        scale_color_manual(values  = c( "blue", "red")) +
+        scale_fill_manual(values   = c( "blue", "red")) +
+        xlab("Number of goals scored (predicted)") +
+        ylab("Count/Frequency") +
+        ggtitle("'Home' team is blue, 'Away' team is red") +
+        facet_wrap(~game_name, ncol = 4) +
+        theme_classic() +
+        theme(strip.background = element_rect(colour = "white", fill = "white"),
+              panel.spacing = unit(1, "lines"))
+        
+```
+
+
+
+```{r, echo=FALSE}
+#Prepare dataset for creating 2d-histograms of games.
+games_players_plot2d <- games_players %>%
+        select(game_nr, team_a, team_a_goals, team_b_goals, team_b, stage ) %>%
+        unite(col = "game_name",team_a, team_b, sep =  "-", remove = FALSE)
+
+# temporary dataframe needed for plaing labels inside the plots
+df_team <- data.frame(
+        # coordinates for upper left , and lower right corner
+        y = rep(0, 51),
+        x = rep(6, 51),
+        #team_a = euro16games[order(euro16games$game_nr),"team_a"],
+        #team_b = euro16games[order(euro16games$game_nr),"team_b"],
+        game_nr = sort(euro16games$game_nr)
+) 
+
+games_players_plot2d <- games_players_plot2d %>%
+        inner_join(df_team, by="game_nr")
+
+```
+
+#### A better visualisation
+
+In this array of xy-plots, circles show predicted number of goals, for the respective opponents of each game. The size of circles is proportional to the number of people who claimed that this many goals would occur.
+
+```{r goalscircles, warning=FALSE, error=FALSE, message=FALSE, fig.height=18, echo=FALSE}
+lbl1 <- str_c(sprintf("Game %s", 1:nrow(bets)))
+names(lbl1) <-  1:nrow(bets)
+
+ggplot(games_players_plot2d, 
+       aes(team_a_goals, team_b_goals, show.legend = FALSE)) +
+        geom_count(alpha = 0.3, show.legend = FALSE) + 
+#        scale_color_manual(values  = c( "blue", "red")) +
+        scale_fill_manual(values   = factor(stage)) +
+        geom_abline(slope = 1, colour = "red", size = 0.9,
+                    alpha = 0.2, show.legend = FALSE) +
+        geom_text(aes(x, y, label = team_a, size=130), 
+                  vjust = "inward", check_overlap = TRUE, show.legend = FALSE) +
+        geom_text(aes(y, x, label = team_b, size=130), 
+                  hjust = "inward", check_overlap = TRUE, show.legend = FALSE) +
+        ggtitle("Euro 2016: Number of goals scored - all predictions") +
+        facet_wrap(~game_nr, ncol = 4, labeller = as_labeller(lbl1)) +
+        theme_classic() + 
+        theme(strip.background = element_rect(colour = "white", fill = "white"),
+              panel.spacing = unit(1, "lines"))
+
+```
+
+These plots above show more clearly the distribution, in particular for the knockout round.
+It is common that penalty shootouts occur at the end of KO-round games.
+People have been expecting that.
+
+## 'Joker' Games
+
+### Which games were preferred for 'Jokers'?
+
+Participants can pick a few 'Joker games', doubling the betting scores. Players scoring Jokers can reap huge amounts of reward points, making the leaderboard much more dynamic over the course of the tournament. 
+
+```{r jok, eval=TRUE}
+
+jokers_top <- games_players %>%
+        
+  filter(is_joker == TRUE) %>%
+  unite(col = "game_name",team_a, team_b, sep =  "-") %>% 
+  select(game_name, is_joker) %>%
+  group_by(game_name) %>%
+  summarize(n = n()) 
+
+```
+
+```{r eval=TRUE, fig.height=10}
+jokers_top %>%
+        arrange(n, game_name) %>% 
+ggplot( aes(reorder(game_name, -n),n)) +
+        geom_bar(stat="identity", color="grey", fill="skyblue") +
+        #geom_col() +
+        geom_text(aes(label =  n), vjust = "inward", size=2.5) +
+        theme(axis.text.y = element_text(size=10)) +
+        theme(axis.text.x = element_text(size=8)) +
+        xlab("Euro 2016 Game") +
+        ylab("Count/Frequency (Picked as Joker n times)") +
+        coord_flip() +
+        ggtitle("Most popular soccer matches for 'Joker' bets",
+                subtitle = "Most popular choices are at the bottom of the figure")
+        
+```
+
+Of course,  Germany's games (from group stage as well as K.O. stage) were preferred by the players. Additionally player apparently prefer teams participating in the quarter- and semi-finals. Choices to place joker bets for KO-round games are limited. All participants have to pick some of these. Therefore, I guess, Portugal's games stand out - people saw it as the favourite for the semifinal game Portugal-Wales.
+
+However, games from early in the tournament (FRA-ROU, FRA-ALB) were also picked relatively often.
+
+Surprisingly, games of the former Euro 2012 champion, Spain, were not particularly popular as 'joker' games. Maybe the community didn't expect them to win clearly. Spain had tough competitors, (CZE, TUR, CRO).
+
+## Winning Players of the betting game
+
+#### Which players most often bet for draws?
+
+```{r}
+players_prefer_draw <- games_players %>%
+        filter(team_a_goals == team_b_goals) %>%
+        select(player_last_name, player_first_name, game_nr) %>%
+        group_by(player_last_name, player_first_name) %>%
+        count(sort = TRUE) 
+
+n_draw_median <- median(players_prefer_draw$n)
+```
+
+There were `r nrow(euro16games) - (8+4+2+1)` matches in the group phase of the Euro 2016. Of these `r num_draws` (`r round(num_draws/(nrow(euro16games) - (8+4+2+1)) * 100, 0)`%)  ended in a draw. (There were `r nrow(euro16games)` matches in total).
+
+The median value for "number of matches predicted as draw" is n=`r n_draw_median`. 
+Few people (n=`r nmax <- num_draws; nrow(players_prefer_draw %>% filter(n >= nmax))`) have predicted at least `r nmax` draws, though:
+
+
+#### Is 'predicting a lot of draws' a winning strategy?
+
+```{r money, echo=FALSE}
+char2star <- function(x){
+       paste0(
+               str_sub(x,1,1),
+               str_replace_all(str_sub(x,2,100), ".", "*")
+               )
+}
+
+players_prefer_draw <- players_prefer_draw %>%
+  left_join(players, by = c("player_last_name", "player_first_name")) %>%
+  select(player_last_name, player_first_name, 
+         n_draws_pred = n, money_rank = rank) %>%
+  mutate(last_name = char2star(player_last_name),
+         first_name = char2star(player_first_name)) %>%
+  filter(!is.na(money_rank))
+
+players_prefer_draw_winners <- players_prefer_draw %>% 
+#        select(5,6,3,4) %>% 
+        filter(n_draws_pred > n_draw_median) 
+
+```
+
+Yes. Of the `r nrow(players_winners)` prize money winners, n=`r nrow(players_prefer_draw_winners)` (`r round( nrow(players_prefer_draw_winners)/nrow(players_winners), 2) * 100`%) have predicted more than the median number of draws (`r n_draw_median`).
+
+```{r echo=FALSE}
+kable(players_prefer_draw_winners %>% data.frame() %>% select(5,6,3,4))
+```
+
+
+## Detailed analysis of game scores.
+
+Which games where predicted successfully?
+
+```{r echo=FALSE}
+euro16bets7 <- euro16bets_per_game %>% 
+        inner_join(euro16games_final, 
+                   by=c("team_a_goals", "team_b_goals", "game_nr")) 
+
+corr_pred_by <- euro16bets7  %>%
+        mutate(score = paste0("(",team_a_goals, ":", team_b_goals, ")")) %>% 
+        select(game_nr, team_a_name, team_b_name, score, is_draw) %>%
+        group_by(game_nr, team_a_name, team_b_name, score, is_draw) %>%
+        summarise(corr_pred_by = n()) %>%
+        arrange(desc(corr_pred_by)) %>%
+        mutate(is_draw = ifelse(is_draw == TRUE, "draw", "")) 
+
+```
+
+There were  `r cs <- sum(corr_pred_by$corr_pred_by); cs` games were predicted correctly by these many unique players. Success rate: `r tot <- nrow(euro16bets_per_game); cs`/`r tot` = `r round(cs/tot,3) * 100`% 
+
+
+#### Which game scores did nobody predict correctly?
+
+```{r surprise, echo=FALSE}
+nm <- c("#", "Team A", "Team B", "Score", "Draw", 
+         "Correct")
+surprise_results_ids <- setdiff(euro16games$game_nr,corr_pred_by$game_nr)
+surprise_results <- euro16games_final %>%
+        filter(game_nr %in% surprise_results_ids) %>% 
+        mutate(score = paste0("(",team_a_goals, ":", team_b_goals, ")")) %>% 
+        select(game_nr, team_a_name, team_b_name, score, is_draw) %>%
+        mutate(is_draw = ifelse(is_draw == TRUE, "draw", "")) %>%
+        mutate(corr_pred_by = 0) 
+                       
+kable(surprise_results)
+
+
+```
+
+#### What about getting the 'tendency' right?
+
+
+
+```{r tendency, echo=FALSE}
+corr_pred_by <- bind_rows(corr_pred_by, surprise_results)
+
+euro16bets8 <- euro16bets_per_game %>%
+        select(-team_a_goals, -team_b_goals) %>%
+        inner_join(euro16games_final, by=c("tendency", "game_nr"))
+
+tendency_pred_by <- euro16bets8  %>%
+        mutate(score = paste0("(",team_a_goals, ":", team_b_goals, ")")) %>% 
+        select(game_nr, team_a_name, team_b_name, score, is_draw) %>%
+        group_by(game_nr, team_a_name, team_b_name, score, is_draw) %>%
+        summarise(tend_pred_by=n()) %>%
+        arrange(desc(tend_pred_by)) %>%
+        mutate(is_draw = ifelse(is_draw == TRUE, "draw", ""))
+
+corr_pred_by <- tendency_pred_by %>%
+        inner_join(corr_pred_by, by=c("game_nr", "team_a_name", "team_b_name", "score", "is_draw"))
+
+```
+
+Most accurately predicted tendencies
+
+```{r echo=FALSE}
+nm <- c("#", "Team A", "Team B", "Score", "Draw", 
+        "Tendency", "Correct")
+knitr::kable(head(corr_pred_by, 5), col.names = nm) # %>% filter(tend_pred_by %in% 80:200))
+
+```
+
+Least accurately predicted tendencies
+
+```{r echo=FALSE}
+
+knitr::kable(tail(corr_pred_by, 5), col.names = nm) # %>% filter(tend_pred_by %in% 80:200))
+
+```
+
+#### Plot all of them together
+
+Note that in the first plot below, the prediction frequencies in columns 'Tendency' and 'Correct' have been ranked twice, independently of each other. In the second plot below, the prediction freqencies from rows on the table above plot on vertical lines in the plot. 
+
+```{r tend1, echo=FALSE, fig.width=8}
+corr_pred_by.2 <- corr_pred_by %>% 
+        arrange(desc(corr_pred_by)) 
+
+corr_pred_by.2$pos <- 1:nrow(corr_pred_by.2)
+
+surprise_results_tend <- corr_pred_by.2 %>% 
+        filter(tend_pred_by - corr_pred_by <=20)
+
+ggplot(corr_pred_by, aes(seq_along(game_nr),tend_pred_by)) +
+        geom_point(color="gold") +
+        geom_point(data=corr_pred_by.2, 
+                   aes(seq_along(game_nr),corr_pred_by),
+                   color="darkgreen") +
+        xlab("Games ranked by prediction accuracy") +
+        ylab("# of correct bets") +
+        ggtitle("Yellow: Tendency right\nGreen: Score right")
+
+```
+
+```{r blackcirc, fig.width=8, echo=FALSE}
+subt <- str_c("Yellow: Tendency right\nGreen: Score right",
+              "Black encircled: Surprising games",
+               collapse = "\n")
+ggplot(corr_pred_by.2, aes(seq_along(game_nr),corr_pred_by)) +
+        geom_point(color = "darkgreen") +
+        geom_line(color = "darkgreen") +
+        geom_point(data = corr_pred_by.2, 
+                   aes(seq_along(game_nr), tend_pred_by), 
+                   color = "gold") +
+        geom_point(data = surprise_results_tend, 
+                   aes(pos,tend_pred_by), color = "black", 
+                   size = 5, shape = 21) +
+        xlab("Games ranked by prediction accuracy") +
+        ylab("# of people who got tendency/abs.score right") +
+        ggtitle(subt) +
+        geom_text_repel(data = corr_pred_by.2,
+                        aes(seq_along(game_nr), 
+                            tend_pred_by, 
+                            label=str_c(team_a_name, 
+                                        team_b_name, sep =  ":")),
+                        size=2)
+
+```
+
+#### Closing words about surprising games
+
+In the plot above, a few games (those closest to the green line) are marked with a black circle. 
+This table shows these marked games. They were surprising: Few participants got the tendency right. 
+
+
+```{r echo=FALSE}
+kable(surprise_results_tend, col.names=c(nm, "Pos"))
+```
+

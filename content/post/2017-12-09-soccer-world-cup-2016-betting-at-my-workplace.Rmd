@@ -1,0 +1,395 @@
+---
+title: Soccer World Cup 2016 - Betting At My Workplace - Part I
+author: Knut Behrends
+date: '2017-12-09'
+slug: Soccer World Cup Bets, part I
+output: 
+  html_document:
+    toc: true
+    toc_depth: 1
+    css: styles.css
+    fig_caption: yes
+    keep_md: yes
+image: /static/img/football.png
+categories:
+  - blog-post
+tags:
+  - fun
+  - R
+summary: weekend project from Summer 2016
+keywords: ["Personal-Blog", "Fun", "rstats", "Sports-Data", "Soccer", "Euro-2016"]      
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Soccer championship Euro 2016 - A weekend project, from July 2016
+
+This is the data-preprocessing part of a blog post that has most of its visual content in a second [part](/post/2017/12/soccer-world-cup-bets-part-ii). 
+
+####  Part 1: preprocessing the data
+
+
+> I wrote this in July 2016, to make myself familiar with the R packages `ggplot2` and other tidyverse packages. Exploratory Analysis of an Euro 2016 Betting Game. Predictions were made, just for fun (and a small amount of prize money), by a group of players (colleagues, their friends and family members) from my workplace in Germany. 
+
+Some definition of terms: In this context, 
+
+- *Player* means 'Participant in the Betting Game', **not** 'Professional Soccer Player' in one of the matches played during Euro 2016.  
+- *Bet* means 'Score' (in goals, e.g. 2:1): predicted result of a match at Euro 2016 
+- *Prediction* means 'more or less educated guess' made by some colleague of mine, or one of his/her friends, or family member. It does **not** mean 'prediction' in a machine-learning sense (e.g, as a result of fitting a model)
+
+In 2016 I submitted [the original version of this post](https://rpubs.com/knb/euro2016bets) to Rpubs.com, the default website to upload to from within the Rstudio IDE, but the Rpubs website has evolved to a dump of countless low-quality submissions of student homework, and I want my content at a central place.
+Also, the previous blog post was long and monolithic. Therefore, I've split it up and  reposted it here.
+
+This blogpost is just the boring but necessary preprocessing part. For the exploratory analysis, read [part 2 of this post]().
+
+## About the dataset
+
+There were ~300 players predicting scores of the ~50 games during the Euro2016. This means there are `300 * 50 = 15000` predicions  to analyze, but in fact there are only around 13000. This is because many players dropped out of the game, or lost interest during the Euro 2016, which lasted for 3 weeks. Nearly all players made full predctions for the group stage, but during the Knock-Out Stage of the Euro 2016, there were only brief periods of about 2 to 4 days, when players had to make their bets. Apparently, many people just missed their deadlines.    
+
+The rules of the betting game are too complicated to explain here. Probably the most important rule is that each successful prediction gets some reward points. Predicting the exact end result gets more points that getting just the tendency (win/draw/loss) right. All players had a set of 5 or so 'Joker' games available, which double the reward points earned. Players were free to assign this 'doubling' reward to any upcoming soccer game. Of course people used their favorite teams, and/or those games  they were most certain about with respect to the end result. 
+
+## Data preparation
+
+The dataset of the player's bets/predictions is not public, because there are full names of real people inside. Maybe I'll show anonymized results of a small part of it at the end of this post. In 2016, I've used a little script to screen-scraped the data from the (internal) website, and then I copied it all together into a big csv-file. 
+
+## Data analysis
+
+## Data preprocessing
+
+#### R packages needed
+
+```{r libs, message=FALSE}
+library(lubridate)
+library(dplyr)
+library(tidyr)  # separate
+library(purrr)  # functional programming
+library(stringr)
+library(readr)
+library(ggplot2)
+library(assertthat) # is.writeable
+```
+
+
+```{r results='hide', echo=FALSE}
+#### Current working directory:
+getwd()
+```
+
+```{r eval=FALSE, echo=FALSE, results='hide'}
+#### Where to find this code and data
+        
+# well: 
+if("well" == system("hostnamectl --static", intern = TRUE)){
+        #setwd("/home/knut/code/git/_my/R_stuff/euro2016/gfzock")
+        #setwd("~/code/git/_my/kbehrends.netlify.creative-theme/")
+}
+
+```
+
+#### Read in the data files 
+
+We need 
+
+- the final bets (13621 rows)
+- true end results of the games played (51 matches)
+- prize money winners (36 people)
+
+
+```{r readcsv, message=FALSE}
+
+datadir <- "../../data/gfzock/"
+see_if(is.readable(datadir))
+
+infile1 <- file.path(datadir, "EM2016_compiled_final.csv")
+infile2 <- file.path(datadir, "real_games_scores_full.txt")
+infile3 <- file.path(datadir, "gfzock_prize-money-winners.csv")
+
+see_if(is.readable(infile1))
+euro16games_final  <- read_tsv(infile2, col_names = FALSE)
+see_if(is.readable(infile2))
+euro16bets_per_game1        <- readLines(infile1)
+see_if(is.readable(infile3))
+players_winners  <- read_csv(infile3) %>%
+        separate(col = Player, 
+                 into = c("player_last_name", "player_first_name"),
+                 sep = ",",  
+                 remove = TRUE)
+
+```
+
+For now, we will only be using character vector `euro16bets_per_game1`. The other two input files will be dealt with later.
+
+The character vector `euro16bets_per_game1` is `r length(euro16bets_per_game1)` elements long. Some complex preprocessing is necessary to convert it into two data frames:
+
+1. A data frame of games played
+1. A data frame of bets by player and game. 
+
+We make two passes over the character vector.
+
+####  Read in games-data 
+
+First, detect section markers in  `euro16bets_per_game1`.  Lines starting with "#" mark a new section. Each section-marker line represents a new games, and contains few elements of game metadata. It looks like this
+
+`#;51;POR;FRA;2016-07-10 21:01:01`
+
+This means: 
+
+Game 51 was Portugal vs France, it happened on July 10, 2016.
+
+```{r separate}
+euro16games_ind <- str_detect(pattern = "^#",string = euro16bets_per_game1)
+
+# 
+euro16games     <- tbl_df(data = euro16bets_per_game1[euro16games_ind]) %>% 
+        separate(value, into = str_trim(c("mark", "game_nr",
+                                "team_a","team_b","game_date")),
+                 sep         = ";") %>%
+        mutate(game_nr       = as.integer(game_nr),
+               game_date     = ymd_hms(game_date), 
+               mark          = NULL)    %>%
+        mutate(stage         = ifelse(game_nr > 36, "knockout", "group"))   
+
+glimpse(euro16games, width = 50)
+
+```
+
+#### Find number of betting participants per game
+
+```{r}
+# remove empty lines
+euro16_empty <- str_detect(pattern = "^$", string = euro16bets_per_game1)
+euro16bets_per_game2 <- euro16bets_per_game1[!euro16_empty]
+```
+
+Find section-marker positions
+
+```{r}
+section_marker_posns <- which(str_detect(pattern = "^#", 
+                                         string = euro16bets_per_game2))
+game_metadata <- euro16bets_per_game2[section_marker_posns]
+```
+
+
+
+Find the number of bets per game:
+```{r bets_per_game}
+
+numbets_last_section <- length(euro16bets_per_game2) - tail(section_marker_posns,1)
+num_of_bets <- c(diff(section_marker_posns)-1, numbets_last_section)
+
+
+# Convert num_of_bets to a named vector:
+names(num_of_bets) <- game_metadata
+
+```
+
+The `num_of_bets` vector is sorted by date, in reverse order, youngest last. The last 3 elements are the first games played: 
+
+```{r width=30}
+tail(num_of_bets,3)
+```
+
+How many players participated over the course of the tournament?
+
+```{r plot1, echo=FALSE, fig.width=8}
+bets <- data.frame(game_no = 1:length(num_of_bets), 
+                   bets = rev(num_of_bets))
+ggplot(bets, aes(game_no, bets)) + 
+        geom_line() + 
+        xlab("Euro 2016 Game #") +
+        ylab("Number of Participants") + theme_bw() +
+        ggtitle("Participation over time") +
+        annotate(geom = "text", x = 5, y = 210, 
+           label = sprintf("| Opening game%s", ""), 
+           color="darkgrey")        + 
+        annotate(geom = "text", x = 47, y = 210, 
+           label = sprintf("Final in Paris%s", ""), 
+           color="darkgrey")
+```
+
+There was a bump in the transition from group stage to KO-stage, because many players missed to register their bets before the submission deadline.
+
+#### Data frame 2: bets by game and player
+
+Removing empty lines and marker lines from infile `euro16bets_per_game1` (`r length(euro16bets_per_game1)` lines) created `euro16bets_per_game2`, a vector of `r length(euro16bets_per_game2)` elements.
+
+In a second pass over `euro16bets_per_game2`,  split the vector into a list of vectors, then convert to data frame. 
+
+```{r}
+
+game <- map2(names(num_of_bets), num_of_bets+1, rep) %>% 
+        unlist()
+euro16bets_per_game <- cbind(euro16bets_per_game2, game) 
+euro16bets_per_game <- euro16bets_per_game %>% 
+        as_data_frame() %>% 
+        rename("betstr" = "euro16bets_per_game2") %>% 
+        filter(str_detect(betstr, "#;") ==FALSE )
+```
+
+
+
+#### Convert bets into data frame with meaningful column names
+
+```{r warning=FALSE, message=FALSE}
+euro16bets_per_game <- euro16bets_per_game %>%
+        separate(game, sep=";", remove = TRUE, into = c("x", "game_nr", "y")) %>% 
+        mutate(game_nr = as.integer(game_nr))
+
+euro16bets_per_game <- euro16bets_per_game %>%       
+        separate(betstr, sep=";",remove = TRUE,
+         into=c("player_last_name", "player_first_name",
+                "team_a_goals","team_b_goals", 
+                "is_joker", "irrelev")) %>% 
+        mutate_if(is.character, str_trim) %>% 
+        mutate(team_a_goals = as.integer(team_a_goals),
+               team_b_goals = as.integer(team_b_goals),
+               tendency= ifelse(
+                   team_a_goals == team_b_goals, "draw",
+                        ifelse(
+                        team_a_goals > team_b_goals, "team_a",
+                        "team_b"))) %>% 
+        select(-x, -y, -irrelev)
+
+euro16bets_per_game$is_joker <- map_lgl(euro16bets_per_game$is_joker, 
+                                        function(x) ifelse(x == "", FALSE, TRUE))
+
+```
+The structure of the data frame now looks like this:
+
+```{r echo=FALSE}
+glimpse(euro16bets_per_game, width=30) #
+
+```
+
+The column `tendency` indicates what the player predicted as a winner for that game. Values for `tendency` are `
+`r unique(euro16bets_per_game$tendency)``.
+
+
+
+#### Extract Unique Players
+```{r}
+players <- euro16bets_per_game %>% 
+        select(player_last_name, player_first_name) %>%
+        mutate(player_last_name=str_trim(player_last_name), player_first_name=str_trim(player_first_name)) %>%
+        unique() %>%
+        arrange(player_last_name, player_first_name)
+
+
+
+```
+
+There are `r nrow(players)` players.
+
+#### Read in: list of players who won prize money
+
+```{r}
+
+
+colnames(players_winners) <- players_winners %>% 
+        colnames() %>% 
+        make.names() %>% 
+        tolower()
+
+players_winners <- players_winners %>% 
+        mutate(player_first_name = str_trim(player_first_name),
+               player_last_name  = str_trim(player_last_name)) %>% 
+        rename( "fraction_pct"   = "portion....", "amount_euro"="prize..euro.")
+```
+There are `r nrow(players_winners)` players who got prize money.
+
+#### Join them with players table:
+
+(We made sure by data cleanup that *all* winning entries can be mapped to the players table.)
+
+```{r}
+
+players_winners$is_winner <- TRUE
+
+players <- players %>%
+        left_join(players_winners, 
+                  by = c( "player_last_name", "player_first_name")) %>%
+        mutate(is_winner=! is.na(is_winner)) 
+
+```
+
+Create joint table of players and their bets
+```{r gpl, }
+games_players <- euro16bets_per_game %>%
+        inner_join(euro16games, by=c("game_nr"))
+```
+
+Read in final games scores from `infile3`, as they were played.
+
+```{r}
+# add full names of countries, e.g. POR -> Portugal
+names(euro16games_final) <- c("team_a_long", "team_b_long", "result")
+euro16games_final <- euro16games_final %>%
+        separate(col       = result, sep = ":",
+                 into      = c("team_a_goals", "team_b_goals")) %>%
+        mutate(team_a_goals= as.numeric(team_a_goals),
+               team_b_goals= as.numeric(team_b_goals)) %>%
+        mutate(team_a_name = toupper(str_sub(team_a_long, 1,3)), 
+               team_b_name = toupper(str_sub( team_b_long, 1,3))) %>%
+        select(team_a_long,  team_a_name, team_a_goals, 
+               team_b_goals, team_b_name, team_b_long)
+
+# add draws
+euro16games_final <- euro16games_final %>% 
+        mutate(is_draw = ifelse(team_a_goals == team_b_goals, 
+                                TRUE, FALSE))
+
+glimpse(euro16games_final, width=30)
+```
+
+```{r}
+
+good.tmp    <- unique(c(euro16games$team_a, euro16games$team_b))
+updthis.tmp <-    unique(c(euro16games_final$team_a_name, euro16games_final$team_b_name)) 
+(updthis <- setdiff(updthis.tmp, good.tmp))
+(good <- setdiff(good.tmp, updthis.tmp))
+
+update_euro16games_final <- function(x,y){
+        euro16games_final[euro16games_final$team_a_name == x, "team_a_name"] <<- y
+        euro16games_final[euro16games_final$team_b_name == x, "team_b_name"] <<- y
+} 
+# update in-place
+walk2(updthis, good, update_euro16games_final)
+
+
+# add game_nr and date
+euro16games_final <- euro16games_final %>%
+        inner_join(euro16games, by=c("team_a_name"="team_a", "team_b_name"="team_b")) %>%
+        arrange(desc(game_nr))
+
+# add tendency
+euro16games_final <- euro16games_final %>% 
+        mutate(tendency= ifelse(team_a_goals == team_b_goals, "draw", ifelse(team_a_goals > team_b_goals, "team_a", "team_b")))
+
+num_draws <- euro16games_final %>%
+        filter(is_draw == TRUE) %>%
+        count() %>%
+        as.integer()
+
+        
+glimpse(euro16games_final, width = 50)
+
+```
+
+
+Save results to .RData file, which will be used in [part2](/post/2017/12/soccer-world-cup-bets-part-ii):
+
+```{r outfile, message=FALSE, warning=FALSE, results='hide'}
+see_if(is.writeable(datadir))
+outfile <- file.path(datadir, "gfzock_euro2016_preprocessed.RData")
+
+see_if(is.writeable(outfile))
+save.image(file=outfile)        
+
+
+```
+
+####  End of preprocessing
+
+Continue reading in a second blog post, [part2](/post/2017/12/soccer-world-cup-bets-part-ii). 

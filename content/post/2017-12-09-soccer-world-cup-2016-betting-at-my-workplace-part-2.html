@@ -1,0 +1,620 @@
+---
+title: Soccer World Cup 2016 - Betting At My Workplace - Part 2 
+author: Knut Behrends
+date: '2017-12-09'
+slug: Soccer World Cup Bets, part II
+output: 
+  html_document:
+    toc: true
+    toc_depth: 1
+    css: styles.css
+    fig_caption: yes
+    keep_md: yes
+image: /static/img/football.png
+categories:
+  - blog-post
+tags:
+  - fun
+  - R
+summary: weekend project from Summer 2016
+keywords: ["Personal-Blog", "Fun", "rstats", "Sports-Data", "Soccer", "Kaggle.com"]      
+---
+
+
+
+<div id="soccer-championship-euro-2016---a-weekend-project-from-july-2016" class="section level4">
+<h4>Soccer championship Euro 2016 - A weekend project, from July 2016</h4>
+<p>Continued from a <a href="/post/2017/12/soccer-world-cup-bets-part-i">previous blog post</a>, that explained the data preprocessing steps.</p>
+<blockquote>
+<p>I wrote this in July 2016, to make myself familiar with the R package <code>ggplot2</code>, and other tidyverse packages. This post contains exploratory analysis of an Euro 2016 Betting Game. Predictions were made, just for fun and a small amount of prize money, by a group of players at my workplace. Participants in the betting game were about 300 colleagues, their friends and family members.</p>
+</blockquote>
+<p>Some definition of terms: In this context,</p>
+<ul>
+<li><em>Player</em> means ‘Participant in the Betting Game’, <strong>not</strong> ‘Professional Soccer Player’ in one of the matches played during Euro 2016.<br />
+</li>
+<li><em>Bet</em> means ‘Score’ (in goals, e.g. “Germany-France, 0:2”). The predicted result of a match at Euro 2016.</li>
+<li><em>Prediction</em> means ‘more or less educated guess’ made by some colleague of mine, or one of his/her friends, or family member. It does <strong>not</strong> mean ‘prediction’ in a machine-learning sense (e.g, as a result of fitting a model)</li>
+</ul>
+<p>In 2016 I submitted <a href="https://rpubs.com/knb/euro2016bets">the original version of this post</a> to RPubs.com, the default website to upload to from within the Rstudio IDE, but the RPubs website has evolved to a dump of countless low-quality submissions of student homework, and I want my content at a central place. Therefore, I’ve reposted it here.</p>
+</div>
+<div id="about-the-dataset" class="section level2">
+<h2>About the dataset</h2>
+<p>There were ~300 players predicting scores of the ~50 games during the Euro2016. This means there are <code>300 * 50 = 15000</code> predicions to analyze, but in fact there are only around 13000. This is because many players dropped out of the game, or lost interest during the Euro 2016, which lasted for 30 days. Nearly all players made full predctions for the group stage, but during the Knock-Out Stage of the Euro 2016, there were only brief periods of about 2 to 4 days, when players had to make their bets. Apparently, many people simply missed their deadlines.</p>
+<p>The rules of the betting game are too complicated to explain here. Probably the most important rule is that each successful prediction gets some reward points. Predicting the exact end result gets more points that getting just the tendency (win/draw/loss) right. All players had a set of 10 ‘Joker’ games available, which double the reward points earned. Players were free to assign this ‘doubling’ reward to any upcoming soccer game. Of course people used their favorite teams, and/or those games they were most certain about with respect to the end result.</p>
+</div>
+<div id="data-preparation--see-part-1" class="section level2">
+<h2>Data preparation -See part 1</h2>
+<p>The dataset of the player’s bets/predictions is not public, because there are full names of real people inside. Maybe I’ll show anonymized results of a small part of it at the end of this post. In 2016, I’ve used a little script to screen-scraped the data from the (internal) website, and then I copied it all together into a big csv-file. See <a href="">part 1</a> of this blog post for details. Here I read in everything from an <code>.RData</code>-File, R’s proprietary storage format. This populates our workspace with a lot of precalculated objects. The most important is the <code>euro16_bets_per_game</code> data frame.</p>
+</div>
+<div id="data-analysis" class="section level2">
+<h2>Data analysis</h2>
+<p>Load precalculated objects into global environment:</p>
+<pre class="r"><code>datadir &lt;- &quot;../../data/gfzock/&quot;
+assertthat::see_if(assertthat::is.readable(datadir))</code></pre>
+<pre><code>## [1] TRUE</code></pre>
+<pre class="r"><code>infile &lt;- file.path(datadir, &quot;gfzock_euro2016_preprocessed.RData&quot;)
+assertthat::see_if(assertthat::is.readable(infile))</code></pre>
+<pre><code>## [1] TRUE</code></pre>
+<pre class="r"><code>load(infile)        </code></pre>
+<div id="r-packages-needed" class="section level4">
+<h4>R packages needed</h4>
+<pre class="r"><code>library(tidyr)
+library(dplyr)
+library(lubridate)
+library(purrr)  # functional programming
+library(stringr)
+library(readr)
+library(ggplot2)
+library(ggrepel) # better labelling of datapoints
+library(knitr) 
+library(assertthat)
+theme_set(theme_bw())</code></pre>
+<p>There are 286 players predicting scores for 51 games.</p>
+<p>How many players <em>actually</em> participated over the course of the tournament?</p>
+<p><img src="/post/2017-12-09-soccer-world-cup-2016-betting-at-my-workplace-part-2_files/figure-html/plot1-1.png" width="768" /></p>
+<p>Some players registered with the website, but failed to pay the registration fee in time, thus they were never able to to predict anything.</p>
+<p>There was a bump in participation during the transition from group stage to KO-stage, because, again, many players missed to register their bets before the many KO-stage submission deadlines. Here the deadlines were much stricter than at the beginning of the tournament.</p>
+<p>The plot also shows that many people did not bother to place a bet for the last game, the final.</p>
+<pre class="r"><code>games_players &lt;- euro16bets_per_game %&gt;%
+        inner_join(euro16games, by = c(&quot;game_nr&quot;))
+
+glimpse(games_players, width=30)</code></pre>
+<pre><code>## Observations: 13,474
+## Variables: 11
+## $ player_last_name  &lt;chr&gt; ...
+## $ player_first_name &lt;chr&gt; ...
+## $ team_a_goals      &lt;int&gt; ...
+## $ team_b_goals      &lt;int&gt; ...
+## $ is_joker          &lt;lgl&gt; ...
+## $ game_nr           &lt;int&gt; ...
+## $ tendency          &lt;chr&gt; ...
+## $ team_a            &lt;chr&gt; ...
+## $ team_b            &lt;chr&gt; ...
+## $ game_date         &lt;dttm&gt; ...
+## $ stage             &lt;chr&gt; ...</code></pre>
+</div>
+<div id="home-team-vs-away-team" class="section level3">
+<h3>“Home team” vs “Away Team”</h3>
+<p>Is there a bias of position (“Home team” vs “Away Team”)? Needless to say, during the Euro 2016, <em>all</em> teams were actually ‘Away’ teams, except for the hosting country’s team, France. I’ll just stick to the naming convention, because of it would be awkward to talk about the “first/second” or the “Left/right team”.</p>
+<p><img src="/post/2017-12-09-soccer-world-cup-2016-betting-at-my-workplace-part-2_files/figure-html/density-1.png" width="768" /></p>
+<p>Indeed, the ‘home’ team seems to be preferred by the participants. They think the home teams will, on average, score more goals than the ‘away’ team.</p>
+<div id="visualisation-of-aggregated-scores" class="section level4">
+<h4>Visualisation of aggregated scores</h4>
+<p>The following set of histograms show that the “away” teams (shown in red) have their maximum mouch more often on the left side (near zero goals) than on the right side.</p>
+<p><img src="/post/2017-12-09-soccer-world-cup-2016-betting-at-my-workplace-part-2_files/figure-html/histo1-1.png" width="480" /></p>
+</div>
+<div id="a-better-visualisation" class="section level4">
+<h4>A better visualisation</h4>
+<p>In this array of xy-plots, circles show predicted number of goals, for the respective opponents of each game. The size of circles is proportional to the number of people who claimed that this many goals would occur.</p>
+<p><img src="/post/2017-12-09-soccer-world-cup-2016-betting-at-my-workplace-part-2_files/figure-html/goalscircles-1.png" width="480" /></p>
+<p>These plots above show more clearly the distribution, in particular for the knockout round. It is common that penalty shootouts occur at the end of KO-round games. People have been expecting that.</p>
+</div>
+</div>
+</div>
+<div id="joker-games" class="section level2">
+<h2>‘Joker’ Games</h2>
+<div id="which-games-were-preferred-for-jokers" class="section level3">
+<h3>Which games were preferred for ‘Jokers’?</h3>
+<p>Participants can pick a few ‘Joker games’, doubling the betting scores. Players scoring Jokers can reap huge amounts of reward points, making the leaderboard much more dynamic over the course of the tournament.</p>
+<pre class="r"><code>jokers_top &lt;- games_players %&gt;%
+        
+  filter(is_joker == TRUE) %&gt;%
+  unite(col = &quot;game_name&quot;,team_a, team_b, sep =  &quot;-&quot;) %&gt;% 
+  select(game_name, is_joker) %&gt;%
+  group_by(game_name) %&gt;%
+  summarize(n = n()) </code></pre>
+<pre class="r"><code>jokers_top %&gt;%
+        arrange(n, game_name) %&gt;% 
+ggplot( aes(reorder(game_name, -n),n)) +
+        geom_bar(stat=&quot;identity&quot;, color=&quot;grey&quot;, fill=&quot;skyblue&quot;) +
+        #geom_col() +
+        geom_text(aes(label =  n), vjust = &quot;inward&quot;, size=2.5) +
+        theme(axis.text.y = element_text(size=10)) +
+        theme(axis.text.x = element_text(size=8)) +
+        xlab(&quot;Euro 2016 Game&quot;) +
+        ylab(&quot;Count/Frequency (Picked as Joker n times)&quot;) +
+        coord_flip() +
+        ggtitle(&quot;Most popular soccer matches for &#39;Joker&#39; bets&quot;,
+                subtitle = &quot;Most popular choices are at the bottom of the figure&quot;)</code></pre>
+<p><img src="/post/2017-12-09-soccer-world-cup-2016-betting-at-my-workplace-part-2_files/figure-html/unnamed-chunk-6-1.png" width="480" /></p>
+<p>Of course, Germany’s games (from group stage as well as K.O. stage) were preferred by the players. Additionally player apparently prefer teams participating in the quarter- and semi-finals. Choices to place joker bets for KO-round games are limited. All participants have to pick some of these. Therefore, I guess, Portugal’s games stand out - people saw it as the favourite for the semifinal game Portugal-Wales.</p>
+<p>However, games from early in the tournament (FRA-ROU, FRA-ALB) were also picked relatively often.</p>
+<p>Surprisingly, games of the former Euro 2012 champion, Spain, were not particularly popular as ‘joker’ games. Maybe the community didn’t expect them to win clearly. Spain had tough competitors, (CZE, TUR, CRO).</p>
+</div>
+</div>
+<div id="winning-players-of-the-betting-game" class="section level2">
+<h2>Winning Players of the betting game</h2>
+<div id="which-players-most-often-bet-for-draws" class="section level4">
+<h4>Which players most often bet for draws?</h4>
+<pre class="r"><code>players_prefer_draw &lt;- games_players %&gt;%
+        filter(team_a_goals == team_b_goals) %&gt;%
+        select(player_last_name, player_first_name, game_nr) %&gt;%
+        group_by(player_last_name, player_first_name) %&gt;%
+        count(sort = TRUE) 
+
+n_draw_median &lt;- median(players_prefer_draw$n)</code></pre>
+<p>There were 36 matches in the group phase of the Euro 2016. Of these 11 (31%) ended in a draw. (There were 51 matches in total).</p>
+<p>The median value for “number of matches predicted as draw” is n=6. Few people (n=40) have predicted at least 11 draws, though:</p>
+</div>
+<div id="is-predicting-a-lot-of-draws-a-winning-strategy" class="section level4">
+<h4>Is ‘predicting a lot of draws’ a winning strategy?</h4>
+<p>Yes. Of the 36 prize money winners, n=30 (83%) have predicted more than the median number of draws (6).</p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">last_name</th>
+<th align="left">first_name</th>
+<th align="right">n_draws_pred</th>
+<th align="right">money_rank</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">E*</td>
+<td align="left">M*****</td>
+<td align="right">15</td>
+<td align="right">14</td>
+</tr>
+<tr class="even">
+<td align="left">M********</td>
+<td align="left">J****</td>
+<td align="right">14</td>
+<td align="right">19</td>
+</tr>
+<tr class="odd">
+<td align="left">N*****</td>
+<td align="left">D**</td>
+<td align="right">14</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">N*****</td>
+<td align="left">V**************</td>
+<td align="right">14</td>
+<td align="right">3</td>
+</tr>
+<tr class="odd">
+<td align="left">M*****</td>
+<td align="left">F******</td>
+<td align="right">13</td>
+<td align="right">30</td>
+</tr>
+<tr class="even">
+<td align="left">N*****</td>
+<td align="left">V********</td>
+<td align="right">13</td>
+<td align="right">21</td>
+</tr>
+<tr class="odd">
+<td align="left">K***</td>
+<td align="left">D*****</td>
+<td align="right">12</td>
+<td align="right">8</td>
+</tr>
+<tr class="even">
+<td align="left">K*****</td>
+<td align="left">R******</td>
+<td align="right">12</td>
+<td align="right">10</td>
+</tr>
+<tr class="odd">
+<td align="left">G******</td>
+<td align="left">A******</td>
+<td align="right">11</td>
+<td align="right">19</td>
+</tr>
+<tr class="even">
+<td align="left">M***</td>
+<td align="left">C********</td>
+<td align="right">11</td>
+<td align="right">30</td>
+</tr>
+<tr class="odd">
+<td align="left">B*******</td>
+<td align="left">T*****</td>
+<td align="right">10</td>
+<td align="right">17</td>
+</tr>
+<tr class="even">
+<td align="left">K*****</td>
+<td align="left">F****</td>
+<td align="right">10</td>
+<td align="right">17</td>
+</tr>
+<tr class="odd">
+<td align="left">R****</td>
+<td align="left">T******</td>
+<td align="right">10</td>
+<td align="right">15</td>
+</tr>
+<tr class="even">
+<td align="left">S***********</td>
+<td align="left">A*****</td>
+<td align="right">10</td>
+<td align="right">30</td>
+</tr>
+<tr class="odd">
+<td align="left">U*****</td>
+<td align="left">K******</td>
+<td align="right">10</td>
+<td align="right">30</td>
+</tr>
+<tr class="even">
+<td align="left">B*********</td>
+<td align="left">F****</td>
+<td align="right">9</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">F*****</td>
+<td align="left">A****</td>
+<td align="right">9</td>
+<td align="right">4</td>
+</tr>
+<tr class="even">
+<td align="left">G*</td>
+<td align="left">H****</td>
+<td align="right">9</td>
+<td align="right">28</td>
+</tr>
+<tr class="odd">
+<td align="left">H****</td>
+<td align="left">D***</td>
+<td align="right">9</td>
+<td align="right">30</td>
+</tr>
+<tr class="even">
+<td align="left">K****</td>
+<td align="left">M*******</td>
+<td align="right">9</td>
+<td align="right">23</td>
+</tr>
+<tr class="odd">
+<td align="left">P***</td>
+<td align="left">S*******</td>
+<td align="right">9</td>
+<td align="right">11</td>
+</tr>
+<tr class="even">
+<td align="left">R****</td>
+<td align="left">D*****</td>
+<td align="right">9</td>
+<td align="right">30</td>
+</tr>
+<tr class="odd">
+<td align="left">S******</td>
+<td align="left">L****</td>
+<td align="right">9</td>
+<td align="right">7</td>
+</tr>
+<tr class="even">
+<td align="left">W********</td>
+<td align="left">I***</td>
+<td align="right">9</td>
+<td align="right">22</td>
+</tr>
+<tr class="odd">
+<td align="left">E*********</td>
+<td align="left">G***</td>
+<td align="right">8</td>
+<td align="right">23</td>
+</tr>
+<tr class="even">
+<td align="left">B*********</td>
+<td align="left">E***</td>
+<td align="right">7</td>
+<td align="right">23</td>
+</tr>
+<tr class="odd">
+<td align="left">K*******</td>
+<td align="left">F****</td>
+<td align="right">7</td>
+<td align="right">23</td>
+</tr>
+<tr class="even">
+<td align="left">L*******</td>
+<td align="left">D****</td>
+<td align="right">7</td>
+<td align="right">5</td>
+</tr>
+<tr class="odd">
+<td align="left">M****</td>
+<td align="left">K******</td>
+<td align="right">7</td>
+<td align="right">11</td>
+</tr>
+<tr class="even">
+<td align="left">S**********</td>
+<td align="left">B*******</td>
+<td align="right">7</td>
+<td align="right">5</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div id="detailed-analysis-of-game-scores." class="section level2">
+<h2>Detailed analysis of game scores.</h2>
+<p>Which games where predicted successfully?</p>
+<p>There were 1618 games were predicted correctly by these many unique players. Success rate: 1618/13474 = 12%</p>
+<div id="which-game-scores-did-nobody-predict-correctly" class="section level4">
+<h4>Which game scores did nobody predict correctly?</h4>
+<table>
+<thead>
+<tr class="header">
+<th align="right">game_nr</th>
+<th align="left">team_a_name</th>
+<th align="left">team_b_name</th>
+<th align="left">score</th>
+<th align="left">is_draw</th>
+<th align="right">corr_pred_by</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">48</td>
+<td align="left">FRA</td>
+<td align="left">ISL</td>
+<td align="left">(5:2)</td>
+<td align="left"></td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="right">42</td>
+<td align="left">HUN</td>
+<td align="left">BEL</td>
+<td align="left">(0:4)</td>
+<td align="left"></td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="right">33</td>
+<td align="left">HUN</td>
+<td align="left">POR</td>
+<td align="left">(3:3)</td>
+<td align="left">draw</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="right">28</td>
+<td align="left">RUS</td>
+<td align="left">WAL</td>
+<td align="left">(0:3)</td>
+<td align="left"></td>
+<td align="right">0</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="what-about-getting-the-tendency-right" class="section level4">
+<h4>What about getting the ‘tendency’ right?</h4>
+<p>Most accurately predicted tendencies</p>
+<table>
+<thead>
+<tr class="header">
+<th align="right">#</th>
+<th align="left">Team A</th>
+<th align="left">Team B</th>
+<th align="left">Score</th>
+<th align="left">Draw</th>
+<th align="right">Tendency</th>
+<th align="right">Correct</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">15</td>
+<td align="left">FRA</td>
+<td align="left">ALB</td>
+<td align="left">(2:0)</td>
+<td align="left"></td>
+<td align="right">275</td>
+<td align="right">118</td>
+</tr>
+<tr class="even">
+<td align="right">1</td>
+<td align="left">FRA</td>
+<td align="left">ROU</td>
+<td align="left">(2:1)</td>
+<td align="left"></td>
+<td align="right">265</td>
+<td align="right">49</td>
+</tr>
+<tr class="odd">
+<td align="right">7</td>
+<td align="left">GER</td>
+<td align="left">UKR</td>
+<td align="left">(2:0)</td>
+<td align="left"></td>
+<td align="right">264</td>
+<td align="right">88</td>
+</tr>
+<tr class="even">
+<td align="right">29</td>
+<td align="left">NIR</td>
+<td align="left">GER</td>
+<td align="left">(0:1)</td>
+<td align="left"></td>
+<td align="right">262</td>
+<td align="right">29</td>
+</tr>
+<tr class="odd">
+<td align="right">21</td>
+<td align="left">ESP</td>
+<td align="left">TUR</td>
+<td align="left">(3:0)</td>
+<td align="left"></td>
+<td align="right">249</td>
+<td align="right">18</td>
+</tr>
+</tbody>
+</table>
+<p>Least accurately predicted tendencies</p>
+<table>
+<thead>
+<tr class="header">
+<th align="right">#</th>
+<th align="left">Team A</th>
+<th align="left">Team B</th>
+<th align="left">Score</th>
+<th align="left">Draw</th>
+<th align="right">Tendency</th>
+<th align="right">Correct</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">17</td>
+<td align="left">UKR</td>
+<td align="left">NIR</td>
+<td align="left">(0:2)</td>
+<td align="left"></td>
+<td align="right">33</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="right">11</td>
+<td align="left">AUT</td>
+<td align="left">HUN</td>
+<td align="left">(0:2)</td>
+<td align="left"></td>
+<td align="right">30</td>
+<td align="right">3</td>
+</tr>
+<tr class="odd">
+<td align="right">12</td>
+<td align="left">POR</td>
+<td align="left">ISL</td>
+<td align="left">(1:1)</td>
+<td align="left">draw</td>
+<td align="right">23</td>
+<td align="right">17</td>
+</tr>
+<tr class="even">
+<td align="right">31</td>
+<td align="left">CRO</td>
+<td align="left">ESP</td>
+<td align="left">(2:1)</td>
+<td align="left"></td>
+<td align="right">10</td>
+<td align="right">7</td>
+</tr>
+<tr class="odd">
+<td align="right">36</td>
+<td align="left">ITA</td>
+<td align="left">IRL</td>
+<td align="left">(0:1)</td>
+<td align="left"></td>
+<td align="right">6</td>
+<td align="right">2</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="plot-all-of-them-together" class="section level4">
+<h4>Plot all of them together</h4>
+<p>Note that in the first plot below, the prediction frequencies in columns ‘Tendency’ and ‘Correct’ have been ranked twice, independently of each other. In the second plot below, the prediction freqencies from rows on the table above plot on vertical lines in the plot.</p>
+<p><img src="/post/2017-12-09-soccer-world-cup-2016-betting-at-my-workplace-part-2_files/figure-html/tend1-1.png" width="768" /></p>
+<p><img src="/post/2017-12-09-soccer-world-cup-2016-betting-at-my-workplace-part-2_files/figure-html/blackcirc-1.png" width="768" /></p>
+</div>
+<div id="closing-words-about-surprising-games" class="section level4">
+<h4>Closing words about surprising games</h4>
+<p>In the plot above, a few games (those closest to the green line) are marked with a black circle. This table shows these marked games. They were surprising: Few participants got the tendency right.</p>
+<table>
+<thead>
+<tr class="header">
+<th align="right">#</th>
+<th align="left">Team A</th>
+<th align="left">Team B</th>
+<th align="left">Score</th>
+<th align="left">Draw</th>
+<th align="right">Tendency</th>
+<th align="right">Correct</th>
+<th align="right">Pos</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">14</td>
+<td align="left">ROU</td>
+<td align="left">SUI</td>
+<td align="left">(1:1)</td>
+<td align="left">draw</td>
+<td align="right">82</td>
+<td align="right">73</td>
+<td align="right">8</td>
+</tr>
+<tr class="even">
+<td align="right">4</td>
+<td align="left">ENG</td>
+<td align="left">RUS</td>
+<td align="left">(1:1)</td>
+<td align="left">draw</td>
+<td align="right">41</td>
+<td align="right">29</td>
+<td align="right">22</td>
+</tr>
+<tr class="odd">
+<td align="right">26</td>
+<td align="left">ROU</td>
+<td align="left">ALB</td>
+<td align="left">(0:1)</td>
+<td align="left"></td>
+<td align="right">34</td>
+<td align="right">17</td>
+<td align="right">28</td>
+</tr>
+<tr class="even">
+<td align="right">12</td>
+<td align="left">POR</td>
+<td align="left">ISL</td>
+<td align="left">(1:1)</td>
+<td align="left">draw</td>
+<td align="right">23</td>
+<td align="right">17</td>
+<td align="right">29</td>
+</tr>
+<tr class="odd">
+<td align="right">31</td>
+<td align="left">CRO</td>
+<td align="left">ESP</td>
+<td align="left">(2:1)</td>
+<td align="left"></td>
+<td align="right">10</td>
+<td align="right">7</td>
+<td align="right">38</td>
+</tr>
+<tr class="even">
+<td align="right">36</td>
+<td align="left">ITA</td>
+<td align="left">IRL</td>
+<td align="left">(0:1)</td>
+<td align="left"></td>
+<td align="right">6</td>
+<td align="right">2</td>
+<td align="right">45</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>

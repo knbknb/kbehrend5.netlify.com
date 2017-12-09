@@ -7,10 +7,30 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>&amp;copy;2017 Knut Behrends</copyright>
-    <lastBuildDate>Mon, 04 Dec 2017 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 09 Dec 2017 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/tags/fun/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Soccer World Cup 2016 - Betting At My Workplace - Part 2</title>
+      <link>/post/2017/12/soccer-world-cup-bets-part-ii/</link>
+      <pubDate>Sat, 09 Dec 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2017/12/soccer-world-cup-bets-part-ii/</guid>
+      <description>Soccer championship Euro 2016 - A weekend project, from July 2016 Continued from a previous blog post, that explained the data preprocessing steps.
+ I wrote this in July 2016, to make myself familiar with the R package ggplot2, and other tidyverse packages. This post contains exploratory analysis of an Euro 2016 Betting Game. Predictions were made, just for fun and a small amount of prize money, by a group of players at my workplace.</description>
+    </item>
+    
+    <item>
+      <title>Soccer World Cup 2016 - Betting At My Workplace - Part I</title>
+      <link>/post/2017/12/soccer-world-cup-bets-part-i/</link>
+      <pubDate>Sat, 09 Dec 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2017/12/soccer-world-cup-bets-part-i/</guid>
+      <description>Soccer championship Euro 2016 - A weekend project, from July 2016 This is the data-preprocessing part of a blog post that has most of its visual content in a second part.
+Part 1: preprocessing the data  I wrote this in July 2016, to make myself familiar with the R packages ggplot2 and other tidyverse packages. Exploratory Analysis of an Euro 2016 Betting Game. Predictions were made, just for fun (and a small amount of prize money), by a group of players (colleagues, their friends and family members) from my workplace in Germany.</description>
+    </item>
     
     <item>
       <title>Body Height and BMI in European Soccer Players over the years 2008-2016</title>
