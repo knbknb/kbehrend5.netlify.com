@@ -5,7 +5,7 @@ date: '2017-12-09'
 slug: Soccer World Cup Bets, part II
 output: 
   html_document:
-    keep_md: no          
+    keep_md: no
 image: img/portfolio/figure-blackcirc-1-15pct.png
 categories:
   - blog-post
@@ -13,7 +13,7 @@ tags:
   - fun
   - R
 url: '/post/2017/12/soccer-world-cup-bets-part-ii/'  
-keywords: ["Personal-Blog", "Fun", "rstats", "Sports-Data", "Soccer", "Euro-2016"]      
+keywords: ["Personal-Blog", "Recycling", "Fun", "rstats", "Sports-Data", "Soccer", "Euro-2016"]      
 ---
 
 A weekend project from Summer 2016
