@@ -114,7 +114,7 @@ theme_set(theme_bw())</code></pre>
 <h2>‘Joker’ Games</h2>
 <div id="which-games-were-preferred-for-jokers" class="section level3">
 <h3>Which games were preferred for ‘Jokers’?</h3>
-<p>Participants can pick a few ‘Joker games’, doubling the betting scores. Players scoring Jokers can reap huge amounts of reward points, making the leaderboard much more dynamic over the course of the tournament.</p>
+<p>Participants can pick a few ‘Joker games’, doubling the betting scores. Players scoring with Jokers can earn huge amounts of reward points, making the leaderboard much more dynamic over the course of the tournament.</p>
 <pre class="r"><code>jokers_top %&gt;%
         arrange(n, game_name) %&gt;% 
 ggplot( aes(reorder(game_name, -n),n)) +
@@ -128,228 +128,253 @@ ggplot( aes(reorder(game_name, -n),n)) +
         ggtitle(&quot;Most popular soccer matches for &#39;Joker&#39; bets&quot;,
                 subtitle = &quot;Most popular choices are at the bottom of the figure&quot;)</code></pre>
 <p><img src="/post/2017-12-09-soccer-world-cup-2016-betting-at-my-workplace-part-2_files/figure-html/unnamed-chunk-5-1.png" width="480" /></p>
-<p>Of course, Germany’s games (from group stage as well as K.O. stage) were preferred by the players. Additionally player apparently prefer teams participating in the quarter- and semi-finals. Choices to place joker bets for KO-round games are limited. All participants have to pick some of these. Therefore, I guess, Portugal’s games stand out - people saw it as the favourite for the semifinal game Portugal-Wales.</p>
+<p>Of course, Germany’s games (from group stage as well as K.O. stage) were preferred by the players. Additionally players apparently prefer assign Jokers on teams participating in the quarter- and semi-finals. However, choices to place joker bets for KO-round games are limited. All participants have to pick some of these. Therefore, I guess, Portugal’s games stand out - people saw it as the clear favourite for the semifinal game POR-WAL (Wales).</p>
 <p>However, games from early in the tournament (FRA-ROU, FRA-ALB) were also picked relatively often.</p>
 <p>Surprisingly, games of the former Euro 2012 champion, Spain, were not particularly popular as ‘joker’ games. Maybe the community didn’t expect them to win clearly. Spain had tough competitors (CZE, TUR, CRO).</p>
 </div>
 </div>
+<div id="a-short-note-on-draws" class="section level2">
+<h2>A short note on draws</h2>
+<p>There were 36 matches in the group phase of the Euro 2016. Of these 11 (31%) ended in a draw. (There were 51 matches in total).</p>
+<p><img src="/post/2017-12-09-soccer-world-cup-2016-betting-at-my-workplace-part-2_files/figure-html/unnamed-chunk-7-1.png" width="768" /></p>
+<p>The median value for “number of matches predicted as draw” is n=6. Few people (n=40) have predicted at least 11 draws, though.</p>
+</div>
 <div id="winning-players-of-the-betting-game" class="section level2">
 <h2>Winning Players of the betting game</h2>
-<div id="which-players-most-often-bet-for-draws" class="section level4">
-<h4>Which players most often bet for draws?</h4>
-<pre class="r"><code>players_prefer_draw &lt;- games_players %&gt;%
-        filter(team_a_goals == team_b_goals) %&gt;%
-        select(player_last_name, player_first_name, game_nr) %&gt;%
-        group_by(player_last_name, player_first_name) %&gt;%
-        count(sort = TRUE) 
-
-n_draw_median &lt;- median(players_prefer_draw$n)</code></pre>
-<p>There were 36 matches in the group phase of the Euro 2016. Of these 11 (31%) ended in a draw. (There were 51 matches in total).</p>
-<p>The median value for “number of matches predicted as draw” is n=6. Few people (n=40) have predicted at least 11 draws, though:</p>
-</div>
 <div id="is-predicting-a-lot-of-draws-a-winning-strategy" class="section level4">
 <h4>Is ‘predicting a lot of draws’ a winning strategy?</h4>
 <p>Yes. Of the 36 prize money winners, n=30 (83%) have predicted more than the median number of draws (6).</p>
 <table>
 <thead>
 <tr class="header">
-<th align="left">last_name</th>
-<th align="left">first_name</th>
-<th align="right">n_draws_pred</th>
-<th align="right">money_rank</th>
+<th></th>
+<th align="left">Last Name</th>
+<th align="left">First Name</th>
+<th align="center"># Draws predicted</th>
+<th align="center">Money Rank</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
+<td>1</td>
 <td align="left">E*</td>
 <td align="left">M*****</td>
-<td align="right">15</td>
-<td align="right">14</td>
+<td align="center">15</td>
+<td align="center">14</td>
 </tr>
 <tr class="even">
+<td>2</td>
 <td align="left">M********</td>
 <td align="left">J****</td>
-<td align="right">14</td>
-<td align="right">19</td>
+<td align="center">14</td>
+<td align="center">19</td>
 </tr>
 <tr class="odd">
+<td>3</td>
 <td align="left">N*****</td>
 <td align="left">D**</td>
-<td align="right">14</td>
-<td align="right">2</td>
+<td align="center">14</td>
+<td align="center">2</td>
 </tr>
 <tr class="even">
+<td>4</td>
 <td align="left">N*****</td>
 <td align="left">V**************</td>
-<td align="right">14</td>
-<td align="right">3</td>
+<td align="center">14</td>
+<td align="center">3</td>
 </tr>
 <tr class="odd">
+<td>5</td>
 <td align="left">M*****</td>
 <td align="left">F******</td>
-<td align="right">13</td>
-<td align="right">30</td>
+<td align="center">13</td>
+<td align="center">30</td>
 </tr>
 <tr class="even">
+<td>6</td>
 <td align="left">N*****</td>
 <td align="left">V********</td>
-<td align="right">13</td>
-<td align="right">21</td>
+<td align="center">13</td>
+<td align="center">21</td>
 </tr>
 <tr class="odd">
+<td>7</td>
 <td align="left">K***</td>
 <td align="left">D*****</td>
-<td align="right">12</td>
-<td align="right">8</td>
+<td align="center">12</td>
+<td align="center">8</td>
 </tr>
 <tr class="even">
+<td>8</td>
 <td align="left">K*****</td>
 <td align="left">R******</td>
-<td align="right">12</td>
-<td align="right">10</td>
+<td align="center">12</td>
+<td align="center">10</td>
 </tr>
 <tr class="odd">
+<td>9</td>
 <td align="left">G******</td>
 <td align="left">A******</td>
-<td align="right">11</td>
-<td align="right">19</td>
+<td align="center">11</td>
+<td align="center">19</td>
 </tr>
 <tr class="even">
+<td>10</td>
 <td align="left">M***</td>
 <td align="left">C********</td>
-<td align="right">11</td>
-<td align="right">30</td>
+<td align="center">11</td>
+<td align="center">30</td>
 </tr>
 <tr class="odd">
+<td>11</td>
 <td align="left">B*******</td>
 <td align="left">T*****</td>
-<td align="right">10</td>
-<td align="right">17</td>
+<td align="center">10</td>
+<td align="center">17</td>
 </tr>
 <tr class="even">
+<td>12</td>
 <td align="left">K*****</td>
 <td align="left">F****</td>
-<td align="right">10</td>
-<td align="right">17</td>
+<td align="center">10</td>
+<td align="center">17</td>
 </tr>
 <tr class="odd">
+<td>13</td>
 <td align="left">R****</td>
 <td align="left">T******</td>
-<td align="right">10</td>
-<td align="right">15</td>
+<td align="center">10</td>
+<td align="center">15</td>
 </tr>
 <tr class="even">
+<td>14</td>
 <td align="left">S***********</td>
 <td align="left">A*****</td>
-<td align="right">10</td>
-<td align="right">30</td>
+<td align="center">10</td>
+<td align="center">30</td>
 </tr>
 <tr class="odd">
+<td>15</td>
 <td align="left">U*****</td>
 <td align="left">K******</td>
-<td align="right">10</td>
-<td align="right">30</td>
+<td align="center">10</td>
+<td align="center">30</td>
 </tr>
 <tr class="even">
+<td>16</td>
 <td align="left">B*********</td>
 <td align="left">F****</td>
-<td align="right">9</td>
-<td align="right">1</td>
+<td align="center">9</td>
+<td align="center">1</td>
 </tr>
 <tr class="odd">
+<td>17</td>
 <td align="left">F*****</td>
 <td align="left">A****</td>
-<td align="right">9</td>
-<td align="right">4</td>
+<td align="center">9</td>
+<td align="center">4</td>
 </tr>
 <tr class="even">
+<td>18</td>
 <td align="left">G*</td>
 <td align="left">H****</td>
-<td align="right">9</td>
-<td align="right">28</td>
+<td align="center">9</td>
+<td align="center">28</td>
 </tr>
 <tr class="odd">
+<td>19</td>
 <td align="left">H****</td>
 <td align="left">D***</td>
-<td align="right">9</td>
-<td align="right">30</td>
+<td align="center">9</td>
+<td align="center">30</td>
 </tr>
 <tr class="even">
+<td>20</td>
 <td align="left">K****</td>
 <td align="left">M*******</td>
-<td align="right">9</td>
-<td align="right">23</td>
+<td align="center">9</td>
+<td align="center">23</td>
 </tr>
 <tr class="odd">
+<td>21</td>
 <td align="left">P***</td>
 <td align="left">S*******</td>
-<td align="right">9</td>
-<td align="right">11</td>
+<td align="center">9</td>
+<td align="center">11</td>
 </tr>
 <tr class="even">
+<td>22</td>
 <td align="left">R****</td>
 <td align="left">D*****</td>
-<td align="right">9</td>
-<td align="right">30</td>
+<td align="center">9</td>
+<td align="center">30</td>
 </tr>
 <tr class="odd">
+<td>23</td>
 <td align="left">S******</td>
 <td align="left">L****</td>
-<td align="right">9</td>
-<td align="right">7</td>
+<td align="center">9</td>
+<td align="center">7</td>
 </tr>
 <tr class="even">
+<td>24</td>
 <td align="left">W********</td>
 <td align="left">I***</td>
-<td align="right">9</td>
-<td align="right">22</td>
+<td align="center">9</td>
+<td align="center">22</td>
 </tr>
 <tr class="odd">
+<td>25</td>
 <td align="left">E*********</td>
 <td align="left">G***</td>
-<td align="right">8</td>
-<td align="right">23</td>
+<td align="center">8</td>
+<td align="center">23</td>
 </tr>
 <tr class="even">
+<td>26</td>
 <td align="left">B*********</td>
 <td align="left">E***</td>
-<td align="right">7</td>
-<td align="right">23</td>
+<td align="center">7</td>
+<td align="center">23</td>
 </tr>
 <tr class="odd">
+<td>27</td>
 <td align="left">K*******</td>
 <td align="left">F****</td>
-<td align="right">7</td>
-<td align="right">23</td>
+<td align="center">7</td>
+<td align="center">23</td>
 </tr>
 <tr class="even">
+<td>28</td>
 <td align="left">L*******</td>
 <td align="left">D****</td>
-<td align="right">7</td>
-<td align="right">5</td>
+<td align="center">7</td>
+<td align="center">5</td>
 </tr>
 <tr class="odd">
+<td>29</td>
 <td align="left">M****</td>
 <td align="left">K******</td>
-<td align="right">7</td>
-<td align="right">11</td>
+<td align="center">7</td>
+<td align="center">11</td>
 </tr>
 <tr class="even">
+<td>30</td>
 <td align="left">S**********</td>
 <td align="left">B*******</td>
-<td align="right">7</td>
-<td align="right">5</td>
+<td align="center">7</td>
+<td align="center">5</td>
 </tr>
 </tbody>
 </table>
 </div>
 </div>
-<div id="detailed-analysis-of-game-scores." class="section level2">
-<h2>Detailed analysis of game scores.</h2>
+<div id="detailed-analysis-of-game-scores" class="section level2">
+<h2>Detailed analysis of game scores</h2>
 <p>Which games where predicted successfully?</p>
 <p>There were 1618 games were predicted correctly by these many unique players. Success rate: 1618/13474 = 12%</p>
 <div id="which-game-scores-did-nobody-predict-correctly" class="section level4">
-<h4>Which game scores did nobody predict correctly?</h4>
+<h4>Which game scores did <em>nobody</em> predict correctly?</h4>
 <table>
 <thead>
 <tr class="header">
@@ -405,7 +430,7 @@ n_draw_median &lt;- median(players_prefer_draw$n)</code></pre>
 </div>
 <div id="what-about-getting-the-tendency-right" class="section level4">
 <h4>What about getting the ‘tendency’ right?</h4>
-<p>Most accurately predicted ‘tendencies’. The two rightmost columns indicate the number of people who got it right.</p>
+<p>This table shows the most accurately predicted ‘tendencies’. The two rightmost columns indicate the number of people who got it right.</p>
 <table>
 <thead>
 <tr class="header">
@@ -466,7 +491,7 @@ n_draw_median &lt;- median(players_prefer_draw$n)</code></pre>
 </tr>
 </tbody>
 </table>
-<p>Least accurately predicted ‘tendencies’. The two rightmost columns indicate the number of people who got it right.</p>
+<p>This table shows the least accurately predicted ‘tendencies’(is win / is draw). The two rightmost columns indicate the number of people who got it right.</p>
 <table>
 <thead>
 <tr class="header">
@@ -531,7 +556,6 @@ n_draw_median &lt;- median(players_prefer_draw$n)</code></pre>
 <div id="plot-all-of-them-together" class="section level4">
 <h4>Plot all of them together</h4>
 <p>In the plot below, the matches from above plot on in the lower right corner of plot, they were ‘less predictable’ by the wisdom of the participants.</p>
-<p><img src="/post/2017-12-09-soccer-world-cup-2016-betting-at-my-workplace-part-2_files/figure-html/tend1-1.png" width="768" /></p>
 <p>Surprisingly, Germany-Poland (0:0) is also in the region of ‘low predictability’.</p>
 <p><img src="/post/2017-12-09-soccer-world-cup-2016-betting-at-my-workplace-part-2_files/figure-html/blackcirc-1.png" width="768" /></p>
 </div>

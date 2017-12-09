@@ -315,7 +315,7 @@ players <- players %>%
 ```
 
 Create joint table of players and their bets
-```{r gpl, }
+```{r gpl}
 games_players <- euro16bets_per_game %>%
         inner_join(euro16games, by=c("game_nr"))
 ```

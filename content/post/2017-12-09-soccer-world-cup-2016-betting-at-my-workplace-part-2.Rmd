@@ -250,7 +250,7 @@ People have been expecting that.
 
 ### Which games were preferred for 'Jokers'?
 
-Participants can pick a few 'Joker games', doubling the betting scores. Players scoring Jokers can reap huge amounts of reward points, making the leaderboard much more dynamic over the course of the tournament. 
+Participants can pick a few 'Joker games', doubling the betting scores. Players scoring with Jokers can earn huge amounts of reward points, making the leaderboard much more dynamic over the course of the tournament. 
 
 ```{r jok, eval=TRUE, echo=FALSE}
 
@@ -280,30 +280,54 @@ ggplot( aes(reorder(game_name, -n),n)) +
         
 ```
 
-Of course,  Germany's games (from group stage as well as K.O. stage) were preferred by the players. Additionally player apparently prefer teams participating in the quarter- and semi-finals. Choices to place joker bets for KO-round games are limited. All participants have to pick some of these. Therefore, I guess, Portugal's games stand out - people saw it as the favourite for the semifinal game Portugal-Wales.
+Of course,  Germany's games (from group stage as well as K.O. stage) were preferred by the players. Additionally players apparently prefer assign Jokers on teams participating in the quarter- and semi-finals. However, choices to place joker bets for KO-round games are limited. All participants have to pick some of these. Therefore, I guess, Portugal's games stand out - people saw it as the clear favourite for the semifinal game POR-WAL (Wales).
 
 However, games from early in the tournament (FRA-ROU, FRA-ALB) were also picked relatively often.
 
 Surprisingly, games of the former Euro 2012 champion, Spain, were not particularly popular as 'joker' games. Maybe the community didn't expect them to win clearly. Spain had tough competitors (CZE, TUR, CRO).
 
-## Winning Players of the betting game
+## A short note on draws
 
-#### Which players most often bet for draws?
+There were `r nrow(euro16games) - (8+4+2+1)` matches in the group phase of the Euro 2016. Of these `r num_draws` (`r round(num_draws/(nrow(euro16games) - (8+4+2+1)) * 100, 0)`%)  ended in a draw. (There were `r nrow(euro16games)` matches in total).
 
-```{r}
+
+```{r echo=FALSE}
 players_prefer_draw <- games_players %>%
         filter(team_a_goals == team_b_goals) %>%
         select(player_last_name, player_first_name, game_nr) %>%
         group_by(player_last_name, player_first_name) %>%
-        count(sort = TRUE) 
+        count(sort = TRUE) %>% 
+        ungroup()
 
 n_draw_median <- median(players_prefer_draw$n)
 ```
 
-There were `r nrow(euro16games) - (8+4+2+1)` matches in the group phase of the Euro 2016. Of these `r num_draws` (`r round(num_draws/(nrow(euro16games) - (8+4+2+1)) * 100, 0)`%)  ended in a draw. (There were `r nrow(euro16games)` matches in total).
+
+
+```{r fig.width=8, echo=FALSE}
+
+ggplot( players_prefer_draw, aes(n)) + 
+        geom_histogram(binwidth=1, fill="skyblue") +
+        xlab("Number of draws predicted") +
+        ylab("Number of people [Count]") +
+        geom_vline(xintercept=n_draw_median, color="darkgrey") +
+        geom_vline(xintercept=num_draws, color="blue") +
+        annotate(geom = "text", x = 15, y = 30, 
+           label = sprintf("Actual number of draws at Euro 2016: %s", num_draws), 
+           color="blue") +
+        annotate(geom = "text", x = 4, y = 32, 
+           label = sprintf("Median: %s", n_draw_median), 
+           color="darkgrey") +
+        ggtitle("Histogram of number of draws predicted",
+                subtitle = "Only feasible for the games of the group phase")
+
+```
+
 
 The median value for "number of matches predicted as draw" is n=`r n_draw_median`. 
-Few people (n=`r nmax <- num_draws; nrow(players_prefer_draw %>% filter(n >= nmax))`) have predicted at least `r nmax` draws, though:
+Few people (n=`r nmax <- num_draws; nrow(players_prefer_draw %>% filter(n >= nmax))`) have predicted at least `r nmax` draws, though.
+
+## Winning Players of the betting game
 
 
 #### Is 'predicting a lot of draws' a winning strategy?
@@ -333,11 +357,13 @@ players_prefer_draw_winners <- players_prefer_draw %>%
 Yes. Of the `r nrow(players_winners)` prize money winners, n=`r nrow(players_prefer_draw_winners)` (`r round( nrow(players_prefer_draw_winners)/nrow(players_winners), 2) * 100`%) have predicted more than the median number of draws (`r n_draw_median`).
 
 ```{r echo=FALSE}
-kable(players_prefer_draw_winners %>% data.frame() %>% select(5,6,3,4))
+cnm <- c("Last Name", "First Name", "# Draws predicted", "Money Rank")
+kable(players_prefer_draw_winners %>% data.frame() %>% select(5,6,3,4), 
+      col.names = cnm, row.names=1, align = "llcc")
 ```
 
 
-## Detailed analysis of game scores.
+## Detailed analysis of game scores
 
 Which games where predicted successfully?
 
@@ -359,7 +385,7 @@ corr_pred_by <- euro16bets7  %>%
 There were  `r cs <- sum(corr_pred_by$corr_pred_by); cs` games were predicted correctly by these many unique players. Success rate: `r tot <- nrow(euro16bets_per_game); cs`/`r tot` = `r round(cs/tot,3) * 100`% 
 
 
-#### Which game scores did nobody predict correctly?
+#### Which game scores did *nobody* predict correctly?
 
 ```{r surprise, echo=FALSE, warning=FALSE}
 nm <- c("Game #", "Team A", "Team B", "Score", "Draw", 
@@ -403,7 +429,7 @@ corr_pred_by <- tendency_pred_by %>%
 
 ```
 
-Most accurately predicted 'tendencies'. The two rightmost columns indicate the number of people who got it right.
+This table shows the most accurately predicted 'tendencies'. The two rightmost columns indicate the number of people who got it right.
 
 ```{r echo=FALSE}
 nm <- c("Game #", "Team A", "Team B", "Score", "Draw", 
@@ -412,7 +438,7 @@ knitr::kable(head(corr_pred_by, 5), col.names = nm) # %>% filter(tend_pred_by %i
 
 ```
 
-Least accurately predicted 'tendencies'. The two rightmost columns indicate the number of people who got it right.
+This table shows the least accurately predicted 'tendencies'(is win / is draw). The two rightmost columns indicate the number of people who got it right.
 
 ```{r echo=FALSE}
 
@@ -424,7 +450,7 @@ knitr::kable(tail(corr_pred_by, 5), col.names = nm) # %>% filter(tend_pred_by %i
 
 In the plot below, the matches from  above plot on in the lower right corner of plot, they were 'less predictable' by the wisdom of the participants. 
 
-```{r tend1, echo=FALSE, fig.width=8, results='hide'}
+```{r tend1, echo=FALSE}
 corr_pred_by.2 <- corr_pred_by %>% 
         arrange(desc(corr_pred_by)) 
 
@@ -432,6 +458,10 @@ corr_pred_by.2$pos <- 1:nrow(corr_pred_by.2)
 
 surprise_results_tend <- corr_pred_by.2 %>% 
         filter(tend_pred_by - corr_pred_by <=20)
+
+```
+
+```{r predprod, echo=FALSE, eval=FALSE, fig.width=8}
 
 ggplot(corr_pred_by, aes(seq_along(game_nr),tend_pred_by)) +
         geom_point(color="gold") +
@@ -449,6 +479,7 @@ ggplot(corr_pred_by, aes(seq_along(game_nr),tend_pred_by)) +
         ggtitle("Yellow: Tendency right\nGreen: Score right")
 
 ```
+
 
 Surprisingly, Germany-Poland (0:0) is also in the region of 'low predictability'.
 
