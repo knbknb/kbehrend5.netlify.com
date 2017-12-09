@@ -436,8 +436,8 @@ ggplot(corr_pred_by, aes(seq_along(game_nr),tend_pred_by)) +
         geom_point(data=corr_pred_by.2, 
                    aes(seq_along(game_nr),corr_pred_by),
                    color="darkgreen") +
-        xlab("Games ranked by prediction accuracy") +
-        ylab("# of correct bets") +
+        xlab("Matches, ranked by 'predictability'") +
+        ylab("# of people who got it right") +
         ggtitle("Yellow: Tendency right\nGreen: Score right")
 
 ```
@@ -455,8 +455,8 @@ ggplot(corr_pred_by.2, aes(seq_along(game_nr),corr_pred_by)) +
         geom_point(data = surprise_results_tend, 
                    aes(pos,tend_pred_by), color = "black", 
                    size = 5, shape = 21) +
-        xlab("Games ranked by prediction accuracy") +
-        ylab("# of people who got tendency/abs.score right") +
+        xlab("Matches, ranked by 'predictability'") +
+        ylab("# of people who got it right") +
         ggtitle(subt) +
         geom_text_repel(data = corr_pred_by.2,
                         aes(seq_along(game_nr), 
@@ -474,6 +474,6 @@ This table shows these marked games. They were surprising: Few participants got 
 
 
 ```{r echo=FALSE}
-kable(surprise_results_tend, col.names=c(nm, "Pos"))
+kable(surprise_results_tend, col.names=c(nm, "Pos on X-Axis"))
 ```
 
