@@ -56,7 +56,7 @@ Still experimenting with the Hugo software.</description>
       <pubDate>Sat, 16 Dec 2017 00:00:00 +0000</pubDate>
       
       <guid>/post/2017/12/learning-jq/</guid>
-      <description>A grabbag of jq commands  Some notes about learning jq, the lightweight and flexible command-line JSON processor. Maybe I’ll extend and improve this blog post in the next months.
+      <description>A grabbag of commands  Some notes about learning jq, the lightweight and flexible command-line JSON processor. Maybe I’ll extend and improve this blog post in the next months.
  I need to be fluent with the JSON parsing tool jq. Very often I have to interact with JSON data: When I interact with APIs, when parsing scraped Twitter data, when doing SPARQL queries…
 Here I’ve saved some of my own mini-scripts and shortcuts that I have developed for my own needs.</description>
     </item>

@@ -1,5 +1,5 @@
 ---
-title: Learning jq
+title: Learning jq 
 author: Knut Behrends
 date: '2017-12-16'
 slug: Learning jq
@@ -7,10 +7,12 @@ categories: []
 tags: []
 ---
 
-### A grabbag of `jq` commands 
+### A grabbag of ![](/img/portfolio/jq-med.png) commands 
 
 
 > Some notes about learning jq, the  lightweight and flexible command-line JSON processor. Maybe I'll extend and improve this blog post in the next months. 
+
+
 
 I need to be fluent with the JSON parsing tool [jq](https://stedolan.github.io/jq/).
 Very often I have to interact with JSON data: When I interact with APIs,
