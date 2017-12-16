@@ -1,0 +1,57 @@
+---
+title: Learning jq
+author: Knut Behrends
+date: '2017-12-16'
+slug: Learning jq
+categories: []
+tags: []
+---
+
+
+
+<div id="a-grabbag-of-jq-commands" class="section level3">
+<h3>A grabbag of <code>jq</code> commands</h3>
+<blockquote>
+<p>Some notes about learning jq, the lightweight and flexible command-line JSON processor. Maybe I’ll extend and improve this blog post in the next months.</p>
+</blockquote>
+<p>I need to be fluent with the JSON parsing tool <a href="https://stedolan.github.io/jq/">jq</a>. Very often I have to interact with JSON data: When I interact with APIs, when parsing scraped Twitter data, when doing SPARQL queries…</p>
+<p>Here I’ve saved some of my own mini-scripts and shortcuts that I have developed for my own needs. Most of it is already available in similar form, on the internet, but it is not available in a form that I found useful.</p>
+<p>The following text snippets emerged by entering commands on the Unix command line. This was a trial and error process.</p>
+<div id="example-1---extract-tweet-text" class="section level4">
+<h4>Example 1 - extract tweet text</h4>
+<p>This snippet extracts the text from a file that I created by saving data from the Twitter streaming API:</p>
+<pre><code>&lt; raw_tweets/stream__AGU17.json jq -s &#39;[.[] | {text: .text}] &#39; \
+   | jq  -f -r to_csv.jq  | grep -i &quot;rstats&quot; | sort -u</code></pre>
+</div>
+<div id="example-2---extract-more-than-1-field-from-tweets" class="section level4">
+<h4>Example 2 - extract more than 1 field from tweets</h4>
+<p>This is a variant of Example 1.</p>
+<pre><code>&lt;raw_tweets/stream_rstats.json jq  -s  -S  &#39;[.[] | \
+   {name:  .user.name, sn: .user.screen_name, loc: .user.location, \
+   url:.user.url, desc:.user.description, _fol: .user.followers_count }]&#39;   | \
+   jq  -f -r to_csv.jq
+</code></pre>
+</div>
+<div id="helper-function-to_csv" class="section level4">
+<h4>Helper function <code>to_csv()</code></h4>
+<p>This is from a <a href="https://stackoverflow.com/a/44012345/202553">Stackoverflow Answer</a> on the question <em>How to convert arbirtrary simple JSON to CSV using jq?</em></p>
+<pre><code>
+def tocsv($x):
+    $x
+    |(map(keys)
+        |add
+        |unique
+        |sort
+    ) as $cols
+    |map(. as $row
+        |$cols
+        |map($row[.]|tostring)
+    ) as $rows
+    |$cols,$rows[]
+    | @csv;
+
+tocsv(.)
+
+</code></pre>
+</div>
+</div>

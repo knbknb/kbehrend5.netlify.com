@@ -32,6 +32,16 @@ Still experimenting with the Hugo software.</description>
     </item>
     
     <item>
+      <title>Learning jq</title>
+      <link>/post/2017/12/learning-jq/</link>
+      <pubDate>Sat, 16 Dec 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2017/12/learning-jq/</guid>
+      <description>A grabbag of jq commands Some notes about learning jq, the lightweight and flexible command-line JSON processor.
+ </description>
+    </item>
+    
+    <item>
       <title>Soccer World Cup 2016 - Betting At My Workplace - Part I&#43;II</title>
       <link>/post/2017/12/soccer-world-cup-bets-part-ii/</link>
       <pubDate>Sat, 09 Dec 2017 00:00:00 +0000</pubDate>

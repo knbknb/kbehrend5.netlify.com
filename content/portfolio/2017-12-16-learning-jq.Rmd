@@ -1,0 +1,22 @@
+---
+title: Learning jq
+author: Knut Behrends
+date: '2017-12-16'
+slug: Learning jq
+output: 
+  html_document:
+    keep_md: no
+image: img/portfolio/jq-med.png
+categories:
+  - blog-post
+tags:
+  - note
+  - linux
+url: '/post/2017/12/learning-jq/'  
+keywords: ["Personal-Blog", "Personal-Productivity", "Linux", "Twitter"]    
+---
+
+### A grabbag of `jq` commands 
+
+
+Some notes about learning jq, the  lightweight and flexible command-line JSON processor.
