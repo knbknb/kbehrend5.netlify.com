@@ -17,6 +17,10 @@ tags: []
 <p>I need to be fluent with the JSON parsing tool <a href="https://stedolan.github.io/jq/">jq</a>. Very often I have to interact with JSON data: When I interact with APIs, when parsing scraped Twitter data, when doing SPARQL queries…</p>
 <p>Here I’ve saved some of my own mini-scripts and shortcuts that I have developed for my own needs. Most of it is already available in similar form, on the internet, but it is not available in a form that I found useful.</p>
 <p>The following text snippets emerged by entering commands on the Unix command line. This was a trial and error process.</p>
+<p>The format of the snippets below is a pipe of shell commands.</p>
+<p><code>&lt;infile.json jq-cmd1 jq-cmd2 std-cmd1 std-cmd2 ...</code></p>
+<p>The infile.json I’ve saved beforehand using a <a href="https://stackoverflow.com/a/47791375/202553">small python script</a>.</p>
+<p>The infile contains one Tweet per line. The file as a whole is not a valid JSON file. For this reason I need the first <code>jq</code> command. It converts the collection of JSON fragments into an array of JSON objects. The second jq does the filtering.</p>
 <div id="example-1---extract-tweet-text" class="section level4">
 <h4>Example 1 - extract tweet text</h4>
 <p>This snippet extracts the text from a file that I created by saving data from the Twitter streaming API:</p>
@@ -53,5 +57,34 @@ def tocsv($x):
 tocsv(.)
 
 </code></pre>
+</div>
+<div id="further-processing" class="section level4">
+<h4>Further processing</h4>
+<p>Further processing on the command line can be done with the <code>[csvkit](http://csvkit.readthedocs.io/en/1.0.2/tricks.html#installation)</code> suite of tools.</p>
+<p>This is an example:</p>
+<pre><code>&lt;raw_tweets/stream_rstats.json jq  -s  -S \
+&#39;[.[] | {name:  .user.name, sn: .user.screen_name, \
+loc: .user.location, \
+url:.user.url, \
+desc:.user.description, \
+_fol: .user.followers_count }]&#39;   | \
+jq  -f -r to_csv.jq    | \
+ csvsort -H -c 1    | csvcut -c 5,2 -l | csvlook --max-column-width 30 --max-rows 10
+</code></pre>
+<p>It produces this output:</p>
+<p>(This is not very informative, but that’s intentional. The content of the tweets is irrelevant here).</p>
+<pre><code>| line_number | f                              | c              |
+| ----------- | ------------------------------ | -------------- |
+|           1 |                                | 日本 東京          |
+|           2 |                                | Milan          |
+|           3 |                                | Grand Ledge    |
+|           4 |                                | Iowa City, IA  |
+|           5 |                                | Pennsylvania   |
+|           6 |                                | Columbus, OH   |
+|           7 |                                | Columbus, OH   |
+|           8 | http://es.linkedin.com/in/j... | Madrid - Spain |
+|           9 |                                |                |
+|          10 | http://personal.tcu.edu/kyl... | Fort Worth, TX |
+|         ... | ...                            | ...            |</code></pre>
 </div>
 </div>
