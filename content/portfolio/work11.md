@@ -9,7 +9,7 @@ url: about/more-about-the-hugo-software
 ---
 
 [Hugo Documentation](https://gohugo.io/variables/page/) 
-Click on the link to go to the Hugo Documentation, (predefined variables).
+Links important to me.
 
 
 
