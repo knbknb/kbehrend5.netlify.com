@@ -33,7 +33,7 @@ The format of the snippets below is a pipe of shell commands.
 
 The infile.json I've saved beforehand using a [small python script](https://stackoverflow.com/a/47791375/202553).
 
-The infile contains one Tweet per line. The file as a whole is not a valid JSON file. For this reason I need the first `jq` command. It converts the collection of JSON fragments into an array of JSON objects and some  transforming/filtering into another sequence of JSON fragments. The second `jq` command converts the transformed JSON into a csv file. This jq-cmd is so complex that I've factored out into a sall file which sits int the same directory, called `to_csv.jq`.  
+The infile contains one Tweet per line. The file as a whole is not a valid JSON file. For this reason I need the first `jq` command. It converts the collection of JSON fragments into an array of JSON objects and some  transforming/filtering into another sequence of JSON fragments. The second `jq` command converts the transformed JSON into a csv file. This jq-cmd is so complex that I've factored out into a small file in the same directory, called `to_csv.jq`.  
 
 #### Example 1 - extract tweet text
 

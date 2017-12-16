@@ -20,7 +20,7 @@ tags: []
 <p>The format of the snippets below is a pipe of shell commands.</p>
 <p><code>&lt;infile.json jq-cmd1 jq-cmd2 std-cmd1 std-cmd2 ...</code></p>
 <p>The infile.json I’ve saved beforehand using a <a href="https://stackoverflow.com/a/47791375/202553">small python script</a>.</p>
-<p>The infile contains one Tweet per line. The file as a whole is not a valid JSON file. For this reason I need the first <code>jq</code> command. It converts the collection of JSON fragments into an array of JSON objects and some transforming/filtering into another sequence of JSON fragments. The second <code>jq</code> command converts the transformed JSON into a csv file. This jq-cmd is so complex that I’ve factored out into a sall file which sits int the same directory, called <code>to_csv.jq</code>.</p>
+<p>The infile contains one Tweet per line. The file as a whole is not a valid JSON file. For this reason I need the first <code>jq</code> command. It converts the collection of JSON fragments into an array of JSON objects and some transforming/filtering into another sequence of JSON fragments. The second <code>jq</code> command converts the transformed JSON into a csv file. This jq-cmd is so complex that I’ve factored out into a small file in the same directory, called <code>to_csv.jq</code>.</p>
 <div id="example-1---extract-tweet-text" class="section level4">
 <h4>Example 1 - extract tweet text</h4>
 <p>This snippet extracts the text from a file that I created by saving data from the Twitter streaming API:</p>
