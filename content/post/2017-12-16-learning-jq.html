@@ -28,8 +28,8 @@ tags: []
    | jq  -f -r to_csv.jq  | grep -i &quot;rstats&quot; | sort -u</code></pre>
 </div>
 <div id="example-2---extract-more-than-1-field-from-tweets" class="section level4">
-<h4>Example 2 - extract more than 1 field from tweets</h4>
-<p>This is a variant of Example 1.</p>
+<h4>Example 2 - extract more than 1 field from Tweets</h4>
+<p>This is a variant of Example 1. Extract 5 fields from different levels of the tweet into a csv file with brief column names.</p>
 <pre><code>&lt;raw_tweets/stream_rstats.json jq  -s  -S  &#39;[.[] | \
    {name:  .user.name, sn: .user.screen_name, loc: .user.location, \
    url:.user.url, desc:.user.description, _fol: .user.followers_count }]&#39;   | \
@@ -72,7 +72,7 @@ jq  -f -r to_csv.jq    | \
  csvsort -H -c 1    | csvcut -c 5,2 -l | csvlook --max-column-width 30 --max-rows 10
 </code></pre>
 <p>It produces this output:</p>
-<p>(This is not very informative, but that’s intentional. The content of the tweets is irrelevant here).</p>
+<p>(This table is not very informative, but that’s intentional. The content of the tweets is irrelevant here).</p>
 <pre><code>| line_number | f                              | c              |
 | ----------- | ------------------------------ | -------------- |
 |           1 |                                | 日本 東京          |

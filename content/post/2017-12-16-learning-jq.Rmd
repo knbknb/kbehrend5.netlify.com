@@ -43,9 +43,10 @@ This snippet extracts the text from a file that I created by saving data from th
 ```
 
 
-#### Example 2 - extract more than 1 field from tweets 
+#### Example 2 - extract more than 1 field from Tweets 
 
-This is a variant of Example 1.
+This is a variant of Example 1. Extract 5 fields from different levels of the tweet into a csv file with brief column names.
+
 
 ```
 <raw_tweets/stream_rstats.json jq  -s  -S  '[.[] | \
@@ -100,7 +101,7 @@ jq  -f -r to_csv.jq    | \
 
 It produces this output:
 
-(This is not very informative, but that's intentional. The content of the tweets is irrelevant here).
+(This table is not very informative, but that's intentional. The content of the tweets is irrelevant here).
 
 ```
 | line_number | f                              | c              |
