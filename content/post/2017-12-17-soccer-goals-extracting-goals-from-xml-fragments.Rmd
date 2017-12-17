@@ -1,0 +1,80 @@
+---
+title: 'Soccer-goals: Extracting goals from xml fragments'
+author: Knut Behrends
+date: '2017-12-17'
+slug: Database
+output: 
+  html_document:
+    toc: true
+    toc_depth: 1
+    css: styles.css
+    fig_caption: yes
+    keep_md: yes
+image: /static/img/football.png
+categories:
+  - blog-post
+tags:
+  - fun
+  - R
+summary: part 1 of a series on Bayesian Analysis
+keywords: ["Personal-Blog", "Fun", "rstats", "Sports-Data", "Soccer", "xml"]      
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+This is part 1 of a 2-part series about my first attempts at Bayesian Analysis of Soccer data. 
+
+#### Dataset
+
+The dataset used here is the "European Soccer database from Kaggle.com. This dataset is delivered as a Sqlite database. It contains 7 tables which have been filled by scraping mumerous websites many times in 2014-2016.
+
+
+
+```{r DBI, message=FALSE, warning=FALSE}
+
+library(DBI)
+con <- dbConnect(odbc::odbc(), "well-sqlite-footballdb")
+
+```
+For the sake of brevity, to see the R packages I've included to process the data, see the [previous blogpost](/post/2017/11/european-soccer-players-and-their-bmi/). Only the `tidyr` package is new here.
+
+```{r message=FALSE, warning=FALSE, results='hide', echo=FALSE}
+# tidyverse packages
+library(dplyr, warn.conflicts = FALSE) #
+library(tidyr)   # gather
+library(purrr)   # functional programming
+library(stringr)
+library(lubridate) # strings to datetime
+library(ggplot2)
+
+theme_set(theme_bw())
+
+```
+
+```{r message=FALSE, warning=FALSE}
+library(tidyr)   # gather
+```
+
+The database consists of 7 tables. We'll read in all of them. The Player table contains basic data of ~10000 soccer players from the top leagues of 14 European countries. They are not strictly "European soccer players", but players from all over the globe, competing in the top leagues of certain Western European countries.
+
+```{r, echo=FALSE, results='hide'}
+table_names <- dbListTables(con)
+
+good <- !  str_detect(table_names, "sqlite_sequence")
+table_names <- table_names[good]
+
+# Import all tables as data frames, 308MB
+# feasible with lots of RAM
+walk(table_names,function(x) assign(x,
+dbReadTable(x, conn=con),
+envir = globalenv()))
+dbDisconnect(con)
+```
+
+
+#### Extracting goals
+

@@ -7,7 +7,7 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>&amp;copy;2017 Knut Behrends</copyright>
-    <lastBuildDate>Sat, 09 Dec 2017 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 17 Dec 2017 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/tags/index.xml" rel="self" type="application/rss+xml" />
     
@@ -15,7 +15,7 @@
     <item>
       <title>Fun</title>
       <link>/tags/fun/</link>
-      <pubDate>Sat, 09 Dec 2017 00:00:00 +0000</pubDate>
+      <pubDate>Sun, 17 Dec 2017 00:00:00 +0000</pubDate>
       
       <guid>/tags/fun/</guid>
       <description></description>
@@ -42,9 +42,18 @@
     <item>
       <title>R</title>
       <link>/tags/r/</link>
-      <pubDate>Sat, 09 Dec 2017 00:00:00 +0000</pubDate>
+      <pubDate>Sun, 17 Dec 2017 00:00:00 +0000</pubDate>
       
       <guid>/tags/r/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Soccer</title>
+      <link>/tags/soccer/</link>
+      <pubDate>Sun, 17 Dec 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/soccer/</guid>
       <description></description>
     </item>
     

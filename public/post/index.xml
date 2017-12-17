@@ -7,10 +7,33 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>&amp;copy;2017 Knut Behrends</copyright>
-    <lastBuildDate>Sat, 16 Dec 2017 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 17 Dec 2017 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/post/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Soccer-Database: Generating schema diagrams</title>
+      <link>/post/2017/12/soccerdb-schema-diagrams/</link>
+      <pubDate>Sun, 17 Dec 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2017/12/soccerdb-schema-diagrams/</guid>
+      <description>This is part 1 of a 3-part series of small blog posts about my first attempts at Bayesian Analysis of Soccer data.
+In order to get started I had to invest much more effort than expected into cleaning the data and getting familiar with it.
+tl;dr: This blog post shows 3 times the same database diagram, at varying levels of detail.
+Dataset The dataset used here is the &amp;ldquo;European Soccer Database&amp;rdquo; - 25k+ matches, players &amp;amp; teams attributes for European Professional Football from Kaggle.</description>
+    </item>
+    
+    <item>
+      <title>Soccer-goals: Extracting goals from xml fragments</title>
+      <link>/post/2017/12/database/</link>
+      <pubDate>Sun, 17 Dec 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2017/12/database/</guid>
+      <description>This is part 1 of a 2-part series about my first attempts at Bayesian Analysis of Soccer data.
+Dataset The dataset used here is the “European Soccer database from Kaggle.com. This dataset is delivered as a Sqlite database. It contains 7 tables which have been filled by scraping mumerous websites many times in 2014-2016.
+library(DBI) con &amp;lt;- dbConnect(odbc::odbc(), &amp;quot;well-sqlite-footballdb&amp;quot;) For the sake of brevity, to see the R packages I’ve included to process the data, see the previous blogpost.</description>
+    </item>
     
     <item>
       <title>Learning jq</title>

@@ -262,6 +262,10 @@ code {
   margin-left: 2px;
 }
 
+.img-width-medium > img {
+        max-width: 900px;
+}
+
 @media (min-width: 600px) {
   .header {
     padding: 25px 0;

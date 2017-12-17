@@ -18,6 +18,21 @@
   </url>
   
   <url>
+    <loc>/post/2017/12/soccerdb-schema-diagrams/</loc>
+    <lastmod>2017-12-17T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/post/2017/12/soccerdb-schema-diagrams/</loc>
+    <lastmod>2017-12-17T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/post/2017/12/database/</loc>
+    <lastmod>2017-12-17T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>/post/2017/12/learning-jq/</loc>
     <lastmod>2017-12-16T00:00:00+00:00</lastmod>
   </url>
@@ -84,13 +99,13 @@
   
   <url>
     <loc>/categories/blog-post/</loc>
-    <lastmod>2017-12-16T00:00:00+00:00</lastmod>
+    <lastmod>2017-12-17T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>/categories/</loc>
-    <lastmod>2017-12-16T00:00:00+00:00</lastmod>
+    <lastmod>2017-12-17T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -102,7 +117,7 @@
   
   <url>
     <loc>/tags/fun/</loc>
-    <lastmod>2017-12-09T00:00:00+00:00</lastmod>
+    <lastmod>2017-12-17T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -132,13 +147,13 @@
   
   <url>
     <loc>/post/</loc>
-    <lastmod>2017-12-16T00:00:00+00:00</lastmod>
+    <lastmod>2017-12-17T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>/tags/r/</loc>
-    <lastmod>2017-12-09T00:00:00+00:00</lastmod>
+    <lastmod>2017-12-17T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -149,8 +164,14 @@
   </url>
   
   <url>
+    <loc>/tags/soccer/</loc>
+    <lastmod>2017-12-17T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
     <loc>/tags/</loc>
-    <lastmod>2017-12-09T00:00:00+00:00</lastmod>
+    <lastmod>2017-12-17T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   

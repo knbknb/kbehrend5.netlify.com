@@ -1,0 +1,37 @@
+---
+title: 'Soccer-goals: Extracting goals from xml fragments'
+author: Knut Behrends
+date: '2017-12-17'
+slug: Database
+output: 
+  html_document:
+    toc: true
+    toc_depth: 1
+    css: styles.css
+    fig_caption: yes
+    keep_md: yes
+image: /static/img/football.png
+categories:
+  - blog-post
+tags:
+  - fun
+  - R
+summary: part 1 of a series on Bayesian Analysis
+keywords: ["Personal-Blog", "Fun", "rstats", "Sports-Data", "Soccer", "xml"]      
+---
+
+
+
+<p>This is part 1 of a 2-part series about my first attempts at Bayesian Analysis of Soccer data.</p>
+<div id="dataset" class="section level4">
+<h4>Dataset</h4>
+<p>The dataset used here is the “European Soccer database from Kaggle.com. This dataset is delivered as a Sqlite database. It contains 7 tables which have been filled by scraping mumerous websites many times in 2014-2016.</p>
+<pre class="r"><code>library(DBI)
+con &lt;- dbConnect(odbc::odbc(), &quot;well-sqlite-footballdb&quot;)</code></pre>
+<p>For the sake of brevity, to see the R packages I’ve included to process the data, see the <a href="/post/2017/11/european-soccer-players-and-their-bmi/">previous blogpost</a>. Only the <code>tidyr</code> package is new here.</p>
+<pre class="r"><code>library(tidyr)   # gather</code></pre>
+<p>The database consists of 7 tables. We’ll read in all of them. The Player table contains basic data of ~10000 soccer players from the top leagues of 14 European countries. They are not strictly “European soccer players”, but players from all over the globe, competing in the top leagues of certain Western European countries.</p>
+</div>
+<div id="extracting-goals" class="section level4">
+<h4>Extracting goals</h4>
+</div>

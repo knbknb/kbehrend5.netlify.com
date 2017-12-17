@@ -32,6 +32,15 @@ Still experimenting with the Hugo software.</description>
     </item>
     
     <item>
+      <title>Soccer-Database: Generating schema diagrams</title>
+      <link>/post/2017/12/soccerdb-schema-diagrams/</link>
+      <pubDate>Sun, 17 Dec 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2017/12/soccerdb-schema-diagrams/</guid>
+      <description>This blog post shows 3 times the same database diagram, at varying levels of detail.</description>
+    </item>
+    
+    <item>
       <title>Learning jq</title>
       <link>/post/2017/12/learning-jq/</link>
       <pubDate>Sat, 16 Dec 2017 00:00:00 +0000</pubDate>
