@@ -9,7 +9,7 @@ output:
     toc_depth: 1
     css: styles.css
     fig_caption: yes
-    keep_md: yes
+    keep_md: no
 categories:
   - blog-post
 tags:
