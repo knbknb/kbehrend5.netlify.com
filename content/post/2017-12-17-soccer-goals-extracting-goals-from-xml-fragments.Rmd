@@ -1,5 +1,5 @@
 ---
-title: 'Soccer-goals: Extracting goals from xml fragments'
+title: 'Soccer-Database: Extracting goal data from XML fragments'
 author: Knut Behrends
 date: '2017-12-17'
 slug: Database
@@ -17,16 +17,17 @@ tags:
   - fun
   - R
 summary: part 1 of a series on Bayesian Analysis
-keywords: ["Personal-Blog", "Fun", "rstats", "Sports-Data", "Soccer", "xml"]      
+keywords: ["Personal-Blog", "Fun", "rstats", "Sports-Data", "Soccer", "XML"]      
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = FALSE)
+options(knitr.table.format = "html") 
 ```
 
 
 
-This is part 2 of a 3-part series about my first attempts at Bayesian Analysis of Soccer data. 
+This is part 2 of a 3-part series about Statistical Analysis of Soccer data. 
 
 - [Part 1](/post/2017/12/soccerdb-schema-diagrams/) shows the database diagram of the Sqlite database mentioned below.
 - Part 2 (this page) describes how to preprocess some text data that was stored in an cryptic format inside the database
@@ -35,23 +36,16 @@ This is part 2 of a 3-part series about my first attempts at Bayesian Analysis o
 #### Dataset 
 
 
-The dataset used here is the ["European Soccer Database" - 25k+ matches, players & teams attributes for European Professional Football](https://www.kaggle.com/hugomathien/soccer/) from Kaggle.com. This dataset is delivered as an Sqlite database. It contains 7 tables which have been filled by the original curator in 2014-2016.
-The data comes from many sources.
+The dataset used here is the ["European Soccer Database" - 25k+ matches, players & teams attributes for European Professional Football](https://www.kaggle.com/hugomathien/soccer/) from Kaggle.com. This dataset is delivered as an Sqlite database. It contains 7 tables which have been populated by the original curator in 2014-2016.
+The data comes from many internet sources.
 
-#### The problem 
-
-The problem I am solving here: Important information is stored inside the database, but in format that is not usable.
-
-The goal data looks like this:
-
-
-```{r DBI, message=FALSE, warning=FALSE}
+```{r DBI, message=FALSE, warning=FALSE, echo=FALSE}
 
 library(DBI)
 con <- dbConnect(odbc::odbc(), "well-sqlite-footballdb")
 
 ```
-For the sake of brevity, to see the R packages I've included to process the data, see the [previous blogpost](/post/2017/11/european-soccer-players-and-their-bmi/). Only the `tidyr` package is new here.
+For the sake of brevity, to see database internals, see the [previous blogpost](/post/2017/12/soccerdb-schema-diagrams/). 
 
 ```{r message=FALSE, warning=FALSE, results='hide', echo=FALSE}
 # tidyverse packages
@@ -66,11 +60,8 @@ theme_set(theme_bw())
 
 ```
 
-```{r message=FALSE, warning=FALSE}
-library(tidyr)   # gather
-```
 
-The database consists of 7 tables. We'll read in all of them. The Player table contains basic data of ~10000 soccer players from the top leagues of 14 European countries. They are not strictly "European soccer players", but players from all over the globe, competing in the top leagues of certain Western European countries.
+The database consists of 7 tables. We'll read in all of them. The `Player` table contains basic data of ~10000 soccer players from the top leagues of 14 European countries. They are not strictly "European soccer players", but players from all over the globe, competing in the top leagues of certain Western European countries.
 
 ```{r, echo=FALSE, results='hide'}
 table_names <- dbListTables(con)
@@ -87,5 +78,161 @@ dbDisconnect(con)
 ```
 
 
+#### The problem 
+
+The problem I am solving here: Important information is stored inside the database, but still in an unusable format. In this post I show how to transform the data content from these columns.
+
+The "goal" column, which is column 34 in the "Match" table has a TEXT datatype: `r htmltools::HTML('{{< figure src="/img/post/footballb--diagram--matchtable-goalscolumn.png" title="" >}}')`
+
+This in itself is not a problem. However, an entry in this table typically looks like this:
+
+```{r xml1, message=TRUE, results='asis'}
+library(xml2)
+xmlparse <- function(s){
+        read_xml(s) %>% 
+                xml_find_all(".//player1")  %>% 
+                xml_text()  %>% 
+                str_c( collapse="\t")
+}
+
+
+# get 1 XML fragment for game 489042
+xmlfrag <- Match %>% 
+        select(match_api_id, goal)  %>% 
+        filter(!is.na(goal)) %>% 
+        filter(match_api_id == 489042) %>%
+        select(goal) %>% 
+        unique() %>% 
+        rename("Goals for Game 489042:" = "goal") 
+
+xmlout <- system(command = "tidy -q -i -xml ",
+        input = as.character(xmlfrag), 
+       intern = TRUE)
+
+```
+
+```xml
+`r paste(xmlout, collapse = '\n')`
+```
+
+This is XML text. The XML fragment was scraped from some website, and the curator of the database did not fully finish the job of parsing the information out of this.
+
+
+With regard to the XML fragment, I think the `<player1>` element means this guy scored, `<player2>` made the assist. 
+
+These are the two `<player1>` we are interested, with the following `player_api_id`s:
+
+```{r cho=TRUE}
+(scorer_api_ids <- xmlfrag  %>% 
+        as.character() %>%
+        xmlparse() %>%
+        str_split(pattern =  "\t") %>% 
+        unlist() %>% 
+        as.numeric())
+```
+
+I've looked it up for game 489042, [Manchester United vs Newcastle, first PL game in Season 2008/2009, on August 17, 2008](https://en.wikipedia.org/wiki/2008%E2%80%9309_Manchester_United_F.C._season), the player IDs are correct.
+
+```{r}
+Player %>% 
+        filter(player_api_id %in% scorer_api_ids) %>% 
+        select(player_api_id, player_name, birthday) %>% 
+        mutate(birthday = format.Date(birthday, "%Y-%m-%d"))
+```
+
+These guys actually scored.
+
+
 #### Extracting goals
+
+There are `r nrow(Match)` Matches in the database, and we have goal information for about 50% of them.
+
+The goals can be extracted with this code:
+
+```{r xml2, echo=TRUE, eval=TRUE, warning=FALSE}
+xmlparse2 <- function(s, m){
+        unlist(s) %>%
+                read_xml() %>%
+                xml_find_all(".//player1") %>%
+                xml_text(trim = TRUE) %>%
+                data_frame( match_api_id = m , 
+                            goals_by = str_c(., collapse = "\t"))
+}
+
+# Parse xml and store result in nested data structure
+Match_Player_Goal <- Match %>%
+        select(match_api_id, goal) %>%
+        filter(!is.na(goal)) %>%
+        filter(goal != "<goal />")  %>%
+        nest(-match_api_id) %>%
+        rowwise() %>%
+        do(goals_by = xmlparse2(.$data, .$match_api_id)) 
+
+
+```
+
+```{r xml3, echo=TRUE, eval=TRUE, warning=FALSE}
+Match_Player_Goal.2 <- Match_Player_Goal %>% 
+        unnest(goals_by) %>%
+        select(-`.`) %>%
+        unique()
+
+# assume there are no more than 12 goals per match
+into <- map2_chr("Player", 1:12, str_c)
+
+# convert them into key-value table
+Match_Player_Goal.3 <- Match_Player_Goal.2 %>%
+        separate(goals_by, into = into, "\t") %>%
+        gather(k, player_api_id, -match_api_id) %>%
+        filter(!is.na(player_api_id)) %>%
+        mutate(player_api_id = as.integer(player_api_id)) %>%
+        arrange(match_api_id, k)
+
+```
+
+```{r read, eval=FALSE}
+Match_Player_Goal.3 <- readRDS("Match_Player_Goal.3.RDS")
+
+```
+
+
+A few sample datasets from the new `Match_Player_Goal.3` dataframe, 
+which has `r nrow(Match_Player_Goal.3)` rows:
+
+```{r eval=TRUE}
+
+head(Match_Player_Goal.3, 5)
+```
+
+Which player has scored the most goals?
+
+```{r season, eval=TRUE}
+#saveRDS(Match_Player_Goal.3, file="Match_Player_Goal.3.RDS")
+
+Match_Season <- Match %>% 
+        select(match_api_id, season)
+
+Player_most_goals <- Match_Player_Goal.3 %>%
+        inner_join(Match_Season, by="match_api_id") %>%
+        group_by(player_api_id, season) %>%
+        summarise(goals = n()) %>%
+        arrange(desc(goals)) %>% 
+        ungroup()
+
+Player_most_goals_season <- Player_most_goals %>% 
+        left_join(Player, by = "player_api_id") %>% 
+        select(-id)
+
+```
+
+```{r mostg}
+Player_most_goals_season %>% 
+        select(-height, -weight, -player_fifa_api_id) %>%
+        mutate(birthday = year(birthday)) %>% 
+        select(season, player_name, goals, birthday, player_api_id) %>% 
+        head(30) %>% 
+        knitr::kable(caption="Goals per season", row.names=1, align="clccc") %>% 
+        kableExtra::kable_styling(bootstrap_options = c("striped", "hover"))
+
+```
 

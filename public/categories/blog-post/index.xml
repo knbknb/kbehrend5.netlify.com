@@ -7,10 +7,29 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>&amp;copy;2017 Knut Behrends</copyright>
-    <lastBuildDate>Sun, 17 Dec 2017 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 18 Dec 2017 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/categories/blog-post/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Soccer-Database: Extracting goal data from XML fragments</title>
+      <link>/post/2017/12/database/</link>
+      <pubDate>Mon, 18 Dec 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2017/12/database/</guid>
+      <description>Using R to process XML fragments stored in a relational database.</description>
+    </item>
+    
+    <item>
+      <title>Soccer-Database: Extracting goal data from XML fragments</title>
+      <link>/post/2017/12/database/</link>
+      <pubDate>Sun, 17 Dec 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2017/12/database/</guid>
+      <description>This is part 2 of a 3-part series about Statistical Analysis of Soccer data.
+ Part 1 shows the database diagram of the Sqlite database mentioned below. Part 2 (this page) describes how to preprocess some text data that was stored in an cryptic format inside the database Part 3 (not written yet) describes some statistical analysis of some aspect of this dataset.  Dataset The dataset used here is the “European Soccer Database” - 25k+ matches, players &amp;amp; teams attributes for European Professional Football from Kaggle.</description>
+    </item>
     
     <item>
       <title>Soccer-Database: Generating schema diagrams</title>
@@ -31,16 +50,6 @@
 In order to get started I had to invest much more effort than expected into cleaning the data and getting familiar with it.
 tl;dr: This blog post shows 3 times the same database diagram, at varying levels of detail.
 Dataset The dataset used here is the &amp;ldquo;European Soccer Database&amp;rdquo; - 25k+ matches, players &amp;amp; teams attributes for European Professional Football from Kaggle.</description>
-    </item>
-    
-    <item>
-      <title>Soccer-goals: Extracting goals from xml fragments</title>
-      <link>/post/2017/12/database/</link>
-      <pubDate>Sun, 17 Dec 2017 00:00:00 +0000</pubDate>
-      
-      <guid>/post/2017/12/database/</guid>
-      <description>This is part 2 of a 3-part series about my first attempts at Bayesian Analysis of Soccer data.
- Part 1 shows the database diagram of the Sqlite database mentioned below. Part 2 (this page) describes how to preprocess some text data that was stored in an cryptic format inside the database Part 3 (not written yet) describes some statistical analysis of some aspect of this dataset.  Dataset The dataset used here is the “European Soccer Database” - 25k+ matches, players &amp;amp; teams attributes for European Professional Football from Kaggle.</description>
     </item>
     
     <item>

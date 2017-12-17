@@ -54,7 +54,7 @@ See [part 1]() of this blog post for details. Here I read in everything from an 
 Load precalculated objects into global environment:
 
 ```{r loadData}
-datadir <- "../../data/gfzock/"
+datadir <- "../../data2/gfzock/"
 #assertthat::see_if(assertthat::is.readable(datadir))
 infile <- file.path(datadir, "gfzock_euro2016_preprocessed.RData")
 #assertthat::see_if(assertthat::is.readable(infile))
@@ -90,7 +90,7 @@ getwd()
 #### Where to find this code and data
         
 # well: 
-if("well" == system("hostnamectl --static", intern = TRUE)){
+if("well" == Sys.info()[["nodename"]]){
         #setwd("~/code/git/_my/kbehrends.netlify.creative-theme/content/post")
                 #setwd("/home/knut/code/git/_my/R_stuff/euro2016/gfzock")
 

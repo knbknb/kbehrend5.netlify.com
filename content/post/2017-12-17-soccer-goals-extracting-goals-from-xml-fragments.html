@@ -1,5 +1,5 @@
 ---
-title: 'Soccer-goals: Extracting goals from xml fragments'
+title: 'Soccer-Database: Extracting goal data from XML fragments'
 author: Knut Behrends
 date: '2017-12-17'
 slug: Database
@@ -17,12 +17,12 @@ tags:
   - fun
   - R
 summary: part 1 of a series on Bayesian Analysis
-keywords: ["Personal-Blog", "Fun", "rstats", "Sports-Data", "Soccer", "xml"]      
+keywords: ["Personal-Blog", "Fun", "rstats", "Sports-Data", "Soccer", "XML"]      
 ---
 
 
 
-<p>This is part 2 of a 3-part series about my first attempts at Bayesian Analysis of Soccer data.</p>
+<p>This is part 2 of a 3-part series about Statistical Analysis of Soccer data.</p>
 <ul>
 <li><a href="/post/2017/12/soccerdb-schema-diagrams/">Part 1</a> shows the database diagram of the Sqlite database mentioned below.</li>
 <li>Part 2 (this page) describes how to preprocess some text data that was stored in an cryptic format inside the database</li>
@@ -30,18 +30,735 @@ keywords: ["Personal-Blog", "Fun", "rstats", "Sports-Data", "Soccer", "xml"]
 </ul>
 <div id="dataset" class="section level4">
 <h4>Dataset</h4>
-<p>The dataset used here is the <a href="https://www.kaggle.com/hugomathien/soccer/">“European Soccer Database” - 25k+ matches, players &amp; teams attributes for European Professional Football</a> from Kaggle.com. This dataset is delivered as an Sqlite database. It contains 7 tables which have been filled by the original curator in 2014-2016. The data comes from many sources.</p>
+<p>The dataset used here is the <a href="https://www.kaggle.com/hugomathien/soccer/">“European Soccer Database” - 25k+ matches, players &amp; teams attributes for European Professional Football</a> from Kaggle.com. This dataset is delivered as an Sqlite database. It contains 7 tables which have been populated by the original curator in 2014-2016. The data comes from many internet sources.</p>
+<p>For the sake of brevity, to see database internals, see the <a href="/post/2017/12/soccerdb-schema-diagrams/">previous blogpost</a>.</p>
+<p>The database consists of 7 tables. We’ll read in all of them. The <code>Player</code> table contains basic data of ~10000 soccer players from the top leagues of 14 European countries. They are not strictly “European soccer players”, but players from all over the globe, competing in the top leagues of certain Western European countries.</p>
 </div>
 <div id="the-problem" class="section level4">
 <h4>The problem</h4>
-<p>The problem I am solving here: Important information is stored inside the database, but in format that is not usable.</p>
-<p>The goal data looks like this:</p>
-<pre class="r"><code>library(DBI)
-con &lt;- dbConnect(odbc::odbc(), &quot;well-sqlite-footballdb&quot;)</code></pre>
-<p>For the sake of brevity, to see the R packages I’ve included to process the data, see the <a href="/post/2017/11/european-soccer-players-and-their-bmi/">previous blogpost</a>. Only the <code>tidyr</code> package is new here.</p>
-<pre class="r"><code>library(tidyr)   # gather</code></pre>
-<p>The database consists of 7 tables. We’ll read in all of them. The Player table contains basic data of ~10000 soccer players from the top leagues of 14 European countries. They are not strictly “European soccer players”, but players from all over the globe, competing in the top leagues of certain Western European countries.</p>
+<p>The problem I am solving here: Important information is stored inside the database, but still in an unusable format. In this post I show how to transform the data content from these columns.</p>
+<p>The “goal” column, which is column 34 in the “Match” table has a TEXT datatype: {{< figure src="/img/post/footballb--diagram--matchtable-goalscolumn.png" title="" >}}</p>
+<p>This in itself is not a problem. However, an entry in this table typically looks like this:</p>
+<pre class="xml"><code>&lt;goal&gt;
+  &lt;value&gt;
+    &lt;comment&gt;n&lt;/comment&gt;
+    &lt;stats&gt;
+      &lt;goals&gt;1&lt;/goals&gt;
+      &lt;shoton&gt;1&lt;/shoton&gt;
+    &lt;/stats&gt;
+    &lt;event_incident_typefk&gt;406&lt;/event_incident_typefk&gt;
+    &lt;elapsed&gt;22&lt;/elapsed&gt;
+    &lt;player2&gt;38807&lt;/player2&gt;
+    &lt;subtype&gt;header&lt;/subtype&gt;
+    &lt;player1&gt;37799&lt;/player1&gt;
+    &lt;sortorder&gt;5&lt;/sortorder&gt;
+    &lt;team&gt;10261&lt;/team&gt;
+    &lt;id&gt;378998&lt;/id&gt;
+    &lt;n&gt;295&lt;/n&gt;
+    &lt;type&gt;goal&lt;/type&gt;
+    &lt;goal_type&gt;n&lt;/goal_type&gt;
+  &lt;/value&gt;
+  &lt;value&gt;
+    &lt;comment&gt;n&lt;/comment&gt;
+    &lt;stats&gt;
+      &lt;goals&gt;1&lt;/goals&gt;
+      &lt;shoton&gt;1&lt;/shoton&gt;
+    &lt;/stats&gt;
+    &lt;event_incident_typefk&gt;393&lt;/event_incident_typefk&gt;
+    &lt;elapsed&gt;24&lt;/elapsed&gt;
+    &lt;player2&gt;24154&lt;/player2&gt;
+    &lt;subtype&gt;shot&lt;/subtype&gt;
+    &lt;player1&gt;24148&lt;/player1&gt;
+    &lt;sortorder&gt;4&lt;/sortorder&gt;
+    &lt;team&gt;10260&lt;/team&gt;
+    &lt;id&gt;379019&lt;/id&gt;
+    &lt;n&gt;298&lt;/n&gt;
+    &lt;type&gt;goal&lt;/type&gt;
+    &lt;goal_type&gt;n&lt;/goal_type&gt;
+  &lt;/value&gt;
+&lt;/goal&gt;</code></pre>
+<p>This is XML text. The XML fragment was scraped from some website, and the curator of the database did not fully finish the job of parsing the information out of this.</p>
+<p>With regard to the XML fragment, I think the <code>&lt;player1&gt;</code> element means this guy scored, <code>&lt;player2&gt;</code> made the assist.</p>
+<p>These are the two <code>&lt;player1&gt;</code> we are interested, with the following <code>player_api_id</code>s:</p>
+<pre><code>## [1] 37799 24148</code></pre>
+<p>I’ve looked it up for game 489042, <a href="https://en.wikipedia.org/wiki/2008%E2%80%9309_Manchester_United_F.C._season">Manchester United vs Newcastle, first PL game in Season 2008/2009, on August 17, 2008</a>, the player IDs are correct.</p>
+<pre><code>##   player_api_id     player_name   birthday
+## 1         24148 Darren Fletcher 1984-02-01
+## 2         37799 Obafemi Martins 1984-10-28</code></pre>
+<p>These guys actually scored.</p>
 </div>
 <div id="extracting-goals" class="section level4">
 <h4>Extracting goals</h4>
+<p>There are 25979 Matches in the database, and we have goal information for about 50% of them.</p>
+<p>The goals can be extracted with this code:</p>
+<pre class="r"><code>xmlparse2 &lt;- function(s, m){
+        unlist(s) %&gt;%
+                read_xml() %&gt;%
+                xml_find_all(&quot;.//player1&quot;) %&gt;%
+                xml_text(trim = TRUE) %&gt;%
+                data_frame( match_api_id = m , 
+                            goals_by = str_c(., collapse = &quot;\t&quot;))
+}
+
+# Parse xml and store result in nested data structure
+Match_Player_Goal &lt;- Match %&gt;%
+        select(match_api_id, goal) %&gt;%
+        filter(!is.na(goal)) %&gt;%
+        filter(goal != &quot;&lt;goal /&gt;&quot;)  %&gt;%
+        nest(-match_api_id) %&gt;%
+        rowwise() %&gt;%
+        do(goals_by = xmlparse2(.$data, .$match_api_id)) </code></pre>
+<pre class="r"><code>Match_Player_Goal.2 &lt;- Match_Player_Goal %&gt;% 
+        unnest(goals_by) %&gt;%
+        select(-`.`) %&gt;%
+        unique()
+
+# assume there are no more than 12 goals per match
+into &lt;- map2_chr(&quot;Player&quot;, 1:12, str_c)
+
+# convert them into key-value table
+Match_Player_Goal.3 &lt;- Match_Player_Goal.2 %&gt;%
+        separate(goals_by, into = into, &quot;\t&quot;) %&gt;%
+        gather(k, player_api_id, -match_api_id) %&gt;%
+        filter(!is.na(player_api_id)) %&gt;%
+        mutate(player_api_id = as.integer(player_api_id)) %&gt;%
+        arrange(match_api_id, k)</code></pre>
+<p>A few sample datasets from the new <code>Match_Player_Goal.3</code> dataframe, which has 39863 rows:</p>
+<pre><code>## # A tibble: 5 x 3
+##   match_api_id k       player_api_id
+##          &lt;int&gt; &lt;chr&gt;           &lt;int&gt;
+## 1       489042 Player1         37799
+## 2       489042 Player2         24148
+## 3       489043 Player1         26181
+## 4       489044 Player1         30853
+## 5       489045 Player1         23139</code></pre>
+<p>Which player has scored the most goals?</p>
+<table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<caption>
+<span id="tab:mostg">Table 1: </span>Goals per season
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:center;">
+season
+</th>
+<th style="text-align:left;">
+player_name
+</th>
+<th style="text-align:center;">
+goals
+</th>
+<th style="text-align:center;">
+birthday
+</th>
+<th style="text-align:center;">
+player_api_id
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+1
+</td>
+<td style="text-align:center;">
+2011/2012
+</td>
+<td style="text-align:left;">
+Lionel Messi
+</td>
+<td style="text-align:center;">
+52
+</td>
+<td style="text-align:center;">
+1987
+</td>
+<td style="text-align:center;">
+30981
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+2
+</td>
+<td style="text-align:center;">
+2014/2015
+</td>
+<td style="text-align:left;">
+Cristiano Ronaldo
+</td>
+<td style="text-align:center;">
+51
+</td>
+<td style="text-align:center;">
+1985
+</td>
+<td style="text-align:center;">
+30893
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+3
+</td>
+<td style="text-align:center;">
+2011/2012
+</td>
+<td style="text-align:left;">
+Cristiano Ronaldo
+</td>
+<td style="text-align:center;">
+47
+</td>
+<td style="text-align:center;">
+1985
+</td>
+<td style="text-align:center;">
+30893
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+4
+</td>
+<td style="text-align:center;">
+2012/2013
+</td>
+<td style="text-align:left;">
+Lionel Messi
+</td>
+<td style="text-align:center;">
+46
+</td>
+<td style="text-align:center;">
+1987
+</td>
+<td style="text-align:center;">
+30981
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+5
+</td>
+<td style="text-align:center;">
+2014/2015
+</td>
+<td style="text-align:left;">
+Lionel Messi
+</td>
+<td style="text-align:center;">
+46
+</td>
+<td style="text-align:center;">
+1987
+</td>
+<td style="text-align:center;">
+30981
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+6
+</td>
+<td style="text-align:center;">
+2015/2016
+</td>
+<td style="text-align:left;">
+Luis Suarez
+</td>
+<td style="text-align:center;">
+42
+</td>
+<td style="text-align:center;">
+1987
+</td>
+<td style="text-align:center;">
+40636
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+7
+</td>
+<td style="text-align:center;">
+2015/2016
+</td>
+<td style="text-align:left;">
+Zlatan Ibrahimovic
+</td>
+<td style="text-align:center;">
+41
+</td>
+<td style="text-align:center;">
+1981
+</td>
+<td style="text-align:center;">
+35724
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+8
+</td>
+<td style="text-align:center;">
+2010/2011
+</td>
+<td style="text-align:left;">
+Cristiano Ronaldo
+</td>
+<td style="text-align:center;">
+40
+</td>
+<td style="text-align:center;">
+1985
+</td>
+<td style="text-align:center;">
+30893
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+9
+</td>
+<td style="text-align:center;">
+2015/2016
+</td>
+<td style="text-align:left;">
+Cristiano Ronaldo
+</td>
+<td style="text-align:center;">
+39
+</td>
+<td style="text-align:center;">
+1985
+</td>
+<td style="text-align:center;">
+30893
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+10
+</td>
+<td style="text-align:center;">
+2015/2016
+</td>
+<td style="text-align:left;">
+Gonzalo Higuain
+</td>
+<td style="text-align:center;">
+36
+</td>
+<td style="text-align:center;">
+1987
+</td>
+<td style="text-align:center;">
+25759
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+11
+</td>
+<td style="text-align:center;">
+2012/2013
+</td>
+<td style="text-align:left;">
+Cristiano Ronaldo
+</td>
+<td style="text-align:center;">
+35
+</td>
+<td style="text-align:center;">
+1985
+</td>
+<td style="text-align:center;">
+30893
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+12
+</td>
+<td style="text-align:center;">
+2009/2010
+</td>
+<td style="text-align:left;">
+Lionel Messi
+</td>
+<td style="text-align:center;">
+35
+</td>
+<td style="text-align:center;">
+1987
+</td>
+<td style="text-align:center;">
+30981
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+13
+</td>
+<td style="text-align:center;">
+2008/2009
+</td>
+<td style="text-align:left;">
+Samuel Eto’o
+</td>
+<td style="text-align:center;">
+33
+</td>
+<td style="text-align:center;">
+1981
+</td>
+<td style="text-align:center;">
+33639
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+14
+</td>
+<td style="text-align:center;">
+2010/2011
+</td>
+<td style="text-align:left;">
+Lionel Messi
+</td>
+<td style="text-align:center;">
+32
+</td>
+<td style="text-align:center;">
+1987
+</td>
+<td style="text-align:center;">
+30981
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+15
+</td>
+<td style="text-align:center;">
+2008/2009
+</td>
+<td style="text-align:left;">
+Diego Forlan
+</td>
+<td style="text-align:center;">
+32
+</td>
+<td style="text-align:center;">
+1979
+</td>
+<td style="text-align:center;">
+38460
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+16
+</td>
+<td style="text-align:center;">
+2013/2014
+</td>
+<td style="text-align:left;">
+Luis Suarez
+</td>
+<td style="text-align:center;">
+32
+</td>
+<td style="text-align:center;">
+1987
+</td>
+<td style="text-align:center;">
+40636
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+17
+</td>
+<td style="text-align:center;">
+2013/2014
+</td>
+<td style="text-align:left;">
+Diego Costa
+</td>
+<td style="text-align:center;">
+31
+</td>
+<td style="text-align:center;">
+1988
+</td>
+<td style="text-align:center;">
+19243
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+18
+</td>
+<td style="text-align:center;">
+2011/2012
+</td>
+<td style="text-align:left;">
+Robin van Persie
+</td>
+<td style="text-align:center;">
+31
+</td>
+<td style="text-align:center;">
+1983
+</td>
+<td style="text-align:center;">
+30843
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+19
+</td>
+<td style="text-align:center;">
+2013/2014
+</td>
+<td style="text-align:left;">
+Cristiano Ronaldo
+</td>
+<td style="text-align:center;">
+31
+</td>
+<td style="text-align:center;">
+1985
+</td>
+<td style="text-align:center;">
+30893
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+20
+</td>
+<td style="text-align:center;">
+2012/2013
+</td>
+<td style="text-align:left;">
+Edinson Cavani
+</td>
+<td style="text-align:center;">
+31
+</td>
+<td style="text-align:center;">
+1987
+</td>
+<td style="text-align:center;">
+49677
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+21
+</td>
+<td style="text-align:center;">
+2015/2016
+</td>
+<td style="text-align:left;">
+Robert Lewandowski
+</td>
+<td style="text-align:center;">
+31
+</td>
+<td style="text-align:center;">
+1988
+</td>
+<td style="text-align:center;">
+93447
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+22
+</td>
+<td style="text-align:center;">
+2010/2011
+</td>
+<td style="text-align:left;">
+Mario Gomez
+</td>
+<td style="text-align:center;">
+30
+</td>
+<td style="text-align:center;">
+1985
+</td>
+<td style="text-align:center;">
+27326
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+23
+</td>
+<td style="text-align:center;">
+2010/2011
+</td>
+<td style="text-align:left;">
+Antonio Di Natale
+</td>
+<td style="text-align:center;">
+30
+</td>
+<td style="text-align:center;">
+1977
+</td>
+<td style="text-align:center;">
+27734
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+24
+</td>
+<td style="text-align:center;">
+2008/2009
+</td>
+<td style="text-align:left;">
+David Villa
+</td>
+<td style="text-align:center;">
+30
+</td>
+<td style="text-align:center;">
+1981
+</td>
+<td style="text-align:center;">
+30909
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+25
+</td>
+<td style="text-align:center;">
+2015/2016
+</td>
+<td style="text-align:left;">
+Lionel Messi
+</td>
+<td style="text-align:center;">
+30
+</td>
+<td style="text-align:center;">
+1987
+</td>
+<td style="text-align:center;">
+30981
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+26
+</td>
+<td style="text-align:center;">
+2012/2013
+</td>
+<td style="text-align:left;">
+Zlatan Ibrahimovic
+</td>
+<td style="text-align:center;">
+30
+</td>
+<td style="text-align:center;">
+1981
+</td>
+<td style="text-align:center;">
+35724
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+27
+</td>
+<td style="text-align:center;">
+2011/2012
+</td>
+<td style="text-align:left;">
+Klaas Jan Huntelaar
+</td>
+<td style="text-align:center;">
+30
+</td>
+<td style="text-align:center;">
+1983
+</td>
+<td style="text-align:center;">
+36784
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+28
+</td>
+<td style="text-align:center;">
+2009/2010
+</td>
+<td style="text-align:left;">
+Antonio Di Natale
+</td>
+<td style="text-align:center;">
+29
+</td>
+<td style="text-align:center;">
+1977
+</td>
+<td style="text-align:center;">
+27734
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+29
+</td>
+<td style="text-align:center;">
+2009/2010
+</td>
+<td style="text-align:left;">
+Didier Drogba
+</td>
+<td style="text-align:center;">
+29
+</td>
+<td style="text-align:center;">
+1978
+</td>
+<td style="text-align:center;">
+30822
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+30
+</td>
+<td style="text-align:center;">
+2011/2012
+</td>
+<td style="text-align:left;">
+Wayne Rooney
+</td>
+<td style="text-align:center;">
+29
+</td>
+<td style="text-align:center;">
+1985
+</td>
+<td style="text-align:center;">
+30829
+</td>
+</tr>
+</tbody>
+</table>
 </div>

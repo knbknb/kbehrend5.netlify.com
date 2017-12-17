@@ -32,6 +32,15 @@ Still experimenting with the Hugo software.</description>
     </item>
     
     <item>
+      <title>Soccer-Database: Extracting goal data from XML fragments</title>
+      <link>/post/2017/12/database/</link>
+      <pubDate>Mon, 18 Dec 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2017/12/database/</guid>
+      <description>Using R to process XML fragments stored in a relational database.</description>
+    </item>
+    
+    <item>
       <title>Soccer-Database: Generating schema diagrams</title>
       <link>/post/2017/12/soccerdb-schema-diagrams/</link>
       <pubDate>Sun, 17 Dec 2017 00:00:00 +0000</pubDate>
