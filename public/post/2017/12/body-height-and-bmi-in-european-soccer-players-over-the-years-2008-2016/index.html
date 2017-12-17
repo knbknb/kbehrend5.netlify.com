@@ -1,0 +1,336 @@
+<!-- post/single.html //-->
+<!DOCTYPE html>
+<html lang="en-us">
+        <!-- post/header-post.html //-->
+  <head>
+    <meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>Body Height and BMI in European Soccer Players over the years 2008-2016</title>
+<meta name="description" content="Knut Behrends&#39; personal blog. A website built through Hugo and blogdown.">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="all,follow">
+<meta name="googlebot" content="index,follow,snippet,archive">
+
+<meta property="keywords" content ="Personal-Blog, Fun, rstats, Sports-Data, Soccer, Kaggle.com">
+
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:400,300,700,400italic">
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+<link rel="stylesheet" href="/css/owl.carousel.css">
+<link rel="stylesheet" href="/css/owl.theme.css">
+
+
+  <link href="/css/style.green.css" rel="stylesheet" id="theme-stylesheet">
+
+ 
+
+  
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+        <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  
+
+
+<link href="/css/custom.css" rel="stylesheet">
+<link rel="shortcut icon" href="/img/favicon/favicon.png">
+
+
+<script>
+window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+ga('create', 'UA-38728498-3', 'auto');
+ga('send', 'pageview');
+</script>
+<script async src='//www.google-analytics.com/analytics.js'></script>
+
+
+    
+<link rel="apple-touch-icon" sizes="57x57" href="/img/favicon/apple-icon-57x57.png">
+<link rel="apple-touch-icon" sizes="60x60" href="/img/favicon/apple-icon-60x60.png">
+<link rel="apple-touch-icon" sizes="72x72" href="/img/favicon/apple-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="76x76" href="/img/favicon/apple-icon-76x76.png">
+<link rel="apple-touch-icon" sizes="114x114" href="/img/favicon/apple-icon-114x114.png">
+<link rel="apple-touch-icon" sizes="120x120" href="/img/favicon/apple-icon-120x120.png">
+<link rel="apple-touch-icon" sizes="144x144" href="/img/favicon/apple-icon-144x144.png">
+<link rel="apple-touch-icon" sizes="152x152" href="/img/favicon/apple-icon-152x152.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/img/favicon/apple-icon-180x180.png">
+<link rel="icon" type="image/png" sizes="192x192"  href="/img/favicon/android-icon-192x192.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/img/favicon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/img/favicon/favicon-96x96.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/img/favicon/favicon-16x16.png">
+<link rel="manifest" href="/img/favicon/manifest.json">
+<meta name="msapplication-TileColor" content="#ffffff">
+<meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
+<meta name="theme-color" content="#ffffff">
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+              <nav class="nav">
+
+  <a href="/" class="nav-logo">
+    
+    <span class="nav-logo-medium"><img src="/img/logo-knutbehrends-square-circle.72x72.png" alt="brain-activity-logo" /></span>
+    
+    </a>
+  <span class="sidebar-heading">
+          <a href="/">Knut Behrends Personal Blog, v3</a>
+  </span>
+  <ul class="nav-links">
+    
+    <li><a href="/">Home</a></li>
+    
+    <li><a href="/post/">Blog</a></li>
+    
+    <li><a href="/about/">About</a></li>
+    
+    <li><a href="/contact/">Get in touch</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<link rel="apple-touch-icon" sizes="57x57" href="/img/favicon/apple-icon-57x57.png">
+<link rel="apple-touch-icon" sizes="60x60" href="/img/favicon/apple-icon-60x60.png">
+<link rel="apple-touch-icon" sizes="72x72" href="/img/favicon/apple-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="76x76" href="/img/favicon/apple-icon-76x76.png">
+<link rel="apple-touch-icon" sizes="114x114" href="/img/favicon/apple-icon-114x114.png">
+<link rel="apple-touch-icon" sizes="120x120" href="/img/favicon/apple-icon-120x120.png">
+<link rel="apple-touch-icon" sizes="144x144" href="/img/favicon/apple-icon-144x144.png">
+<link rel="apple-touch-icon" sizes="152x152" href="/img/favicon/apple-icon-152x152.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/img/favicon/apple-icon-180x180.png">
+<link rel="icon" type="image/png" sizes="192x192"  href="/img/favicon/android-icon-192x192.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/img/favicon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/img/favicon/favicon-96x96.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/img/favicon/favicon-16x16.png">
+<link rel="manifest" href="/img/favicon/manifest.json">
+<meta name="msapplication-TileColor" content="#ffffff">
+<meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
+<meta name="theme-color" content="#ffffff">
+
+
+
+
+<link href='//cdn.bootcss.com/highlight.js/9.11.0/styles/github.min.css' rel='stylesheet' type='text/css' />
+
+
+
+
+<main class="content" role="main">
+
+  <article class="article">
+    
+    <span class="article-duration">5 min read</span>
+    
+
+    <h1 class="article-title">Body Height and BMI in European Soccer Players over the years 2008-2016</h1>
+
+    
+    <span class="article-date">2017/12/04</span>
+    
+
+    <div class="article-content">
+      <div id="change-of-body-parameters-in-soccer-players" class="section level3">
+<h3>Change of body parameters in soccer players</h3>
+<blockquote>
+<p>How did body mass index and body size of professional football players change over the years? Body size, not so much. It has stayed rather constant between 2008 and 2016. Average height might have even <em>fallen</em> a little bit. Body weight and, correspondingly, Body Mass Index on the other hand, have fallen even more. This means the top clubs want thinner players. It also means, in soccer, possibilities to increase the athleticism of players is limited.</p>
+</blockquote>
+<p>As mentioned in <a href="/post/2017/11/european-soccer-players-and-their-bmi/">previous blogposts</a>, I’ve downloaded a <a href="https://www.kaggle.com/hugomathien/soccer/downloads/soccer.zip">zipfile (36 MB)</a> with Football data from data science community <a href="https://www.kaggle.com/hugomathien/soccer">Kaggle.com</a>. The archive contained an SQLite Database.</p>
+<pre class="r"><code>library(DBI)
+con &lt;- dbConnect(odbc::odbc(), &quot;well-sqlite-footballdb&quot;)</code></pre>
+<p>For the sake of brevity, to see the R packages I’ve included to process the data, see the <a href="/post/2017/11/european-soccer-players-and-their-bmi/">previous blogpost</a>. Only the <code>tidyr</code> package is new here.</p>
+<pre class="r"><code>library(tidyr)   # gather</code></pre>
+<p>The database consists of 7 tables. We’ll read in all of them. The Player table contains basic data of ~10000 soccer players from the top leagues of 14 European countries. They are not strictly “European soccer players”, but players from all over the globe, competing in the top leagues of certain Western European countries.</p>
+<p>Tables in the Sqlite database:</p>
+<pre><code>##                     Rows Columns
+## Player_Attributes 183978      42
+## Player             11060       7
+## Match              25979     115
+## League                11       3
+## Country               11       2
+## Team                 299       5
+## Team_Attributes     1458      25</code></pre>
+<p>The <code>Player</code> table lists the soccer players’ data.</p>
+<p>Add some new attributes to the table.</p>
+<pre class="r"><code>pounds_per_kg &lt;- 0.453592
+sizes &lt;- c(&quot;large&quot; = 190, &quot;small&quot; = 175)
+
+Player &lt;- Player %&gt;%
+        mutate(birthday = ymd(as_datetime(birthday))) %&gt;% # was string
+        mutate(weight = weight * pounds_per_kg) %&gt;%
+        mutate(bmi = weight /((height/100)^2)) %&gt;%
+        mutate(size = factor(
+                if_else(height &gt;= sizes[&quot;large&quot;], &quot;large&quot;,
+                        if_else(height &gt;= sizes[&quot;small&quot;], &quot;medium&quot;, &quot;small&quot;))))
+
+# from sqlite database foreign key constraints
+#   FOREIGN KEY(`home_player_1`) REFERENCES `Player`(`player_api_id`),</code></pre>
+<p>The <code>Match</code> table contains data from 25979 matches, played between 2008-07-18 and 2016-05-25. The table contains 115 columns.</p>
+<p>The names of the players comprising the teams are listed in 22 columns named <code>home_player_1</code> to <code>home_player_11</code>, and <code>away_player_1</code> to <code>away_player_11</code>. The substitute players nominated for the match are not known.</p>
+<p>This database table has an untidy format. Let’s tidy it with the <code>tidyr::gather()</code> function:</p>
+<pre class="r"><code>Match_players  &lt;- Match %&gt;%
+        select(match_api_id, season, league_id,
+        home_player_1:away_player_11) %&gt;%
+        rename(&quot;match_id&quot; = match_api_id)  %&gt;%
+        gather( k, player_api_id,  -match_id, -season, -league_id)</code></pre>
+<p>This table now looks like this:</p>
+<pre class="r"><code>head(Match_players %&gt;% filter(!is.na(player_api_id)), 5)</code></pre>
+<pre><code>##   match_id    season league_id             k player_api_id
+## 1   493016 2008/2009         1 home_player_1         39890
+## 2   493017 2008/2009         1 home_player_1         38327
+## 3   493018 2008/2009         1 home_player_1         95597
+## 4   493020 2008/2009         1 home_player_1         30934
+## 5   493021 2008/2009         1 home_player_1         37990</code></pre>
+<p>I’ve only shown 5 rows of this 571538 x 5 table. This table can now be joined with the <code>Player</code> table:</p>
+<pre class="r"><code>Player_in_match &lt;- Player %&gt;%
+        inner_join(Match_players, by = c(&quot;player_api_id&quot; = &quot;player_api_id&quot;)) %&gt;%
+        mutate(year_of_birth = year(birthday)) %&gt;%
+        rename(&quot;player_id&quot; = id)</code></pre>
+<p>We’ll start with body size, because it is an easier quantity to understand.</p>
+<pre class="r"><code>## there are too few players in the dataset
+# born earlier than 1975, and after 1998
+yob_thresh_max &lt;- 1975
+yob_thresh_min &lt;- 1997
+
+
+Player_height_by_year &lt;- Player_in_match %&gt;%
+        select(year_of_birth, size, height ) %&gt;%
+        filter(year_of_birth &gt;= yob_thresh_max) %&gt;%
+        filter(year_of_birth &lt;= yob_thresh_min) %&gt;%
+        group_by(year_of_birth) %&gt;%
+        summarize( avg_height = mean(height))
+
+# average body height seems to go down a little bit
+Player_height_by_year %&gt;%
+        ggplot(aes(year_of_birth, avg_height)) +
+        geom_point() +
+        geom_smooth(method=&quot;loess&quot;, span=1, se=TRUE) +
+        ylab(&quot;Average Player Height [cm]&quot;) +
+        xlab(&quot;Player&#39;s Year of Birth&quot;) +
+        ylim(c(175, 190))</code></pre>
+<p><img src="/post/2017-12-04-body-height-and-bmi-in-european-soccer-players-over-the-years-2008-2016_files/figure-html/unnamed-chunk-10-1.png" width="768" /></p>
+<p>Average body size might have even fallen a bit in professional soccer. This trend is unlike Icehockey, where another data scientist has collected evidence in a <a href="https://ikashnitsky.github.io/2017/ice-hockey-players-height/">blogpost</a> that professional players have an average body size 183 cm in 2010, and this increases about 0.1 cm per year.</p>
+</div>
+<div id="bmi-per-year" class="section level3">
+<h3>BMI per year</h3>
+<p>How did Body Mass Index change over the years?</p>
+<p>The following plots show that BMI seems to fall. Maybe this is an artifact, because for the years 2016 the database contains much more younger players who are not fully grown up biologically and have less massive bodies.</p>
+<pre class="r"><code>Player_bmi_by_year &lt;- Player_in_match %&gt;%
+        select(year_of_birth, season, player_api_id, bmi) %&gt;%
+        group_by(year_of_birth, season) %&gt;%
+        #        summarize(distinct_players = n())
+        summarize(distinct_players =n_distinct(player_api_id)) %&gt;% 
+        ungroup()
+
+
+
+
+Player_bmi_by_year %&gt;%
+        group_by(year_of_birth) %&gt;%
+        summarize(distinct_players = sum(distinct_players)) %&gt;%
+        ggplot(aes(year_of_birth, distinct_players)) +
+        geom_point() +
+        geom_smooth(method=&quot;loess&quot;, se=FALSE) +
+        ylab(&quot;Number of BMI by  Players in Database&quot;) +
+        xlab(&quot;Players&#39; Year of Birth&quot;) +
+        geom_vline(xintercept = c(yob_thresh_max, yob_thresh_min),
+                   color=&quot;maroon&quot;) +
+        ggtitle(&quot;European Soccer Database: Players&#39; Appearances in Matches&quot;,
+                subtitle = &quot;By year of birth. Double counted for each season. Seasons 2008-2016.&quot;)</code></pre>
+<p><img src="/post/2017-12-04-body-height-and-bmi-in-european-soccer-players-over-the-years-2008-2016_files/figure-html/unnamed-chunk-11-1.png" width="768" /></p>
+<pre class="r"><code># remove players where we have too few counts 
+Player_bmi_by_year &lt;- Player_in_match %&gt;%
+        select(year_of_birth, bmi ) %&gt;%
+        filter(year_of_birth &gt;= yob_thresh_max) %&gt;%
+        filter(year_of_birth &lt;= yob_thresh_min) 
+
+Player_bmi_by_season &lt;- Player_in_match %&gt;%
+        select(season, bmi ) 
+
+Player_bmi_by_year.2 &lt;- Player_bmi_by_year %&gt;%
+        group_by(year_of_birth) %&gt;%
+        summarize( avg_bmi = mean(bmi))
+
+# average BMI over the years
+Player_bmi_by_year.2 %&gt;%
+        ggplot(aes(year_of_birth, avg_bmi)) +
+        geom_point() +
+        geom_smooth(method=&quot;loess&quot;, span=1, se=FALSE) +
+        ylab(&quot;Average Player BMI&quot;) +
+        xlab(&quot;Players&#39; Year of Birth&quot;)</code></pre>
+<p><img src="/post/2017-12-04-body-height-and-bmi-in-european-soccer-players-over-the-years-2008-2016_files/figure-html/unnamed-chunk-11-2.png" width="768" /></p>
+<pre class="r"><code># 1 boxplot per year - trend is less obvious
+Player_bmi_by_year %&gt;%  
+        mutate(year_of_birth = factor(year_of_birth)) %&gt;%  
+        ggplot(aes(year_of_birth, bmi)) +
+        geom_boxplot() +
+        ylab(&quot;BMI&quot;) +
+        ggtitle(&quot;Body Mass Index of Soccer Players over years&quot;)</code></pre>
+<p><img src="/post/2017-12-04-body-height-and-bmi-in-european-soccer-players-over-the-years-2008-2016_files/figure-html/unnamed-chunk-11-3.png" width="768" /></p>
+<pre class="r"><code># BMI per season
+Player_bmi_by_season %&gt;%  
+        ggplot(aes(season, bmi)) +
+        geom_violin() +
+        ylab(&quot;BMI&quot;) +
+        theme(axis.text.x=element_text(angle=60,hjust=1)) +
+        ggtitle(&quot;Body Mass Index of Soccer Players over years&quot;)</code></pre>
+<p><img src="/post/2017-12-04-body-height-and-bmi-in-european-soccer-players-over-the-years-2008-2016_files/figure-html/unnamed-chunk-11-4.png" width="768" /></p>
+<p>These violin plots show the distributions of players’ BMIs <em>per season</em>. They appear to be very much alike. You might think that the range of values goes down - indicating that players get more uniform with respect to BMI. I also think clubs prefer thinner, younger, more agile players. Or the residence time of players in clubs has gone down, or younger players get into top clubs at an earlier age.</p>
+</div>
+
+    </div>
+  </article>
+
+  
+
+</main>
+
+<!-- layouts/partials/footer.html //-->
+      <footer class="footer">
+        <ul class="footer-links">
+          <li>
+            <a href="/index.xml" type="application/rss+xml" target="_blank">RSS feed</a>
+          </li>
+        </ul>
+        
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-38728498-3"></script>
+
+
+      </footer>
+
+  
+  
+
+
+
+<script src="//cdn.bootcss.com/highlight.js/9.11.0/highlight.min.js"></script>
+
+
+
+<script src="//cdn.bootcss.com/highlight.js/9.11.0/languages/r.min.js"></script>
+<script src="//cdn.bootcss.com/highlight.js/9.11.0/languages/yaml.min.js"></script>
+<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+
+
+
+  
+
+
+<script src="/js/jquery.min.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/jquery.cookie.js"> </script>
+<script src="/js/ekko-lightbox.js"></script>
+<script src="/js/jquery.scrollTo.min.js"></script>
+<script src="/js/masonry.pkgd.min.js"></script>
+<script src="/js/imagesloaded.pkgd.min.js"></script>
+<script src="/js/owl.carousel.min.js"></script>
+<script src="/js/front.js"></script>
+<script src="/js/motto-fragments.js"></script>
+<script src="/js/math-code.js"></script>
+<script src="/js/modify-css.js"></script>
+
+</body>
+</html>
