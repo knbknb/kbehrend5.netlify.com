@@ -74,7 +74,7 @@ library(assertthat) # is.writeable</code></pre>
 <li>true end results of the games played (51 matches)</li>
 <li>prize money winners (36 people)</li>
 </ul>
-<pre class="r"><code>datadir &lt;- &quot;../../data/gfzock/&quot;
+<pre class="r"><code>datadir &lt;- here::here(&quot;data2/gfzock&quot;)
 see_if(is.readable(datadir))</code></pre>
 <pre><code>## [1] TRUE</code></pre>
 <pre class="r"><code>infile1 &lt;- file.path(datadir, &quot;EM2016_compiled_final.csv&quot;)
