@@ -99,12 +99,12 @@ We need
 
 ```{r readcsv, message=FALSE}
 
-datadir <- here::here("data2/gfzock")
+datadir <- "data2/gfzock"
 see_if(is.readable(datadir))
 
-infile1 <- file.path(datadir, "EM2016_compiled_final.csv")
-infile2 <- file.path(datadir, "real_games_scores_full.txt")
-infile3 <- file.path(datadir, "gfzock_prize-money-winners.csv")
+infile1 <- here::here(datadir, "EM2016_compiled_final.csv")
+infile2 <- here::here(datadir, "real_games_scores_full.txt")
+infile3 <- here::here(datadir, "gfzock_prize-money-winners.csv")
 
 see_if(is.readable(infile1))
 euro16games_final  <- read_tsv(infile2, col_names = FALSE)
@@ -382,7 +382,7 @@ Save results to .RData file, which will be used in [part2](/post/2017/12/soccer-
 
 ```{r outfile, message=FALSE, warning=FALSE, results='hide'}
 see_if(is.writeable(datadir))
-outfile <- file.path(datadir, "gfzock_euro2016_preprocessed.RData")
+outfile <- here::here(datadir, "gfzock_euro2016_preprocessed.RData")
 
 see_if(is.writeable(outfile))
 save.image(file=outfile)        
