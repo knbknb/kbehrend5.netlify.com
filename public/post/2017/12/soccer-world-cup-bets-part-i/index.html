@@ -346,10 +346,14 @@ players &lt;- players %&gt;%
         left_join(players_winners, 
                   by = c( &quot;player_last_name&quot;, &quot;player_first_name&quot;)) %&gt;%
         mutate(is_winner=! is.na(is_winner)) </code></pre>
-<p>Create joint table of players and their bets</p>
+<ul>
+<li>Create joint table of players and their bets</li>
+</ul>
 <pre class="r"><code>games_players &lt;- euro16bets_per_game %&gt;%
         inner_join(euro16games, by=c(&quot;game_nr&quot;))</code></pre>
-<p>Read in final games scores from <code>infile3</code>, as they were played.</p>
+<ul>
+<li>Read in final games scores from <code>infile3</code>, as they were played.</li>
+</ul>
 <pre class="r"><code># add full names of countries, e.g. POR -&gt; Portugal
 names(euro16games_final) &lt;- c(&quot;team_a_long&quot;, &quot;team_b_long&quot;, &quot;result&quot;)
 euro16games_final &lt;- euro16games_final %&gt;%
@@ -420,7 +424,9 @@ glimpse(euro16games_final, width = 50)</code></pre>
 ## $ game_date    &lt;dttm&gt; 2016-07-10 21:01:01, 20...
 ## $ stage        &lt;chr&gt; &quot;knockout&quot;, &quot;knockout&quot;, ...
 ## $ tendency     &lt;chr&gt; &quot;team_a&quot;, &quot;team_b&quot;, &quot;tea...</code></pre>
-<p>Save results to .RData file, which will be used in <a href="/post/2017/12/soccer-world-cup-bets-part-ii">part2</a>:</p>
+<ul>
+<li>Save results to .RData file, which will be used in <a href="/post/2017/12/soccer-world-cup-bets-part-ii">part2</a>:</li>
+</ul>
 <pre class="r"><code>see_if(is.writeable(datadir))
 outfile &lt;- here::here(datadir, &quot;gfzock_euro2016_preprocessed.RData&quot;)
 
@@ -429,7 +435,9 @@ save.image(file=outfile)        </code></pre>
 </div>
 <div id="end-of-preprocessing" class="section level4">
 <h4>End of preprocessing</h4>
-<p>Continue reading in a second blog post, <a href="/post/2017/12/soccer-world-cup-bets-part-ii">part2</a>.</p>
+<ul>
+<li>Continue reading in a second blog post, <a href="/post/2017/12/soccer-world-cup-bets-part-ii">part2</a>.</li>
+</ul>
 </div>
 </div>
 

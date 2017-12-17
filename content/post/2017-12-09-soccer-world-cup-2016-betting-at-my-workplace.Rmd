@@ -314,13 +314,14 @@ players <- players %>%
 
 ```
 
-Create joint table of players and their bets
-```{r gpl}
+- Create joint table of players and their bets
+
+```{r games}
 games_players <- euro16bets_per_game %>%
         inner_join(euro16games, by=c("game_nr"))
 ```
 
-Read in final games scores from `infile3`, as they were played.
+- Read in final games scores from `infile3`, as they were played.
 
 ```{r}
 # add full names of countries, e.g. POR -> Portugal
@@ -378,7 +379,7 @@ glimpse(euro16games_final, width = 50)
 ```
 
 
-Save results to .RData file, which will be used in [part2](/post/2017/12/soccer-world-cup-bets-part-ii):
+- Save results to .RData file, which will be used in [part2](/post/2017/12/soccer-world-cup-bets-part-ii):
 
 ```{r outfile, message=FALSE, warning=FALSE, results='hide'}
 see_if(is.writeable(datadir))
@@ -392,4 +393,4 @@ save.image(file=outfile)
 
 ####  End of preprocessing
 
-Continue reading in a second blog post, [part2](/post/2017/12/soccer-world-cup-bets-part-ii). 
+- Continue reading in a second blog post, [part2](/post/2017/12/soccer-world-cup-bets-part-ii). 
