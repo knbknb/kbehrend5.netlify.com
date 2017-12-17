@@ -26,12 +26,23 @@ knitr::opts_chunk$set(echo = TRUE)
 
 
 
-This is part 1 of a 2-part series about my first attempts at Bayesian Analysis of Soccer data. 
+This is part 2 of a 3-part series about my first attempts at Bayesian Analysis of Soccer data. 
 
-#### Dataset
+- [Part 1](/post/2017/12/soccerdb-schema-diagrams/) shows the database diagram of the Sqlite database mentioned below.
+- Part 2 (this page) describes how to preprocess some text data that was stored in an cryptic format inside the database
+- Part 3 (not written yet) describes some statistical analysis of some aspect of this dataset.
 
-The dataset used here is the "European Soccer database from Kaggle.com. This dataset is delivered as a Sqlite database. It contains 7 tables which have been filled by scraping mumerous websites many times in 2014-2016.
+#### Dataset 
 
+
+The dataset used here is the ["European Soccer Database" - 25k+ matches, players & teams attributes for European Professional Football](https://www.kaggle.com/hugomathien/soccer/) from Kaggle.com. This dataset is delivered as an Sqlite database. It contains 7 tables which have been filled by the original curator in 2014-2016.
+The data comes from many sources.
+
+#### The problem 
+
+The problem I am solving here: Important information is stored inside the database, but in format that is not usable.
+
+The goal data looks like this:
 
 
 ```{r DBI, message=FALSE, warning=FALSE}

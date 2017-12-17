@@ -1,8 +1,13 @@
 .Rproj.user
 .Rhistory
 .RData
+*.Rdata
+*.Rds
 .Ruserdata
 public
 public/*
 bmi_over_the_years.R
 soccerdb--most-imbalanced-league.Rmd
+data/gfzock/gfzock_euro2016_preprocessed.RData
+data/
+data2

@@ -22,10 +22,20 @@ keywords: ["Personal-Blog", "Fun", "rstats", "Sports-Data", "Soccer", "xml"]
 
 
 
-<p>This is part 1 of a 2-part series about my first attempts at Bayesian Analysis of Soccer data.</p>
+<p>This is part 2 of a 3-part series about my first attempts at Bayesian Analysis of Soccer data.</p>
+<ul>
+<li><a href="/post/2017/12/soccerdb-schema-diagrams/">Part 1</a> shows the database diagram of the Sqlite database mentioned below.</li>
+<li>Part 2 (this page) describes how to preprocess some text data that was stored in an cryptic format inside the database</li>
+<li>Part 3 (not written yet) describes some statistical analysis of some aspect of this dataset.</li>
+</ul>
 <div id="dataset" class="section level4">
 <h4>Dataset</h4>
-<p>The dataset used here is the “European Soccer database from Kaggle.com. This dataset is delivered as a Sqlite database. It contains 7 tables which have been filled by scraping mumerous websites many times in 2014-2016.</p>
+<p>The dataset used here is the <a href="https://www.kaggle.com/hugomathien/soccer/">“European Soccer Database” - 25k+ matches, players &amp; teams attributes for European Professional Football</a> from Kaggle.com. This dataset is delivered as an Sqlite database. It contains 7 tables which have been filled by the original curator in 2014-2016. The data comes from many sources.</p>
+</div>
+<div id="the-problem" class="section level4">
+<h4>The problem</h4>
+<p>The problem I am solving here: Important information is stored inside the database, but in format that is not usable.</p>
+<p>The goal data looks like this:</p>
 <pre class="r"><code>library(DBI)
 con &lt;- dbConnect(odbc::odbc(), &quot;well-sqlite-footballdb&quot;)</code></pre>
 <p>For the sake of brevity, to see the R packages I’ve included to process the data, see the <a href="/post/2017/11/european-soccer-players-and-their-bmi/">previous blogpost</a>. Only the <code>tidyr</code> package is new here.</p>
