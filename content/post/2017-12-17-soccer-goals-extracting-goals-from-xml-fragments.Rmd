@@ -115,12 +115,12 @@ xmlout <- system(command = "tidy -q -i -xml ",
 `r paste(xmlout, collapse = '\n')`
 ```
 
-This is XML text. The XML fragment was scraped from some website, and the curator of the database did not fully finish the job of parsing the information out of this.
+This is XML text. The XML fragment was scraped from some website, and the curator of the database did not fully finish the job of parsing the information out of this. There is very detailed information (team ids; goaltype,...) inside, which is tedious to extract. And if it was extraacted, it would make the database design even more complicated, because more tables would be needed.
 
 
 With regard to the XML fragment, I think the `<player1>` element means this guy scored, `<player2>` made the assist. 
 
-These are the two `<player1>` we are interested, with the following `player_api_id`s:
+These are the two `<player1>` we are interested in, with the following `player_api_id`s:
 
 ```{r cho=TRUE}
 (scorer_api_ids <- xmlfrag  %>% 
@@ -225,13 +225,15 @@ Player_most_goals_season <- Player_most_goals %>%
 
 ```
 
+This table is not particularly insightful, it just shows that I've correctly parsed the XML-fragments in the datatable. We have `r nrow(Player_most_goals_season)` players which shot `r sum(Player_most_goals_season$goals)` goals in total, in `r length(unique(Player_most_goals_season$season))` seasons. 
+
 ```{r mostg}
 Player_most_goals_season %>% 
         select(-height, -weight, -player_fifa_api_id) %>%
         mutate(birthday = year(birthday)) %>% 
         select(season, player_name, goals, birthday, player_api_id) %>% 
         head(30) %>% 
-        knitr::kable(caption="Goals per season", row.names=1, align="clccc") %>% 
+        knitr::kable(caption="Goals per player and season", row.names=1, align="clccc") %>% 
         kableExtra::kable_styling(bootstrap_options = c("striped", "hover"))
 
 ```
