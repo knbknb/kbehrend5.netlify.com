@@ -190,5 +190,14 @@ library(DBI) con &amp;lt;- dbConnect(odbc::odbc(), &amp;quot;well-sqlite-footbal
 # tidyverse packages library(dplyr, warn.conflicts = FALSE) # library(purrr) # functional programming library(stringr) library(lubridate) # strings to datetime library(ggplot2) library(NHANES) # US health data data(NHANES) theme_set(theme_bw()) The database consists of 7 tables.</description>
     </item>
     
+    <item>
+      <title></title>
+      <link>/portfolio/2017-12-17-soccer-database-generating-schema-diagrams/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/portfolio/2017-12-17-soccer-database-generating-schema-diagrams/</guid>
+      <description>This blog post shows 3 times the same database diagram, at varying levels of detail.</description>
+    </item>
+    
   </channel>
 </rss>
