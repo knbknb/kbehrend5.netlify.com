@@ -6,6 +6,7 @@ howonlyimage: false
 title: My first blog posts
 weight: 10
 summary: 🐣
+url: '/about/'
 ---
 
 
