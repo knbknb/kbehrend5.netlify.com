@@ -43,7 +43,7 @@ keywords: ["Personal-Blog", "Fun", "rstats", "Sports-Data", "Soccer", "Kaggle.co
 </div>
 <div id="data-preparation--see-part-1" class="section level2">
 <h2>Data preparation -See part 1</h2>
-<p>The dataset of the player’s bets/predictions is not public, because there are full names of real people inside. Maybe I’ll show anonymized results of a small part of it at the end of this post. In 2016, I’ve used a little script to screen-scraped the data from the (internal) website, and then I copied it all together into a big csv-file. See <a href="">part 1</a> of this blog post for details. Here I read in everything from an <code>.RData</code>-File, R’s proprietary storage format. This populates our workspace with a lot of precalculated objects. The most important is the <code>euro16_bets_per_game</code> data frame.</p>
+<p>The dataset of the player’s bets/predictions is not public, because there are full names of real people inside. Maybe I’ll show anonymized results of a small part of it at the end of this post. In 2016, I’ve used a little script to screen-scrape the data from the (internal) website, and then I copied it all together into a big csv-file. See <a href="">part 1</a> of this blog post for details. Here I read in everything from an <code>.RData</code>-File, R’s proprietary storage format. This populates our workspace with a lot of precalculated objects. The most important is the <code>euro16_bets_per_game</code> data frame.</p>
 </div>
 <div id="data-analysis" class="section level2">
 <h2>Data analysis</h2>
@@ -71,7 +71,7 @@ theme_set(theme_bw())</code></pre>
 <p><img src="/post/2017-12-09-soccer-world-cup-2016-betting-at-my-workplace-part-2_files/figure-html/plot1-1.png" width="768" /></p>
 <p>Some players registered with the website, but failed to pay the registration fee in time, thus they were never able to to predict anything.</p>
 <p>There was a bump in participation during the transition from group stage to KO-stage, because, again, many players missed to register their bets before the many KO-stage submission deadlines. Here the deadlines were much stricter than at the beginning of the tournament.</p>
-<p>The plot also shows that many people did not bother to place a bet for the last game, the final.</p>
+<p>The plot also shows that many people did not bother to place a bet for the last game, the Final in Paris.</p>
 </div>
 <div id="more-detailed-analysis-of-bets-made" class="section level3">
 <h3>More detailed analysis of bets made</h3>
@@ -129,7 +129,7 @@ ggplot( aes(reorder(game_name, -n),n)) +
 <p><img src="/post/2017-12-09-soccer-world-cup-2016-betting-at-my-workplace-part-2_files/figure-html/unnamed-chunk-5-1.png" width="480" /></p>
 <p>Of course, Germany’s games (from group stage as well as K.O. stage) were preferred by the players. Additionally players apparently prefer assign Jokers on teams participating in the quarter- and semi-finals. However, choices to place joker bets for KO-round games are limited. All participants have to pick some of these. Therefore, I guess, Portugal’s games stand out - people saw it as the clear favourite for the semifinal game POR-WAL (Wales).</p>
 <p>However, games from early in the tournament (FRA-ROU, FRA-ALB) were also picked relatively often.</p>
-<p>Surprisingly, games of the former Euro 2012 champion, Spain, were not particularly popular as ‘joker’ games. Maybe the community didn’t expect them to win clearly. Spain had tough competitors (CZE, TUR, CRO).</p>
+<p>Surprisingly, games of the former Euro 2012 champion, Spain, were not particularly popular as ‘Joker’ games. Maybe the community didn’t expect them to win clearly. Spain had tough competitors (CZE, TUR, CRO).</p>
 </div>
 </div>
 <div id="a-short-note-on-draws" class="section level2">
@@ -558,8 +558,8 @@ ggplot( aes(reorder(game_name, -n),n)) +
 <p>Surprisingly, Germany-Poland (0:0) is also in the region of ‘low predictability’.</p>
 <p><img src="/post/2017-12-09-soccer-world-cup-2016-betting-at-my-workplace-part-2_files/figure-html/blackcirc-1.png" width="768" /></p>
 </div>
-<div id="a-second-look-at-about-surprising-games" class="section level4">
-<h4>A second look at about surprising games</h4>
+<div id="a-second-look-at-surprising-games" class="section level4">
+<h4>A second look at surprising games</h4>
 <p>In the plot above, a few games (those closest to the green line) are marked with a black circle. This table shows these marked games. They were similar to the 4 games in the table that nobody got right: very few participants also got the tendency right.</p>
 <table>
 <thead>

@@ -45,7 +45,7 @@ The rules of the betting game are too complicated to explain here. Probably the 
 
 ## Data preparation -See part 1
 
-The dataset of the player's bets/predictions is not public, because there are full names of real people inside. Maybe I'll show anonymized results of a small part of it at the end of this post. In 2016, I've used a little script to screen-scraped the data from the (internal) website, and then I copied it all together into a big csv-file. 
+The dataset of the player's bets/predictions is not public, because there are full names of real people inside. Maybe I'll show anonymized results of a small part of it at the end of this post. In 2016, I've used a little script to screen-scrape the data from the (internal) website, and then I copied it all together into a big csv-file. 
 See [part 1]() of this blog post for details. Here I read in everything from an `.RData`-File, R's proprietary storage format. This populates our workspace with a lot of precalculated objects. The most important is the `euro16_bets_per_game` data frame.
 
 ## Data analysis
@@ -124,7 +124,7 @@ Some players registered with the website, but failed to pay the registration fee
 There was a bump in participation during the transition from group stage to KO-stage, because, again, many players missed to register their bets before the many KO-stage submission deadlines. Here the deadlines were much stricter than at the beginning of the tournament.
 
 
-The plot also shows that many people did not bother to place a bet for the last game, the final.
+The plot also shows that many people did not bother to place a bet for the last game, the Final in Paris.
 
 ```{r results='hide', echo=FALSE, eval=FALSE}
 
@@ -283,7 +283,7 @@ Of course,  Germany's games (from group stage as well as K.O. stage) were prefer
 
 However, games from early in the tournament (FRA-ROU, FRA-ALB) were also picked relatively often.
 
-Surprisingly, games of the former Euro 2012 champion, Spain, were not particularly popular as 'joker' games. Maybe the community didn't expect them to win clearly. Spain had tough competitors (CZE, TUR, CRO).
+Surprisingly, games of the former Euro 2012 champion, Spain, were not particularly popular as 'Joker' games. Maybe the community didn't expect them to win clearly. Spain had tough competitors (CZE, TUR, CRO).
 
 ## A short note on draws
 
@@ -513,7 +513,7 @@ ggplot(corr_pred_by.2, aes(seq_along(game_nr),corr_pred_by)) +
 
 ```
 
-#### A second look at about surprising games
+#### A second look at surprising games
 
 In the plot above, a few games (those closest to the green line) are marked with a black circle. 
 This table shows these marked games. They were similar to the 4 games in the table that nobody got right: very few participants also got the tendency right. 
