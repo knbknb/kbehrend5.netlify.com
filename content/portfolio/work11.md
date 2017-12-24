@@ -8,8 +8,14 @@ weight: 10
 url: about/more-about-the-hugo-software
 ---
 
-[Hugo Documentation](https://gohugo.io/variables/page/) 
-Links important to me.
+Links important to me: 
+[Blogdown Book](https://bookdown.org/yihui/blogdown/) --
+[Hugo Documentation](https://gohugo.io/variables/page/) --
+[Hugo Shortcodes](https://gohugo.io/content-management/shortcodes/) --
+[Webapps with Go](https://app.pluralsight.com/library/courses/creating-web-applications-go-update) --
+[Go Docs](https://golang.org/doc/)
+
+
 
 
 
