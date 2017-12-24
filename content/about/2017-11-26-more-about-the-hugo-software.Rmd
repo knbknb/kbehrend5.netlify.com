@@ -16,13 +16,22 @@ output:
 
 #### Links important to me
 
-
+#### Hugo ![hugo logo](/img/hugo-logo.png)
 - [Hugo Documentation:: predefined variables](https://gohugo.io/variables/page/) 
 Click on the link to go to the Hugo Documentation, (predefined variables).
 - [Hugo Documentation: Content Management](https://gohugo.io/content-management/) 
+- [Hugo Shortcodes](https://gohugo.io/content-management/shortcodes/) 
+
+`r htmltools::HTML('{{< figure src="https://bookdown.org/yihui/blogdown/images/logo.png" width="40px" title="">}}')`
+
+#### R Markdown 
+
 - [RMarkdown Cheat Sheet](https://www.rstudio.com/wp-content/uploads/2016/03/rmarkdown-cheatsheet-2.0.pdf) 
 - [Blogdown Book](https://bookdown.org/yihui/blogdown/) 
-- [Hugo Shortcodes](https://gohugo.io/content-management/shortcodes/) 
+
+`r htmltools::HTML('{{< figure src="https://golang.org/doc/gopher/doc.png" width="40px" title="">}}')`
+
+#### Go 
 - [Webapps with Go](https://app.pluralsight.com/library/courses/creating-web-applications-go-update) 
 - [Go Docs](https://golang.org/doc/)
 
