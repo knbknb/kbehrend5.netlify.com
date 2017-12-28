@@ -98,7 +98,7 @@ We need
 
 ```{r readcsv, message=FALSE}
 
-datadir <- "data2/gfzock"
+datadir <- "data/gfzock"
 see_if(is.readable(datadir))
 
 infile1 <- here::here(datadir, "EM2016_compiled_final.csv")

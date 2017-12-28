@@ -53,7 +53,7 @@ See [part 1]() of this blog post for details. Here I read in everything from an 
 Load precalculated objects into global environment:
 
 ```{r loadData}
-datadir <- "data2/gfzock/"
+datadir <- "data/gfzock/"
 #assertthat::see_if(assertthat::is.readable(datadir))
 infile <- here::here(datadir, "gfzock_euro2016_preprocessed.RData")
 #assertthat::see_if(assertthat::is.readable(infile))
