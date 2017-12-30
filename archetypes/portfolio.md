@@ -15,5 +15,6 @@ tags=
   - fun
 url= /post/2017/12/soccerdb-schema-diagrams/
 summary= none
-keywords= ["Personal-Blog"]    
+keywords= ["Personal-Blog"]
+usePhotoswipe= false
 +++
