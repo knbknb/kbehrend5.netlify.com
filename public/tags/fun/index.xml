@@ -59,7 +59,7 @@ Dataset The dataset used here is the &amp;ldquo;European Soccer Database&amp;rdq
       
       <guid>/post/2017/12/soccer-world-cup-bets-part-ii/</guid>
       <description>Soccer championship Euro 2016 - A weekend project, from July 2016 Continued from a previous blog post, that explained the data preprocessing steps.
- I wrote this in July 2016, to make myself familiar with the R package ggplot2, and other tidyverse packages. This post contains exploratory analysis of an Euro 2016 Betting Game. Predictions were made, just for fun and a small amount of prize money, by a group of players at my workplace.</description>
+ I wrote this in July 2016 to make myself familiar with the R package ggplot2, and other tidyverse packages. This post contains exploratory analysis of an Euro 2016 Betting Game. Predictions were made, just for fun and a small amount of prize money, by a group of players at my workplace.</description>
     </item>
     
     <item>

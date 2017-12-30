@@ -1,3 +1,4 @@
+<!-- lithium-theme -->
 {{ if and (not .Params.disable_highlight) (in (string .Content) "</pre>") }}
 {{ $highVer := .Site.Params.highlightjsVersion }}
 {{ $highCDN := (.Site.Params.highlightjsCDN | default "//cdn.bootcss.com") }}
