@@ -16,7 +16,8 @@ tags:
   - fun
   - R
 summary: weekend project from Summer 2016
-keywords: ["Personal-Blog", "Fun", "rstats", "Sports-Data", "Soccer", "Euro-2016"]      
+keywords: ["Personal-Blog", "Fun", "rstats", "Sports-Data", "Soccer", "Euro-2016"]
+banner: 'img/post/thumb/figure-blackcirc-1-15pct.png'
 ---
 
 ```{r setup, include=FALSE}

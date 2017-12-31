@@ -12,6 +12,7 @@ output:
     fig_caption: yes
     keep_md: yes
 image: /static/img/post/football--diagram-sm.png
+banner: img/post/thumb/footballb--diagram-sm.png
 categories:
   - blog-post
 tags:

@@ -11,6 +11,7 @@ output:
     fig_caption: yes
     keep_md: yes
 image: /static/img/football.png
+banner: img/post/thumb/football.png
 categories:
   - blog-post
 tags:

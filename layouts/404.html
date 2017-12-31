@@ -1,0 +1,44 @@
+{{ partial "header" . }}
+    <div id="all">
+
+        <header>
+
+          {{ partial "head_favicon" . }}
+
+        </header>
+
+        <div id="content">
+            <div class="container">
+
+                <div class="col-sm-6 col-sm-offset-3" id="error-page">
+
+                    <div class="box">
+                        <h3>We are sorry - this page is not here (anymore)</h3>
+
+                        <p class="text-center">
+                            <a href="{{ .Site.BaseURL }}">
+                                <img src="img/logo-404-goopybadge_bread_slice_cat_by_goopymart-d4qanyi.jpg" alt="{{ .Title }} logo">
+                            </a>
+                        </p>
+
+                        <h4 class="text-muted">Error 404 - Page not found</h4>
+
+                        <p class="buttons"><a href="{{ .Site.BaseURL }}" class="btn btn-template-main"><i class="fa fa-home"></i> Go to Homepage</a>
+                        </p>
+                        <small>Logo Image: CC license applies. Copyright <a href="https://goopymart.deviantart.com/art/goopybadge-bread-slice-cat-286032330">goopymart at deviantart</a> </small> 
+                       
+                    </div>
+
+
+                </div>
+                <!-- /.col-sm-6 -->
+            </div>
+            <!-- /.container -->
+        </div>
+        <!-- /#content -->
+
+        {{ partial "footer.html" . }}
+
+    </div>
+  </body>
+</html>
