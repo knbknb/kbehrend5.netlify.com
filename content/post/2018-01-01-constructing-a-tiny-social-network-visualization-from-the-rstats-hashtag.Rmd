@@ -59,7 +59,7 @@ library(threejs)
 ec <- as.numeric(eigen_centrality(gr)$vector)
 
 # Create new vector 'v' that is equal to the square-root of 'ec' multiplied by 5
-v <- 5 * sqrt(ec)
+v <- 2 * sqrt(ec)
 
 # Plot threejs plot of graph setting vertex size to v
 graphjs(gr, vertex.size = v, vertex.label = TRUE, main="#Rstats tweet network, 2016")
@@ -89,8 +89,9 @@ plot(gr,
      layout = layout_nicely(gr))
 ```
 
-Set vertex attributes
+Show some details of the network
+
 ```{r}
-incident(gr, 'Hadley Wickham', mode = c("all"))
+incident(gr, 'Hadley Wickham', mode = c("all")) %>%  head(20)
 ```
 
