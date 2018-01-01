@@ -18,8 +18,7 @@
       <pubDate>Mon, 01 Jan 2018 00:00:00 +0000</pubDate>
       
       <guid>/post/2018/01/constructing-a-tiny-social-network-visualization-from-the-rstats-hashtag/</guid>
-      <description>Constructing a tiny social-network visualization from the #Rstats hashtag In 2016, I was harvesting tweets from the Twitter streaming API. I’ve used the #rstats hashtag as the search filter. This hashtag is more descriptive than the #R hashtag which may not even be a valid filter expression because it is so short - only two characters.
-During a day or so I gathered about 100 tweets, encoded in JSON format.</description>
+      <description>(Under Construction - Checking if 3-D plot below works ) Constructing a tiny social-network visualization from the #Rstats hashtag In 2016, I was harvesting tweets from the Twitter streaming API. I’ve used the #rstats hashtag as the search filter. This hashtag is more descriptive than the #R hashtag which may not even be a valid filter expression because it is so short - only two characters.</description>
     </item>
     
   </channel>

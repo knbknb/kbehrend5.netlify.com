@@ -11,6 +11,9 @@ banner: img/post/thumb/jq-med.png
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
+
+# (Under Construction - Checking if 3-D plot below works )
+
 ## Constructing a tiny social-network visualization from the #Rstats hashtag
 
 In 2016, I was harvesting tweets from the Twitter streaming API. I've used the `#rstats` hashtag as the search filter. This hashtag is more descriptive than the `#R` hashtag which may not even be a valid filter expression because it is so short - only two characters.
@@ -19,7 +22,7 @@ During a day or so I gathered about 100 tweets, encoded in JSON format.
 Each tweet contains about 2500 characters. This might surprise you, because a tweet used to be 140 characters in length, until Twitter increased it to 280 characters in 2017. But a tweet contains a lot of metadata.
 
 
-In a different blogpost ('[Learning jq](/post/learning-jq)')  I've explained how to extract specific fields from the nested structure. See example 4.
+In a different blogpost ('[Learning jq](/post/2017/12/learning-jq)')  I've explained how to extract specific fields from the nested structure. See example 4.
 
 This text file can be read in as a data frame:
 
