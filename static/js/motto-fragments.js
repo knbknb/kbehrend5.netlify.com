@@ -1,5 +1,5 @@
 $(function(){
-// from the first Chapter of "Great Jones Street" by Don DeLillo
+// Line 1 - 85 from the first Chapter of "Great Jones Street" by Don DeLillo
         var fragments = ["Fame requires every kind of excess.",
 "True fame",
 "Devouring neon",
