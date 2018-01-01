@@ -66,7 +66,7 @@ graphjs(gr, vertex.size = v, vertex.label = TRUE, main="#Rstats tweet network, 2
 
 ```
 
-```{r}
+```{r moreplots, eval=FALSE, echo=FALSE}
 g.b <- betweenness(gr, directed = TRUE)
 #Show histogram of vertex betweenness
 hist(g.b, breaks = 80)
