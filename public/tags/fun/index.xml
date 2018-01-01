@@ -7,10 +7,20 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>&amp;copy;2018 Knut Behrends</copyright>
-    <lastBuildDate>Mon, 18 Dec 2017 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 01 Jan 2018 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/tags/fun/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Constructing a tiny social-network visualization from the #Rstats hashtag</title>
+      <link>/post/2018/01/constructing-a-tiny-social-network-visualization-from-the-rstats-hashtag/</link>
+      <pubDate>Mon, 01 Jan 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2018/01/constructing-a-tiny-social-network-visualization-from-the-rstats-hashtag/</guid>
+      <description>Constructing a tiny social-network visualization from the #Rstats hashtag In 2016, I was harvesting tweets from the Twitter streaming API. I’ve used the #rstats hashtag as the search filter. This hashtag is more descriptive than the #R hashtag which may not even be a valid filter expression because it is so short - only two characters.
+During a day or so I gathered about 100 tweets, encoded in JSON format.</description>
+    </item>
     
     <item>
       <title>Soccer-Database: Extracting goal data from XML fragments</title>

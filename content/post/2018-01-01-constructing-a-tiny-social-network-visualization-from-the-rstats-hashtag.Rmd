@@ -1,0 +1,96 @@
+---
+title: 'Constructing a tiny social-network visualization from the #Rstats hashtag'
+author: Knut Behrends
+date: '2018-01-01'
+slug: constructing-a-tiny-social-network-visualization-from-the-rstats-hashtag
+categories: [blog-post]
+tags: [fun, rstats]
+banner: img/post/thumb/jq-med.png
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+## Constructing a tiny social-network visualization from the #Rstats hashtag
+
+In 2016, I was harvesting tweets from the Twitter streaming API. I've used the `#rstats` hashtag as the search filter. This hashtag is more descriptive than the `#R` hashtag which may not even be a valid filter expression because it is so short - only two characters.
+
+During a day or so I gathered about 100 tweets, encoded in JSON format.  
+Each tweet contains about 2500 characters. This might surprise you, because a tweet used to be 140 characters in length, until Twitter increased it to 280 characters in 2017. But a tweet contains a lot of metadata.
+
+
+In a different blogpost ('[Learning jq](/post/learning-jq)')  I've explained how to extract specific fields from the nested structure. See example 4.
+
+This text file can be read in as a data frame:
+
+```{r message=FALSE, warning=FALSE}
+options(knitr.table.format = "html") 
+library(here)
+library(assertthat)
+library(tidyverse)
+library(igraph)
+datadir <- "data/twitter"
+see_if(is.readable(datadir))
+
+infile1 <- here::here(datadir, "rstats_network.txt")
+mentions <- read_csv(infile1)
+# remove leading "_" from column names
+colnames(mentions) <- gsub("^_", "", colnames(mentions), perl = TRUE)
+```
+
+Convert it to an igraph object, a network
+```{r df2igr}
+users <- mentions %>% 
+        select(name) %>% 
+        dplyr::union(mentions %>% select(mentions_name) %>% rename(name ="mentions_name"))
+
+
+gr <- mentions %>% 
+        select(name, mentions_name) %>%
+        unique() %>% 
+        filter(name != mentions_name) %>% 
+        graph_from_data_frame(directed = TRUE, vertices = users)
+
+gr <- set_vertex_attr(gr, "color", value = "dodgerblue")
+
+# Redraw the graph and make the vertex size 1
+library(threejs)
+
+ec <- as.numeric(eigen_centrality(gr)$vector)
+
+# Create new vector 'v' that is equal to the square-root of 'ec' multiplied by 5
+v <- 5 * sqrt(ec)
+
+# Plot threejs plot of graph setting vertex size to v
+graphjs(gr, vertex.size = v, vertex.label = TRUE, main="#Rstats tweet network, 2016")
+
+```
+
+```{r}
+g.b <- betweenness(gr, directed = TRUE)
+#Show histogram of vertex betweenness
+hist(g.b, breaks = 80)
+
+
+plot(gr,
+     vertex.label = NA,
+     vertex.label.color = "black", 
+     edge.color = 'gray77',
+     vertex.size = 0,
+     edge.arrow.size = 0.1,
+     layout = layout_nicely(gr))
+
+# Create plot with vertex size determined by betweenness score
+plot(gr, 
+#     vertex.label = NA,
+     edge.color = 'black',
+     vertex.size = sqrt(g.b)+1,
+     edge.arrow.size = 0.05,
+     layout = layout_nicely(gr))
+```
+
+Set vertex attributes
+```{r}
+incident(gr, 'Hadley Wickham', mode = c("all"))
+```
+
