@@ -6,6 +6,10 @@ slug: Learning jq
 categories: []
 tags: []
 banner: img/post/thumb/jq-med.png
+output:
+  html_document:
+    toc: true
+    toc_depth: 4
 ---
 
 ### A grabbag of ![](/img/portfolio/jq-med.png) commands 
@@ -30,17 +34,22 @@ This was a trial and error process.
 
 The format of the snippets below is a pipe of shell commands.
 
-`<infile.json jq-cmd1 jq-cmd2 std-cmd1 std-cmd2 ... `
+`<infile.json jq-cmd1 | jq-cmd2 | shell-cmd1 | shell-cmd2 ... `
 
 The infile.json I've saved beforehand using a [small python script](https://stackoverflow.com/a/47791375/202553).
 
-The infile contains one Tweet per line. The file as a whole is not a valid JSON file. For this reason I need the first `jq` command. It converts the collection of JSON fragments into an array of JSON objects and some  transforming/filtering into another sequence of JSON fragments. The second `jq` command converts the transformed JSON into a csv file. This jq-cmd is so complex that I've factored out into a small file in the same directory, called `to_csv.jq`.  
+The infile contains one Tweet per line. The file as a whole is not a valid JSON file. For this reason I need the first `jq` command, `jq-cmd1`. It converts the collection of JSON fragments into an array of JSON objects and applies a transformation, or does some filtering. This creates another sequence of JSON fragments. 
+
+The second `jq` command converts the transformed JSON into a csv file. This jq-cmd is so complex that I've factored it out into a small file in the same directory, called `to_csv.jq` (see at end of this post).  
+
+File `to_csv.jq` looks like this:
+
 
 #### Example 1 - extract tweet text
 
-This snippet extracts the text from a file that I created by saving data from the Twitter streaming API:
+This snippet extracts the text from a file that I created by saving data from the Twitter streaming API. I've filtered for the "`#rstats`" hashtag which includes tweets about the R language:
 
-```
+```{bash eval=FALSE}
 < raw_tweets/stream__AGU17.json jq -s '[.[] | {text: .text}] ' \
    | jq  -f -r to_csv.jq  | grep -i "rstats" | sort -u
 ```
@@ -61,9 +70,9 @@ This is a variant of Example 1. Extract 5 fields from different levels of the tw
 
 #### Helper function `to_csv()`
 
-This is from a [Stackoverflow Answer](https://stackoverflow.com/a/44012345/202553) on the question *How to convert arbirtrary simple JSON to CSV using jq?*  
+This is from a [Stackoverflow Answer](https://stackoverflow.com/a/44012345/202553) to the question *How to convert arbirtrary simple JSON to CSV using jq?*  
 
-```
+```{bash eval=FALSE}
 
 def tocsv($x):
     $x
@@ -81,16 +90,18 @@ def tocsv($x):
 
 tocsv(.)
 
+# call: 
+# <tweets.json jq  -s  -S  '[.[] | {name:  .user.name, sn: .user.screen_name, loc: .user.location, url:.user.url, desc:.user.description, _fol: .user.followers_count }]'  | jq  -f -r to_csv.jq
 
 ```
 
 #### Further processing
 
-Further processing on the command line can be done with the `[csvkit](http://csvkit.readthedocs.io/en/1.0.2/tricks.html#installation)` suite of tools.
+Further processing on the command line can be done with the *[csvkit](http://csvkit.readthedocs.io/en/1.0.2/tricks.html#installation)* suite of tools.
 
-This is an example:
+This is an example. (*csvsort*, *csvcut*, *csvlook* correspond to `shell-cmd1` mentioned above) :
 
-```
+```{bash eval=FALSE}
 <raw_tweets/stream_rstats.json jq  -s  -S \
 '[.[] | {name:  .user.name, sn: .user.screen_name, \
 loc: .user.location, \
@@ -109,7 +120,7 @@ It produces this output:
 ```
 | line_number | f                              | c              |
 | ----------- | ------------------------------ | -------------- |
-|           1 |                                | 日本 東京          |
+|           1 |                                | 日本 東京      |
 |           2 |                                | Milan          |
 |           3 |                                | Grand Ledge    |
 |           4 |                                | Iowa City, IA  |
@@ -122,4 +133,59 @@ It produces this output:
 |         ... | ...                            | ...            |
 ```
 
+#### Example 3 - Extract follower-count, username, description, location
+
+Extract `.user.name, .user.screen_name, .user.location, url:.user.url, .user.description,  .user.followers_count`, but display  only `follower-count, name, description, location` sorted by followercount descending
+
+```{bash eval=FALSE}
+<raw_tweets/stream_rstats.json jq  -s  -S  '[.[] | {name:  .user.name, sn: .user.screen_name, loc: .user.location, url:.user.url, desc:.user.description, _fol: .user.followers_count }]'   | jq  -f -r to_csv.jq     | csvcut -c 1,4,2,3 | csvsort -c 1 -r  | uniq | more 
+```
+
+Output:
+
+
+```
+_fol,name,desc,loc
+387997,"Craig Brown, Ph.D.","Technology & #Business #Consultant (#techpreneur), Dad, #Entrepreneur, #STEM, #Philanthropist, #CancerSurvivor + #BigData SME http://www.craigbrownphd.com","Houston, TX"
+83310,Kirk Borne,"The Principal Data Scientist at @BoozAllen, PhD Astrophysicist, ♡ Data Science, Top Big Data Influencer. Ex-Professor http://rocketdatascience.org/",Booz Allen Hamilton
+83296,Kirk Borne,"The Principal Data Scientist at @BoozAllen, PhD Astrophysicist, ♡ Data Science, Top Big Data Influencer. Ex-Professor http://rocketdatascience.org/",Booz Allen Hamilton
+33681,R-bloggers,Twitting blog posts from the R blogosphere,
+33671,R-bloggers,Twitting blog posts from the R blogosphere,
+30097,Hadley Wickham,"R, data, visualisation.","Houston, TX"
+30096,Hadley Wickham,"R, data, visualisation.","Houston, TX"
+30094,Hadley Wickham,"R, data, visualisation.","Houston, TX"
+30074,Hadley Wickham,"R, data, visualisation.","Houston, TX"
+30072,Hadley Wickham,"R, data, visualisation.","Houston, TX"
+20738,BIconnections,Networking | connecting | people | technology | #process | #Business #Intelligence | #Information #Management | #data | learning discussions | #Community,Belgium
+20731,BIconnections,Networking | connecting | people | technology | #process | #Business #Intelligence | #Information #Management | #data | learning discussions | #Community,Belgium
+20254,Bill Nigh,Citizen/US Army Vet/Con
+```
+
+These are the people with the most followers. Their follower count has increased while I was  scraping the data from the Twitter Streaming API.
+
+#### Example 4 - Extract Users and those they retweeted or mentioned in text
+
+This command gives a tabular output to the question *"Who mentions whom?"*. The data can be used to create a social-network visualisation.
+
+```{bash}
+<raw_tweets/stream_rstats.json jq  -s    '[.[] | { _name:  .user.name, _screen_name: .user.screen_name, _id:.user.id, mentions_id: .entities.user_mentions[].id, mentions_name: .entities.user_mentions[].name, mentions_screen_name: .entities.user_mentions[].screen_name}]' | jq -f -r to_csv.jq |  grep -P  '^"' | head
+```
+
+Output:
+
+(Only ten rows are shown)
+
+```
+"_id","_name","_screen_name","mentions_id","mentions_name","mentions_screen_name"
+"622262193","ReactJS News","ReactJS_News","245217900","timelyportfolio","timelyportfolio"
+"151588786","Alex Bertram","bedatadriven","552767357","Maarten-Jan Kallen","mj_kallen"
+"1553414406","Lovedeep Gondara","LovedeepSG","144592995","R-bloggers","Rbloggers"
+"4277617239","Javascript Bot","JavascriptBot_","622262193","ReactJS News","ReactJS_News"
+"4277617239","Javascript Bot","JavascriptBot_","622262193","ReactJS News","timelyportfolio"
+"4277617239","Javascript Bot","JavascriptBot_","622262193","timelyportfolio","ReactJS_News"
+"4277617239","Javascript Bot","JavascriptBot_","622262193","timelyportfolio","timelyportfolio"
+"4277617239","Javascript Bot","JavascriptBot_","245217900","ReactJS News","ReactJS_News"
+"4277617239","Javascript Bot","JavascriptBot_","245217900","ReactJS News","timelyportfolio"
+
+```
 

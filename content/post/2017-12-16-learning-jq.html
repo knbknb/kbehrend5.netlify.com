@@ -6,6 +6,10 @@ slug: Learning jq
 categories: []
 tags: []
 banner: img/post/thumb/jq-med.png
+output:
+  html_document:
+    toc: true
+    toc_depth: 4
 ---
 
 
@@ -19,13 +23,15 @@ banner: img/post/thumb/jq-med.png
 <p>Here I’ve saved some of my own mini-scripts and shortcuts that I have developed for my own needs. Most of it is already available in similar form, on the internet, but it is not available in a form that I found useful.</p>
 <p>The following text snippets emerged by entering commands on the Unix command line. This was a trial and error process.</p>
 <p>The format of the snippets below is a pipe of shell commands.</p>
-<p><code>&lt;infile.json jq-cmd1 jq-cmd2 std-cmd1 std-cmd2 ...</code></p>
+<p><code>&lt;infile.json jq-cmd1 | jq-cmd2 | shell-cmd1 | shell-cmd2 ...</code></p>
 <p>The infile.json I’ve saved beforehand using a <a href="https://stackoverflow.com/a/47791375/202553">small python script</a>.</p>
-<p>The infile contains one Tweet per line. The file as a whole is not a valid JSON file. For this reason I need the first <code>jq</code> command. It converts the collection of JSON fragments into an array of JSON objects and some transforming/filtering into another sequence of JSON fragments. The second <code>jq</code> command converts the transformed JSON into a csv file. This jq-cmd is so complex that I’ve factored out into a small file in the same directory, called <code>to_csv.jq</code>.</p>
+<p>The infile contains one Tweet per line. The file as a whole is not a valid JSON file. For this reason I need the first <code>jq</code> command, <code>jq-cmd1</code>. It converts the collection of JSON fragments into an array of JSON objects and applies a transformation, or does some filtering. This creates another sequence of JSON fragments.</p>
+<p>The second <code>jq</code> command converts the transformed JSON into a csv file. This jq-cmd is so complex that I’ve factored it out into a small file in the same directory, called <code>to_csv.jq</code> (see at end of this post).</p>
+<p>File <code>to_csv.jq</code> looks like this:</p>
 <div id="example-1---extract-tweet-text" class="section level4">
 <h4>Example 1 - extract tweet text</h4>
-<p>This snippet extracts the text from a file that I created by saving data from the Twitter streaming API:</p>
-<pre><code>&lt; raw_tweets/stream__AGU17.json jq -s &#39;[.[] | {text: .text}] &#39; \
+<p>This snippet extracts the text from a file that I created by saving data from the Twitter streaming API. I’ve filtered for the “<code>#rstats</code>” hashtag which includes tweets about the R language:</p>
+<pre class="bash"><code>&lt; raw_tweets/stream__AGU17.json jq -s &#39;[.[] | {text: .text}] &#39; \
    | jq  -f -r to_csv.jq  | grep -i &quot;rstats&quot; | sort -u</code></pre>
 </div>
 <div id="example-2---extract-more-than-1-field-from-tweets" class="section level4">
@@ -39,8 +45,8 @@ banner: img/post/thumb/jq-med.png
 </div>
 <div id="helper-function-to_csv" class="section level4">
 <h4>Helper function <code>to_csv()</code></h4>
-<p>This is from a <a href="https://stackoverflow.com/a/44012345/202553">Stackoverflow Answer</a> on the question <em>How to convert arbirtrary simple JSON to CSV using jq?</em></p>
-<pre><code>
+<p>This is from a <a href="https://stackoverflow.com/a/44012345/202553">Stackoverflow Answer</a> to the question <em>How to convert arbirtrary simple JSON to CSV using jq?</em></p>
+<pre class="bash"><code>
 def tocsv($x):
     $x
     |(map(keys)
@@ -57,13 +63,15 @@ def tocsv($x):
 
 tocsv(.)
 
+# call: 
+# &lt;tweets.json jq  -s  -S  &#39;[.[] | {name:  .user.name, sn: .user.screen_name, loc: .user.location, url:.user.url, desc:.user.description, _fol: .user.followers_count }]&#39;  | jq  -f -r to_csv.jq
 </code></pre>
 </div>
 <div id="further-processing" class="section level4">
 <h4>Further processing</h4>
-<p>Further processing on the command line can be done with the <code>[csvkit](http://csvkit.readthedocs.io/en/1.0.2/tricks.html#installation)</code> suite of tools.</p>
-<p>This is an example:</p>
-<pre><code>&lt;raw_tweets/stream_rstats.json jq  -s  -S \
+<p>Further processing on the command line can be done with the <em><a href="http://csvkit.readthedocs.io/en/1.0.2/tricks.html#installation">csvkit</a></em> suite of tools.</p>
+<p>This is an example. (<em>csvsort</em>, <em>csvcut</em>, <em>csvlook</em> correspond to <code>shell-cmd1</code> mentioned above) :</p>
+<pre class="bash"><code>&lt;raw_tweets/stream_rstats.json jq  -s  -S \
 &#39;[.[] | {name:  .user.name, sn: .user.screen_name, \
 loc: .user.location, \
 url:.user.url, \
@@ -76,7 +84,7 @@ jq  -f -r to_csv.jq    | \
 <p>(This table is not very informative, but that’s intentional. The content of the tweets is irrelevant here).</p>
 <pre><code>| line_number | f                              | c              |
 | ----------- | ------------------------------ | -------------- |
-|           1 |                                | 日本 東京          |
+|           1 |                                | 日本 東京      |
 |           2 |                                | Milan          |
 |           3 |                                | Grand Ledge    |
 |           4 |                                | Iowa City, IA  |
@@ -87,5 +95,46 @@ jq  -f -r to_csv.jq    | \
 |           9 |                                |                |
 |          10 | http://personal.tcu.edu/kyl... | Fort Worth, TX |
 |         ... | ...                            | ...            |</code></pre>
+</div>
+<div id="example-3---extract-follower-count-username-description-location" class="section level4">
+<h4>Example 3 - Extract follower-count, username, description, location</h4>
+<p>Extract <code>.user.name, .user.screen_name, .user.location, url:.user.url, .user.description,  .user.followers_count</code>, but display only <code>follower-count, name, description, location</code> sorted by followercount descending</p>
+<pre class="bash"><code>&lt;raw_tweets/stream_rstats.json jq  -s  -S  &#39;[.[] | {name:  .user.name, sn: .user.screen_name, loc: .user.location, url:.user.url, desc:.user.description, _fol: .user.followers_count }]&#39;   | jq  -f -r to_csv.jq     | csvcut -c 1,4,2,3 | csvsort -c 1 -r  | uniq | more </code></pre>
+<p>Output:</p>
+<pre><code>_fol,name,desc,loc
+387997,&quot;Craig Brown, Ph.D.&quot;,&quot;Technology &amp; #Business #Consultant (#techpreneur), Dad, #Entrepreneur, #STEM, #Philanthropist, #CancerSurvivor + #BigData SME http://www.craigbrownphd.com&quot;,&quot;Houston, TX&quot;
+83310,Kirk Borne,&quot;The Principal Data Scientist at @BoozAllen, PhD Astrophysicist, ♡ Data Science, Top Big Data Influencer. Ex-Professor http://rocketdatascience.org/&quot;,Booz Allen Hamilton
+83296,Kirk Borne,&quot;The Principal Data Scientist at @BoozAllen, PhD Astrophysicist, ♡ Data Science, Top Big Data Influencer. Ex-Professor http://rocketdatascience.org/&quot;,Booz Allen Hamilton
+33681,R-bloggers,Twitting blog posts from the R blogosphere,
+33671,R-bloggers,Twitting blog posts from the R blogosphere,
+30097,Hadley Wickham,&quot;R, data, visualisation.&quot;,&quot;Houston, TX&quot;
+30096,Hadley Wickham,&quot;R, data, visualisation.&quot;,&quot;Houston, TX&quot;
+30094,Hadley Wickham,&quot;R, data, visualisation.&quot;,&quot;Houston, TX&quot;
+30074,Hadley Wickham,&quot;R, data, visualisation.&quot;,&quot;Houston, TX&quot;
+30072,Hadley Wickham,&quot;R, data, visualisation.&quot;,&quot;Houston, TX&quot;
+20738,BIconnections,Networking | connecting | people | technology | #process | #Business #Intelligence | #Information #Management | #data | learning discussions | #Community,Belgium
+20731,BIconnections,Networking | connecting | people | technology | #process | #Business #Intelligence | #Information #Management | #data | learning discussions | #Community,Belgium
+20254,Bill Nigh,Citizen/US Army Vet/Con</code></pre>
+<p>These are the people with the most followers. Their follower count has increased while I was scraping the data from the Twitter Streaming API.</p>
+</div>
+<div id="example-4---extract-users-and-those-they-retweeted-or-mentioned-in-text" class="section level4">
+<h4>Example 4 - Extract Users and those they retweeted or mentioned in text</h4>
+<p>This command gives a tabular output to the question <em>“Who mentions whom?”</em>. The data can be used to create a social-network visualisation.</p>
+<pre class="bash"><code>&lt;raw_tweets/stream_rstats.json jq  -s    &#39;[.[] | { _name:  .user.name, _screen_name: .user.screen_name, _id:.user.id, mentions_id: .entities.user_mentions[].id, mentions_name: .entities.user_mentions[].name, mentions_screen_name: .entities.user_mentions[].screen_name}]&#39; | jq -f -r to_csv.jq |  grep -P  &#39;^&quot;&#39; | head</code></pre>
+<pre><code>## bash: raw_tweets/stream_rstats.json: No such file or directory
+## jq: Could not open to_csv.jq: No such file or directory</code></pre>
+<p>Output:</p>
+<p>(Only ten rows are shown)</p>
+<pre><code>&quot;_id&quot;,&quot;_name&quot;,&quot;_screen_name&quot;,&quot;mentions_id&quot;,&quot;mentions_name&quot;,&quot;mentions_screen_name&quot;
+&quot;622262193&quot;,&quot;ReactJS News&quot;,&quot;ReactJS_News&quot;,&quot;245217900&quot;,&quot;timelyportfolio&quot;,&quot;timelyportfolio&quot;
+&quot;151588786&quot;,&quot;Alex Bertram&quot;,&quot;bedatadriven&quot;,&quot;552767357&quot;,&quot;Maarten-Jan Kallen&quot;,&quot;mj_kallen&quot;
+&quot;1553414406&quot;,&quot;Lovedeep Gondara&quot;,&quot;LovedeepSG&quot;,&quot;144592995&quot;,&quot;R-bloggers&quot;,&quot;Rbloggers&quot;
+&quot;4277617239&quot;,&quot;Javascript Bot&quot;,&quot;JavascriptBot_&quot;,&quot;622262193&quot;,&quot;ReactJS News&quot;,&quot;ReactJS_News&quot;
+&quot;4277617239&quot;,&quot;Javascript Bot&quot;,&quot;JavascriptBot_&quot;,&quot;622262193&quot;,&quot;ReactJS News&quot;,&quot;timelyportfolio&quot;
+&quot;4277617239&quot;,&quot;Javascript Bot&quot;,&quot;JavascriptBot_&quot;,&quot;622262193&quot;,&quot;timelyportfolio&quot;,&quot;ReactJS_News&quot;
+&quot;4277617239&quot;,&quot;Javascript Bot&quot;,&quot;JavascriptBot_&quot;,&quot;622262193&quot;,&quot;timelyportfolio&quot;,&quot;timelyportfolio&quot;
+&quot;4277617239&quot;,&quot;Javascript Bot&quot;,&quot;JavascriptBot_&quot;,&quot;245217900&quot;,&quot;ReactJS News&quot;,&quot;ReactJS_News&quot;
+&quot;4277617239&quot;,&quot;Javascript Bot&quot;,&quot;JavascriptBot_&quot;,&quot;245217900&quot;,&quot;ReactJS News&quot;,&quot;timelyportfolio&quot;
+</code></pre>
 </div>
 </div>
