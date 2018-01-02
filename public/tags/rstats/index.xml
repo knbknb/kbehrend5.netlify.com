@@ -18,7 +18,7 @@
       <pubDate>Mon, 01 Jan 2018 00:00:00 +0000</pubDate>
       
       <guid>/post/2018/01/constructing-a-tiny-social-network-visualization-from-the-rstats-hashtag/</guid>
-      <description>(Under Construction - Checking if 3-D plot below works ) In 2016, I was harvesting tweets from the Twitter streaming API. I’ve used the #rstats hashtag as the search filter. This hashtag is commonly used in the R community on Twitter. Tag #rstats is more descriptive than the too short, unusable, #R hashtag which may not even be a valid filter expression.</description>
+      <description>(Under Construction - Checking if 3-D plot below works ) In 2016, I was harvesting tweets from the Twitter streaming API. I’ve used the #rstats hashtag as the search filter. This hashtag is commonly used by the R community on Twitter. Tag #rstats is more descriptive than the too short, unusable, #R hashtag which may not even be a valid filter expression.</description>
     </item>
     
   </channel>
