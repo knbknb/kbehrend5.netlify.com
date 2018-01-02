@@ -5,7 +5,7 @@ date: '2018-01-01'
 slug: constructing-a-tiny-social-network-visualization-from-the-rstats-hashtag
 categories: [blog-post]
 tags: [fun, rstats]
-banner: img/post/thumb/jq-med.png
+banner: img/post/thumb/rstats_tweetnodes.png
 ---
 
 ```{r setup, include=FALSE}
@@ -15,36 +15,73 @@ knitr::opts_chunk$set(echo = TRUE)
 # (Under Construction - Checking if 3-D plot below works )
 
 
-In 2016, I was harvesting tweets from the Twitter streaming API. I've used the `#rstats` hashtag as the search filter. This hashtag is more descriptive than the `#R` hashtag which may not even be a valid filter expression because it is so short - only two characters.
+In 2016, I was harvesting tweets from the Twitter streaming API. I've used the `#rstats` hashtag as the search filter. This hashtag is commonly used in the R community on Twitter. Tag `#rstats` is more descriptive than the too short, unusable, `#R` hashtag which may not even be a valid filter expression.
 
-During a day or so I gathered about 100 tweets, encoded in JSON format.  
-Each tweet contains about 2500 characters. This might surprise you, because a tweet used to be 140 characters in length, until Twitter increased it to 280 characters in 2017. But a tweet contains a lot of metadata.
+Load the necessary R packages, and the datafiles. 
 
+```{r libs, warning=FALSE, message=FALSE}
+options(knitr.table.format = "html") 
+library(here)
+library(stringr)
+library(lubridate)
+library(threejs)
+library(tidyverse)
+library(igraph)
+
+datadir <- "data/twitter"
+# (extracts from the full tweets data, explained below)
+infile0 <- here::here(datadir, "rstats_tweettimes.txt")
+infile1 <- here::here(datadir, "rstats_network.txt")
+
+```
+
+Convert dates to strings, group them into day-of-month, and hours-of-day:
+
+```{r dates,  echo=FALSE, results='hide'}
+tweetdates <- read_csv(infile0)
+# rstats_tweettimes.txt:  "Sun Jul 10 08:14:23 +0000 2016"
+tweetdates <- tweetdates %>% 
+        mutate(dt = str_replace(dt, "\\+0000 ", ""),
+               dt = str_replace(dt, "^\\w+ ", ""),
+               dt = parse_date_time(dt, orders = c("b d  H:M:S Y")),
+               day = day(dt),
+               day = sprintf("July %02d", day),
+               hour = hour(dt))
+
+```
+
+From `r min(tweetdates$dt)` to `r max(tweetdates$dt)` I gathered `r nrow(tweetdates)` tweets, encoded in JSON format.  
+Each tweet contains about 2500 characters. This might surprise you, because a tweet used to be 140 characters in length, until Twitter increased it to 280 characters in 2017. But a tweet contains a lot of metadata, and this enlarges the length of a tweet to exceed 2000 characters,  when serialized to a one-line JSON string.
 
 In a different blogpost ('[Learning jq](/post/2017/12/learning-jq)')  I've explained how to extract specific fields from the nested structure. See example 4.
 
-This text file can be read in as a data frame:
+This plot shows  the user activity during this period:
+
+```{r plot1, fig.width=9}
+theme_set(theme_bw())
+tweetdates %>% ggplot(aes(hour)) +
+  geom_bar(fill="dodgerblue") +
+        facet_wrap(~ day, nrow = 1) +
+        xlab("Hour of Day")+ ylab("Tweets per Hour") +
+        ggtitle("#Rstats Tweets in July 2016")
+```
+
+The text file with the user data and the important "mentions" metadata can be read in as a data frame:
 
 ```{r message=FALSE, warning=FALSE}
-options(knitr.table.format = "html") 
-library(here)
-library(assertthat)
-library(tidyverse)
-library(igraph)
-datadir <- "data/twitter"
-see_if(is.readable(datadir))
-
-infile1 <- here::here(datadir, "rstats_network.txt")
 mentions <- read_csv(infile1)
 # remove leading "_" from column names
 colnames(mentions) <- gsub("^_", "", colnames(mentions), perl = TRUE)
 ```
 
-Convert it to an igraph object, a network
-```{r df2igr}
+Convert it to an igraph object `gr`, a network:
+
+```{r df2igr, fig.width=9}
 users <- mentions %>% 
         select(name) %>% 
-        dplyr::union(mentions %>% select(mentions_name) %>% rename(name ="mentions_name"))
+        dplyr::union(mentions %>% 
+                             select(mentions_name) %>% 
+                             rename(name ="mentions_name"))
 
 
 gr <- mentions %>% 
@@ -56,17 +93,26 @@ gr <- mentions %>%
 gr <- set_vertex_attr(gr, "color", value = "dodgerblue")
 
 # Redraw the graph and make the vertex size 1
-library(threejs)
 
 ec <- as.numeric(eigen_centrality(gr)$vector)
 
-# Create new vector 'v' that is equal to the square-root of 'ec' multiplied by 5
+# Create new vector 'v' that is equal to the square-root of 'ec' 
+# multiplied by some scaling factor, here: 2
 v <- 2 * sqrt(ec)
 
 # Plot threejs plot of graph setting vertex size to v
-graphjs(gr, vertex.size = v, vertex.label = TRUE, main="#Rstats tweet network, 1 day in July 2016")
+graphjs(gr, vertex.size = v, vertex.label = TRUE, 
+        main="#Rstats tweet network, ~1 day in July 2016")
 
 ```
+
+**Move the mouse pointer over the plot and press the left button, then drag the mouse pointer around. Mouse wheel enlarges.**
+
+I suspect the Hadley Wickham node sits at the center of the large cluster with the large nodes.
+
+Coming soon: Labels on the network nodes.
+
+
 
 ```{r moreplots, eval=FALSE, echo=FALSE}
 g.b <- betweenness(gr, directed = TRUE)
@@ -91,7 +137,7 @@ plot(gr,
      layout = layout_nicely(gr))
 ```
 
-Show some details of the network
+Show some details of the network, in textual form:
 
 ```{r}
 incident(gr, 'Hadley Wickham', mode = c("all")) %>%  head(20)
