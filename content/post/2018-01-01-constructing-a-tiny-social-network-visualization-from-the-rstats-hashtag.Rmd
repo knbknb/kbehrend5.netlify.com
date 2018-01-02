@@ -61,7 +61,7 @@ In a different blogpost ('[Learning jq](/post/2017/12/learning-jq)')  I've expla
 
 #### Plot: Activity over time
 
-This plot shows  the user activity during this period:
+This plot shows  the user activity during this 3-day period:
 
 ```{r plot1, fig.width=9}
 theme_set(theme_bw())
@@ -69,8 +69,11 @@ tweetdates %>% ggplot(aes(hour)) +
   geom_bar(fill="dodgerblue") +
         facet_wrap(~ day, nrow = 1) +
         xlab("Hour of Day")+ ylab("Tweets per Hour") +
-        ggtitle("#Rstats Tweets in July 2016")
+        ggtitle("#Rstats Tweets in July 2016", 
+                subtitle = "Harvested from the Twitter Streaming API. Local Time Zone: Central European Time.")
 ```
+
+Currently I have not looked at the peak that happened on July 09 2016 at ~ 15:00 h.
 
 #### Constructing the interactions network 
 
@@ -124,12 +127,7 @@ graphjs(gr, vertex.size = v, vertex.label = TRUE,
 
 I suspect the Hadley Wickham node sits at the center of the large cluster with the large nodes.
 
-Coming soon: 
- 
- - Labels on the network nodes.
- - Analysis of a larger twitter dataset (about a different subject)
- 
-**Stay tuned!**
+
 
 ```{r moreplots, eval=FALSE, echo=FALSE}
 g.b <- betweenness(gr, directed = TRUE)
@@ -160,3 +158,10 @@ Show some details of the network, in textual form:
 incident(gr, 'Hadley Wickham', mode = c("all")) %>%  head(20)
 ```
 
+#### Coming soon: 
+ 
+ - Labels on the network nodes.
+ - A note on the peak of activity on July 09 2016 at ~ 15:00
+ - Analysis of a larger twitter dataset (about a different subject)
+ 
+**Stay tuned!**
