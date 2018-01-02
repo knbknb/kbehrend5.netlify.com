@@ -55,7 +55,7 @@ tweetdates <- tweetdates %>%
 ```
 
 From `r min(tweetdates$dt)` to `r max(tweetdates$dt)` I gathered `r nrow(tweetdates)` tweets, encoded in JSON format.  
-Each tweet contains about 2500 characters. This might surprise you, because a tweet used to be 140 characters in length, until Twitter increased it to 280 characters in 2017. But a tweet contains a lot of metadata, and this enlarges the length of a tweet to exceed 2000 characters,  when serialized to a one-line JSON string.
+Each tweet contains about 2500 characters. This might surprise you, because a tweet used to be 140 characters in length, until Twitter increased it to 280 characters in 2017. But a tweet contains a lot of metadata, and this makes a tweet exceed 2000 characters, when serialized to a compact JSON string (*not* pretty-printed).
 
 In a different blogpost ('[Learning jq](/post/2017/12/learning-jq)')  I've explained how to extract specific fields from the nested structure. See example 4.
 
@@ -84,7 +84,7 @@ colnames(mentions) <- gsub("^_", "", colnames(mentions), perl = TRUE)
 
 Convert it to an igraph object `gr`, a network:
 
-```{r df2igr, fig.width=9}
+```{r df2igr}
 users <- mentions %>% 
         select(name) %>% 
         dplyr::union(mentions %>% 
@@ -113,7 +113,7 @@ v <- 2 * sqrt(ec)
 
 #### Plot: The network 
 
-```{r plot2}
+```{r plot2, fig.width=9}
 # Plot threejs plot of graph setting vertex size to v
 graphjs(gr, vertex.size = v, vertex.label = TRUE, 
         main="#Rstats tweet network, ~1 day in July 2016")
@@ -124,9 +124,12 @@ graphjs(gr, vertex.size = v, vertex.label = TRUE,
 
 I suspect the Hadley Wickham node sits at the center of the large cluster with the large nodes.
 
-Coming soon: Labels on the network nodes.
-
-
+Coming soon: 
+ 
+ - Labels on the network nodes.
+ - Analysis of a larger twitter dataset (about a different subject)
+ 
+**Stay tuned!**
 
 ```{r moreplots, eval=FALSE, echo=FALSE}
 g.b <- betweenness(gr, directed = TRUE)
