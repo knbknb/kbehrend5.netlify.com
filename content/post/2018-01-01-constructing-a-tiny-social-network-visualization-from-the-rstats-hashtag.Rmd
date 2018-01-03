@@ -31,17 +31,21 @@ library(lubridate)
 library(threejs)
 library(tidyverse)
 library(igraph)
-
+library(jsonlite)
 datadir <- "data/twitter"
 # (extracts from the full tweets data, explained below)
 infile0 <- here::here(datadir, "rstats_tweettimes.txt")
 infile1 <- here::here(datadir, "rstats_network.txt")
+infile2 <- here::here(datadir, "rstats_tweettext.txt")
 
 ```
 
 Convert dates to strings, group them into day-of-month, and hours-of-day:
 
 ```{r dates,  echo=FALSE, results='hide'}
+tweettexts <- read_json(infile2, simplifyVector = TRUE) %>% 
+        select(-dt)
+
 tweetdates <- read_csv(infile0)
 # rstats_tweettimes.txt:  "Sun Jul 10 08:14:23 +0000 2016"
 tweetdates <- tweetdates %>% 
@@ -52,6 +56,7 @@ tweetdates <- tweetdates %>%
                day = sprintf("July %02d", day),
                hour = hour(dt))
 
+tweetdates <- tweetdates %>% inner_join(tweettexts, by = "id")
 ```
 
 From `r min(tweetdates$dt)` to `r max(tweetdates$dt)` I gathered `r nrow(tweetdates)` tweets, encoded in JSON format.  
@@ -73,7 +78,21 @@ tweetdates %>% ggplot(aes(hour)) +
                 subtitle = "Harvested from the Twitter Streaming API. Local Time Zone: Central European Time.")
 ```
 
-Currently I have not looked at the peak that happened on July 09 2016 at ~ 15:00 h.
+Why is there a peak that happened on July 09 2016 at ~ 15:00 h? Apparently, someone posted a new article ["The Mathematics of Machine Learning"](https://www.r-bloggers.com/the-mathematics-of-machine-learning/?utm_source=feedburner&utm_medium=twitter&utm_campaign=Feed%3A+RBloggers+%28R+bloggers%29) on [R-bloggers.com](https://www.r-bloggers.com), and immediately the article link was shared (retweeted) many times.
+
+```{r maxtw, echo = FALSE}
+max_tweet <-  tweetdates %>% 
+        filter(hour == 15) %>% 
+        select(txt) %>% 
+        group_by(txt) %>% 
+        summarize(cnt = n()) %>% 
+        arrange(desc(cnt)) %>% 
+        head(1)
+```
+
+The tweet text that was shared `r max_tweet$cnt` times was:
+
+<code>`r as.character(max_tweet$txt)`</code>
 
 #### Constructing the interactions network 
 
@@ -161,7 +180,6 @@ incident(gr, 'Hadley Wickham', mode = c("all")) %>%  head(20)
 #### Coming soon: 
  
  - Labels on the network nodes.
- - A note on the peak of activity on July 09 2016 at ~ 15:00
  - Analysis of a larger twitter dataset (about a different subject)
  
 **Stay tuned!**
