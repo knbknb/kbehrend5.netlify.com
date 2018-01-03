@@ -179,7 +179,7 @@ incident(gr, 'Hadley Wickham', mode = c("all")) %>%  head(20)
 
 #### Coming soon: 
  
- - Labels on the network nodes.
+ - Labels on the network nodes
  - Analysis of a larger twitter dataset (about a different subject)
  
 **Stay tuned!**
