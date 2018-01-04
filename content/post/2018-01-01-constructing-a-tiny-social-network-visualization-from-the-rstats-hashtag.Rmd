@@ -77,7 +77,7 @@ tweetdates %>% ggplot(aes(hour)) +
         facet_wrap(~ day, nrow = 1) +
         xlab("Hour of Day")+ ylab("Tweets per Hour") +
         ggtitle("#Rstats Tweets in July 2016", 
-                subtitle = "Harvested from the Twitter Streaming API. Local Time Zone: Central European Time.")
+                subtitle = "Harvested from the Twitter Streaming API. Local Time Zone: Central European Time (DST).")
 ```
 
 Why is there a peak that happened on July 09 2016 at ~ 15:00 h? Apparently, someone posted a new article ["The Mathematics of Machine Learning"](https://www.r-bloggers.com/the-mathematics-of-machine-learning/?utm_source=feedburner&utm_medium=twitter&utm_campaign=Feed%3A+RBloggers+%28R+bloggers%29) on [R-bloggers.com](https://www.r-bloggers.com), and immediately the article link was shared (retweeted) many times. The article is not *that* great, so I suspect this is no true human activity, but some form of Twitter spam, as shown below.
@@ -105,7 +105,10 @@ mentions <- read_csv(infile1)
 # remove leading "_" from column names
 colnames(mentions) <- gsub("^_", "", colnames(mentions), perl = TRUE)
 # show a few entries
-knitr::kable(mentions %>%  head(5), align = "rllrll")
+w_html <- knitr::kable(mentions %>%  mutate(id=as.character(id)) %>%  head(5), 
+             align = "rllrll")
+
+kable_styling(w_html, "striped", position = "left", font_size = 14)
 ```
 
 Convert it to an igraph object `gr`, a network:
@@ -125,6 +128,7 @@ gr <- mentions %>%
         graph_from_data_frame(directed = TRUE, vertices = users)
 ```
 
+
 The graph has  `r gorder(gr)` Nodes and `r gsize(gr)` Edges. 
 Show a few edges:
 
@@ -132,7 +136,9 @@ Show a few edges:
 E(gr) %>% head(20)
 ```
 
-Now I calculate a node-property called 'Eigenvector-Centrality' $ec$, which gives higher scores to nodes that are well-connected with other well-connected nodes. The value of $ec$ is between 0 and 1, and most of them close to 0, so I also take logarithms, creating a two-column dataframe for easier plotting.
+This means that the twitter user on the left  mentioned or retweeted the person on the right.
+
+Now I calculate a node-property called '[Eigenvector-Centrality](https://en.wikipedia.org/wiki/Eigenvector_centrality)' $ec$, a measure which gives higher scores to nodes that are well-connected with other well-connected nodes. The value of $ec$ is between 0 and 1, and most of them close to 0, so I also take logarithms, creating a two-column dataframe for easier plotting.
 
 ```{r}
 ec <- as.numeric(eigen_centrality(gr)$vector)
@@ -143,26 +149,27 @@ A density plot of the eigenvector centrality shows its weird distribution:
 
 ```{r density, warning=FALSE, fig.width=9}
 #vlines <- c(-3, -11, -41)
-vlines <- c(1, -9, -36) # minima
+vlines <- c(-36, -9, 0) # minima
 ggplot(ecdf , aes(eclog)) +
         geom_density(na.rm = TRUE) +
-        ggtitle("Density Plot of Eigenvector centralities") +
+        ggtitle("Density Plot of Eigenvector Centralities") +
         xlab("ln(Eigenvector Centrality)") +
         xlim(c(-50,0)) + 
         geom_vline(xintercept = vlines, 
-                   color=c(blues9[3], blues9[9], "dodgerblue"), 
+                   color=c(blues9[9], blues9[3], "dodgerblue"), 
                    linetype="dotted" , size=1) +
         ggtitle("Density plot of Eigenvector Centrality", 
-                subtitle = "Weird distribution can be used to color 
-                the nodes in the plot below")
+                subtitle = 
+"Weird distribution can be used to color the nodes in the plot below")
         
 
 ```
 
+The nodes with the smallest eigenvector centrality ec will be filled with  the darkest blue, and nodes with higher-values of ec (close to 1)  will be colored *dodgerblue*, which is similar to the iconic blue of the Twitter logo. Intermediate values will be colored pale blue.
 
 ```{r}
 bluevals <- map(ecdf$eclog, function(x, ec){
-        if(x < vlines[3] ) blues9[9]
+        if(x < vlines[1] ) blues9[9]
         else if(x < vlines[2]) blues9[3] 
         else "dodgerblue"
                 })
@@ -171,11 +178,14 @@ gr <- set_vertex_attr(gr, "color", value = bluevals)
 
 ```
 
-A single Vertex and its attributes:
+
+A single Vertex and its attributes, 'name' and 'color':
 
 ```{r}
 V(gr)[[1]] 
 ```
+
+Color depends on the Eigenvector Centrality.
 
 
 #### Plot: The network 
@@ -204,7 +214,7 @@ mentioned <- incident(gr, 'Hadley Wickham', mode = c("in")) %>%  length()
 #### Some observations
 
 If you carefully move the network and point to the central node you can verify for yourself that the node representing 'Hadley Wickham' sits at the center of the large cluster with the large nodes.
-The node has `r mentioned` incoming links, and `r mentioned_by_hw` outgoing links (he mentioned `r mentioned_by_hw` people).
+The node has `r mentioned` incoming links, and `r mentioned_by_hw` outgoing links (he mentioned `r mentioned_by_hw` people). Hadley has an $ec$-value of `r ec[which(V(gr)$name == 'Hadley Wickham')]`.
 
 Here are some links from the "true" R community. 
 
@@ -260,8 +270,9 @@ incident(gr, 'Hadley Wickham', mode = c("all")) %>%  head(20)
 
 ```
 
-#### Coming "soon": 
+#### More ideas:
 
- - More thorough Analysis of retweet-counts
+ - "Betweenness analysis"
+ - More thoroughly include more twitter data, e.g. retweet-counts
  - Analysis of a larger Twitter dataset (about a different subject)
  
