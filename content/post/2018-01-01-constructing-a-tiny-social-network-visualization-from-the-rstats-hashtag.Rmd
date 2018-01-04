@@ -12,7 +12,7 @@ banner: img/post/thumb/rstats_tweetnodes.png
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-# (Under Construction - Checking if 3-D plot below works )
+## (Under Construction)
 
 
 In 2016, I was harvesting tweets from the Twitter streaming API. I've used the `#rstats` hashtag as the search filter. This hashtag is commonly used by the R community on Twitter. Tag `#rstats` is more descriptive than the too short, unusable, `#R` hashtag which may not even be a valid filter expression.
@@ -25,13 +25,15 @@ Load the necessary R packages, and the datafiles.
 
 ```{r libs, warning=FALSE, message=FALSE}
 options(knitr.table.format = "html") 
-library(here)
-library(stringr)
-library(lubridate)
-library(threejs)
-library(tidyverse)
-library(igraph)
-library(jsonlite)
+options(fig.width = 9) 
+library(here)       # filesystem
+library(stringr)    #
+library(lubridate)  # dateformats
+library(threejs)    # interactive plot
+library(tidyverse)  #
+library(igraph)     # network
+library(jsonlite)   # JSON
+library(kableExtra) # styled output
 datadir <- "data/twitter"
 # (extracts from the full tweets data, explained below)
 infile0 <- here::here(datadir, "rstats_tweettimes.txt")
@@ -42,7 +44,7 @@ infile2 <- here::here(datadir, "rstats_tweettext.txt")
 
 Convert dates to strings, group them into day-of-month, and hours-of-day:
 
-```{r dates,  echo=FALSE, results='hide'}
+```{r dates,  echo=TRUE, results='hide'}
 tweettexts <- read_json(infile2, simplifyVector = TRUE) %>% 
         select(-dt)
 
@@ -59,8 +61,8 @@ tweetdates <- tweetdates %>%
 tweetdates <- tweetdates %>% inner_join(tweettexts, by = "id")
 ```
 
-From `r min(tweetdates$dt)` to `r max(tweetdates$dt)` I gathered `r nrow(tweetdates)` tweets, encoded in JSON format.  
-Each tweet contains about 2500 characters. This might surprise you, because a tweet used to be 140 characters in length, until Twitter increased it to 280 characters in 2017. But a tweet contains a lot of metadata, and this makes a tweet exceed 2000 characters, when serialized to a compact JSON string (*not* pretty-printed).
+During the 34 hours from `r min(tweetdates$dt)` to `r max(tweetdates$dt)` I gathered `r nrow(tweetdates)` tweets, encoded in JSON format.  
+Each tweet contains about 2500 characters. This might surprise you, because a tweet used to be 140 characters in length, until Twitter increased it to 280 characters in 2017. But a tweet contains a lot of metadata, and this makes a tweet exceed 2000 characters when serialized to a compact JSON string (*not* pretty-printed).
 
 In a different blogpost ('[Learning jq](/post/2017/12/learning-jq)')  I've explained how to extract specific fields from the nested structure. See example 4.
 
@@ -78,7 +80,7 @@ tweetdates %>% ggplot(aes(hour)) +
                 subtitle = "Harvested from the Twitter Streaming API. Local Time Zone: Central European Time.")
 ```
 
-Why is there a peak that happened on July 09 2016 at ~ 15:00 h? Apparently, someone posted a new article ["The Mathematics of Machine Learning"](https://www.r-bloggers.com/the-mathematics-of-machine-learning/?utm_source=feedburner&utm_medium=twitter&utm_campaign=Feed%3A+RBloggers+%28R+bloggers%29) on [R-bloggers.com](https://www.r-bloggers.com), and immediately the article link was shared (retweeted) many times.
+Why is there a peak that happened on July 09 2016 at ~ 15:00 h? Apparently, someone posted a new article ["The Mathematics of Machine Learning"](https://www.r-bloggers.com/the-mathematics-of-machine-learning/?utm_source=feedburner&utm_medium=twitter&utm_campaign=Feed%3A+RBloggers+%28R+bloggers%29) on [R-bloggers.com](https://www.r-bloggers.com), and immediately the article link was shared (retweeted) many times. The article is not *that* great, so I suspect this is no true human activity, but some form of Twitter spam, as shown below.
 
 ```{r maxtw, echo = FALSE}
 max_tweet <-  tweetdates %>% 
@@ -92,16 +94,18 @@ max_tweet <-  tweetdates %>%
 
 The tweet text that was shared `r max_tweet$cnt` times was:
 
-<code>`r as.character(max_tweet$txt)`</code>
+<code>`r gsub("\\n+", "", as.character(max_tweet$txt))`</code>
 
 #### Constructing the interactions network 
 
-The text file with the user data and the important "mentions" metadata can be read in as a data frame:
+Using the jq tool, I've contructed a separate text file containing the user data and the important "mentions" metadata.  Read in the file, as a data frame:
 
 ```{r message=FALSE, warning=FALSE}
 mentions <- read_csv(infile1)
 # remove leading "_" from column names
 colnames(mentions) <- gsub("^_", "", colnames(mentions), perl = TRUE)
+# show a few entries
+knitr::kable(mentions %>%  head(5), align = "rllrll")
 ```
 
 Convert it to an igraph object `gr`, a network:
@@ -119,39 +123,116 @@ gr <- mentions %>%
         unique() %>% 
         filter(name != mentions_name) %>% 
         graph_from_data_frame(directed = TRUE, vertices = users)
+```
 
-gr <- set_vertex_attr(gr, "color", value = "dodgerblue")
+The graph has  `r gorder(gr)` Nodes and `r gsize(gr)` Edges. 
+Show a few edges:
 
-# Redraw the graph and make the vertex size 1
+```{r}
+E(gr) %>% head(20)
+```
 
+Now I calculate a node-property called 'Eigenvector-Centrality' $ec$, which gives higher scores to nodes that are well-connected with other well-connected nodes. The value of $ec$ is between 0 and 1, and most of them close to 0, so I also take logarithms, creating a two-column dataframe for easier plotting.
+
+```{r}
 ec <- as.numeric(eigen_centrality(gr)$vector)
+ecdf <- data.frame(ec = ec, eclog = log(ec))
+```
 
-# Create new vector 'v' that is equal to the square-root of 'ec' 
-# multiplied by some scaling factor, here: 2
-v <- 2 * sqrt(ec)
+A density plot of the eigenvector centrality shows its weird distribution:
+
+```{r density, warning=FALSE, fig.width=9}
+#vlines <- c(-3, -11, -41)
+vlines <- c(1, -9, -36) # minima
+ggplot(ecdf , aes(eclog)) +
+        geom_density(na.rm = TRUE) +
+        ggtitle("Density Plot of Eigenvector centralities") +
+        xlab("ln(Eigenvector Centrality)") +
+        xlim(c(-50,0)) + 
+        geom_vline(xintercept = vlines, 
+                   color=c(blues9[3], blues9[9], "dodgerblue"), 
+                   linetype="dotted" , size=1) +
+        ggtitle("Density plot of Eigenvector Centrality", 
+                subtitle = "Weird distribution can be used to color 
+                the nodes in the plot below")
+        
+
+```
+
+
+```{r}
+bluevals <- map(ecdf$eclog, function(x, ec){
+        if(x < vlines[3] ) blues9[9]
+        else if(x < vlines[2]) blues9[3] 
+        else "dodgerblue"
+                })
+gr <- set_vertex_attr(gr, "color", value = bluevals)
 
 
 ```
+
+A single Vertex and its attributes:
+
+```{r}
+V(gr)[[1]] 
+```
+
 
 #### Plot: The network 
 
 ```{r plot2, fig.width=9}
+
+# Scaling factor:
+# Create new vector 'v' that is equal to the square-root of 'ec' 
+# multiplied by factor, here: ec^-1/8
+v <- ec^0.125
+
 # Plot threejs plot of graph setting vertex size to v
-graphjs(gr, vertex.size = v, vertex.label = TRUE, 
-        main="#Rstats tweet network, ~1 day in July 2016")
+graphjs(gr, vertex.size = v, vertex.label = V(gr)$name, 
+        main="#Rstats Tweets network, 34 hours in July 2016")
 
 ```
 
-**Move the mouse pointer over the plot and press the left button, then drag the mouse pointer around. Mouse wheel enlarges.**
+```{r ment, echo=FALSE}
+mentioned_by_hw <- incident(gr, 'Hadley Wickham', mode = c("out")) %>%  length()
+mentioned <- incident(gr, 'Hadley Wickham', mode = c("in")) %>%  length()
 
-I suspect the Hadley Wickham node sits at the center of the large cluster with the large nodes.
+```
 
+**Move the mouse pointer over the plot and press the left button, then drag the mouse pointer around. Mouse wheel enlarges. Mouse over Node shows author of tweet.**
+
+#### Some observations
+
+If you carefully move the network and point to the central node you can verify for yourself that the node representing 'Hadley Wickham' sits at the center of the large cluster with the large nodes.
+The node has `r mentioned` incoming links, and `r mentioned_by_hw` outgoing links (he mentioned `r mentioned_by_hw` people).
+
+Here are some links from the "true" R community. 
+
+```{r echo=FALSE, eval=TRUE}
+edgelist_hadley <- E(gr)[[inc("Hadley Wickham")]]
+temp_h <- head_of(gr, edgelist_hadley) %>% as.list()
+temp_t <- tail_of(gr, edgelist_hadley) %>% as.list()
+edgelist_hadley_df <- data.frame(
+  mentioner_id = temp_t %>% unlist(),
+  mentioned_id = temp_h %>% unlist(),
+  mentioner    = temp_t %>% names(),
+  mentioned    = temp_h %>% names()
+)
+
+x_html <- knitr::kable(edgelist_hadley_df %>% head(15), align="ccrl")
+kable_styling(x_html, "striped", position = "left")
+
+```
+
+Another notable feature in the network is the pale blue structure with the many tiny spheres attached. Interestingly, this represents the highly-retweeted tweet by "Craig Brown, Phd", mentioned above. The announcement of a new article on r-bloggers was mentioned by a lot of people in their tweets, but the people who retweet him hardly got any mentions themselves. The users he mentions have names like 'GimmieKiss' and also have lots of emoticons in their names (Check by pointing the mouse over some of those pale blue nodes). Maybe this is a form of Twitter-Spam.
+
+There are also some smaller communities (twitter users that refer to each other) that *do not* mention anyone from the larger R community. Maybe this is also spam. I haven't looked, and I won't show a table with member data here.
 
 
 ```{r moreplots, eval=FALSE, echo=FALSE}
 g.b <- betweenness(gr, directed = TRUE)
-#Show histogram of vertex betweenness
-hist(g.b, breaks = 80)
+#Show histogram of vertex 1
+
 
 
 plot(gr,
@@ -171,15 +252,16 @@ plot(gr,
      layout = layout_nicely(gr))
 ```
 
-Show some details of the network, in textual form:
 
-```{r}
+```{r eval=FALSE, echo=FALSE}
+#Show some details of the network, in textual form:
+
 incident(gr, 'Hadley Wickham', mode = c("all")) %>%  head(20)
+
 ```
 
-#### Coming soon: 
+#### Coming "soon": 
+
+ - More thorough Analysis of retweet-counts
+ - Analysis of a larger Twitter dataset (about a different subject)
  
- - Labels on the network nodes
- - Analysis of a larger twitter dataset (about a different subject)
- 
-**Stay tuned!**
