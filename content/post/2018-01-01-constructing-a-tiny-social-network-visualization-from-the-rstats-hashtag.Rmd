@@ -19,7 +19,10 @@ In 2016, I was harvesting tweets from the Twitter streaming API. I've used the `
 
 Here I do some exploratory analysis of these ~ 1000 tweets, and I visualize the interactions (the "mentions") of the active Twitter users as a directed graph.
 
+This blogpost is inspired by the Datacamp Class ['Network Analysis in R'](https://www.datacamp.com/courses/network-analysis-in-r)
+
 ####  Preprocessing
+
 
 Load the necessary R packages, and the datafiles. 
 
@@ -190,6 +193,8 @@ Color depends on the Eigenvector Centrality.
 
 #### Plot: The network 
 
+Only tweets mentioning or retweeting someone else are shown here. Sole Twitter users who have used the `#rstats` hashtag but were not mentioning anyone else are not shown.
+
 ```{r plot2, fig.width=9}
 
 # Scaling factor:
@@ -238,37 +243,37 @@ Another notable feature in the network is the pale blue structure with the many 
 
 There are also some smaller communities (twitter users that refer to each other) that *do not* mention anyone from the larger R community. Maybe this is also spam. I haven't looked, and I won't show a table with member data here.
 
-
-```{r moreplots, eval=FALSE, echo=FALSE}
-g.b <- betweenness(gr, directed = TRUE)
-#Show histogram of vertex 1
-
-
-
-plot(gr,
-     vertex.label = NA,
-     vertex.label.color = "black", 
-     edge.color = 'gray77',
-     vertex.size = 0,
-     edge.arrow.size = 0.1,
-     layout = layout_nicely(gr))
-
-# Create plot with vertex size determined by betweenness score
-plot(gr, 
-#     vertex.label = NA,
-     edge.color = 'black',
-     vertex.size = sqrt(g.b)+1,
-     edge.arrow.size = 0.05,
-     layout = layout_nicely(gr))
-```
-
-
-```{r eval=FALSE, echo=FALSE}
-#Show some details of the network, in textual form:
-
-incident(gr, 'Hadley Wickham', mode = c("all")) %>%  head(20)
+#### More about the Hadley node
+```{r colors, echo=FALSE}
+# Create a color palette of length equal to the maximal geodesic distance plus one.
+colors <- c("black", "red", "orange", "dodgerblue", "blue", blues9[3])
 
 ```
+
+The next plot shows a subgraph: only those nodes interconnected with the Hadley Node up to a geodesic distance of `length(colors)`. 
+
+The Hadley node has a black color, its next neighbors are shown in red, the neighbors of the neighbors (having a geodesic distance of 2) are orange, and so on.
+
+
+```{r moreplots, eval=TRUE, echo=FALSE, fig.width=9}
+# Make an ego graph
+g_hadley <- make_ego_graph(gr, diameter(gr), nodes = 'Hadley Wickham', mode = c("all"))[[1]]
+# Get a vector of geodesic distances of all vertices from Hadley vertex  
+dists <- distances(g_hadley, "Hadley Wickham")
+
+
+# Set color attribute to vertices of network g_hadley.
+V(g_hadley)$color <- colors[dists+1]
+
+graphjs(g_hadley, vertex.size = v, vertex.label = V(g_hadley)$name, 
+        main="Geodesic Distances from 'Hadley Wickham' (black), in #Rstats Tweets network")
+
+
+```
+
+**Move the mouse pointer over the plot and press the left button, then drag the mouse pointer around. Mouse wheel enlarges. Mouse over Node shows author of tweet.**
+
+I find it amazing that this small (n ~ 1000) set of tweets, harvested at a seemingly random point in time (July 2016) reflects quite well how I perceive the structure the R community on Twitter.
 
 #### More ideas:
 
