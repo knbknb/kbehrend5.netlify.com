@@ -80,7 +80,7 @@ tweetdates %>% ggplot(aes(hour)) +
                 subtitle = "Harvested from the Twitter Streaming API. Local Time Zone: Central European Time (DST).")
 ```
 
-Why is there a peak that happened on July 09 2016 at ~ 15:00 h? Apparently, someone posted a new article ["The Mathematics of Machine Learning"](https://www.r-bloggers.com/the-mathematics-of-machine-learning/?utm_source=feedburner&utm_medium=twitter&utm_campaign=Feed%3A+RBloggers+%28R+bloggers%29) on [R-bloggers.com](https://www.r-bloggers.com), and immediately the article link was shared (retweeted) many times. The article is not *that* great, so I suspect this is no true human activity, but some form of Twitter spam, as shown below.
+Why is there a peak that happened on July 09 2016 at ~ 15:00 h? Apparently, someone posted a new article ["The Mathematics of Machine Learning"](https://www.r-bloggers.com/the-mathematics-of-machine-learning/?utm_source=feedburner&utm_medium=twitter&utm_campaign=Feed%3A+RBloggers+%28R+bloggers%29) on [R-bloggers.com](https://www.r-bloggers.com), and immediately the article link was shared (retweeted) many times. The article is not *that* great, so I suspect this sharing is no true human activity, but some form of Twitter spam, as shown below.
 
 ```{r maxtw, echo = FALSE}
 max_tweet <-  tweetdates %>% 
@@ -273,6 +273,6 @@ incident(gr, 'Hadley Wickham', mode = c("all")) %>%  head(20)
 #### More ideas:
 
  - "Betweenness analysis"
- - More thoroughly include more twitter data, e.g. retweet-counts
+ - More thoroughly include more twitter data, e.g. follower-counts
  - Analysis of a larger Twitter dataset (about a different subject)
  
