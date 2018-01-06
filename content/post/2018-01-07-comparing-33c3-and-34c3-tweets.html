@@ -10,4 +10,138 @@ draft: true
 
 
 
-
+<div id="preprocessing" class="section level4">
+<h4>Preprocessing</h4>
+<p>Load the necessary R packages, and the datafiles.</p>
+<pre class="r"><code>options(knitr.table.format = &quot;html&quot;) 
+options(fig.width = 9) 
+library(here)       # filesystem
+library(stringr)    #
+library(lubridate)  # dateformats
+library(threejs)    # interactive plot
+library(tidyverse)  #
+library(igraph)     # network
+library(jsonlite)   # JSON
+library(kableExtra) # styled output
+datadir &lt;- &quot;data/twitter&quot;
+# (extracts from the full tweets data, explained below)
+infile0 &lt;- here::here(datadir, &quot;33c3.created_at.json&quot;)
+infile1 &lt;- here::here(datadir, &quot;34c3.created_at.json&quot;)
+theme_set(theme_bw())
+# read in simple JSON files, simplifyVector converts to data frames
+tweets33c3 &lt;- read_json(infile0, simplifyVector = TRUE) %&gt;% 
+        mutate(event = &quot;33c3&quot;)
+tweets34c3 &lt;- read_json(infile1, simplifyVector = TRUE) %&gt;% 
+        mutate(event = &quot;34c3&quot;)</code></pre>
+<p>For 34C3, the harvesting script was not able to extract all tweets as syntactically valid JSON files. I have not figured out exactly what was wrong. It seems that many tweets were nested inside each other, but the nesting occured always on a single line.</p>
+<p>So, what did the JSON look like? <em>Not</em> like this:</p>
+<pre><code>tweet1
+tweet2
+tweet3
+tweet4</code></pre>
+<p>…but like this:</p>
+<pre><code>tweet1_tweet2fragment1
+tweet2fragment2
+tweet3
+tweet4</code></pre>
+<p>I tried my best to recover the first tweet from each line, discarding the fragmented JSON object of tweet 2. This recovery might produce duplicated tweets.</p>
+<pre><code>tweet1
+tweet1
+fragment2
+tweet3
+tweet4</code></pre>
+<p>Thus I had to further preprocess the tweets with a command similar to this pipe:</p>
+<pre><code>grep  &quot;^{\&quot;created_at&quot; stream__34c3.id_date_text.json | 
+   uniq &gt; 34c3.created_at.json`</code></pre>
+<p>Valid tweets always start with ‘created_at’, at the beginning of the line.</p>
+<ul>
+<li>keep these</li>
+<li>remove duplicated tweets</li>
+</ul>
+<p>Convert dates to strings, group them into day-of-month, and hours-of-day:</p>
+<pre class="r"><code>tweetdates &lt;- bind_rows(tweets33c3, tweets34c3)
+# rstats_tweettimes.txt:  &quot;Sun Jul 10 08:14:23 +0000 2016&quot;
+tweetdates &lt;- tweetdates %&gt;% 
+        mutate(dt = str_replace(dt, &quot;\\+0000 &quot;, &quot;&quot;),
+               dt = str_replace(dt, &quot;^\\w+ &quot;, &quot;&quot;),
+               dt = parse_date_time(dt, orders = c(&quot;b d  H:M:S Y&quot;)),
+               day = day(dt),
+               hour = hour(dt), 
+               year= year(dt))</code></pre>
+<p>Tweets gathered during the two events:</p>
+<table class="table table-striped">
+<thead>
+<tr>
+<th style="text-align:left;">
+Event
+</th>
+<th style="text-align:left;">
+From
+</th>
+<th style="text-align:left;">
+To
+</th>
+<th style="text-align:center;">
+Num Tweets
+</th>
+<th style="text-align:center;">
+Median Length of text
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+33c3
+</td>
+<td style="text-align:left;">
+2016-12-27
+</td>
+<td style="text-align:left;">
+2017-01-01
+</td>
+<td style="text-align:center;">
+37089
+</td>
+<td style="text-align:center;">
+120
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+34c3
+</td>
+<td style="text-align:left;">
+2017-12-21
+</td>
+<td style="text-align:left;">
+2017-12-29
+</td>
+<td style="text-align:center;">
+27780
+</td>
+<td style="text-align:center;">
+121
+</td>
+</tr>
+</tbody>
+</table>
+<p>Each tweet contains about 2500 characters. This might surprise you, because a tweet used to be 140 characters in length, until Twitter increased it to 280 characters in 2017. But a tweet contains a lot of metadata, and this makes a tweet exceed 2000 characters when serialized to a compact JSON string (<em>not</em> pretty-printed).</p>
+</div>
+<div id="plot-activity-over-time" class="section level4">
+<h4>Plot: Activity over time</h4>
+<p>This plot compares user activity on twitter during the 2 conferences, one year apart:</p>
+<p><img src="/post/2018-01-07-comparing-33c3-and-34c3-tweets_files/figure-html/plot1-1.png" width="864" /></p>
+<p>The 34c4 congress had 15000 visitors, much more than 33c3 (<a href="https://de.wikipedia.org/wiki/Chaos_Communication_Congress#Kongress-Mottos_und_Veranstaltungsorte_1984_bis_heute">12000 participants</a>), but absolute count of tweets per hour seems to be lower in 2017.</p>
+<ul>
+<li>Maybe Twitter has become less popular among the visitors?</li>
+<li>Maybe my preprocessing script was too aggressive in cleaning up things.</li>
+<li>Maybe the Twitter streaming API works differently?</li>
+</ul>
+</div>
+<div id="extra-plot" class="section level2">
+<h2>Extra plot</h2>
+<p>This plot shows that there was some user activity on Twitter even before the 34c4 started.</p>
+<p><img src="/post/2018-01-07-comparing-33c3-and-34c3-tweets_files/figure-html/plotextra1-1.png" width="864" /></p>
+<p>The second row shows the activity during the first day of the conference, for comparison.</p>
+</div>

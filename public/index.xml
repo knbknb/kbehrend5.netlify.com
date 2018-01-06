@@ -46,7 +46,8 @@ Still experimenting with the Hugo software.</description>
       <pubDate>Sun, 07 Jan 2018 00:00:00 +0000</pubDate>
       
       <guid>/post/2018/01/tweets-33c3-vs-33c4/</guid>
-      <description></description>
+      <description>Preprocessing Load the necessary R packages, and the datafiles.
+options(knitr.table.format = &amp;quot;html&amp;quot;) options(fig.width = 9) library(here) # filesystem library(stringr) # library(lubridate) # dateformats library(threejs) # interactive plot library(tidyverse) # library(igraph) # network library(jsonlite) # JSON library(kableExtra) # styled output datadir &amp;lt;- &amp;quot;data/twitter&amp;quot; # (extracts from the full tweets data, explained below) infile0 &amp;lt;- here::here(datadir, &amp;quot;33c3.created_at.json&amp;quot;) infile1 &amp;lt;- here::here(datadir, &amp;quot;34c3.created_at.json&amp;quot;) theme_set(theme_bw()) # read in simple JSON files, simplifyVector converts to data frames tweets33c3 &amp;lt;- read_json(infile0, simplifyVector = TRUE) %&amp;gt;% mutate(event = &amp;quot;33c3&amp;quot;) tweets34c3 &amp;lt;- read_json(infile1, simplifyVector = TRUE) %&amp;gt;% mutate(event = &amp;quot;34c3&amp;quot;) For 34C3, the harvesting script was not able to extract all tweets as syntactically valid JSON files.</description>
     </item>
     
     <item>

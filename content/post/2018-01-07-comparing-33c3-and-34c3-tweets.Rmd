@@ -8,3 +8,152 @@ tags: []
 draft: true
 ---
 
+
+####  Preprocessing
+
+
+Load the necessary R packages, and the datafiles. 
+
+```{r libs, warning=FALSE, message=FALSE}
+options(knitr.table.format = "html") 
+options(fig.width = 9) 
+library(here)       # filesystem
+library(stringr)    #
+library(lubridate)  # dateformats
+library(threejs)    # interactive plot
+library(tidyverse)  #
+library(igraph)     # network
+library(jsonlite)   # JSON
+library(kableExtra) # styled output
+datadir <- "data/twitter"
+# (extracts from the full tweets data, explained below)
+infile0 <- here::here(datadir, "33c3.created_at.json")
+infile1 <- here::here(datadir, "34c3.created_at.json")
+theme_set(theme_bw())
+# read in simple JSON files, simplifyVector converts to data frames
+tweets33c3 <- read_json(infile0, simplifyVector = TRUE) %>% 
+        mutate(event = "33c3")
+tweets34c3 <- read_json(infile1, simplifyVector = TRUE) %>% 
+        mutate(event = "34c3")
+```
+
+For 34C3, the harvesting script was not able to extract all tweets as syntactically valid JSON files. I have not figured out exactly what was wrong. It seems that many tweets were nested inside each other, but the nesting occured always on a single line. 
+
+So, what did the JSON look like? *Not* like this:
+
+```
+tweet1
+tweet2
+tweet3
+tweet4
+```
+
+...but like this: 
+
+```
+tweet1_tweet2fragment1
+tweet2fragment2
+tweet3
+tweet4
+```
+
+I tried my best to recover the first tweet from each line, discarding the fragmented JSON object of tweet 2. This recovery might  produce duplicated tweets.
+
+```
+tweet1
+tweet1
+fragment2
+tweet3
+tweet4
+```
+
+Thus I had to further  preprocess the tweets with a command similar to this pipe: 
+
+```
+grep  "^{\"created_at" stream__34c3.id_date_text.json | 
+   uniq > 34c3.created_at.json`
+```
+
+Valid tweets always start with 'created_at', at the beginning of the line.
+
+ - keep these
+ - remove duplicated tweets
+
+Convert dates to strings, group them into day-of-month, and hours-of-day:
+
+```{r dates,  echo=TRUE, results='hide'}
+
+
+tweetdates <- bind_rows(tweets33c3, tweets34c3)
+# rstats_tweettimes.txt:  "Sun Jul 10 08:14:23 +0000 2016"
+tweetdates <- tweetdates %>% 
+        mutate(dt = str_replace(dt, "\\+0000 ", ""),
+               dt = str_replace(dt, "^\\w+ ", ""),
+               dt = parse_date_time(dt, orders = c("b d  H:M:S Y")),
+               day = day(dt),
+               hour = hour(dt), 
+               year= year(dt))
+
+
+```
+
+Tweets gathered during the two events:
+
+```{r tab1, echo=FALSE}
+tweetsumm <- tweetdates %>% 
+        group_by(event) %>% 
+        summarize(from=min(format( dt, "%Y-%m-%d")), 
+                  to = max(format( dt, "%Y-%m-%d")), 
+                  n_tweets = n(),
+                  median_text_length = median(str_length(txt)))
+
+summ_html <- knitr::kable(tweetsumm, 
+             align = "lllcc", col.names = c("Event", "From", "To", "Num Tweets", "Median Length of text"))
+
+kable_styling(summ_html, "striped", position = "left")
+```
+
+Each tweet contains about 2500 characters. This might surprise you, because a tweet used to be 140 characters in length, until Twitter increased it to 280 characters in 2017. But a tweet contains a lot of metadata, and this makes a tweet exceed 2000 characters when serialized to a compact JSON string (*not* pretty-printed).
+
+
+
+#### Plot: Activity over time
+
+This plot compares user activity on twitter during the 2 conferences, one year apart:
+
+```{r plot1, fig.width=9, echo=FALSE}
+tweetdates_27 <- tweetdates  %>%
+        filter((event == "34c3" & day >= 27)|(event == "33c3")) 
+tweetdates_27 %>%
+        ggplot(aes(hour)) +
+  geom_bar(fill="dodgerblue") +
+        facet_wrap(event ~ year+ day, ncol=6) +
+        xlab("Hour of Day")+ ylab("Tweets per Hour") +
+        ggtitle("#33C3 vs #34C3 Tweets (from Dec 2016 and 2017)", 
+                subtitle = "Harvested from the Twitter Streaming API. Local Time Zone: Central European Time.")
+```
+
+The 34c4 congress had 15000 visitors, much more than 33c3 ([12000 participants](https://de.wikipedia.org/wiki/Chaos_Communication_Congress#Kongress-Mottos_und_Veranstaltungsorte_1984_bis_heute)), but absolute count of tweets per hour seems to be lower in 2017. 
+
+- Maybe Twitter has become less popular among the visitors? 
+- Maybe my preprocessing script was too aggressive in cleaning up things.
+- Maybe the Twitter streaming API works differently?
+
+## Extra plot
+
+This plot shows that there was some user activity on Twitter even before the 34c4 started.
+
+```{r plotextra1, fig.width=9, echo=FALSE}
+
+tweetdates %>%
+        filter(event == "34c3", day <= 27) %>% 
+        ggplot(aes(hour)) +
+  geom_bar(fill="dodgerblue") +
+        facet_wrap(event ~ year + day, ncol=6, nrow=2) +
+        expand_limits(y=1300) +
+        xlab("Hour of Day")+ ylab("Tweets per Hour") +
+        ggtitle("#34C3 Tweets (27.-30. Dec 2017) - Pre-Conference Tweets", 
+                subtitle = "Harvested from the Twitter Streaming API. Local Time Zone: Central European Time.")
+```
+
+The second row shows the activity during the first day of the conference, for comparison.
