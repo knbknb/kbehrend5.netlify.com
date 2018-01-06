@@ -207,19 +207,19 @@ theme_set(theme_bw())</code></pre>
 </div>
 <div id="home-team-vs-away-team" class="section level3">
 <h3>“Home team” vs “Away Team”</h3>
-<p>Is there a bias of position (“Home team” vs “Away Team”)? Needless to say, during the Euro 2016, <em>all</em> teams were actually ‘Away’ teams, except for the hosting country’s team, France. I’ll just stick to the naming convention, because of it would be awkward to talk about the “first/second” or the “Left/right team”.</p>
+<p>Is there a bias of position (“Home team” vs “Away Team”)? Needless to say, during the Euro 2016, <em>all</em> teams were actually ‘Away’ teams, except for the hosting country’s team, France. I’ll just stick to the naming convention, because of it would be awkward to talk about the “first/second team” or the “left/right team”.</p>
 <p><img src="/post/2017-12-09-soccer-world-cup-2016-betting-at-my-workplace-part-2_files/figure-html/density-1.png" width="768" /></p>
 <p>Indeed, the ‘home’ team seems to be preferred by the participants. They think the home teams will, on average, score more goals than the ‘away’ team.</p>
 <div id="visualisation-of-aggregated-scores" class="section level4">
 <h4>Visualisation of aggregated scores</h4>
-<p>The following set of histograms demonstrates the same as before. The “away” teams (shown in red) have their maximum much more often on the left side (near zero goals) than on the right side.</p>
+<p>The following set of histograms demonstrates the same as before. The “away” teams (shown in red) have their maximum more often on the left side (near zero goals) than on the right side (more goals).</p>
 <p><img src="/post/2017-12-09-soccer-world-cup-2016-betting-at-my-workplace-part-2_files/figure-html/histo1-1.png" width="480" /></p>
 </div>
 <div id="a-better-visualisation" class="section level4">
 <h4>A better visualisation</h4>
 <p>In this array of xy-plots, circles show predicted number of goals, for the respective opponents of each game. The size of circles is proportional to the number of people who claimed that this many goals would occur.</p>
 <p><img src="/post/2017-12-09-soccer-world-cup-2016-betting-at-my-workplace-part-2_files/figure-html/goalscircles-1.png" width="480" /></p>
-<p>These plots above show more clearly the distribution, in particular for the knockout round. It is common that penalty shootouts occur at the end of KO-round games. People have been expecting that.</p>
+<p>These plots above show more clearly the range of goals scored, in particular for the knockout round. It is common that penalty shootouts occur at the end of KO-round games. People have been expecting that.</p>
 </div>
 </div>
 </div>
@@ -227,7 +227,7 @@ theme_set(theme_bw())</code></pre>
 <h2>‘Joker’ Games</h2>
 <div id="which-games-were-preferred-for-jokers" class="section level3">
 <h3>Which games were preferred for ‘Jokers’?</h3>
-<p>Participants can pick a few ‘Joker games’, doubling the betting scores. Players scoring with Jokers can earn huge amounts of reward points, making the leaderboard much more dynamic over the course of the tournament.</p>
+<p>Participants can pick a few ‘Joker games’, doubling the betting scores. Players corectly scoring with Jokers can earn huge amounts of reward points, making the leaderboard much more dynamic over the course of the tournament.</p>
 <pre class="r"><code>jokers_top %&gt;%
         arrange(n, game_name) %&gt;% 
 ggplot( aes(reorder(game_name, -n),n)) +
@@ -241,7 +241,7 @@ ggplot( aes(reorder(game_name, -n),n)) +
         ggtitle(&quot;Most popular soccer matches for &#39;Joker&#39; bets&quot;,
                 subtitle = &quot;Most popular choices are at the bottom of the figure&quot;)</code></pre>
 <p><img src="/post/2017-12-09-soccer-world-cup-2016-betting-at-my-workplace-part-2_files/figure-html/unnamed-chunk-5-1.png" width="480" /></p>
-<p>Of course, Germany’s games (from group stage as well as K.O. stage) were preferred by the players. Additionally players apparently prefer assign Jokers on teams participating in the quarter- and semi-finals. However, choices to place joker bets for KO-round games are limited. All participants have to pick some of these. Therefore, I guess, Portugal’s games stand out - people saw it as the clear favourite for the semifinal game POR-WAL (Wales).</p>
+<p>Of course, Germany’s games (from group stage as well as K.O. stage) were preferred by the players. Additionally players apparently prefer assign Jokers on teams participating in the quarter- and semi-finals. However, alternatives to place joker bets for KO-round games are limited, simply because there are fewer games. All participants have to pick some of these. Therefore, I guess, Portugal’s games stand out - people saw it as the clear favourite for the semifinal game POR-WAL (Portugal-Wales).</p>
 <p>However, games from early in the tournament (FRA-ROU, FRA-ALB) were also picked relatively often.</p>
 <p>Surprisingly, games of the former Euro 2012 champion, Spain, were not particularly popular as ‘Joker’ games. Maybe the community didn’t expect them to win clearly. Spain had tough competitors (CZE, TUR, CRO).</p>
 </div>
@@ -485,7 +485,7 @@ ggplot( aes(reorder(game_name, -n),n)) +
 <div id="detailed-analysis-of-game-scores" class="section level2">
 <h2>Detailed analysis of game scores</h2>
 <p>Which games where predicted successfully?</p>
-<p>There were 1618 games were predicted correctly by these many unique players. Success rate: 1618/13474 = 12%</p>
+<p>There were 1618 games predicted correctly by these many unique players. Success rate: 1618/13474 = 12%</p>
 <div id="which-game-scores-did-nobody-predict-correctly" class="section level4">
 <h4>Which game scores did <em>nobody</em> predict correctly?</h4>
 <table>
@@ -539,12 +539,13 @@ ggplot( aes(reorder(game_name, -n),n)) +
 </tr>
 </tbody>
 </table>
-<p>These were the only 4 games where nobody did guess the correct scores.</p>
+<p>These were the only 4 games where nobody has guessed the scores correctly.</p>
 </div>
 <div id="what-about-getting-the-tendency-right" class="section level4">
 <h4>What about getting the ‘tendency’ right?</h4>
 <p>This table shows the most accurately predicted ‘tendencies’. The two rightmost columns indicate the number of people who got it right.</p>
 <table>
+<caption><span id="tab:kable1">Table 1: </span>Best guessed ‘Tendencies’</caption>
 <thead>
 <tr class="header">
 <th align="right">Game #</th>
@@ -606,6 +607,7 @@ ggplot( aes(reorder(game_name, -n),n)) +
 </table>
 <p>This table shows the least accurately predicted ‘tendencies’(is win / is draw). The two rightmost columns indicate the number of people who got it right.</p>
 <table>
+<caption><span id="tab:kable2">Table 2: </span>Worst guessed ‘Tendencies’</caption>
 <thead>
 <tr class="header">
 <th align="right">Game #</th>
@@ -668,13 +670,13 @@ ggplot( aes(reorder(game_name, -n),n)) +
 </div>
 <div id="plot-all-of-them-together" class="section level4">
 <h4>Plot all of them together</h4>
-<p>In the plot below, the matches from above plot on in the lower right corner of plot, they were ‘less predictable’ by the wisdom of the participants.</p>
-<p>Surprisingly, Germany-Poland (0:0) is also in the region of ‘low predictability’.</p>
+<p>The plot below shows: Matches on the left were ‘easiest’ to guess. Games in the lower right corner of plot were ‘less predictable’, according to the wisdom of the participants.</p>
+<p>Surprisingly, Germany-Poland (0:0) is also in the region of ‘less predictable’. Almost nobody expected this result.</p>
 <p><img src="/post/2017-12-09-soccer-world-cup-2016-betting-at-my-workplace-part-2_files/figure-html/blackcirc-1.png" width="768" /></p>
 </div>
 <div id="a-second-look-at-surprising-games" class="section level4">
 <h4>A second look at surprising games</h4>
-<p>In the plot above, a few games (those closest to the green line) are marked with a black circle. This table shows these marked games. They were similar to the 4 games in the table that nobody got right: very few participants also got the tendency right.</p>
+<p>In the plot above, a few games (close to the green line) are marked with a black circle. This table shows these marked games. They were similar to the 4 games in the table that nobody got right: very few participants also got the tendency right.</p>
 <table>
 <thead>
 <tr class="header">
@@ -756,7 +758,7 @@ ggplot( aes(reorder(game_name, -n),n)) +
 </div>
 <div id="conclusion" class="section level2">
 <h2>Conclusion</h2>
-<p>In the next run of the betting game, I’ll predict more draws, and also put my jokers on draws. When I predict non-draw games, I will carefully look that my scores will be in favor of the “B” team, on the right side of the scoresheet. This alone will distance myself from the majority of the players. Otherwise, I won’t make it into the ranks that win some of that prize money.</p>
+<p>In the next run of the betting game (FIFA World Cup 2018), I’ll predict more draws, and also put my jokers on draws. When I predict non-draw games, I will carefully adjust my predicted scores such that they will be slightly in favor of the “B” team, on the right side of the scoresheet. This alone will distance myself from the majority of the players. Otherwise, I won’t make it into the ranks that win some of that prize money.</p>
 </div>
 
     </div>
