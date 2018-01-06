@@ -3,7 +3,7 @@ title: Soccer World Cup 2016 - Betting At My Workplace - Part 2
 author: Knut Behrends
 date: '2017-12-09'
 slug: Soccer World Cup Bets, part II
-banner: img/post/thumb/football.png
+banner: 'img/post/thumb/figure-blackcirc-1-15pct.png'
 output: 
   html_document:
     toc: true
@@ -251,7 +251,7 @@ People have been expecting that.
 
 ### Which games were preferred for 'Jokers'?
 
-Participants can pick a few 'Joker games', doubling the betting scores. Players corectly scoring with Jokers can earn huge amounts of reward points, making the leaderboard much more dynamic over the course of the tournament. 
+Participants can pick a few 'Joker games', doubling the betting scores. Players correctly scoring with Jokers can earn huge amounts of reward points, making the leaderboard much more dynamic over the course of the tournament. 
 
 ```{r jok, eval=TRUE, echo=FALSE}
 
@@ -472,10 +472,10 @@ ggplot(corr_pred_by, aes(seq_along(game_nr),tend_pred_by)) +
                    color="darkgreen") +
         xlab("Matches, ranked by 'predictability'") +
         ylab("# of people who got it right") +
-        annotate(geom = "text", x = 5, y = 155, 
+        annotate(geom = "text", x = 5, y = 157, 
            label = sprintf("More predictable%s", ""), 
            color="darkgrey") +
-        annotate(geom = "text", x = 48, y = 155, 
+        annotate(geom = "text", x = 48, y = 157, 
            label = sprintf("Less predictable%s", ""), 
            color="darkgrey") +
         ggtitle("Green: Score right\nYellow: Tendency right")

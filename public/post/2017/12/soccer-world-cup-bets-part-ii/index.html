@@ -227,7 +227,7 @@ theme_set(theme_bw())</code></pre>
 <h2>‘Joker’ Games</h2>
 <div id="which-games-were-preferred-for-jokers" class="section level3">
 <h3>Which games were preferred for ‘Jokers’?</h3>
-<p>Participants can pick a few ‘Joker games’, doubling the betting scores. Players corectly scoring with Jokers can earn huge amounts of reward points, making the leaderboard much more dynamic over the course of the tournament.</p>
+<p>Participants can pick a few ‘Joker games’, doubling the betting scores. Players correctly scoring with Jokers can earn huge amounts of reward points, making the leaderboard much more dynamic over the course of the tournament.</p>
 <pre class="r"><code>jokers_top %&gt;%
         arrange(n, game_name) %&gt;% 
 ggplot( aes(reorder(game_name, -n),n)) +
