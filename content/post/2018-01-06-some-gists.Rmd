@@ -1,0 +1,50 @@
+---
+title: Some Gists
+author: Knut Behrends
+date: '2018-01-06'
+slug: some-gists
+categories: ['personal-blog']
+tags: ['github', 'code', 'notes']
+banner: img/post/thumb/github-logo-gist-knb-txt.png
+
+---
+
+### Link Collection for my own personal use
+
+Github 'Gists' are code samples that are too short for, or not worth creating a new standalone repository.
+
+For example
+
+- One-off scripts
+- unfinished/half-working scripts
+- forked github gists from other people
+- copies of codesamples from other people, slightly edited or customized
+
+This webpage is just for my own personal use, a reminder for myself.
+
+For now, I list only the links to the gists. Maybe I'll include the full gists when appropriate.
+
+
+#### All gists
+
+- [Github](https://gist.github.com/knbknb/)
+
+#### Twitter streaming API
+
+ - [Get tweets](https://gist.github.com/knbknb/f5d393802d44a3f978694468dcff70e6)
+
+#### My Rstudio IDE snippets
+
+ - [Snippets](https://github.com/knbknb/R_HOME/blob/master/snippets/r.snippets)
+
+ - [Github repo](https://github.com/knbknb/R_HOME)
+
+#### Some older codesamples (1 longer script)
+
+ - [Gist: Rosenblatt's perceptron](https://gist.github.com/knbknb/1d17caecd9b800d5148a30d537013668)
+
+```{r eval=FALSE, echo=FALSE}
+htmltools::HTML('{{< gist knbknb 1d17caecd9b800d5148a30d537013668/ >}}'
+```
+
+

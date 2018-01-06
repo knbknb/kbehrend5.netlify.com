@@ -3,8 +3,8 @@ title: Learning jq
 author: Knut Behrends
 date: '2017-12-16'
 slug: Learning jq
-categories: []
-tags: []
+categories: ['personal-blog', 'code-samples']
+tags: ['code']
 banner: img/post/thumb/jq-med.png
 output:
   html_document:
@@ -17,16 +17,19 @@ output:
 <div id="a-grabbag-of-commands" class="section level3">
 <h3>A grabbag of <img src="/img/portfolio/jq-med.png" /> commands</h3>
 <blockquote>
-<p>Some notes about learning jq, the lightweight and flexible command-line JSON processor. Maybe I’ll extend and improve this blog post in the next months.</p>
+<p>Some notes about learning jq, the lightweight and flexible command-line JSON processor. I’ll extend and improve this blog post in the next months. This content is a notebook for myself, it has not the purpose to teach anyone.</p>
 </blockquote>
 <p>I need to be fluent with the JSON parsing tool <a href="https://stedolan.github.io/jq/">jq</a>. Very often I have to interact with JSON data: When I interact with APIs, when parsing scraped Twitter data, when doing SPARQL queries…</p>
 <p>Here I’ve saved some of my own mini-scripts and shortcuts that I have developed for my own needs. Most of it is already available in similar form, on the internet, but it is not available in a form that I found useful.</p>
 <p>The following text snippets emerged by entering commands on the Unix command line. This was a trial and error process.</p>
 <p>The format of the snippets below is a pipe of shell commands.</p>
 <p><code>&lt;infile.json jq-cmd1 | jq-cmd2 | shell-cmd1 | shell-cmd2 ...</code></p>
-<p>The infile.json I’ve saved beforehand using a <a href="https://stackoverflow.com/a/47791375/202553">small python script</a>.</p>
+<p>The infile.json I’ve saved beforehand using a <a href="https://gist.github.com/knbknb/f5d393802d44a3f978694468dcff70e6">small python script</a>.</p>
 <p>The infile contains one Tweet per line. The file as a whole is not a valid JSON file. For this reason I need the first <code>jq</code> command, <code>jq-cmd1</code>. It converts the collection of JSON fragments into an array of JSON objects and applies a transformation, or does some filtering. This creates another sequence of JSON fragments.</p>
 <p>The second <code>jq</code> command converts the transformed JSON into a csv file. This jq-cmd is so complex that I’ve factored it out into a small file in the same directory, called <code>to_csv.jq</code> (see at end of this post).</p>
+<p>Instead of the complex to_csv</p>
+<div class="alert alert-warning">
+<b>NOTE</b> If the python programs in <a href="https://csvkit.readthedocs.io/en/1.0.2/">csvkit</a> are installed, you can also use <pre> < simplefile.json in2csv > csv.out </pre> </div>
 <p>File <code>to_csv.jq</code> looks like this:</p>
 <div id="example-1---extract-tweet-text" class="section level4">
 <h4>Example 1 - extract tweet text</h4>

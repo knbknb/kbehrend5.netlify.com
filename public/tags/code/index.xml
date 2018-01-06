@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Code on Knut Behrends Personal Blog, v3</title>
+    <link>/tags/code/</link>
+    <description>Recent content in Code on Knut Behrends Personal Blog, v3</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>&amp;copy;2018 Knut Behrends</copyright>
+    <lastBuildDate>Sat, 06 Jan 2018 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/tags/code/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Some Gists</title>
+      <link>/post/2018/01/some-gists/</link>
+      <pubDate>Sat, 06 Jan 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2018/01/some-gists/</guid>
+      <description>Link Collection for my own personal use Github ‘Gists’ are code samples that are too short for, or not worth creating a new standalone repository.
+For example
+ One-off scripts unfinished/half-working scripts forked github gists from other people copies of codesamples from other people, slightly edited or customized  This webpage is just for my own personal use, a reminder for myself.
+For now, I list only the links to the gists.</description>
+    </item>
+    
+    <item>
+      <title>Learning jq</title>
+      <link>/post/2017/12/learning-jq/</link>
+      <pubDate>Sat, 16 Dec 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2017/12/learning-jq/</guid>
+      <description>A grabbag of commands  Some notes about learning jq, the lightweight and flexible command-line JSON processor. I’ll extend and improve this blog post in the next months. This content is a notebook for myself, it has not the purpose to teach anyone.
+ I need to be fluent with the JSON parsing tool jq. Very often I have to interact with JSON data: When I interact with APIs, when parsing scraped Twitter data, when doing SPARQL queries…</description>
+    </item>
+    
+  </channel>
+</rss>

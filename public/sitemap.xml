@@ -18,6 +18,16 @@
   </url>
   
   <url>
+    <loc>/post/2018/01/06/some-gists.html</loc>
+    <lastmod>2018-01-06T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/post/2018/01/some-gists/</loc>
+    <lastmod>2018-01-06T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>/post/2018/01/constructing-a-tiny-social-network-visualization-from-the-rstats-hashtag/</loc>
     <lastmod>2018-01-01T00:00:00+00:00</lastmod>
   </url>
@@ -125,6 +135,18 @@
   </url>
   
   <url>
+    <loc>/tags/code/</loc>
+    <lastmod>2018-01-06T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>/categories/code-samples/</loc>
+    <lastmod>2017-12-16T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
     <loc>/categories/external/</loc>
     <lastmod>2017-11-26T00:00:00+00:00</lastmod>
     <priority>0</priority>
@@ -133,6 +155,12 @@
   <url>
     <loc>/tags/fun/</loc>
     <lastmod>2018-01-01T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>/tags/github/</loc>
+    <lastmod>2018-01-06T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -155,6 +183,18 @@
   </url>
   
   <url>
+    <loc>/tags/notes/</loc>
+    <lastmod>2018-01-06T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>/categories/personal-blog/</loc>
+    <lastmod>2018-01-06T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
     <loc>/portfolio/</loc>
     <lastmod>2017-11-23T20:23:59+05:30</lastmod>
     <priority>0</priority>
@@ -162,7 +202,7 @@
   
   <url>
     <loc>/post/</loc>
-    <lastmod>2018-01-01T00:00:00+00:00</lastmod>
+    <lastmod>2018-01-06T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -192,7 +232,7 @@
   
   <url>
     <loc>/tags/</loc>
-    <lastmod>2018-01-01T00:00:00+00:00</lastmod>
+    <lastmod>2018-01-06T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   

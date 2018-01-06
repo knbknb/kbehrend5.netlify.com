@@ -22,11 +22,29 @@
     </item>
     
     <item>
+      <title>Code Samples</title>
+      <link>/categories/code-samples/</link>
+      <pubDate>Sat, 16 Dec 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/categories/code-samples/</guid>
+      <description></description>
+    </item>
+    
+    <item>
       <title>External</title>
       <link>/categories/external/</link>
       <pubDate>Sun, 26 Nov 2017 00:00:00 +0000</pubDate>
       
       <guid>/categories/external/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Personal Blog</title>
+      <link>/categories/personal-blog/</link>
+      <pubDate>Sat, 06 Jan 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/categories/personal-blog/</guid>
       <description></description>
     </item>
     

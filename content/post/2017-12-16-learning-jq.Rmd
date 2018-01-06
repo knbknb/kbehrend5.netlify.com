@@ -3,8 +3,8 @@ title: Learning jq
 author: Knut Behrends
 date: '2017-12-16'
 slug: Learning jq
-categories: []
-tags: []
+categories: ['personal-blog', 'code-samples']
+tags: ['code']
 banner: img/post/thumb/jq-med.png
 output:
   html_document:
@@ -15,7 +15,7 @@ output:
 ### A grabbag of ![](/img/portfolio/jq-med.png) commands 
 
 
-> Some notes about learning jq, the  lightweight and flexible command-line JSON processor. Maybe I'll extend and improve this blog post in the next months. 
+> Some notes about learning jq, the  lightweight and flexible command-line JSON processor. I'll extend and improve this blog post in the next months. This content is a notebook for myself, it has not the purpose to teach anyone.
 
 
 
@@ -36,11 +36,21 @@ The format of the snippets below is a pipe of shell commands.
 
 `<infile.json jq-cmd1 | jq-cmd2 | shell-cmd1 | shell-cmd2 ... `
 
-The infile.json I've saved beforehand using a [small python script](https://stackoverflow.com/a/47791375/202553).
+The infile.json I've saved beforehand using a [small python script](https://gist.github.com/knbknb/f5d393802d44a3f978694468dcff70e6).
 
 The infile contains one Tweet per line. The file as a whole is not a valid JSON file. For this reason I need the first `jq` command, `jq-cmd1`. It converts the collection of JSON fragments into an array of JSON objects and applies a transformation, or does some filtering. This creates another sequence of JSON fragments. 
 
 The second `jq` command converts the transformed JSON into a csv file. This jq-cmd is so complex that I've factored it out into a small file in the same directory, called `to_csv.jq` (see at end of this post).  
+
+Instead of the complex to_csv 
+
+```{r echo=FALSE}
+# SO Answer 
+# https://stackoverflow.com/questions/18024769/adding-custom-styled-paragraphs-in-markdown-cells/36814654#36814654
+htmltools::HTML('<div class="alert alert-warning">
+<b>NOTE</b> If the python programs in <a href="https://csvkit.readthedocs.io/en/1.0.2/">csvkit</a> are installed, you can also use <pre> < simplefile.json in2csv > csv.out </pre> </div>')
+```
+
 
 File `to_csv.jq` looks like this:
 
@@ -94,6 +104,7 @@ tocsv(.)
 # <tweets.json jq  -s  -S  '[.[] | {name:  .user.name, sn: .user.screen_name, loc: .user.location, url:.user.url, desc:.user.description, _fol: .user.followers_count }]'  | jq  -f -r to_csv.jq
 
 ```
+
 
 #### Further processing
 
