@@ -1,6 +1,6 @@
 $(function(){
 // Line 1 - 85 from the first Chapter of "Great Jones Street" by Don DeLillo
-        var fragments = ["Fame requires every kind of excess.",
+var fragments = {"delillo": ["Fame requires every kind of excess.",
 "True fame",
 "Devouring neon",
 "Somber renown",
@@ -82,17 +82,18 @@ $(function(){
 "I was able to learn",
 "Beyond certain personal limits",
 "In endland",
-"Far from the tropics of fame.",
+"Far from the tropics of fame."],
+science: [
+"Your labia is normal.",
 "People matter. ",
 "Maybe it’s time? ",
 "hic! <wipes lips> ",
 "Life finds a way. ",
 "Evolution happens. ",
 "Electrons are weird ",
-"Fun & interesting 👇 ",
-"Drugs: less is more. ",
-"Your labia is normal.",
-"Corals are animals!   ",
+"Fun & interesting 👇" ,
+"Drugs: less is more.",
+"Corals are animals!",
 "Carbs aren’t the devil ",
 "History is a science.  ",
 "Hot Dog is a good dog. ",
@@ -107,7 +108,6 @@ $(function(){
 "Meta-analyses are fucked ",
 "Putting the fun in fungi ",
 "You are made of stardust. ",
-"All insects aren't bugs ;) ",
 "ducks have corkscrew dongs ",
 "Geology isn't just rocks.  ",
 "ART IS HARD OK?!?! Fuck.... ",
@@ -271,7 +271,17 @@ $(function(){
 "Disasters are manmade. Oh, and climate change is real. ",
 "Don't let your studies interfere with your education.  ",
 "Palaeontology and archaeology are not the same thing!  ",
-"People use language creatively, flexibly, and fluidly  " ];
- var idx = parseInt((fragments.length + 1) * Math.random());
- $( "#motto" ).text(fragments[idx]);
+"People use language creatively, flexibly, and fluidly  " ]};
+var idx = 0, len = 0;
+if (window.location.pathname === "/"){
+    len = fragments.delillo.length + 1;
+    idx = parseInt(len * Math.random());
+    $( "#motto" ).text(fragments.delillo[idx]);
+} else {
+    len = fragments.science.length + 1;
+    idx = parseInt(len * Math.random());
+    $( "#motto" ).text(fragments.science[idx]);
+
+}
+
 });
