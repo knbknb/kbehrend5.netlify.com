@@ -25,6 +25,9 @@
             <article class="archive-item post">
                     <div class="row">
                         <div class="col-md-1">
+                        {{ if .Params.draft  }}
+  <div class="alert alert-danger text-center-sm">Draft</div>
+                        {{end}}
                           <div class="image">
                               <a href="{{ .Permalink }}">
                                   {{ if .Params.banner }}
