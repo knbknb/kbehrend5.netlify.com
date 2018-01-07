@@ -133,7 +133,11 @@ ga('send', 'pageview');
     
 
     <div class="article-content">
-      <div id="preprocessing" class="section level4">
+      <div id="preprocessing-and-simple-timeseries-plots" class="section level3">
+<h3>Preprocessing and simple timeseries plots</h3>
+<p>I really like the Chaos Communication Congress. I remember well how I discovered it: (TBC)</p>
+<p>I’m not in the CCC. I like the live streams. Continued education is important. High Quality content for free.</p>
+<div id="preprocessing" class="section level4">
 <h4>Preprocessing</h4>
 <p>Load the necessary R packages, and the datafiles.</p>
 <pre class="r"><code>options(knitr.table.format = &quot;html&quot;) 
@@ -156,7 +160,7 @@ tweets33c3 &lt;- read_json(infile0, simplifyVector = TRUE) %&gt;%
         mutate(event = &quot;33c3&quot;)
 tweets34c3 &lt;- read_json(infile1, simplifyVector = TRUE) %&gt;% 
         mutate(event = &quot;34c3&quot;)</code></pre>
-<p>For 34C3, the harvesting script was not able to extract all tweets as syntactically valid JSON files. I have not figured out exactly what was wrong. It seems that many tweets were nested inside each other, but the nesting occured always on a single line.</p>
+<p>For 34C3, the harvesting script was not able to extract all tweets as syntactically valid JSON files. I have not figured out exactly what was wrong. It seems that many tweets were nested inside each other, but the nesting occured always on a single line. There were so many garbage tweets that it was impossible to remove them all manually.</p>
 <p>So, what did the JSON look like? <em>Not</em> like this:</p>
 <pre><code>tweet1
 tweet2
@@ -167,7 +171,7 @@ tweet4</code></pre>
 tweet2fragment2
 tweet3
 tweet4</code></pre>
-<p>I tried my best to recover the first tweet from each line, discarding the fragmented JSON object of tweet 2. This recovery might produce duplicated tweets.</p>
+<p>Using a series of shell commands and pipelines, I tried my best to recover the first tweet from each line, discarding the fragmented JSON object of tweet 2. This recovery step might produce duplicated tweets for some reason.</p>
 <pre><code>tweet1
 tweet1
 fragment2
@@ -188,6 +192,7 @@ tweetdates &lt;- tweetdates %&gt;%
         mutate(dt = str_replace(dt, &quot;\\+0000 &quot;, &quot;&quot;),
                dt = str_replace(dt, &quot;^\\w+ &quot;, &quot;&quot;),
                dt = parse_date_time(dt, orders = c(&quot;b d  H:M:S Y&quot;)),
+               y_m_d = format(dt, &quot;%Y-%m-%d&quot;),
                day = day(dt),
                hour = hour(dt), 
                year= year(dt))</code></pre>
@@ -238,13 +243,13 @@ Median Length of text
 2017-12-21
 </td>
 <td style="text-align:left;">
-2017-12-29
+2018-01-02
 </td>
 <td style="text-align:center;">
-27780
+48709
 </td>
 <td style="text-align:center;">
-121
+127
 </td>
 </tr>
 </tbody>
@@ -255,18 +260,18 @@ Median Length of text
 <h4>Plot: Activity over time</h4>
 <p>This plot compares user activity on twitter during the 2 conferences, one year apart:</p>
 <p><img src="/post/2018-01-07-comparing-33c3-and-34c3-tweets_files/figure-html/plot1-1.png" width="864" /></p>
-<p>The 34c4 congress had 15000 visitors, much more than 33c3 (<a href="https://de.wikipedia.org/wiki/Chaos_Communication_Congress#Kongress-Mottos_und_Veranstaltungsorte_1984_bis_heute">12000 participants</a>), but absolute count of tweets per hour seems to be lower in 2017.</p>
+<p>For the the 33C3 I’ve started gathering tweets later (on the 27th) and finished earlier. The 34C3 congress had 15000 visitors, much more than 33C3 (<a href="https://de.wikipedia.org/wiki/Chaos_Communication_Congress#Kongress-Mottos_und_Veranstaltungsorte_1984_bis_heute">12000 participants</a>), but absolute count of tweets per hour seems to be lower in 2017.</p>
 <ul>
 <li>Maybe Twitter has become less popular among the visitors?</li>
 <li>Maybe my preprocessing script was too aggressive in cleaning up things.</li>
 <li>Maybe the Twitter streaming API works differently?</li>
 </ul>
 </div>
+</div>
 <div id="extra-plot" class="section level2">
 <h2>Extra plot</h2>
-<p>This plot shows that there was some user activity on Twitter even before the 34c4 started.</p>
+<p>This plot shows that there was some user activity on Twitter even before the 34c4 started, and after it ended.</p>
 <p><img src="/post/2018-01-07-comparing-33c3-and-34c3-tweets_files/figure-html/plotextra1-1.png" width="864" /></p>
-<p>The second row shows the activity during the first day of the conference, for comparison.</p>
 </div>
 
     </div>

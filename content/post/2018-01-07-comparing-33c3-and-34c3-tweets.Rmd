@@ -8,6 +8,12 @@ tags: []
 draft: true
 ---
 
+### Preprocessing and simple timeseries plots 
+
+I really like the Chaos Communication Congress. I remember well how I discovered it:
+(TBC)
+
+I'm not in the CCC. I like the live streams. Continued  education is important. High Quality content for free.
 
 ####  Preprocessing
 
@@ -37,7 +43,7 @@ tweets34c3 <- read_json(infile1, simplifyVector = TRUE) %>%
         mutate(event = "34c3")
 ```
 
-For 34C3, the harvesting script was not able to extract all tweets as syntactically valid JSON files. I have not figured out exactly what was wrong. It seems that many tweets were nested inside each other, but the nesting occured always on a single line. 
+For 34C3, the harvesting script was not able to extract all tweets as syntactically valid JSON files. I have not figured out exactly what was wrong. It seems that many tweets were nested inside each other, but the nesting occured always on a single line. There were so many garbage tweets that it was impossible to remove them all manually. 
 
 So, what did the JSON look like? *Not* like this:
 
@@ -57,7 +63,8 @@ tweet3
 tweet4
 ```
 
-I tried my best to recover the first tweet from each line, discarding the fragmented JSON object of tweet 2. This recovery might  produce duplicated tweets.
+Using a series of shell commands and pipelines,
+I tried my best to recover the first tweet from each line, discarding the fragmented JSON object of tweet 2. This recovery step might produce duplicated tweets for some reason. 
 
 ```
 tweet1
@@ -90,6 +97,7 @@ tweetdates <- tweetdates %>%
         mutate(dt = str_replace(dt, "\\+0000 ", ""),
                dt = str_replace(dt, "^\\w+ ", ""),
                dt = parse_date_time(dt, orders = c("b d  H:M:S Y")),
+               y_m_d = format(dt, "%Y-%m-%d"),
                day = day(dt),
                hour = hour(dt), 
                year= year(dt))
@@ -123,17 +131,18 @@ This plot compares user activity on twitter during the 2 conferences, one year a
 
 ```{r plot1, fig.width=9, echo=FALSE}
 tweetdates_27 <- tweetdates  %>%
-        filter((event == "34c3" & day >= 27)|(event == "33c3")) 
+        filter((event == "34c3" & (day >= 27 | day == 1))|(event == "33c3")) 
 tweetdates_27 %>%
         ggplot(aes(hour)) +
   geom_bar(fill="dodgerblue") +
-        facet_wrap(event ~ year+ day, ncol=6) +
+        facet_wrap(event ~ y_m_d, ncol=6) +
         xlab("Hour of Day")+ ylab("Tweets per Hour") +
         ggtitle("#33C3 vs #34C3 Tweets (from Dec 2016 and 2017)", 
                 subtitle = "Harvested from the Twitter Streaming API. Local Time Zone: Central European Time.")
 ```
 
-The 34c4 congress had 15000 visitors, much more than 33c3 ([12000 participants](https://de.wikipedia.org/wiki/Chaos_Communication_Congress#Kongress-Mottos_und_Veranstaltungsorte_1984_bis_heute)), but absolute count of tweets per hour seems to be lower in 2017. 
+For the the 33C3 I've started gathering tweets later (on the 27th) and finished earlier.
+The 34C3 congress had 15000 visitors, much more than 33C3 ([12000 participants](https://de.wikipedia.org/wiki/Chaos_Communication_Congress#Kongress-Mottos_und_Veranstaltungsorte_1984_bis_heute)), but absolute count of tweets per hour seems to be lower in 2017. 
 
 - Maybe Twitter has become less popular among the visitors? 
 - Maybe my preprocessing script was too aggressive in cleaning up things.
@@ -141,19 +150,20 @@ The 34c4 congress had 15000 visitors, much more than 33c3 ([12000 participants](
 
 ## Extra plot
 
-This plot shows that there was some user activity on Twitter even before the 34c4 started.
+This plot shows that there was some user activity on Twitter even before the 34c4 started, and after it ended.
 
-```{r plotextra1, fig.width=9, echo=FALSE}
+```{r plotextra1, fig.width=9, fig.height=7, echo=FALSE}
 
 tweetdates %>%
-        filter(event == "34c3", day <= 27) %>% 
+        filter(event == "34c3") %>% 
         ggplot(aes(hour)) +
   geom_bar(fill="dodgerblue") +
-        facet_wrap(event ~ year + day, ncol=6, nrow=2) +
-        expand_limits(y=1300) +
+        facet_wrap(event ~ y_m_d, ncol=6, nrow=3) +
+        expand_limits(y=1400) +
+        #scale_color_manual(c("dodgerblue", blues9[6])) +
         xlab("Hour of Day")+ ylab("Tweets per Hour") +
-        ggtitle("#34C3 Tweets (27.-30. Dec 2017) - Pre-Conference Tweets", 
+        ggtitle("#34C3 Tweets (27.-30. Dec 2017) - Pre- and Post-Conference Tweets", 
                 subtitle = "Harvested from the Twitter Streaming API. Local Time Zone: Central European Time.")
 ```
 
-The second row shows the activity during the first day of the conference, for comparison.
+
