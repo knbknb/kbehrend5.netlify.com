@@ -1,7 +1,9 @@
+<!-- post/single.html //-->
 <!DOCTYPE html>
 <html lang="en-us">
-<head><!-- themes/.../_default/baseof.html //-->
-        <meta charset="utf-8">
+        <!-- post/header.html //-->
+  <head>
+    <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <title>Soccer-Database: Generating schema diagrams</title>
 <meta name="description" content="Knut Behrends&#39; personal blog. A website built through Hugo and blogdown.">
@@ -9,7 +11,7 @@
 <meta name="robots" content="all,follow">
 <meta name="googlebot" content="index,follow,snippet,archive">
 
-<meta property="keywords" content ="Personal-Blog, Fun, Database, Sports-Data, Soccer, Shell">
+<meta property="keywords" content ="Personal-Blog, Fun, rstats, Sports-Data, Soccer, xml">
 
 <link rel="stylesheet" href="/css/bootstrap.min.css">
 <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:400,300,700,400italic">
@@ -42,8 +44,7 @@ ga('send', 'pageview');
 <script async src='//www.google-analytics.com/analytics.js'></script>
 
 
-
-  
+    
 <link rel="apple-touch-icon" sizes="57x57" href="/img/favicon/apple-icon-57x57.png">
 <link rel="apple-touch-icon" sizes="60x60" href="/img/favicon/apple-icon-60x60.png">
 <link rel="apple-touch-icon" sizes="72x72" href="/img/favicon/apple-icon-72x72.png">
@@ -62,104 +63,241 @@ ga('send', 'pageview');
 <meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
 <meta name="theme-color" content="#ffffff">
 
-  
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+              
+<nav class="nav">
 
-
-</head>
-<body>
-  <div id="all">
-      <div class="container-fluid">
-          <div class="row row-offcanvas row-offcanvas-left">
-              <div id="sidebar" class="col-xs-6 col-sm-4 col-md-3 sidebar-offcanvas">
-  <div class="sidebar-content">
-    <span class="sidebar-heading"><a href="/">Knut Behrends Personal Blog, v3</a>
+  <a href="/" class="nav-logo">
     
     <span class="nav-logo-medium"><img src="/img/logo-knutbehrends-square-circle.72x72.png" alt="brain-activity-logo" /></span>
-    </span>
+    
+    </a>
+  <span class="sidebar-heading">
+          <a href="/">Knut Behrends Personal Blog, v3</a>
+  </span>
+  <ul class="nav-links">
+    
+    <li><a href="/">Home</a></li>
+    
+    <li><a href="/post/">Blog</a></li>
+    
+    <li><a href="/about/">About</a></li>
+    
+    <li><a href="/contact/">Get in touch</a></li>
+    
+  </ul>
+</nav>
 
-    
-      <p class="sidebar-p"><b id='motto'>Travels through grey nothingness...</b></p>
-    
-      <p class="sidebar-p">Currently based near Berlin, Germany.</p>
-    
-    <ul class="sidebar-menu">
-      
-      
-        <li><a href="/">Home</a></li>
-      
-        <li><a href="/post/">Blog</a></li>
-      
-        <li><a href="/about/">About</a></li>
-      
-        <li><a href="/contact/">Get in touch</a></li>
-      
-    </ul>
-    <p class="social">
-  
-  
-  
-  <a href="https://twitter.com/sudo_f/" data-animate-hover="pulse" class="external twitter">
-    <i class="fa fa-twitter"></i>
-  </a>
-  
-  
-  
-  <a href="mailto:knbknb00@yahoo.com" data-animate-hover="pulse" class="email">
-    <i class="fa fa-envelope"></i>
-  </a>
-  
-  
-  
-  <a href="https://stackoverflow.com/users/202553/knb" data-animate-hover="pulse">
-    <i class="fa fa-stack-overflow"></i>
-  </a>
-  
-  
-  <a href="https://github.com/knbknb" data-animate-hover="pulse">
-    <i class="fa fa-github"></i>
-  </a>
-  
-</p>
+      </header>
 
 
-    <div class="copyright">
-      <p class="credit">
+<link rel="apple-touch-icon" sizes="57x57" href="/img/favicon/apple-icon-57x57.png">
+<link rel="apple-touch-icon" sizes="60x60" href="/img/favicon/apple-icon-60x60.png">
+<link rel="apple-touch-icon" sizes="72x72" href="/img/favicon/apple-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="76x76" href="/img/favicon/apple-icon-76x76.png">
+<link rel="apple-touch-icon" sizes="114x114" href="/img/favicon/apple-icon-114x114.png">
+<link rel="apple-touch-icon" sizes="120x120" href="/img/favicon/apple-icon-120x120.png">
+<link rel="apple-touch-icon" sizes="144x144" href="/img/favicon/apple-icon-144x144.png">
+<link rel="apple-touch-icon" sizes="152x152" href="/img/favicon/apple-icon-152x152.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/img/favicon/apple-icon-180x180.png">
+<link rel="icon" type="image/png" sizes="192x192"  href="/img/favicon/android-icon-192x192.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/img/favicon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/img/favicon/favicon-96x96.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/img/favicon/favicon-16x16.png">
+<link rel="manifest" href="/img/favicon/manifest.json">
+<meta name="msapplication-TileColor" content="#ffffff">
+<meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
+<meta name="theme-color" content="#ffffff">
+
+
+
+
+
+<link href='//cdn.bootcss.com/highlight.js/9.11.0/styles/github.min.css' rel='stylesheet' type='text/css' />
+
+
+
+
+<main class="content" role="main">
+
+  <article class="article">
+    
+    <span class="article-duration">3 min read</span>
+    
+
+    <h1 class="article-title">Soccer-Database: Generating schema diagrams</h1>
+
+    
+    <span class="article-date">2017/12/17</span>
+    
+
+    <div class="article-content">
+      
+
+<p>This is part 1 of a 3-part series of small blog posts about my first attempts at Bayesian Analysis of Soccer data.</p>
+
+<p>In order to get started I had to invest much more effort than expected into cleaning the data and getting familiar with it.</p>
+
+<p><strong>tl;dr: This blog post shows 3 times the same database diagram, at varying levels of detail.</strong></p>
+
+<h4 id="dataset">Dataset</h4>
+
+<p>The dataset used here is the <a href="https://www.kaggle.com/hugomathien/soccer/">&ldquo;European Soccer Database&rdquo; - 25k+ matches, players &amp; teams attributes for European Professional Football</a> from Kaggle.com. This dataset is delivered as an Sqlite database. It contains 7 tables which have been filled by the original curator by scraping numerous websites many times in 2014-2016.</p>
+
+<h4 id="the-database-schema">The database schema</h4>
+
+<p>The database schema can be viewed with the free <a href="http://www.schemacrawler.com/how-to.html">schemacrawler</a> tool.</p>
+
+<blockquote>
+<p>Note: To get schemacrawler to work properly, <code>Java</code> and <code>Graphviz</code> need to be installed on your computer. At this time, I do not know the minimum versions required for these tools.</p>
+</blockquote>
+
+<p>A basic command to list the database contents is</p>
+
+<pre><code># This is bash code for the unix command line
+#
+#  assign the absolute path to sqlite file to variable: db  
+db=&quot;/home/knut/code/git/football-data-collection/football-data.sqlite&quot;
+#
+# the actual shell command
+./schemacrawler.sh -server sqlite -database $db -password=&quot;&quot; -c list
+</code></pre>
+
+<p>Output:</p>
+
+<pre><code>System Information
+========================================================================
+
+generated by                              SchemaCrawler 14.17.04        
+generated on                              2017-12-17 12:52:40           
+
         
-          &copy;2018 Knut Behrends
-        
-        | Templates used: Theme (1): <a href="https://bootstrapious.com/p/creative-portfolio" class="external">'Creative-Portfolio-Theme' from Bootstrapious.com</a>, Theme (2): <a href="https://bootstrapious.com/p/universal-business-e-commerce-template" class="external">'Universal-Theme' from Bootstrapious.com</a>
 
- for <a class="nav-logo-tiny" href="http://gohugo.io/"> <img class="" src="/img/hugo-logo.png" alt="Hugo-Logo" /> Hugo</a>, the Static Site Generator. Theme ported by <a href="https://github.com/kishaningithub">Kishan B</a>. - Theme (3):
-<a href="https://github.com/jrutheiser/hugo-lithium-theme">'Hugo-lithium-theme'</a> with <a href="https://github.com/yihui/blogdown-yihui-template">modifications</a> to make it work better with Yihui Xie's <a href="https://github.com/rstudio/blogdown">blogdown R package</a>.
-      </p>
+Tables
+========================================================================
+
+Country                                                          [table]
+League                                                           [table]
+&quot;Match&quot;                                                          [table]
+Player                                                           [table]
+Player_Attributes                                                [table]
+Team                                                             [table]
+Team_Attributes                                                  [table]
+</code></pre>
+
+<p>There are no views defined in the database.</p>
+
+<p>List the table contents:</p>
+
+<p>(This result is similar to the previous one, )</p>
+
+<pre><code>Row Count
+========================================================================
+
+Row Count                                                               
+------------------------------------------------------------------------
+Country                                                          11 rows
+League                                                           11 rows
+&quot;Match&quot;                                                      25,979 rows
+Player                                                       11,060 rows
+Player_Attributes                                           183,978 rows
+Team                                                            299 rows
+Team_Attributes                                               1,458 rows
+</code></pre>
+
+<h4 id="the-schema-diagram">The &ldquo;schema diagram&rdquo;</h4>
+
+<p>Visualize these tables in a diagram, showing the tables, rowcounts, column names, columns datatypes, and their primarykey-foreignkey relationships between the tables.</p>
+
+<p>As explained in the <a href="http://www.schemacrawler.com/diagramming.html">schemacrawler documentation</a>, this can be done in many variants.</p>
+
+<p>Command-line options used:</p>
+
+<ul>
+<li>To suppress schema names and foreign key names, use  <code>-portablenames</code><br /></li>
+<li>Show only significant columns, such as primary and foreign key columns, and columns that are part of unique indexes: use <code>-infolevel=standard  -command=brief</code> .<br /></li>
+<li>optionally, to show column ordinals: set configuration option <code>schemacrawler.format.show_ordinal_numbers=true</code> in the configuration file <code>config/schemacrawler.config.properties</code>, as mentioned in the <a href="http://www.schemacrawler.com/diagramming.html">documentation</a></li>
+</ul>
+
+<h4 id="high-level-diagram">High-Level Diagram</h4>
+
+<p>This command can be used to create a PNG image file with a schema diagram.:</p>
+
+<pre><code>./schemacrawler.sh -server sqlite -database $db  -password=&quot;&quot; \
+   -infolevel=maximum -command=brief \ 
+   -portablenames  -outputformat=png -outputfile=footballb--diagram--brief--no-constraintnames-colnum--rowcounts.png
+
+</code></pre>
+
+<p>This command yields this picture:</p>
+
+
+
+<div class="box" >
+  <figure class="img-width-medium" itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject">
+    <div class="img">
+      <img itemprop="thumbnail" src="/img/post/footballb--diagram--brief--no-constraintnames-colnum--rowcounts.png" />
     </div>
-  </div>
+    <a href="/img/post/footballb--diagram--brief--no-constraintnames-colnum--rowcounts.png" itemprop="contentUrl"></a>
+      <figcaption><h4>↑ High-Level Diagram ↑</h4>
+      </figcaption>
+  </figure>
 </div>
 
-              
-<!-- custom layouts/_default/single.html //-->
-<div class="col-xs-12 col-sm-8 col-md-9 content-column white-background">
-  <div class="small-navbar visible-xs">
-  <button type="button" data-toggle="offcanvas" class="btn btn-ghost pull-left"> <i class="fa fa-align-left"> </i>Menu</button>
-  <h1 class="small-navbar-heading"><a href="/">Knut Behrends Personal Blog, v3</a></h1>
-</div>
 
-  <div class="row">
-    <div class="col-lg-8">
-      <div class="content-column-content">
-         <h1>Soccer-Database: Generating schema diagrams</h1>
-         <p>This blog post shows 3 times the same database diagram, at varying levels of detail.</p>
+<p>This diagram above is only high-level. A more accurate diagram would contain <em>all nonempty</em> columns in the tables and look like this:</p>
 
-         
-      </div>
+<h4 id="all-relevant-columns-diagram">&ldquo;All relevant columns&rdquo; diagram</h4>
+
+
+
+<div class="box" >
+  <figure class="img-width-medium" itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject">
+    <div class="img">
+      <img itemprop="thumbnail" src="/img/post/footballb--diagram--no-playerXY-cols--no-constraintnames-colnum--rowcounts.png" />
     </div>
-  </div>
+    <a href="/img/post/footballb--diagram--no-playerXY-cols--no-constraintnames-colnum--rowcounts.png" itemprop="contentUrl"></a>
+      <figcaption><h4>↑ All nonempty columns Diagram↑  </h4>
+      </figcaption>
+  </figure>
 </div>
 
-          </div>
-      </div>
-  </div>
-  
+
+<p>The <code>Match</code> table contains a lot of columns from commercial betting companies. The 3-letter codes correspond to the odds and other bookie metadata.</p>
+
+<h4 id="all-columns-diagram">&ldquo;All columns&rdquo; Diagram</h4>
+
+<p>The actual <code>Match</code> table contains many columns that serve no apparent purpose. There are dozens of columns that have names such as <code>homePlayerX10</code>, <code>awayPlayPlayerY2</code>&hellip;. The full diagram looks quite bizarre, and is shown here only for completeness:</p>
+
+<pre><code>./schemacrawler.sh -server sqlite -database $db  -password=&quot;&quot; \
+-infolevel=maximum -command=schema -portablenames  -outputformat=png \
+-outputfile=footballb--diagram--with-playerXY-cols--no-constraintnames-colnum--rowcounts.png 
+</code></pre>
+
+
+
+<div class="box" >
+  <figure class="img-width-medium" itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject">
+    <div class="img">
+      <img itemprop="thumbnail" src="/img/post/footballb--diagram--with-playerXY-cols--no-constraintnames-colnum--rowcounts.png" />
+    </div>
+    <a href="/img/post/footballb--diagram--with-playerXY-cols--no-constraintnames-colnum--rowcounts.png" itemprop="contentUrl"></a>
+      <figcaption><h4>↑ All-columns Diagram (shows even irrelevant ones) ↑</h4>
+      </figcaption>
+  </figure>
+</div>
+
+
+    </div>
+  </article>
+
+
+</main>
+
+
 <!-- layouts/partials/footer.html //-->
       <footer class="footer">
         <ul class="footer-links">
@@ -177,7 +315,22 @@ ga('send', 'pageview');
   
 
 
+
+
+<script src="//cdn.bootcss.com/highlight.js/9.11.0/highlight.min.js"></script>
+
+
+
+<script src="//cdn.bootcss.com/highlight.js/9.11.0/languages/r.min.js"></script>
+<script src="//cdn.bootcss.com/highlight.js/9.11.0/languages/yaml.min.js"></script>
+<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+
+
+
   
+<script src="/js/math-code.js"></script>
+<script async src="//cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
 
   
 <section id="comments">
@@ -203,7 +356,7 @@ ga('send', 'pageview');
 </section>
 
 
-  <script src="/js/jquery.min.js"></script>
+<script src="/js/jquery.min.js"></script>
 <script src="/js/bootstrap.min.js"></script>
 <script src="/js/jquery.cookie.js"> </script>
 <script src="/js/ekko-lightbox.js"></script>
@@ -215,7 +368,6 @@ ga('send', 'pageview');
 <script src="/js/motto-fragments.js"></script>
 <script src="/js/math-code.js"></script>
 <script src="/js/modify-css.js"></script>
-
 
 </body>
 </html>
