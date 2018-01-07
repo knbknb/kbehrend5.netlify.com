@@ -9,7 +9,7 @@ showonlyimage: no
 css: custom.css
 output: html_document
 image: img/post/thumb/github-logo-gist-knb-txt.png
-url: /post/2018/01/some-gists.html
+url: /post/2018/01/some-gists/
 summary: none
 keywords:
   - Personal-Blog
