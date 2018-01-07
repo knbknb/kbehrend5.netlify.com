@@ -32,6 +32,15 @@ Still experimenting with the Hugo software.</description>
     </item>
     
     <item>
+      <title>Comparing 33C3 and 34C3 tweets</title>
+      <link>/post/2018/01/tweets-33c3-vs-33c4/</link>
+      <pubDate>Sun, 07 Jan 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2018/01/tweets-33c3-vs-33c4/</guid>
+      <description>Analysing the inspiring tweets from the CCC community (Draft)</description>
+    </item>
+    
+    <item>
       <title>Some Gists</title>
       <link>/post/2018/01/06/some-gists.html</link>
       <pubDate>Sat, 06 Jan 2018 00:00:00 +0000</pubDate>
@@ -46,7 +55,7 @@ Still experimenting with the Hugo software.</description>
       <pubDate>Mon, 01 Jan 2018 00:00:00 +0000</pubDate>
       
       <guid>/post/2018/01/constructing-a-tiny-social-network-visualization-from-the-rstats-hashtag/</guid>
-      <description>Analysis of ~1000 tweets about the R language. Visualing the interactions of the active Twitter users as a directed graph.</description>
+      <description>Analysis of ~1000 tweets about the R language. Visualing the interactions of the active Twitter users as a directed graph. (Draft)</description>
     </item>
     
     <item>

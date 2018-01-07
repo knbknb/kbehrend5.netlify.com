@@ -46,10 +46,18 @@ Still experimenting with the Hugo software.</description>
       <pubDate>Sun, 07 Jan 2018 00:00:00 +0000</pubDate>
       
       <guid>/post/2018/01/tweets-33c3-vs-33c4/</guid>
-      <description>Preprocessing and simple timeseries plots I really like the Chaos Communication Congress. I remember well how I discovered it: (TBC)
-I’m not in the CCC. I like the live streams. Continued education is important. High Quality content for free.
-Preprocessing Load the necessary R packages, and the datafiles.
-options(knitr.table.format = &amp;quot;html&amp;quot;) options(fig.width = 9) library(here) # filesystem library(stringr) # library(lubridate) # dateformats library(threejs) # interactive plot library(tidyverse) # library(igraph) # network library(jsonlite) # JSON library(kableExtra) # styled output datadir &amp;lt;- &amp;quot;data/twitter&amp;quot; # (extracts from the full tweets data, explained below) infile0 &amp;lt;- here::here(datadir, &amp;quot;33c3.</description>
+      <description>Analysing the inspiring tweets from the CCC community (Draft)</description>
+    </item>
+    
+    <item>
+      <title>Comparing 33C3 and 34C3 tweets</title>
+      <link>/post/2018/01/tweets-33c3-vs-33c4/</link>
+      <pubDate>Sun, 07 Jan 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2018/01/tweets-33c3-vs-33c4/</guid>
+      <description>Why this analysis? There are two reasons:
+ learn to process Twitter data at scale (~100MB-1GB/file - that’s large enough for me) get more info from/about the inspiring tweets from the CCC community  (This blogpost ist still a DRAFT - I want to publish quickly, even when an analysis is incomplete, or the text is a bit rough in places)
+ Background Occasionally, over the last two years, I have gathered data from the Twitter Streaming API.</description>
     </item>
     
     <item>
@@ -79,7 +87,7 @@ For now, I list only the links to the gists.</description>
       <pubDate>Mon, 01 Jan 2018 00:00:00 +0000</pubDate>
       
       <guid>/post/2018/01/constructing-a-tiny-social-network-visualization-from-the-rstats-hashtag/</guid>
-      <description>Analysis of ~1000 tweets about the R language. Visualing the interactions of the active Twitter users as a directed graph.</description>
+      <description>Analysis of ~1000 tweets about the R language. Visualing the interactions of the active Twitter users as a directed graph. (Draft)</description>
     </item>
     
     <item>

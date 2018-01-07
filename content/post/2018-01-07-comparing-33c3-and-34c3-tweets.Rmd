@@ -3,24 +3,39 @@ title: Comparing 33C3 and 34C3 tweets
 author: Knut Behrends
 date: '2018-01-07'
 slug: tweets-33C3-vs-33C4
-categories: []
-tags: []
-draft: true
+categories: ['personal-blog']
+tags: [twitter, fun, rstats]
+banner: img/post/thumb/tweets--33c3--34cc-histo-per-day--80x.png
+draft: false
 ---
+
+### Why this analysis?
+
+There are two reasons:
+
+- learn to process Twitter data at scale (~100MB-1GB/file - that's large enough for me)
+- get more info from/about the inspiring tweets from the CCC community 
+
+(This blogpost ist still a DRAFT - I want to publish quickly, even when an analysis is incomplete, or the text is a bit rough in places) 
+
+### Background 
+
+Occasionally, over the last two years, I have gathered data from the Twitter Streaming API. However I have never really analysed these datasets.
+Often my tweet-gathering happens during specific events, each with limited duration. When the period of data harvesting is limited to a few days or hours, data files do not get too big.
+For instance I have collected tweets during the Euro 2016 Championship Final, during the US elections 2016, from the AGU/EGU geosciences conferences, and a few more. Until now these files just sat on my hard drive, untouched. They are typically less that 1 GB in size. For this study, I've used files 200 MB and 600 MB in size, for the 33C3 and the 34C3 conferences, respectively.
+
+
+I really like the [Chaos Communication Congress](https://de.wikipedia.org/wiki/Chaos_Communication_Congress#Kongress-Mottos_und_Veranstaltungsorte_1984_bis_heute)), nicknamed XXC3. I remember well how I first happened to know about it, in 2003 or 2004. Waiting at a Berlin train station I saw that a high-rise building had become a [giant light-installation](https://de.wikipedia.org/wiki/Projekt_Blinkenlights) ([Projekt Blinkenlights](https://en.wikipedia.org/wiki/Projekt_Blinkenlights)). Baffled, I went to the conference center, purchased a ticket, and went inside. It was a great experience, so informative! (Conference Tickets were really easy to come by, back in those days. Today they sell out within minutes, and are given preferably to club members and friends). Bitcoin, hardware hacking, security nightmares... I heard first about all these things, and many others, at the CCC congresses). During the last years, I didn't make it to the conference (maybe I'm too old for this...?)
+
+Well, I never was a CCC member, and I'm not a really a hardware hacker or electronics guy. However, I think continued computer-education is important. Therefore I try to watch the live streams from the annual CCC conferences.  Many of the streamed  talks contain very high quality content, for free.
+
+For a while now, I've also noticed that the tweets created during these conferences are highly inspiring. So let's analyse the tweets a bit.
 
 ### Preprocessing and simple timeseries plots 
 
-I really like the Chaos Communication Congress. I remember well how I discovered it:
-(TBC)
+Load the necessary R packages, and the datafiles. (For details see [github page](https://github.com/knbknb/kbehrends.netlify.com/blob/master/content/post/2018-01-07-comparing-33c3-and-34c3-tweets.Rmd)).
 
-I'm not in the CCC. I like the live streams. Continued  education is important. High Quality content for free.
-
-####  Preprocessing
-
-
-Load the necessary R packages, and the datafiles. 
-
-```{r libs, warning=FALSE, message=FALSE}
+```{r libs, warning=FALSE, message=FALSE, echo=FALSE}
 options(knitr.table.format = "html") 
 options(fig.width = 9) 
 library(here)       # filesystem
@@ -31,19 +46,64 @@ library(tidyverse)  #
 library(igraph)     # network
 library(jsonlite)   # JSON
 library(kableExtra) # styled output
+
+theme_set(theme_bw())
+
 datadir <- "data/twitter"
-# (extracts from the full tweets data, explained below)
+# (extracts from the full tweets data, only id, creation_date, tweet_text)
 infile0 <- here::here(datadir, "33c3.created_at.json")
 infile1 <- here::here(datadir, "34c3.created_at.json")
-theme_set(theme_bw())
+
+infile3 <- "33c3_strlength.txt"
+infile4 <- "34c3_strlength.txt"
+
+
 # read in simple JSON files, simplifyVector converts to data frames
 tweets33c3 <- read_json(infile0, simplifyVector = TRUE) %>% 
         mutate(event = "33c3")
 tweets34c3 <- read_json(infile1, simplifyVector = TRUE) %>% 
         mutate(event = "34c3")
+
+# read in tweet lengths, discussed below
+tweetlengths_33c3 <- read_csv(here::here(datadir, infile3), col_names = FALSE)
+tweetlengths_34c3 <- read_csv(here::here(datadir, infile4), col_names = FALSE)
+tweetlengths_33c3 <- tweetlengths_33c3 %>% mutate(event = "33c3")
+tweetlengths_34c3 <- tweetlengths_34c3 %>% mutate(event = "34c3")
+tweetlengths <- bind_rows(tweetlengths_33c3, tweetlengths_34c3)
+
 ```
 
-For 34C3, the harvesting script was not able to extract all tweets as syntactically valid JSON files. I have not figured out exactly what was wrong. It seems that many tweets were nested inside each other, but the nesting occured always on a single line. There were so many garbage tweets that it was impossible to remove them all manually. 
+#### Distribution of tweet lengths
+
+
+Usually each tweet about any subject consists *at least* of 2000 characters. This might surprise you, because a tweet-text used to be 140 characters in length, until Twitter increased it to 280 characters in 2017. But a tweet contains a lot of metadata, and this makes a tweet exceed 2000 characters in length when serialized to a compact JSON string (*not* pretty-printed).
+
+Line lengths of serialized tweet data-structures can be determined with:
+
+`awk '{print length}' stream_of_tweets.json > 34c3_strlength.txt` .
+
+The following histograms show that there were many more tweet data-structures for the 34C4 congress than for the 33C3 congress. There are also many tweet-fragments from 0-2500 characters in length that are not present in the 33C3 histogram. 
+
+I think the multi-modal peak structure of the histograms represents tweets that have been retweeted once or twice, or even more often. Actually I haven't investigated that.
+
+```{r len, fig.width=9, echo=FALSE, warning=FALSE}
+myColors <- c("dodgerblue", blues9[6])
+ggplot(tweetlengths, aes(X1, fill=factor(event))) +
+        geom_histogram( binwidth=100) +
+        geom_rect(xmin=0, xmax= 2000, ymin=0, ymax=300, color="tomato", alpha=0) +
+        facet_wrap(~ event, ncol=2, nrow=1) +
+        xlim(c(0,20000)) +
+        xlab("Tweet length [characters]") +
+        ylab("Count of Tweets") +
+        scale_fill_manual(values=myColors) +
+        theme(legend.position = "none") +
+        ggtitle("Histograms of lengths of 33C3/34C3 tweet texts",
+                subtitle = "Scraping often failed to separate 34C3 tweets properly, creating garbage fragments.")
+```
+
+For 34C3, the harvesting script was not able to extract all tweets as syntactically valid JSON files. Visual inspection revealed that for some unknown reason they consist of many corrupted and duplicated tweets. I have not figured out exactly what was wrong. It seems that many tweets were nested inside each other randomly, but the nesting occured almost always on a single line. Still, some tweet fragments from the 34C3 scrape *did* span multiple lines; see the red rectangle in the figure above. However, there were so many garbage tweets in the 600MB .json-file that it was impossible to remove them all manually. 
+
+#### Bad JSON
 
 So, what did the JSON look like? *Not* like this:
 
@@ -63,8 +123,10 @@ tweet3
 tweet4
 ```
 
-Using a series of shell commands and pipelines,
-I tried my best to recover the first tweet from each line, discarding the fragmented JSON object of tweet 2. This recovery step might produce duplicated tweets for some reason. 
+
+Using a series of shell commands and pipelines, I tried my best to recover the first tweet from each line, discarding the fragmented JSON objects tweets misplaced and appended to each line. This recovery step might produce duplicated tweets for some reason. 
+
+Intermediate result:
 
 ```
 tweet1
@@ -74,6 +136,14 @@ tweet3
 tweet4
 ```
 
+
+#### Valid tweets
+
+Valid tweets always start with '"{created_at:"', at the beginning of the line.
+
+ - keep these
+ - remove duplicated tweets
+
 Thus I had to further  preprocess the tweets with a command similar to this pipe: 
 
 ```
@@ -81,14 +151,9 @@ grep  "^{\"created_at" stream__34c3.id_date_text.json |
    uniq > 34c3.created_at.json`
 ```
 
-Valid tweets always start with 'created_at', at the beginning of the line.
+Convert dates to strings, group them into day-of-month, and hours-of-day.
 
- - keep these
- - remove duplicated tweets
-
-Convert dates to strings, group them into day-of-month, and hours-of-day:
-
-```{r dates,  echo=TRUE, results='hide'}
+```{r dates,  echo=FALSE, results='hide'}
 
 
 tweetdates <- bind_rows(tweets33c3, tweets34c3)
@@ -121,11 +186,10 @@ summ_html <- knitr::kable(tweetsumm,
 kable_styling(summ_html, "striped", position = "left")
 ```
 
-Each tweet contains about 2500 characters. This might surprise you, because a tweet used to be 140 characters in length, until Twitter increased it to 280 characters in 2017. But a tweet contains a lot of metadata, and this makes a tweet exceed 2000 characters when serialized to a compact JSON string (*not* pretty-printed).
+There exist still more tweets about the 34C3 conference than about the 33C3, but the difference in tweet count is no longer as big as the first histogram above suggested.
 
 
-
-#### Plot: Activity over time
+#### Plot: User activity over time
 
 This plot compares user activity on twitter during the 2 conferences, one year apart:
 
@@ -141,16 +205,25 @@ tweetdates_27 %>%
                 subtitle = "Harvested from the Twitter Streaming API. Local Time Zone: Central European Time.")
 ```
 
-For the the 33C3 I've started gathering tweets later (on the 27th) and finished earlier.
-The 34C3 congress had 15000 visitors, much more than 33C3 ([12000 participants](https://de.wikipedia.org/wiki/Chaos_Communication_Congress#Kongress-Mottos_und_Veranstaltungsorte_1984_bis_heute)), but absolute count of tweets per hour seems to be lower in 2017. 
+For the 33C3 I've started gathering tweets later (on Dec 27, 2016) and finished earlier, after 6 days. For the 34C3 I've let the script run unattended for 13 days (see also 'Extra plots', at end of post). 
+
+**Observations (TBC)**
+
+The 34C3 congress had 15000 visitors, much more than 33C3 (12000), but absolute count of tweets per hour seems to be lower in 2017, during the first 2 days, whereas during the last 2 days users seem to have tweeted a bit more, though.
 
 - Maybe Twitter has become less popular among the visitors? 
 - Maybe my preprocessing script was too aggressive in cleaning up things.
 - Maybe the Twitter streaming API works differently?
 
-## Extra plot
+(To be continued:) 
 
-This plot shows that there was some user activity on Twitter even before the 34c4 started, and after it ended.
+- Wordcloud?
+- Network Diagrams from mentions and retweets?
+
+
+### Extra plots
+
+This plot shows that there was some user activity on Twitter even before the 34c3 started, and after it had ended.
 
 ```{r plotextra1, fig.width=9, fig.height=7, echo=FALSE}
 
@@ -166,4 +239,4 @@ tweetdates %>%
                 subtitle = "Harvested from the Twitter Streaming API. Local Time Zone: Central European Time.")
 ```
 
-
+(TBC)
