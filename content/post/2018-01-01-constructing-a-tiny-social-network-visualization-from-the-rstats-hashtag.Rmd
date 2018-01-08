@@ -275,6 +275,63 @@ graphjs(g_hadley, vertex.size = v, vertex.label = V(g_hadley)$name,
 
 I find it amazing that this small (n ~ 1000) set of tweets, harvested at a seemingly random point in time (July 2016) reflects quite well how I perceive the structure the R community on Twitter.
 
+```{r metrics, warning=FALSE}
+metrics <- purrr::map_df(V(gr)$name, function(name = n) {
+        data.frame(nm = name, 
+                n_tri = count_triangles(gr, vids=name),
+                n_trans_loc = transitivity(gr, vids = name, type='local'))
+        })
+# which are the most prominent nodes 
+# metrics %>% arrange(desc(n_tri)) %>%  filter(n_tri > 5)
+# 
+# ggplot(metrics, aes(n_trans_loc, n_tri)) +
+#         geom_point()
+
+
+```
+
+The Largest Cliques are these:
+
+
+```{r largecliq, warning=FALSE}
+
+largest_cliques(gr)
+
+```
+
+There are so many Max Cliques from 2 to 5 Members:
+
+```{r warning=FALSE}
+# Determine all maximal cliques in the network 
+# and assign to object 'clq'
+clq <- max_cliques(gr)
+
+# Calculate the size of each maximal clique.
+table(unlist(lapply(clq, length)))
+
+```
+
+```{r eval=FALSE, echo=FALSE}
+
+
+
+# Perform fast-greedy community detection on network graph
+kc = edge.betweenness.community(gr)
+#lec <- leading.eigenvector.community(gr)
+# Determine sizes of each community
+sizes(kc)
+
+# Determine which individuals belong to which community
+membership(kc)
+
+
+# Plot the community structure of the network
+plot(kc[1], gr)
+
+```
+
+
+
 #### More ideas:
 
  - "Betweenness analysis"
