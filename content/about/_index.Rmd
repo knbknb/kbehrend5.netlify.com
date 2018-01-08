@@ -10,7 +10,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ![My Logo](/img/logo-knutbehrends-square-circle.72x72.png)
 
-#### About this blog
+#### Why this blog?
 
 
 This Blog will include musings about my personal interests:  geosciences, datasciences, coding, photography, and more.
