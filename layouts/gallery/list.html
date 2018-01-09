@@ -1,0 +1,107 @@
+{{ partial "header" . }}
+{{- "<!-- post/list.html //-->" | safeHTML }}
+{{ partial "head_favicon" . }}
+{{ partial "head_highlightjs" . }}
+
+{{ partial "breadcrumbs.html" . }}
+
+<main class="content" role="main" id="content">
+  {{ if and .IsHome .Content }}
+  <article class="article">
+    <div class="article-content">
+      {{ .Content }}
+    </div>
+  </article>
+  {{ else }}
+    <div class="archive container">
+        <div class="row">
+            <!-- *** LEFT COLUMN *** -->
+
+            <div class="col-md-11" id="blog-listing-medium">
+
+            {{ range (where .Data.Pages "Section" "!=" "").GroupByDate "2006" }}
+            <h2 class="archive-title">{{ .Key }}</h2>
+            {{ range .Pages }}
+            <article class="archive-item post">
+                    <div class="row">
+                        <div class="col-md-1">
+                        {{ if .Params.draft  }}
+  <div class="alert alert-danger text-center-sm">Draft</div>
+                        {{end}}
+                          <div class="image">
+                              <a href="{{ .Permalink }}">
+                                  {{ if .Params.banner }}
+                                  <img src="{{ .Site.BaseURL}}{{ .Params.banner }}" class="img-responsive" alt="">
+                                  {{ else }}
+                                  <img src="{{ .Site.BaseURL}}img/placeholder.png" class="img-responsive" alt="">
+                                  {{ end }}
+                              </a>
+                          </div>
+                        </div>
+                        <div class="col-md-10">
+                            <a class="archive-item-link" href="{{ .Permalink }}">{{ .Title }}</a>
+                            <div class="clearfix">
+                                <span class="author-category">
+                                  {{ if and (false) (isset .Params "author") }}
+                                        {{ i18n "authorBy" }} <a href="#">{{ .Params.author }}</a>
+                                  {{ end }}
+                                  {{ if isset .Params "tags" }}
+                                          {{ if gt (len .Params.tags) 0 }}
+                                          in <a href="{{ $.Site.BaseURL }}tags/{{ index .Params.categories 0 | urlize | lower }}">{{ index .Params.tags 0 }}</a>
+                                          {{ end }}
+                                  {{ end }}
+
+                                </span>
+                                <span class="date-comments">
+                                    <a href="{{ .Permalink }}"><i class="fa fa-calendar-o"></i>{{ .Date.Format "2006-01-02" }}</a>
+                                </span>
+                                {{ if eq .Section "post" }}
+                                <span class="article-duration">{{ .ReadingTime }} min read</span>
+                                {{ end }}
+                            </div>{{ if and (false) (isset .Params "author") }}
+                            <p class="intro">{{  .Summary | safeHTML | truncate 100 }}</p>
+                            <p class="read-more"><a href="{{ .Permalink }}" class="btn btn-template-main">{{ i18n "continueReading" }}</a>
+                            </p>
+                            {{ end }}
+                        </div>
+                    </div>
+                </article>
+           {{ end }}
+           {{ end }}
+
+            </div>
+            <!-- /.col-md-9 -->
+
+            <!-- *** LEFT COLUMN END *** -->
+
+            <!-- ___*** RIGHT COLUMN *** ______ -->
+
+            <div class="col-md-1">
+
+                <!-- *** MENUS AND WIDGETS *** -->
+
+                {{ partial "sidebar_univ.html" . }}
+
+                <!-- *** MENUS AND FILTERS END *** -->
+
+            </div>
+            <!-- /.col-md-3 -->
+
+            <!-- *** RIGHT COLUMN END *** -->
+
+        </div>
+        <!-- /.row -->
+    </div>
+    <!-- /.container -->
+</main>
+<!-- /#content -->
+{{ end }}
+
+
+
+
+{{ partial "footer.html" . }}
+{{ partial "scripts.html" . }}
+</body>
+</html>
+

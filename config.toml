@@ -65,8 +65,14 @@ dateFormat = "2006-01-02"
 
 
   [[params.navlinks]]
+  name = "Gallery"
+  url = "gallery/"
+
+
+  [[params.navlinks]]
   name = "About"
   url = "about/"
+
 
   [[params.navlinks]]
   name = "Get in touch"
@@ -128,7 +134,7 @@ dateFormat = "2006-01-02"
     subtitle = ""
 
 [params.recent_posts]
-    enable = true
+    enable = false
     title = "From my blog"
     subtitle = ""
 

@@ -1,0 +1,15 @@
+---
+title: "Gallery"
+output: html_document
+
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+![My Logo](/img/logo-knutbehrends-square-circle.72x72.png)
+
+#### Photography
+
+*Coming soon*
