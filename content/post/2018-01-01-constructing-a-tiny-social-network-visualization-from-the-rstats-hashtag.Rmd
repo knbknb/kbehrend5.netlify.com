@@ -8,8 +8,12 @@ tags: [fun, rstats]
 banner: img/post/thumb/rstats_tweetnodes.png
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+```{r setup, echo=FALSE}
+library(knitr)
+opts_chunk$set(cache = TRUE, warning = FALSE, message = FALSE, 
+               echo = TRUE, tidy = FALSE, height = 3, width = 5,
+               fig.width = 9)
+options(digits = 3, tibble.print_min = 6)
 ```
 
 ## (Under Construction)
@@ -26,7 +30,7 @@ This blogpost is inspired by the Datacamp Class ['Network Analysis in R'](https:
 
 Load the necessary R packages, and the datafiles. 
 
-```{r libs, warning=FALSE, message=FALSE}
+```{r libs, cache=FALSE}
 options(knitr.table.format = "html") 
 options(fig.width = 9) 
 library(here)       # filesystem
@@ -73,7 +77,7 @@ In a different blogpost ('[Learning jq](/post/2017/12/learning-jq)')  I've expla
 
 This plot shows  the user activity during this 3-day period:
 
-```{r plot1, fig.width=9}
+```{r plot1}
 theme_set(theme_bw())
 tweetdates %>% ggplot(aes(hour)) +
   geom_bar(fill="dodgerblue") +
@@ -103,7 +107,7 @@ The tweet text that was shared `r max_tweet$cnt` times was:
 
 Using the jq tool, I've contructed a separate text file containing the user data and the important "mentions" metadata.  Read in the file, as a data frame:
 
-```{r message=FALSE, warning=FALSE}
+```{r message=FALSE}
 mentions <- read_csv(infile1)
 # remove leading "_" from column names
 colnames(mentions) <- gsub("^_", "", colnames(mentions), perl = TRUE)
@@ -150,7 +154,7 @@ ecdf <- data.frame(ec = ec, eclog = log(ec))
 
 A density plot of the eigenvector centrality shows its weird distribution:
 
-```{r density, warning=FALSE, fig.width=9}
+```{r density}
 #vlines <- c(-3, -11, -41)
 vlines <- c(-36, -9, 0) # minima
 ggplot(ecdf , aes(eclog)) +
@@ -195,7 +199,7 @@ Color depends on the Eigenvector Centrality.
 
 Only tweets mentioning or retweeting someone else are shown here. Sole Twitter users who have used the `#rstats` hashtag but were not mentioning anyone else are not shown.
 
-```{r plot2, fig.width=9}
+```{r plot2}
 
 # Scaling factor:
 # Create new vector 'v' that is equal to the square-root of 'ec' 
@@ -255,7 +259,7 @@ The next plot shows a subgraph: only those nodes interconnected with the Hadley 
 The Hadley node has a black color, its next neighbors are shown in red, the neighbors of the neighbors (having a geodesic distance of 2) are orange, and so on.
 
 
-```{r moreplots, eval=TRUE, echo=FALSE, fig.width=9}
+```{r moreplots, eval=TRUE, echo=FALSE}
 # Make an ego graph
 g_hadley <- make_ego_graph(gr, diameter(gr), nodes = 'Hadley Wickham', mode = c("all"))[[1]]
 # Get a vector of geodesic distances of all vertices from Hadley vertex  
@@ -275,7 +279,7 @@ graphjs(g_hadley, vertex.size = v, vertex.label = V(g_hadley)$name,
 
 I find it amazing that this small (n ~ 1000) set of tweets, harvested at a seemingly random point in time (July 2016) reflects quite well how I perceive the structure the R community on Twitter.
 
-```{r metrics, warning=FALSE}
+```{r metrics}
 metrics <- purrr::map_df(V(gr)$name, function(name = n) {
         data.frame(nm = name, 
                 n_tri = count_triangles(gr, vids=name),
@@ -293,7 +297,7 @@ metrics <- purrr::map_df(V(gr)$name, function(name = n) {
 The Largest Cliques are these:
 
 
-```{r largecliq, warning=FALSE}
+```{r largecliq}
 
 largest_cliques(gr)
 
