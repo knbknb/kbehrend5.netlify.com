@@ -18,6 +18,16 @@
   </url>
   
   <url>
+    <loc>/gallery/</loc>
+    <lastmod>2018-01-11T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/gallery/gallery_abstract/</loc>
+    <lastmod>2018-01-11T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>/post/2018/01/tweets-33c3-vs-33c4/</loc>
     <lastmod>2018-01-07T00:00:00+00:00</lastmod>
   </url>
@@ -169,7 +179,9 @@
   </url>
   
   <url>
-    <loc>/gallery/</loc>
+    <loc>/categories/gallery/</loc>
+    <lastmod>2018-01-11T00:00:00+00:00</lastmod>
+    <priority>0</priority>
   </url>
   
   <url>
@@ -205,6 +217,12 @@
   <url>
     <loc>/categories/personal-blog/</loc>
     <lastmod>2018-01-07T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>/tags/photography/</loc>
+    <lastmod>2018-01-11T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   

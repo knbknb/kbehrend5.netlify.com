@@ -1,15 +1,18 @@
 ---
 title: "Gallery"
-output: html_document
-
+date: '2018-01-11'
+slug: Gallery
+output: 
+    html_document:
+        keep_md: yes
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-![My Logo](/img/logo-knutbehrends-square-circle.72x72.png)
+![Logo](/img/logo-knutbehrends-square-circle.72x72.png)
 
 #### Photography
 
-*Coming soon*
+*Coming soon.*
