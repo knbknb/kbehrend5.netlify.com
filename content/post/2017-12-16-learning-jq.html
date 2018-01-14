@@ -3,8 +3,8 @@ title: Learning jq
 author: Knut Behrends
 date: '2017-12-16'
 slug: Learning jq
-categories: ['personal-blog', 'code-samples']
-tags: ['code']
+categories: ['personal-blog', 'code-samples', 'personal-reference']
+tags: ['code', 'reference', 'commandline']
 banner: img/post/thumb/jq-med.png
 output:
   html_document:
@@ -16,21 +16,42 @@ output:
 
 <div id="a-grabbag-of-commands" class="section level3">
 <h3>A grabbag of <img src="/img/portfolio/jq-med.png" /> commands</h3>
-<blockquote>
-<p>Some notes about learning jq, the lightweight and flexible command-line JSON processor. I’ll extend and improve this blog post in the next months. This content is a notebook for myself, it has not the purpose to teach anyone.</p>
-</blockquote>
+<div class="alert alert-info"><b></b> Some notes about learning jq, the  lightweight and flexible command-line JSON processor. I&apos;ll extend and improve this blog post in the next months, in Q1/2018. This page is a notepad for my own use, it has not the purpose to teach anyone.</div>
 <p>I need to be fluent with the JSON parsing tool <a href="https://stedolan.github.io/jq/">jq</a>. Very often I have to interact with JSON data: When I interact with APIs, when parsing scraped Twitter data, when doing SPARQL queries…</p>
-<p>Here I’ve saved some of my own mini-scripts and shortcuts that I have developed for my own needs. Most of it is already available in similar form, on the internet, but it is not available in a form that I found useful.</p>
-<p>The following text snippets emerged by entering commands on the Unix command line. This was a trial and error process.</p>
+<p>Here I’ve saved some of my own mini-scripts and shortcuts that I have developed for my own needs. Most of it is already available in similar form, on the internet, but it is not available in a form that I found useful. By writing it down, extending and re-writing it I can better commit this code to my own long-term memory. So I hope.</p>
+</div>
+<div id="snippets-represented-as-gist" class="section level3">
+<h3>Snippets represented as Gist</h3>
+<p>I am not sure yet what will be the best textual format or representation for saving my codesnippets. I have created a <a href="/post/2018/01/some-gists">gist</a> on github.com where I’ve saved some <code>jq</code> commands:</p>
+{{< gist knbknb 45d119effc573be775e87a35a859a264  "jq_snippets_for_cmdline.sh" >}}
+<div class="alert alert-warning"><b>Note to self: </b>
+                <i>Maybe there is a better way to store codesnippets? Also better convert the snippets below to a gist? (But you do not really put script output into a gist...)</i></div>
+</div>
+<div id="snippets-not-yet-stored-as-gist" class="section level3">
+<h3>Snippets not yet stored as gist</h3>
+<p>The following text snippets are a bit longer. They emerged by entering commands on the Unix command line. This was a trial and error process. Some script output is also given. .</p>
 <p>The format of the snippets below is a pipe of shell commands.</p>
 <p><code>&lt;infile.json jq-cmd1 | jq-cmd2 | shell-cmd1 | shell-cmd2 ...</code></p>
-<p>The infile.json I’ve saved beforehand using a <a href="https://gist.github.com/knbknb/f5d393802d44a3f978694468dcff70e6">small python script</a>.</p>
+<p>The <code>infile.json</code> contains Twitter data that I’ve saved beforehand using a <a href="https://gist.github.com/knbknb/f5d393802d44a3f978694468dcff70e6">small python script</a>.</p>
 <p>The infile contains one Tweet per line. The file as a whole is not a valid JSON file. For this reason I need the first <code>jq</code> command, <code>jq-cmd1</code>. It converts the collection of JSON fragments into an array of JSON objects and applies a transformation, or does some filtering. This creates another sequence of JSON fragments.</p>
 <p>The second <code>jq</code> command converts the transformed JSON into a csv file. This jq-cmd is so complex that I’ve factored it out into a small file in the same directory, called <code>to_csv.jq</code> (see at end of this post).</p>
-<p>Instead of the complex to_csv</p>
 <div class="alert alert-warning">
-<b>NOTE</b> If the python programs in <a href="https://csvkit.readthedocs.io/en/1.0.2/">csvkit</a> are installed, you can also use <pre> < simplefile.json in2csv > csv.out </pre> </div>
-<p>File <code>to_csv.jq</code> looks like this:</p>
+<b>NOTE/TODO</b> If the python programs in the <a title="csvkit docs" href="https://csvkit.readthedocs.io">csvkit</a> are installed, you can also use: <pre> < simplefile.json in2csv > csv.out </pre> 
+<a title="csvkit code" href="https://github.com/wireservice/csvkit">csvkit (code)</a> is a collection of commandline tools that contains <pre>
+csv2arff   csvcut     csvgrep    csvjson    csvpy      
+csvsql     csvstat    csvclean   csvformat  csvjoin    
+csvlook    csvsort    csvstack   in2csv    sql2csv
+</pre></div>
+<p><strong>Note to self:</strong> Get this list with these bash commands</p>
+<pre><code>sudo apt install apt-file
+apt-file update
+apt-file list python3-csvkit
+</code></pre>
+<p><a href="https://stedolan.github.io/jq/manual/#Modules">jq Module</a> <code>to_csv.jq</code> looks like this:</p>
+<pre class="r"><code>### (insert Gist or scriptcode here)</code></pre>
+<p>Instead of the complex to_csv … TODO: (explain difference of <code>to_csv.jq</code> and jq’s built-in <code>@csv</code>)</p>
+<div class="alert alert-warning">
+<b>NOTE</b> end TODO</div>
 <div id="example-1---extract-tweet-text" class="section level4">
 <h4>Example 1 - extract tweet text</h4>
 <p>This snippet extracts the text from a file that I created by saving data from the Twitter streaming API. I’ve filtered for the “<code>#rstats</code>” hashtag which includes tweets about the R language:</p>
@@ -69,6 +90,7 @@ tocsv(.)
 # call: 
 # &lt;tweets.json jq  -s  -S  &#39;[.[] | {name:  .user.name, sn: .user.screen_name, loc: .user.location, url:.user.url, desc:.user.description, _fol: .user.followers_count }]&#39;  | jq  -f -r to_csv.jq
 </code></pre>
+<p>The <a href="https://stackoverflow.com/a/44012345/">other answers</a> are worth a look, too.</p>
 </div>
 <div id="further-processing" class="section level4">
 <h4>Further processing</h4>
@@ -122,6 +144,7 @@ jq  -f -r to_csv.jq    | \
 </div>
 <div id="example-4---extract-users-and-those-they-retweeted-or-mentioned-in-text" class="section level4">
 <h4>Example 4 - Extract Users and those they retweeted or mentioned in text</h4>
+<p>This example was a preprocessing step for this blogpost: <a href="http://127.0.0.1:4321/post/2018/01/constructing-a-tiny-social-network-visualization-from-the-rstats-hashtag/">Constructing a tiny social-network visualization from the #Rstats hashtag</a>.</p>
 <p>This command gives a tabular output to the question <em>“Who mentions whom?”</em>. The data can be used to create a social-network visualisation.</p>
 <pre class="bash"><code>&lt;raw_tweets/stream_rstats.json jq  -s    &#39;[.[] | { _name:  .user.name, _screen_name: .user.screen_name, _id:.user.id, mentions_id: .entities.user_mentions[].id, mentions_name: .entities.user_mentions[].name, mentions_screen_name: .entities.user_mentions[].screen_name}]&#39; | jq -f -r to_csv.jq |  grep -P  &#39;^&quot;&#39; | head</code></pre>
 <pre><code>## bash: raw_tweets/stream_rstats.json: No such file or directory

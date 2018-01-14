@@ -3,8 +3,8 @@ title: Learning jq
 author: Knut Behrends
 date: '2017-12-16'
 slug: Learning jq
-categories: ['personal-blog', 'code-samples']
-tags: ['code']
+categories: ['personal-blog', 'code-samples', 'personal-reference']
+tags: ['code', 'reference', 'commandline']
 banner: img/post/thumb/jq-med.png
 output:
   html_document:
@@ -14,8 +14,11 @@ output:
 
 ### A grabbag of ![](/img/portfolio/jq-med.png) commands 
 
+```{r abstract, echo=FALSE}
+htmltools::HTML('<div class="alert alert-info"><b></b> Some notes about learning jq, the  lightweight and flexible command-line JSON processor. I&apos;ll extend and improve this blog post in the next months, in Q1/2018. This page is a notepad for my own use, it has not the purpose to teach anyone.</div>')
+```
 
-> Some notes about learning jq, the  lightweight and flexible command-line JSON processor. I'll extend and improve this blog post in the next months. This content is a notebook for myself, it has not the purpose to teach anyone.
+
 
 
 
@@ -24,36 +27,70 @@ Very often I have to interact with JSON data: When I interact with APIs,
 when parsing scraped Twitter data, when doing SPARQL queries... 
 
 
-Here I've saved some of my own mini-scripts and shortcuts that I have developed for my own needs. Most of it is already available in similar form, on the internet, but it is not available in a form that I found useful.
+Here I've saved some of my own mini-scripts and shortcuts that I have developed for my own needs. Most of it is already available in similar form, on the internet, but it is not available in a form that I found useful. By writing it down, extending and re-writing it I can better commit this code to my own long-term memory. So I hope.
+
+### Snippets represented as Gist
+
+I am not sure yet what will be the best textual format or representation for saving my codesnippets. I have created a [gist](/post/2018/01/some-gists) on github.com where I've saved some `jq` commands:
+
+`r htmltools::HTML('{{< gist knbknb 45d119effc573be775e87a35a859a264  "jq_snippets_for_cmdline.sh" >}}')`
+
+```{r echo=FALSE}
+htmltools::HTML('<div class="alert alert-warning"><b>Note to self: </b>
+                <i>Maybe there is a better way to store codesnippets? Also better convert the snippets below to a gist? (But you do not really put script output into a gist...)</i></div>')
+```
 
 
+### Snippets not yet stored as gist
 
-The following text snippets emerged by entering commands on the Unix command line.
-This was a trial and error process.
+The following text snippets are a bit longer. They emerged by entering commands on the Unix command line. This was a trial and error process. Some script output is also given. .
+
 
 
 The format of the snippets below is a pipe of shell commands.
 
 `<infile.json jq-cmd1 | jq-cmd2 | shell-cmd1 | shell-cmd2 ... `
 
-The infile.json I've saved beforehand using a [small python script](https://gist.github.com/knbknb/f5d393802d44a3f978694468dcff70e6).
+The `infile.json` contains Twitter data that I've saved beforehand using a [small python script](https://gist.github.com/knbknb/f5d393802d44a3f978694468dcff70e6).
 
 The infile contains one Tweet per line. The file as a whole is not a valid JSON file. For this reason I need the first `jq` command, `jq-cmd1`. It converts the collection of JSON fragments into an array of JSON objects and applies a transformation, or does some filtering. This creates another sequence of JSON fragments. 
 
 The second `jq` command converts the transformed JSON into a csv file. This jq-cmd is so complex that I've factored it out into a small file in the same directory, called `to_csv.jq` (see at end of this post).  
 
-Instead of the complex to_csv 
+
 
 ```{r echo=FALSE}
 # SO Answer 
 # https://stackoverflow.com/questions/18024769/adding-custom-styled-paragraphs-in-markdown-cells/36814654#36814654
 htmltools::HTML('<div class="alert alert-warning">
-<b>NOTE</b> If the python programs in <a href="https://csvkit.readthedocs.io/en/1.0.2/">csvkit</a> are installed, you can also use <pre> < simplefile.json in2csv > csv.out </pre> </div>')
+<b>NOTE/TODO</b> If the python programs in the <a title="csvkit docs" href="https://csvkit.readthedocs.io">csvkit</a> are installed, you can also use: <pre> < simplefile.json in2csv > csv.out </pre> 
+<a title="csvkit code" href="https://github.com/wireservice/csvkit">csvkit (code)</a> is a collection of commandline tools that contains <pre>
+csv2arff   csvcut     csvgrep    csvjson    csvpy      
+csvsql     csvstat    csvclean   csvformat  csvjoin    
+csvlook    csvsort    csvstack   in2csv    sql2csv
+</pre></div>')
+```
+
+**Note to self:** Get this list with these bash commands
+```
+sudo apt install apt-file
+apt-file update
+apt-file list python3-csvkit
+
 ```
 
 
-File `to_csv.jq` looks like this:
 
+[jq Module](https://stedolan.github.io/jq/manual/#Modules) `to_csv.jq` looks like this:
+```{r}
+### (insert Gist or scriptcode here)
+```
+
+Instead of the complex to_csv ...
+TODO: (explain difference of `to_csv.jq` and jq's built-in `@csv`)
+
+`r htmltools::HTML('<div class="alert alert-warning">
+<b>NOTE</b> end TODO</div>')`
 
 #### Example 1 - extract tweet text
 
@@ -105,6 +142,7 @@ tocsv(.)
 
 ```
 
+The [other answers](https://stackoverflow.com/a/44012345/) are worth a look, too.
 
 #### Further processing
 
@@ -175,6 +213,8 @@ _fol,name,desc,loc
 These are the people with the most followers. Their follower count has increased while I was  scraping the data from the Twitter Streaming API.
 
 #### Example 4 - Extract Users and those they retweeted or mentioned in text
+
+This example was a preprocessing step for this blogpost: [Constructing a tiny social-network visualization from the #Rstats hashtag](http://127.0.0.1:4321/post/2018/01/constructing-a-tiny-social-network-visualization-from-the-rstats-hashtag/).
 
 This command gives a tabular output to the question *"Who mentions whom?"*. The data can be used to create a social-network visualisation.
 

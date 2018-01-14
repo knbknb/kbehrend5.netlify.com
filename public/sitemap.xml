@@ -167,6 +167,12 @@
   </url>
   
   <url>
+    <loc>/tags/commandline/</loc>
+    <lastmod>2017-12-16T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
     <loc>/categories/external/</loc>
     <lastmod>2017-11-26T00:00:00+00:00</lastmod>
     <priority>0</priority>
@@ -221,6 +227,12 @@
   </url>
   
   <url>
+    <loc>/categories/personal-reference/</loc>
+    <lastmod>2017-12-16T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
     <loc>/tags/photography/</loc>
     <lastmod>2018-01-11T00:00:00+00:00</lastmod>
     <priority>0</priority>
@@ -241,6 +253,12 @@
   <url>
     <loc>/tags/r/</loc>
     <lastmod>2017-12-18T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>/tags/reference/</loc>
+    <lastmod>2017-12-16T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
