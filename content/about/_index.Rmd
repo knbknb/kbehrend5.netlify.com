@@ -13,12 +13,12 @@ knitr::opts_chunk$set(echo = TRUE)
 #### Why this blog?
 
 
-This Blog will include musings about my personal interests:  geosciences, datasciences, coding, photography, and more.
+This Blog will include musings about my personal interests:  geosciences, datascience(s), coding, photography, and more.
 
-- Over the last years I've slowly realized that I want to get more practice to write clearly.
+- I've slowly realized that I need to practice writing clearly.
 - Towards my long term goal of establishing a reproducible-research workflow for myself, having a personal blog is a nice warm-up exercise, or routine.
 - On my hard drive I have many older documents and side projects. As long as they are not on the net, they are "dead".
 - I've contributed stuff to a few forums and online exchanges, but in the long-term this is too widely dispersed to have any impact. Sometimes a series of postings really belongs together (to be useful to me), but is incoherently distributed over several sites. Often I cannot recover it myself, when I need to look something up that I once knew in greater detail, and wrote about.
-- For example, my documents on RPubs.com (the default site where you can publish/upload to, from within the Rstudio IDE), for instance, are also not really under version control. In fact they are not under anyone's control.  
+- For example, my ~5 documents on RPubs.com (the default site where you can publish/upload to, from within the RStudio IDE), for instance, are also not really under version control. In fact they are not under anyone's control. It is nice to refine and rewrite my texts in-place, as often as I want. 
  
- I've started the blog with a few posts about soccer data, for several reasons. One of them is that this subject fascinates a lot of people.
+ I've started the blog with a few posts about soccer data, for several reasons. One of them is that this subject fascinates a lot of people. Everyone understands something about soccer. Maybe this content will attract some readers. 
