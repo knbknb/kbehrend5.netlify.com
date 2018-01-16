@@ -7,10 +7,21 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>&amp;copy;2018 Knut Behrends</copyright>
-    <lastBuildDate>Sun, 07 Jan 2018 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 16 Jan 2018 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/post/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Drawing a network with &#34;ggraph&#34; and &#34;tidygraph&#34;</title>
+      <link>/post/2018/01/drawing-a-figshare-network-with-ggraph-and-tidygraph/</link>
+      <pubDate>Tue, 16 Jan 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2018/01/drawing-a-figshare-network-with-ggraph-and-tidygraph/</guid>
+      <description>NOTE This blogpost is inspired by this one: Drawing a network with &#34;ggraph&#34; and &#34;tidygraph&#34; by Ken Butler 
+ I’m trying to learn the differences between using the igraph library directly and the new packages ggraph and tidygraph.
+Introduction Thomas Lin Pedersen is the author of a lot of packages, including two that deal with graphs (in the sense of networks), tidygraph for storing and handling graphs, and ggraph for drawing them, ggplot-style.</description>
+    </item>
     
     <item>
       <title>Comparing 33C3 and 34C3 tweets</title>

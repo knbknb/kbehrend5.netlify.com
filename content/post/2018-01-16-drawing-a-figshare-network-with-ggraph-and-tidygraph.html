@@ -1,0 +1,239 @@
+---
+title: Drawing a network with "ggraph" and "tidygraph"
+draft: true
+author: Knut Behrends
+date: '2018-01-16'
+slug: drawing-a-figshare-network-with-ggraph-and-tidygraph
+categories:
+  - R
+  - networks
+tags:
+  - '#rstats'
+  - '#tidyverse'
+---
+
+
+
+<div class="alert alert-success alert-info alert-warning alert-danger"><b>NOTE</b>
+This blogpost is inspired by this one: <a href="https://nxskok.github.io/blog/2017/12/30/drawing-a-network-with-ggraph-and-tidygraph/">
+Drawing a network with "ggraph" and "tidygraph" by Ken Butler
+</a><br>
+</div>
+<p>I’m trying to learn the differences between using the <em>igraph</em> library directly and the new packages <em>ggraph</em> and <em>tidygraph</em>.</p>
+<div id="introduction" class="section level2">
+<h2>Introduction</h2>
+<p><a href="https://github.com/thomasp85">Thomas Lin Pedersen</a> is the author of a lot of packages, including two that deal with graphs (in the sense of networks), <code>tidygraph</code> for storing and handling graphs, and <code>ggraph</code> for drawing them, <code>ggplot</code>-style. I have a feeling I will be spending a lot of time with <code>tidygraph</code>, but in this post, I get my feet wet reading in and storing a graph and then making a picture of it.</p>
+<p>Packages:</p>
+<pre class="r"><code>options(knitr.table.format = &quot;html&quot;) 
+options(fig.width = 9) 
+library(igraph)
+library(httr)
+library(tidyverse)
+library(tidygraph)
+library(ggraph)
+theme_set(theme_bw())</code></pre>
+</div>
+<div id="example-the-figshare-categories" class="section level2">
+<h2>Example: the Figshare categories</h2>
+</div>
+<div id="reading-in-the-data-and-storing-as-a-graph" class="section level2">
+<h2>Reading in the data and storing as a graph</h2>
+<p>I had to think about how I wanted to represent the network. If these had been plane flights, I would have had a starting point and an ending point for each one. The input file (part) looks like this:</p>
+<pre class="r"><code>categories_file &lt;- &quot;data/network/figshare-categories.json&quot;
+
+# if(! file.exists(categories_file)) {
+        categories &lt;- httr::GET(&quot;http://api.figshare.com/v2/categories&quot;) %&gt;%
+                content(as=&quot;text&quot;) %&gt;%
+                jsonlite::fromJSON(simplifyDataFrame = TRUE) %&gt;% 
+                  as_tibble() 
+#         write(categories, file = categories_file)
+# } 
+# categories &lt;- jsonlite::fromJSON(categories_file), 
+#                   simplifyDataFrame = TRUE) %&gt;% 
+#                   as_tibble()</code></pre>
+<pre><code>#head --lines=21 figshare-categories.json | tail -n+2
+ &lt; figshare-categories.json jq . | head --lines=21 - | tail -n+2</code></pre>
+<p>To read this in, I treat it as a three-column json-File. Quick look at the data:</p>
+<pre class="r"><code>categories %&gt;% head(n=10)</code></pre>
+<pre><code>## # A tibble: 10 x 3
+##    parent_id    id title                  
+##        &lt;int&gt; &lt;int&gt; &lt;chr&gt;                  
+##  1        48     1 Biophysics             
+##  2        30     2 Uncategorized          
+##  3        38     4 Biochemistry           
+##  4        48     7 Medicine               
+##  5        48     8 Microbiology           
+##  6        48    10 Anatomy                
+##  7        48    11 Behavioral Neuroscience
+##  8        48    12 Cell Biology           
+##  9        48    13 Genetics               
+## 10        48    14 Molecular Biology</code></pre>
+<p>Quick visualization how category IDs were assigned by Figshare Designers</p>
+<pre class="r"><code>p1 &lt;- ggplot(categories, aes(id, I(1:nrow(categories)))) +
+        geom_point(size=0.1) +
+        xlab(&quot;Category ID&quot;) + ylab(&quot;Count&quot;) +
+        ggtitle(&quot;Figshare Category IDs&quot;, subtitle=&quot;Gaps indicate that a few category-IDs have been deleted or renamed&quot;)
+p2 &lt;-  ggplot(categories, aes(parent_id)) +geom_histogram(binwidth = 5) +
+        xlab(&quot;Category Parent IDs&quot;) + ylab(&quot;Count&quot;) +
+        ggtitle(&quot;Figshare Parent Category IDs&quot;, subtitle=&quot;Gaps indicate that parent-category-IDs have small values or few distinct values &gt; 1000&quot;)
+gridExtra::grid.arrange(p1,p2, nrow=2, ncol=1)</code></pre>
+<p><img src="/post/2018-01-16-drawing-a-figshare-network-with-ggraph-and-tidygraph_files/figure-html/vis1-1.png" width="864" /></p>
+<p>Which category-ids are <em>not</em> assigned?</p>
+<pre class="r"><code>unused_ids &lt;- setdiff(1:max(categories$id), unique(categories$id))
+
+ggplot(data.frame(pos = 1:length(unused_ids), id=unused_ids), aes(pos, id)) +
+        geom_point(size=0.1) +
+        scale_x_continuous(limits=c(0,50)) +
+        ggtitle(&quot;Unused Category IDs&quot;, 
+                subtitle = &quot;Roughly every 3rd number is not assigned to a category IDs&quot;)</code></pre>
+<p><img src="/post/2018-01-16-drawing-a-figshare-network-with-ggraph-and-tidygraph_files/figure-html/unnamed-chunk-3-1.png" width="864" /></p>
+<p><code>tidygraph</code> has a function for turning a data frame structured like this, with edges as rows, into an actual tidy graph:</p>
+<pre class="r"><code>categories_g &lt;- categories %&gt;%
+        select(id , parent_id) %&gt;% 
+        as_tbl_graph()
+
+categories_g</code></pre>
+<pre><code>## # A tbl_graph: 1401 nodes and 1380 edges
+## #
+## # A directed acyclic simple graph with 21 components
+## #
+## # Node Data: 1,401 x 1 (active)
+##   name 
+##   &lt;chr&gt;
+## 1 1    
+## 2 2    
+## 3 4    
+## 4 7    
+## 5 8    
+## 6 10   
+## # ... with 1,395 more rows
+## #
+## # Edge Data: 1,380 x 2
+##    from    to
+##   &lt;int&gt; &lt;int&gt;
+## 1     1  1381
+## 2     2  1382
+## 3     3  1383
+## # ... with 1,377 more rows</code></pre>
+<p>How many attribute names are set?</p>
+<pre class="r"><code>categories_g %&gt;%
+        vertex_attr() %&gt;% 
+        names()</code></pre>
+<pre><code>## [1] &quot;name&quot;</code></pre>
+<p>Only one attribute “name” is set.</p>
+<p>Which edges have the parent_id 48?</p>
+<pre class="r"><code>E(categories_g)[[inc(&#39;48&#39;)]]  %&gt;%
+        head(10)</code></pre>
+<pre><code>## + 10/1380 edges from 136921a (vertex names):
+##  [1] 1 -&gt;48 7 -&gt;48 8 -&gt;48 10-&gt;48 11-&gt;48 12-&gt;48 13-&gt;48 14-&gt;48 15-&gt;48 16-&gt;48</code></pre>
+<pre class="r"><code># similar call
+# incident(categories_g, &#39;48&#39;, mode = c(&quot;in&quot;))</code></pre>
+<p>There are 114 such edges.</p>
+<pre class="r"><code>categories_g &lt;- set_edge_attr(categories_g,
+                              &quot;subject&quot;,
+                              value=categories$title)
+categories_g &lt;- set_edge_attr(categories_g,
+                              &quot;id&quot;,
+                              value=categories$id)
+categories_g &lt;- set_edge_attr(categories_g,
+                              &quot;parent_id&quot;,
+                              value=categories$parent_id)</code></pre>
+<p>Now, how to assign names to the category ids.</p>
+<p>The nodes and edges are shown separately, with the nodes numbered (those numbers are used in the edges).</p>
+</div>
+<div id="extracting-the-nodes-and-edges" class="section level2">
+<h2>Extracting the nodes and edges</h2>
+<p><code>tidygraph</code> uses the same pipeline ideas as the <code>tidyverse</code>, but extra care is required because a tidy graph object has both nodes and edges in it. An extra verb <code>activate</code> lets you specify which one you would like to be “primary” (but you can also access the other one). Piping the output of <code>activate</code> into <code>as_tibble</code> lets you save the nodes or edges as a data frame, separately:</p>
+<pre class="r"><code>nodes = categories_g %&gt;%
+  activate(nodes) %&gt;%
+  as_tibble() %&gt;%
+  mutate(node_number=row_number()) %&gt;%
+  print(n=10)</code></pre>
+<pre><code>## # A tibble: 1,401 x 2
+##    name  node_number
+##    &lt;chr&gt;       &lt;int&gt;
+##  1 1               1
+##  2 2               2
+##  3 4               3
+##  4 7               4
+##  5 8               5
+##  6 10              6
+##  7 11              7
+##  8 12              8
+##  9 13              9
+## 10 14             10
+## # ... with 1,391 more rows</code></pre>
+<pre class="r"><code>edges = categories_g %&gt;%
+  activate(edges) %&gt;%
+  as_tibble() %&gt;% print(n=10)</code></pre>
+<pre><code>## # A tibble: 1,380 x 5
+##     from    to subject                    id parent_id
+##    &lt;int&gt; &lt;int&gt; &lt;chr&gt;                   &lt;int&gt;     &lt;int&gt;
+##  1     1  1381 Biophysics                  1        48
+##  2     2  1382 Uncategorized               2        30
+##  3     3  1383 Biochemistry                4        38
+##  4     4  1381 Medicine                    7        48
+##  5     5  1381 Microbiology                8        48
+##  6     6  1381 Anatomy                    10        48
+##  7     7  1381 Behavioral Neuroscience    11        48
+##  8     8  1381 Cell Biology               12        48
+##  9     9  1381 Genetics                   13        48
+## 10    10  1381 Molecular Biology          14        48
+## # ... with 1,370 more rows</code></pre>
+<p>I saved the node numbers as well as names into the nodes data frame. This lets me look up the <em>names</em> of the nodes referred to in the edges, to convince myself that I have something sensible:</p>
+<pre class="r"><code>edges %&gt;%
+  left_join(nodes,by=c(&quot;from&quot;=&quot;node_number&quot;)) %&gt;%
+  left_join(nodes,by=c(&quot;to&quot;=&quot;node_number&quot;)) %&gt;%
+  print(n=20)</code></pre>
+<pre><code>## # A tibble: 1,380 x 7
+##     from    to subject                    id parent_id name.x name.y
+##    &lt;int&gt; &lt;int&gt; &lt;chr&gt;                   &lt;int&gt;     &lt;int&gt; &lt;chr&gt;  &lt;chr&gt; 
+##  1     1  1381 Biophysics                  1        48 1      48    
+##  2     2  1382 Uncategorized               2        30 2      30    
+##  3     3  1383 Biochemistry                4        38 4      38    
+##  4     4  1381 Medicine                    7        48 7      48    
+##  5     5  1381 Microbiology                8        48 8      48    
+##  6     6  1381 Anatomy                    10        48 10     48    
+##  7     7  1381 Behavioral Neuroscience    11        48 11     48    
+##  8     8  1381 Cell Biology               12        48 12     48    
+##  9     9  1381 Genetics                   13        48 13     48    
+## 10    10  1381 Molecular Biology          14        48 14     48    
+## 11    11  1381 Neuroscience               15        48 15     48    
+## 12    12  1381 Physiology                 16        48 16     48    
+## 13    13  1384 Geography                  17        26 17     26    
+## 14    14  1381 Pharmacology               19        48 19     48    
+## 15    15  1385 Computer Engineering       20         5 20     5     
+## 16    16  1381 Biotechnology              21        48 21     48    
+## 17    17  1385 Software Engineering       23         5 23     5     
+## 18    18  1381 Evolutionary Biology       24        48 24     48    
+## 19    19  1384 Anthropology               25        26 25     26    
+## 20    20  1384 Economics                  27        26 27     26    
+## # ... with 1,360 more rows</code></pre>
+<p>This is what I started with.</p>
+</div>
+<div id="drawing-the-graph" class="section level2">
+<h2>Drawing the graph</h2>
+<p>Thomas Lin Pedersen also wrote the package <code>ggraph</code> which allows <code>ggplot</code>-style plotting of graphs. For our example, this was my ultimate aim: I wanted to see how well the connection information enabled us to reproduce the map above.</p>
+<p>Graphs can be plotted in many different ways. For this graph, I know there is a representation in two dimensions, since the stations are scattered across the 2D-space of West categorieshire. In <code>ggraph</code>, this is controlled by the <code>layout</code> parameter of the <code>ggraph</code> command. The Kamada-Kawai method tries to plot neighbouring nodes a constant distance apart, and chooses their locations as if they are connected by unit-length springs. I find this works well here. In addition, I want to draw the edges (as lines), draw the nodes (as points), and label the nodes by which station they are. These are accomplished by <code>geom_edge_link</code>, <code>geom_node_point</code> and <code>geom_node_text</code>. Additional notes: the <code>alpha=0.3</code> draws the edges partly transparent, so that the station names stand out; the use of <code>repel=T</code> “repels” the station names away from the points they represent so that you can see them (in the manner of <code>geom_text_repel</code>):</p>
+<pre class="r"><code>ggraph(categories_g,layout=&quot;kk&quot;)+
+  geom_edge_link(colour=&quot;blue&quot;, alpha=0.1)+
+  geom_node_point()</code></pre>
+<p><img src="/post/2018-01-16-drawing-a-figshare-network-with-ggraph-and-tidygraph_files/figure-html/unnamed-chunk-10-1.png" width="864" /></p>
+<pre class="r"><code> # geom_node_text(aes(label=id),size=2,repel=T)</code></pre>
+<p>This seems to do a nice job of reproducing the topology in a clear fashion with no overlaps where there shouldn’t be any. (I tried this using the separate stations, Westgate and Kirkgate, in Wakefield, and the display was a lot more confusing.) It doesn’t get compass directions right (it seems to have west and east reversed), but we had no right to expect that it would.</p>
+<p>Another plausible layout is the one called <code>lgl</code>. How does that work here? We leave everything else the same:</p>
+<pre class="r"><code>ggraph(categories_g,layout=&quot;lgl&quot;)+
+  geom_edge_link(colour=&quot;blue&quot;,alpha=0.1)+
+  geom_node_point()</code></pre>
+<p><img src="/post/2018-01-16-drawing-a-figshare-network-with-ggraph-and-tidygraph_files/figure-html/unnamed-chunk-11-1.png" width="864" /></p>
+<pre class="r"><code>#  geom_node_text(aes(label=name),size=2,repel=T)</code></pre>
+<pre class="r"><code>g.outd &lt;- degree(categories_g, mode = c(&quot;in&quot;))
+#names(g.outd) &lt;- edge_attr(categories_g, &quot;subject&quot;)
+#View a summary of out-degree
+table(g.outd)</code></pre>
+<pre><code>## g.outd
+##    0    1    2   22   29   32   36   44   45   48   54   62   66   69   70 
+## 1380    1    1    1    1    1    1    1    1    1    1    1    1    1    1 
+##   73   79   90  114  137  144  163 
+##    1    1    1    1    1    1    1</code></pre>
+</div>

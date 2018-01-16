@@ -1,0 +1,277 @@
+---
+title: Drawing a network with "ggraph" and "tidygraph"
+draft: true
+author: Knut Behrends
+date: '2018-01-16'
+slug: drawing-a-figshare-network-with-ggraph-and-tidygraph
+categories:
+  - R
+  - networks
+tags:
+  - '#rstats'
+  - '#tidyverse'
+---
+
+```{r setup, echo=FALSE}
+library(knitr)
+opts_chunk$set(cache = TRUE, warning = FALSE, message = FALSE, 
+               echo = TRUE, tidy = FALSE, height = 3, width = 5,
+               fig.width = 9)
+options(digits = 3, tibble.print_min = 6)
+```
+
+```{r intro,echo=FALSE}
+htmltools::HTML('<div class="alert alert-success alert-info alert-warning alert-danger"><b>NOTE</b>
+This blogpost is inspired by this one: <a href="https://nxskok.github.io/blog/2017/12/30/drawing-a-network-with-ggraph-and-tidygraph/">
+Drawing a network with "ggraph" and "tidygraph" by Ken Butler
+</a><br>
+</div>')
+```
+
+I'm trying to learn the differences between using the *igraph* library directly and the new packages *ggraph* and *tidygraph*.
+
+
+## Introduction
+
+
+
+[Thomas Lin Pedersen](https://github.com/thomasp85) is the author of a
+lot of packages, including two that deal with graphs (in the sense of
+networks), `tidygraph` for storing and handling graphs, and `ggraph` for
+drawing them, `ggplot`-style. I have a feeling I will be spending a lot
+of time with `tidygraph`, but in this post, I get my feet wet reading in
+and storing a graph and then making a picture of it.
+
+Packages:
+
+```{r libs}
+options(knitr.table.format = "html") 
+options(fig.width = 9) 
+library(igraph)
+library(httr)
+library(tidyverse)
+library(tidygraph)
+library(ggraph)
+theme_set(theme_bw())
+```
+
+
+## Example: the Figshare categories
+
+
+## Reading in the data and storing as a graph
+
+I had to think about how I wanted to represent the network. If these had
+been plane flights, I would have had a starting point and an ending
+point for each one. The input file (part) looks like this:
+
+
+```{r}
+
+categories_file <- "data/network/figshare-categories.json"
+
+# if(! file.exists(categories_file)) {
+        categories <- httr::GET("http://api.figshare.com/v2/categories") %>%
+                content(as="text") %>%
+                jsonlite::fromJSON(simplifyDataFrame = TRUE) %>% 
+                  as_tibble() 
+#         write(categories, file = categories_file)
+# } 
+# categories <- jsonlite::fromJSON(categories_file), 
+#                   simplifyDataFrame = TRUE) %>% 
+#                   as_tibble()
+
+```
+
+
+
+```
+#head --lines=21 figshare-categories.json | tail -n+2
+ < figshare-categories.json jq . | head --lines=21 - | tail -n+2
+```
+
+
+To read this in, I treat it as a three-column json-File. 
+Quick look at the data:
+
+```{r}
+categories %>% head(n=10)
+```
+
+Quick visualization how category IDs were assigned by Figshare Designers
+
+```{r vis1}
+p1 <- ggplot(categories, aes(id, I(1:nrow(categories)))) +
+        geom_point(size=0.1) +
+        xlab("Category ID") + ylab("Count") +
+        ggtitle("Figshare Category IDs", subtitle="Gaps indicate that a few category-IDs have been deleted or renamed")
+p2 <-  ggplot(categories, aes(parent_id)) +geom_histogram(binwidth = 5) +
+        xlab("Category Parent IDs") + ylab("Count") +
+        ggtitle("Figshare Parent Category IDs", subtitle="Gaps indicate that parent-category-IDs have small values or few distinct values > 1000")
+gridExtra::grid.arrange(p1,p2, nrow=2, ncol=1)
+
+```
+
+Which category-ids are *not* assigned?
+
+```{r}
+unused_ids <- setdiff(1:max(categories$id), unique(categories$id))
+
+ggplot(data.frame(pos = 1:length(unused_ids), id=unused_ids), aes(pos, id)) +
+        geom_point(size=0.1) +
+        scale_x_continuous(limits=c(0,50)) +
+        ggtitle("Unused Category IDs", 
+                subtitle = "Roughly every 3rd number is not assigned to a category IDs")
+```
+
+
+
+`tidygraph` has a function for turning a data frame structured like
+this, with edges as rows, into an actual tidy graph:
+
+```{r graph}
+
+categories_g <- categories %>%
+        select(id , parent_id) %>% 
+        as_tbl_graph()
+
+categories_g
+
+```
+
+How many attribute names are set?
+
+```{r}
+categories_g %>%
+        vertex_attr() %>% 
+        names()
+```
+
+Only one attribute "name" is set.
+
+Which edges have the parent_id 48?
+
+```{r}
+
+E(categories_g)[[inc('48')]]  %>%
+        head(10)
+
+
+# similar call
+# incident(categories_g, '48', mode = c("in"))
+```
+
+There are `r length(E(categories_g)[[inc('48')]]  )` such edges.
+
+
+```{r}
+
+categories_g <- set_edge_attr(categories_g,
+                              "subject",
+                              value=categories$title)
+categories_g <- set_edge_attr(categories_g,
+                              "id",
+                              value=categories$id)
+categories_g <- set_edge_attr(categories_g,
+                              "parent_id",
+                              value=categories$parent_id)
+```
+
+Now, how to assign names to the category ids.
+
+The nodes and edges are shown separately, with the nodes numbered (those
+numbers are used in the edges).
+
+## Extracting the nodes and edges
+
+`tidygraph` uses the same pipeline ideas as the `tidyverse`, but extra
+care is required because a tidy graph object has both nodes and edges in
+it. An extra verb `activate` lets you specify which one you would like
+to be "primary" (but you can also access the other one). Piping the
+output of `activate` into `as_tibble` lets you save the nodes or edges
+as a data frame, separately:
+
+```{r}
+
+nodes = categories_g %>%
+  activate(nodes) %>%
+  as_tibble() %>%
+  mutate(node_number=row_number()) %>%
+  print(n=10)
+```
+
+```{r}
+edges = categories_g %>%
+  activate(edges) %>%
+  as_tibble() %>% print(n=10)
+```
+
+I saved the node numbers as well as names into the nodes data frame.
+This lets me look up the *names* of the nodes referred to in the edges,
+to convince myself that I have something sensible:
+
+```{r}
+edges %>%
+  left_join(nodes,by=c("from"="node_number")) %>%
+  left_join(nodes,by=c("to"="node_number")) %>%
+  print(n=20)
+```
+
+This is what I started with.
+
+## Drawing the graph
+
+
+Thomas Lin Pedersen also wrote the package `ggraph` which allows
+`ggplot`-style plotting of graphs. For our example, this was my ultimate
+aim: I wanted to see how well the connection information enabled us to
+reproduce the map above.
+
+Graphs can be plotted in many different ways. For this graph, I know
+there is a representation in two dimensions, since the stations are
+scattered across the 2D-space of West categorieshire. In `ggraph`, this
+is controlled by the `layout` parameter of the `ggraph` command.  The
+Kamada-Kawai method tries to plot neighbouring nodes a constant distance
+apart, and chooses their locations as if they are connected by
+unit-length springs. I find this works well here. In addition, I want to
+draw the edges (as lines), draw the nodes (as points), and label the
+nodes by which station they are. These are accomplished by
+`geom_edge_link`, `geom_node_point` and `geom_node_text`. Additional
+notes: the `alpha=0.3` draws the edges partly transparent, so that the
+station names stand out; the use of `repel=T` "repels" the station names
+away from the points they represent so that you can see them (in the
+manner of `geom_text_repel`):
+
+```{r}
+ggraph(categories_g,layout="kk")+
+  geom_edge_link(colour="blue", alpha=0.1)+
+  geom_node_point()
+
+ # geom_node_text(aes(label=id),size=2,repel=T)
+```
+
+This seems to do a nice job of reproducing the topology in a clear
+fashion with no overlaps where there shouldn't be any. (I tried this
+using the separate stations, Westgate and Kirkgate, in Wakefield, and
+the display was a lot more confusing.) It doesn't get compass directions
+right (it seems to have west and east reversed), but we had no right to
+expect that it would.
+
+Another plausible layout is the one called `lgl`. How does that work
+here? We leave everything else the same:
+
+```{r}
+ggraph(categories_g,layout="lgl")+
+  geom_edge_link(colour="blue",alpha=0.1)+
+  geom_node_point()
+#  geom_node_text(aes(label=name),size=2,repel=T)
+```
+
+
+```{r}
+g.outd <- degree(categories_g, mode = c("in"))
+#names(g.outd) <- edge_attr(categories_g, "subject")
+#View a summary of out-degree
+table(g.outd)
+```
+

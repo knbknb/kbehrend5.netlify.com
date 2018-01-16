@@ -49,6 +49,15 @@
     </item>
     
     <item>
+      <title>Networks</title>
+      <link>/categories/networks/</link>
+      <pubDate>Tue, 16 Jan 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/categories/networks/</guid>
+      <description></description>
+    </item>
+    
+    <item>
       <title>Personal Blog</title>
       <link>/categories/personal-blog/</link>
       <pubDate>Sun, 07 Jan 2018 00:00:00 +0000</pubDate>
@@ -63,6 +72,15 @@
       <pubDate>Sat, 16 Dec 2017 00:00:00 +0000</pubDate>
       
       <guid>/categories/personal-reference/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>R</title>
+      <link>/categories/r/</link>
+      <pubDate>Tue, 16 Jan 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/categories/r/</guid>
       <description></description>
     </item>
     
