@@ -87,6 +87,7 @@ dateFormat = "2006-01-02"
   stackoverflow = "https://stackoverflow.com/users/202553/knb"
   #instagram     = "full profile url in instagram"
   github        = "https://github.com/knbknb"
+  plunker        = "http://plnkr.co/users/knbknb"
 
 ## from universal theme , example site
 

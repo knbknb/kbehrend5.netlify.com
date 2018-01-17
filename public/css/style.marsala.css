@@ -276,6 +276,10 @@ ul.list-style-none {
 #top .social a:hover.email {
   background-color: #4a7f45;
 }
+#top .social a:hover.plunker {
+  background-color: #cd4378;
+}
+
 #top .login {
   float: right;
 }
@@ -3529,7 +3533,7 @@ a.list-group-item.active > .badge,
 /*!
  * Yamm!3 - Yet another megamenu for Bootstrap 3
  * http://geedmo.github.com/yamm3
- * 
+ *
  * @geedmo - Licensed under the MIT license
  */
 .yamm .nav,
