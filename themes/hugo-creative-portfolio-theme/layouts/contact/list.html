@@ -10,6 +10,9 @@
          {{ partial "social_buttons_in_contact.html" . }}
          {{ with .Site.Params.email }}
          <h4>Drop me a line, maybe?</h4>
+        <p id="">
+        I typically check this email account maybe once a week, so please be patient: my response can take a while.
+        </p>
          <form id="contact-form" class="contact-form form" method="post" action="https://formspree.io/{{ . }}">
            <div class="controls">
              <div class="form-group">
@@ -25,7 +28,7 @@
                <textarea rows="4" name="message" id="message" required="required" class="form-control"></textarea>
              </div>
              <div>
-               <input type="submit" value="Send" class="btn btn-ghost">
+               <input type="submit" value="Send" class="btn btn-ghost"><p><small>(Emails will be        processed by the  company 'Formspree') </small></p>
              </div>
            </div>
          </form>
