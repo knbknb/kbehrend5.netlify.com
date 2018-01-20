@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<title>Interest in Bitcoin over Time</title>
+<title>Global interest in Bitcoin over Time</title>
 <meta name="description" content="Knut Behrends&#39; personal blog. A website built through Hugo and blogdown.">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="all,follow">
@@ -128,7 +128,7 @@ ga('send', 'pageview');
     <span class="article-duration">3 min read</span>
     
 
-    <h1 class="article-title">Interest in Bitcoin over Time</h1>
+    <h1 class="article-title">Global interest in Bitcoin over Time</h1>
 
     
     <span class="article-date">2018/01/20</span>
@@ -137,10 +137,10 @@ ga('send', 'pageview');
     <div class="article-content">
       <div class="alert alert-info"><b>Abstract:</b>
 Bitcoin. Visualizing (1) Wikipedia Pageviews, (2) Google Searches and (3) Exchange Rates from 2015 to early 2018. 
-Simple timeseries plots show that these three are strongly correlated.
+Simple timeseries plots (created from Web-API data) show that these three are strongly correlated.
 </div>
-<p>In this post I’ll analyse global interest in Bitcoin and Ethereum over time, according to accesses to Wikipedia articles and as Google Searches.</p>
-<p>The end of the year 2017 saw the “Bitcoin Bubble”, a period of one month where 1 Bitcoin was traded for up to $20000 on most exchanges. I am not invested in Bitcoin, and never was substantially, but this cryptocurrencies and the blockchain technology still interest me.</p>
+<p>In this post I’ll analyse global interest in Bitcoin and Ethereum over time, according to accesses to Wikipedia articles and as Google Searches. At this time, no API keys and authentication are necessary.</p>
+<p>The end of the year 2017 saw the “Bitcoin Bubble”, a period of one month where 1 Bitcoin was traded for up to $20000 on most exchanges. I am not invested in Bitcoin, and never was substantially, but cryptocurrencies and the blockchain technology still interest me.</p>
 <div id="preprocessing" class="section level3">
 <h3>Preprocessing</h3>
 <p>Preprocessing entails:</p>
@@ -159,7 +159,7 @@ theme_set(theme_bw()) # ggplot default</code></pre>
 </div>
 <div id="define-a-wrapper-function-to-access-a-wikipedia-api" class="section level4">
 <h4>Define a wrapper function to access a Wikipedia API</h4>
-<p>The function contains quite a few of hardwired parameters. The <code>pageviews</code> package fetches the data. At this time, no API keys and authentication are necessary. The function could bemade a lot more flexible by adding more parameters but that is also not necessary for this blogpost.</p>
+<p>The function contains quite a few of hardwired parameters. The <a href="https://github.com/ironholds/pageviews"><code>pageviews</code></a> package fetches the data. The function could bemade a lot more flexible by adding more parameters but that is also not necessary for this blogpost.</p>
 <p>The search function only works for terms that for which an article in both wikipedias exists.</p>
 <p>Luckily “Bitcoin” is such a term.</p>
 <pre class="r"><code># Get the pageviews for &quot;Search term&quot;

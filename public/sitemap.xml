@@ -18,6 +18,11 @@
   </url>
   
   <url>
+    <loc>/post/2018/01/interest-in-bitcoin/</loc>
+    <lastmod>2018-01-21T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>/post/2018/01/bitcoin-interest/</loc>
     <lastmod>2018-01-20T00:00:00+00:00</lastmod>
   </url>
@@ -178,7 +183,7 @@
   
   <url>
     <loc>/tags/code/</loc>
-    <lastmod>2018-01-20T00:00:00+00:00</lastmod>
+    <lastmod>2018-01-21T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -202,7 +207,7 @@
   
   <url>
     <loc>/tags/finance/</loc>
-    <lastmod>2018-01-20T00:00:00+00:00</lastmod>
+    <lastmod>2018-01-21T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -256,7 +261,7 @@
   
   <url>
     <loc>/categories/personal-blog/</loc>
-    <lastmod>2018-01-20T00:00:00+00:00</lastmod>
+    <lastmod>2018-01-21T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -285,26 +290,26 @@
   </url>
   
   <url>
-    <loc>/categories/r/</loc>
-    <lastmod>2018-01-16T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
     <loc>/tags/r/</loc>
     <lastmod>2017-12-18T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>/categories/reference/</loc>
-    <lastmod>2017-11-26T00:00:00+00:00</lastmod>
+    <loc>/categories/r/</loc>
+    <lastmod>2018-01-16T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>/tags/reference/</loc>
     <lastmod>2017-12-16T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>/categories/reference/</loc>
+    <lastmod>2017-11-26T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -328,7 +333,7 @@
   
   <url>
     <loc>/tags/time-series/</loc>
-    <lastmod>2018-01-20T00:00:00+00:00</lastmod>
+    <lastmod>2018-01-21T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
