@@ -33,7 +33,7 @@
     <item>
       <title>Code</title>
       <link>/tags/code/</link>
-      <pubDate>Sat, 06 Jan 2018 00:00:00 +0000</pubDate>
+      <pubDate>Sat, 20 Jan 2018 00:00:00 +0000</pubDate>
       
       <guid>/tags/code/</guid>
       <description></description>
@@ -45,6 +45,15 @@
       <pubDate>Sat, 16 Dec 2017 00:00:00 +0000</pubDate>
       
       <guid>/tags/commandline/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Finance</title>
+      <link>/tags/finance/</link>
+      <pubDate>Sat, 20 Jan 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/finance/</guid>
       <description></description>
     </item>
     
@@ -135,6 +144,15 @@
       <pubDate>Sun, 17 Dec 2017 00:00:00 +0000</pubDate>
       
       <guid>/tags/soccer/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Time Series</title>
+      <link>/tags/time-series/</link>
+      <pubDate>Sat, 20 Jan 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/time-series/</guid>
       <description></description>
     </item>
     

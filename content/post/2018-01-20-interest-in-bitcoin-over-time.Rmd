@@ -1,0 +1,164 @@
+---
+title: Interest in Bitcoin over Time
+author: Knut Behrends
+date: '2018-01-20'
+draft: true
+slug: bitcoin-interest
+categories: ['personal-blog']
+tags: ['code', 'finance', 'time-series']
+banner: img/post/thumb/jq-med.png
+output:
+  html_document:
+    toc: false
+---
+
+```{r intro,echo=FALSE}
+htmltools::HTML('<div class="alert alert-info"><b>Abstract:</b>
+Bitcoin. Visualizing (1) Wikipedia Pageviews, (2) Google Searches and (3) Exchange Rates from 2015 to early 2018. 
+Simple timeseries plots show that these three are strongly correlated.
+</div>')
+```
+
+In this post I'll analyse global interest in Bitcoin and Ethereum over time, according to accesses to Wikipedia articles and as Google Searches.
+
+The end of the year 2017 saw the "Bitcoin Bubble", a period of one month where 1 Bitcoin was traded for up to $20000 on most exchanges. I am not invested in Bitcoin, and never was substantially, but this cryptocurrencies and the blockchain technology still interest me.
+
+```{r setup, echo=FALSE}
+library(knitr)
+opts_chunk$set(cache = TRUE, warning = FALSE, message = FALSE, 
+               echo = TRUE, tidy = FALSE, height = 3, width = 5,
+               fig.width = 9)
+options(digits = 3, tibble.print_min = 6)
+```
+
+### Preprocessing 
+
+Preprocessing entails:
+
+- Define necessary R packages
+- Fetching the data
+
+
+#### Load  R packages
+
+```{r libs, cache=FALSE}
+
+library(pageviews) # access Wikipedia
+library(Quandl)    # provider of financial data
+library(lubridate)
+library(tidyverse) 
+library(gtrendsR)  # access Google trends API
+theme_set(theme_bw()) # ggplot default
+
+```
+
+#### Define a wrapper function to access a Wikipedia API
+
+ 
+The function contains quite a few  of hardwired parameters. The `pageviews` package fetches the data. At this time, no API keys and authentication are necessary.
+The function could bemade a lot more flexible by adding more parameters but that is also not necessary for this blogpost.
+
+The search function only works for terms that for which an article in both wikipedias exists. 
+
+Luckily "Bitcoin" is such a term.
+
+```{r func}
+# Get the pageviews for "Search term"
+# pageview data is available since 2015
+startdate <- ymd("20150101")
+enddate <- now()
+
+wikipedia_de_vs_en <- function(term = "Bitcoin") {
+  # call English wikipedia        
+  pageviews <- article_pageviews(
+    project = "en.wikipedia",
+    article = term,
+    user_type = "user",
+    start = startdate,
+    end = enddate
+  )
+  # call German wikipedia
+  pageviews2 <- article_pageviews(
+    project = "de.wikipedia",
+    article = term,
+    user_type = "user",
+    start = startdate,
+    end = enddate
+  )
+
+  # combine to data frame
+  pageviews.df <- bind_rows(pageviews, pageviews2) %>%
+    mutate(language = case_when(
+      language == "en" ~ "English Wikipedia",
+      language == "de" ~ "German Wikipedia"
+    ))
+
+  #plot it with 2 panels
+  ggplot(pageviews.df, aes(date, views, color = language)) +
+    geom_line() +
+    xlab("") + ylab("Views per Day") +
+    theme(legend.position = "none") +
+    facet_wrap(~ language, nrow = 2, scales = "free_y") +
+    ggtitle(
+      sprintf("Daily Pageviews of '%s' in the English and German Wikipedias", term),
+      subtitle = "Human Users only"
+    ) 
+}
+```
+
+Get some data for Bitcoin
+
+```{r btc, echo=FALSE}
+wikipedia_de_vs_en("Bitcoin") 
+```
+
+Get some data for Ethereum, another popular cryptocurrency (at this time).
+
+```{r eth, echo=FALSE}
+wikipedia_de_vs_en("Ethereum") 
+```
+
+There is another, alternative data source: Google Trends API, here accessed with functions from the [gtrendsR](https://github.com/PMassicotte/gtrendsR) package. 
+The API provides aggregated and rescaled data on how many people have performed Google searches for this term.
+
+```{r goog, echo=FALSE}
+btcgoog <- here::here("data/bitcoin_googletrends.RDS")
+if(file.exists(btcgoog)){
+        bitcoin_trends <- readRDS(file = btcgoog)
+} else{
+        bitcoin_trends <- gtrends("Bitcoin", geo = "", time = "today+5-y", 
+                                  gprop = c("web"), category = 0, hl = "en-US")
+        saveRDS(bitcoin_trends, btcgoog)
+}
+```
+
+Show a plot for comparison:
+
+```{r gogl}
+
+bitcoin_trends$interest_over_time %>%
+  filter(date > as.Date("2015-01-01")) %>%
+  ggplot(aes(date, hits)) +
+  geom_line() +
+  theme(legend.position = "none") +
+  xlab("") + ylab("Interest") +
+  ggtitle(
+    sprintf("Google Trends: Worlwide Interest over Time in '%s'", "Bitcoin"),
+    subtitle = "(Google internal counters)"
+  )
+```
+
+#### Another obligatory comparison
+
+Last but not least:  the exchange rate for Bitcoin, here given in Euro. 
+
+```{r quandl}
+
+btc <- Quandl(code = "BCHARTS/BTCDEEUR", type = "xts")
+autoplot(btc$Close["2015-01-01/"]) +
+        ylab("Bitcoin/EUR") + xlab("Year") +
+        ggtitle("Bitcoin Exchange Rate 2015-2018",
+                subtitle="in EUR, according to the Kraken.com trading platform")
+
+```
+

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Time Series on Knut Behrends Personal Blog, v3</title>
+    <link>/tags/time-series/</link>
+    <description>Recent content in Time Series on Knut Behrends Personal Blog, v3</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>&amp;copy;2018 Knut Behrends</copyright>
+    <lastBuildDate>Sat, 20 Jan 2018 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/tags/time-series/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Interest in Bitcoin over Time</title>
+      <link>/post/2018/01/bitcoin-interest/</link>
+      <pubDate>Sat, 20 Jan 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2018/01/bitcoin-interest/</guid>
+      <description>Abstract: Bitcoin. Visualizing (1) Wikipedia Pageviews, (2) Google Searches and (3) Exchange Rates from 2015 to early 2018. Simple timeseries plots show that these three are strongly correlated.  In this post I’ll analyse global interest in Bitcoin and Ethereum over time, according to accesses to Wikipedia articles and as Google Searches.
+The end of the year 2017 saw the “Bitcoin Bubble”, a period of one month where 1 Bitcoin was traded for up to $20000 on most exchanges.</description>
+    </item>
+    
+  </channel>
+</rss>

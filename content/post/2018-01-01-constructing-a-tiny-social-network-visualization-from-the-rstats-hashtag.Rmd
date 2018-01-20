@@ -14,6 +14,8 @@ opts_chunk$set(cache = TRUE, warning = FALSE, message = FALSE,
                echo = TRUE, tidy = FALSE, height = 3, width = 5,
                fig.width = 9)
 options(digits = 3, tibble.print_min = 6)
+options(knitr.table.format = "html") 
+
 ```
 
 ## (Under Construction)
@@ -31,8 +33,6 @@ This blogpost is inspired by the Datacamp Class ['Network Analysis in R'](https:
 Load the necessary R packages, and the datafiles. 
 
 ```{r libs, cache=FALSE}
-options(knitr.table.format = "html") 
-options(fig.width = 9) 
 library(here)       # filesystem
 library(stringr)    #
 library(lubridate)  # dateformats

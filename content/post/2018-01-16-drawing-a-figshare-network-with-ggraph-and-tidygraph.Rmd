@@ -18,6 +18,7 @@ opts_chunk$set(cache = TRUE, warning = FALSE, message = FALSE,
                echo = TRUE, tidy = FALSE, height = 3, width = 5,
                fig.width = 9)
 options(digits = 3, tibble.print_min = 6)
+
 ```
 
 ```{r intro,echo=FALSE}
@@ -151,7 +152,7 @@ Only one attribute "name" is set.
 
 Which edges have the parent_id 48?
 
-```{r}
+```{r eval=FALSE}
 
 E(categories_g)[[inc('48')]]  %>%
         head(10)

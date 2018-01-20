@@ -123,10 +123,10 @@ categories_g</code></pre>
 <p>Only one attribute “name” is set.</p>
 <p>Which edges have the parent_id 48?</p>
 <pre class="r"><code>E(categories_g)[[inc(&#39;48&#39;)]]  %&gt;%
-        head(10)</code></pre>
-<pre><code>## + 10/1380 edges from 136921a (vertex names):
-##  [1] 1 -&gt;48 7 -&gt;48 8 -&gt;48 10-&gt;48 11-&gt;48 12-&gt;48 13-&gt;48 14-&gt;48 15-&gt;48 16-&gt;48</code></pre>
-<pre class="r"><code># similar call
+        head(10)
+
+
+# similar call
 # incident(categories_g, &#39;48&#39;, mode = c(&quot;in&quot;))</code></pre>
 <p>There are 114 such edges.</p>
 <pre class="r"><code>categories_g &lt;- set_edge_attr(categories_g,
