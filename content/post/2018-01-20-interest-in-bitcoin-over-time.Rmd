@@ -13,19 +13,19 @@ output:
 ---
 
 ```{r intro,echo=FALSE}
-htmltools::HTML('<div class="alert alert-info"><b>Abstract:</b>
-Bitcoin. Visualizing (1) Wikipedia Pageviews, (2) Google Searches and (3) Exchange Rates from 2015 to early 2018. 
-Simple timeseries plots (created from Web-API data) show that these three are strongly correlated.
+htmltools::HTML('<div class="alert alert-info"><b>Bitcoin:</b>
+Visualizing (1) Wikipedia Pageviews, (2) Google Searches and (3) Exchange Rates from 2015 to early 2018. 
+Simple timeseries plots (created from Web-API data) show that these three are strongly correlated, except when they aren\'t.
 </div>')
 ```
 
-In this post I'll analyse global interest in Bitcoin and Ethereum over time, according to accesses to Wikipedia articles and as Google Searches. 
+In this post I'll analyse global interest in [Bitcoin](https://en.wikipedia.org/wiki/Bitcoin) and [Ethereum](https://en.wikipedia.org/wiki/Ethereum) over time, according to accesses to their Wikipedia articles and as Google Searches. 
 
-The end of the year 2017 saw the "Bitcoin Bubble", a period of one month where 1 Bitcoin was traded for up to $20000 on most exchanges. I am not invested in Bitcoin, and never was substantially, but cryptocurrencies and the blockchain technology still interest me.
+The end of the year 2017 saw the "Bitcoin [Bubble](https://www.bloomberg.com/news/audio/2017-03-31/this-is-how-you-know-when-the-stock-market-is-in-a-bubble)", a period of one month where 1 Bitcoin was traded for up to $20000 on most exchanges. I am not invested in Bitcoin, and never was substantially, but cryptocurrencies and the blockchain technology still interest me.
 
 ```{r setup, echo=FALSE}
 library(knitr)
-opts_chunk$set(cache = TRUE, warning = FALSE, message = FALSE, 
+opts_chunk$set(cache = FALSE, warning = FALSE, message = FALSE, 
                echo = TRUE, tidy = FALSE, height = 3, width = 5,
                fig.width = 9)
 options(digits = 3, tibble.print_min = 6)
@@ -50,7 +50,9 @@ library(Quandl)    # provider of financial data
 library(lubridate)
 library(tidyverse) 
 library(gtrendsR)  # access Google trends API
-theme_set(theme_bw()) # ggplot default
+# ggplot defaults
+theme_set(theme_bw()) 
+scale_colour_discrete <- function(...) scale_color_brewer(palette="Set1")
 
 ```
 
@@ -110,6 +112,9 @@ wikipedia_de_vs_en <- function(term = "Bitcoin") {
 
 ### Data Visualization
 
+(If you want to follow along, or verify the data: An interactive frontend that does the same is available at this url: [https://tools.wmflabs.org](https://tools.wmflabs.org/pageviews/?project=en.wikipedia.org&platform=all-access&agent=user&range=latest-20&pages=Bitcoin) 
+)
+
 Get some data for the Wikipedia article on Bitcoin:
 
 ```{r btc, echo=FALSE}
@@ -126,7 +131,7 @@ These plots show a lot of things.
 
 - Unsurprisingly, the interest (measured in pageviews) in the English version of the Wikipedia articles is consistently higher than interest in the German version. About 5 times as high.
 - Accesses to the Wikipedia articles peaked quite a few times even before the 2017 craze started. (I haven't looked it up what these events were. Ransomware spreads, perhaps?). 
-- Interest in Ethereum seems to be disproportionally high in Germany: "English pageviews"" were "only" 3 times as high as German pageviews (usually it's 5 times as high).  
+- Interest in Ethereum seems to be disproportionally high in Germany: English pageviews were "only" 3 times as high as German pageviews (usually it's 5 times as high).  
 - Strong peaks in Ethereum-article pageviews  often occured independently from Bitcoin-Article pageviews, for both language articles.
 - (TBC)
 
@@ -177,7 +182,7 @@ autoplot(btc$Close["2015-01-01/"]) +
 ```
 
 What many people talk about is the 'volatility' of Bitcoin. 
-Rarely have I seen someone visualizing this, so here is another plot showing the daily change in the price fo 1 bitcoin, in Euro:
+Rarely have I seen someone visualizing this, so here is another plot showing the daily change in the 'closing price' *(do these trading platforms really close?)* for 1 Bitcoin, in Euro:
 
 ```{r btcdiff}
 autoplot(diff(btc$Close["2015-01-01/"])) +

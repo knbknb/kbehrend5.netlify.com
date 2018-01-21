@@ -14,12 +14,12 @@ output:
 
 
 
-<div class="alert alert-info"><b>Abstract:</b>
-Bitcoin. Visualizing (1) Wikipedia Pageviews, (2) Google Searches and (3) Exchange Rates from 2015 to early 2018. 
-Simple timeseries plots (created from Web-API data) show that these three are strongly correlated.
+<div class="alert alert-info"><b>Bitcoin:</b>
+Visualizing (1) Wikipedia Pageviews, (2) Google Searches and (3) Exchange Rates from 2015 to early 2018. 
+Simple timeseries plots (created from Web-API data) show that these three are strongly correlated, except when they aren't.
 </div>
-<p>In this post I’ll analyse global interest in Bitcoin and Ethereum over time, according to accesses to Wikipedia articles and as Google Searches.</p>
-<p>The end of the year 2017 saw the “Bitcoin Bubble”, a period of one month where 1 Bitcoin was traded for up to $20000 on most exchanges. I am not invested in Bitcoin, and never was substantially, but cryptocurrencies and the blockchain technology still interest me.</p>
+<p>In this post I’ll analyse global interest in <a href="https://en.wikipedia.org/wiki/Bitcoin">Bitcoin</a> and <a href="https://en.wikipedia.org/wiki/Ethereum">Ethereum</a> over time, according to accesses to their Wikipedia articles and as Google Searches.</p>
+<p>The end of the year 2017 saw the “Bitcoin <a href="https://www.bloomberg.com/news/audio/2017-03-31/this-is-how-you-know-when-the-stock-market-is-in-a-bubble">Bubble</a>”, a period of one month where 1 Bitcoin was traded for up to $20000 on most exchanges. I am not invested in Bitcoin, and never was substantially, but cryptocurrencies and the blockchain technology still interest me.</p>
 <div id="preprocessing" class="section level3">
 <h3>Preprocessing</h3>
 <p>Preprocessing entails:</p>
@@ -35,7 +35,9 @@ library(Quandl)    # provider of financial data
 library(lubridate)
 library(tidyverse) 
 library(gtrendsR)  # access Google trends API
-theme_set(theme_bw()) # ggplot default</code></pre>
+# ggplot defaults
+theme_set(theme_bw()) 
+scale_colour_discrete &lt;- function(...) scale_color_brewer(palette=&quot;Set1&quot;)</code></pre>
 </div>
 <div id="define-a-wrapper-function-to-access-a-wikipedia-api" class="section level4">
 <h4>Define a wrapper function to access a Wikipedia API</h4>
@@ -87,6 +89,7 @@ wikipedia_de_vs_en &lt;- function(term = &quot;Bitcoin&quot;) {
 </div>
 <div id="data-visualization" class="section level3">
 <h3>Data Visualization</h3>
+<p>(If you want to follow along, or verify the data: An interactive frontend that does the same is available at this url: <a href="https://tools.wmflabs.org/pageviews/?project=en.wikipedia.org&amp;platform=all-access&amp;agent=user&amp;range=latest-20&amp;pages=Bitcoin">https://tools.wmflabs.org</a> )</p>
 <p>Get some data for the Wikipedia article on Bitcoin:</p>
 <p><img src="/post/2018-01-20-interest-in-bitcoin-over-time_files/figure-html/btc-1.png" width="864" /></p>
 <p>Get some data for the article on Ethereum, another popular cryptocurrency (at this time).</p>
@@ -95,7 +98,7 @@ wikipedia_de_vs_en &lt;- function(term = &quot;Bitcoin&quot;) {
 <ul>
 <li>Unsurprisingly, the interest (measured in pageviews) in the English version of the Wikipedia articles is consistently higher than interest in the German version. About 5 times as high.</li>
 <li>Accesses to the Wikipedia articles peaked quite a few times even before the 2017 craze started. (I haven’t looked it up what these events were. Ransomware spreads, perhaps?).</li>
-<li>Interest in Ethereum seems to be disproportionally high in Germany: “English pageviews”&quot; were “only” 3 times as high as German pageviews (usually it’s 5 times as high).<br />
+<li>Interest in Ethereum seems to be disproportionally high in Germany: English pageviews were “only” 3 times as high as German pageviews (usually it’s 5 times as high).<br />
 </li>
 <li>Strong peaks in Ethereum-article pageviews often occured independently from Bitcoin-Article pageviews, for both language articles.</li>
 <li>(TBC)</li>
@@ -123,7 +126,7 @@ autoplot(btc$Close[&quot;2015-01-01/&quot;]) +
         ggtitle(&quot;Bitcoin Exchange Rate 2015-2018&quot;,
                 subtitle=&quot;&#39;Close Price&#39; in EUR, according to the Bitcoin.de trading platform. Data from Quandl.com.&quot;)</code></pre>
 <p><img src="/post/2018-01-20-interest-in-bitcoin-over-time_files/figure-html/quandl-1.png" width="864" /></p>
-<p>What many people talk about is the ‘volatility’ of Bitcoin. Rarely have I seen someone visualizing this, so here is another plot showing the daily change in the price fo 1 bitcoin, in Euro:</p>
+<p>What many people talk about is the ‘volatility’ of Bitcoin. Rarely have I seen someone visualizing this, so here is another plot showing the daily change in the ‘closing price’ <em>(do these trading platforms really close?)</em> for 1 Bitcoin, in Euro:</p>
 <pre class="r"><code>autoplot(diff(btc$Close[&quot;2015-01-01/&quot;])) +
         ylab(&quot;Daily Price Change, in EUR/day &quot;) + xlab(&quot;Year&quot;) +
         ggtitle(&quot;Volatility of Bitcoin &#39;Close Price&#39; 2015-2018&quot;,

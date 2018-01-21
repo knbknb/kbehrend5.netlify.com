@@ -152,9 +152,9 @@ Only one attribute "name" is set.
 
 Which edges have the parent_id 48?
 
-```{r eval=FALSE}
+```{r eval=TRUE}
 
-E(categories_g)[[inc('48')]]  %>%
+igraph::E(categories_g)[[inc('48')]]  %>%
         head(10)
 
 
@@ -162,7 +162,7 @@ E(categories_g)[[inc('48')]]  %>%
 # incident(categories_g, '48', mode = c("in"))
 ```
 
-There are `r length(E(categories_g)[[inc('48')]]  )` such edges.
+There are `r length(igraph::E(categories_g)[[inc('48')]]  )` such edges.
 
 
 ```{r}
