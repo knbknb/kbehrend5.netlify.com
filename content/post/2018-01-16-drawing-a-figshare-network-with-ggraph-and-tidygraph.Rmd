@@ -8,8 +8,8 @@ categories:
   - R
   - networks
 tags:
-  - '#rstats'
-  - '#tidyverse'
+  - 'rstats'
+  - 'tidyverse'
 ---
 
 ```{r setup, echo=FALSE}
