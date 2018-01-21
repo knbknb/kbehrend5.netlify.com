@@ -3943,3 +3943,8 @@ pre, pre.r {
 .hljs-string {
   color: #191970;
 }
+
+.motto {
+        /* font-style: italic; */
+        /* float: left; */
+}
