@@ -1,5 +1,5 @@
 ---
-title: Drawing a network with "ggraph" and "tidygraph"
+title: Graphs (in the sense of networks)
 draft: true
 author: Knut Behrends
 date: '2018-01-16'
@@ -16,83 +16,773 @@ tags:
 
 <div class="alert alert-success alert-info alert-warning alert-danger"><b>NOTE</b>
 This blogpost is inspired by this one: <a href="https://nxskok.github.io/blog/2017/12/30/drawing-a-network-with-ggraph-and-tidygraph/">
-Drawing a network with "ggraph" and "tidygraph" by Ken Butler
+Drawing a network with "ggraph" and "tidygraph" by Ken Butler.
 </a><br>
 </div>
-<p>I’m trying to learn the differences between using the <em>igraph</em> library directly and the new packages <em>ggraph</em> and <em>tidygraph</em>.</p>
-<div id="introduction" class="section level2">
-<h2>Introduction</h2>
-<p><a href="https://github.com/thomasp85">Thomas Lin Pedersen</a> is the author of a lot of packages, including two that deal with graphs (in the sense of networks), <code>tidygraph</code> for storing and handling graphs, and <code>ggraph</code> for drawing them, <code>ggplot</code>-style. I have a feeling I will be spending a lot of time with <code>tidygraph</code>, but in this post, I get my feet wet reading in and storing a graph and then making a picture of it.</p>
-<p>Packages:</p>
-<pre class="r"><code>options(knitr.table.format = &quot;html&quot;) 
-options(fig.width = 9) 
-library(igraph)
+<div id="example-the-figshare-categories" class="section level4">
+<h4>Example: the Figshare categories</h4>
+<p>Data provider Figshare models their contents with and elaborate hierarchy of disciplines.</p>
+<p>I’m trying to learn the differences between using the <em>igraph</em> library directly and the new packages <em>ggraph</em> and <em>tidygraph</em>. Both new packages were authored by <a href="https://github.com/thomasp85">Thomas Lin Pedersen</a>. created two R packages: <code>tidygraph</code> for storing and handling graphs, and <code>ggraph</code> for drawing them, <code>ggplot</code>-style.</p>
+<p>Load all needed packages:</p>
+<pre class="r"><code>library(igraph)
 library(httr)
 library(tidyverse)
 library(tidygraph)
 library(ggraph)
-theme_set(theme_bw())</code></pre>
+theme_set(theme_bw())
+scale_colour_discrete &lt;- function(...) scale_color_brewer(palette=&quot;Set1&quot;)</code></pre>
 </div>
-<div id="example-the-figshare-categories" class="section level2">
-<h2>Example: the Figshare categories</h2>
-</div>
-<div id="reading-in-the-data-and-storing-as-a-graph" class="section level2">
-<h2>Reading in the data and storing as a graph</h2>
-<p>I had to think about how I wanted to represent the network. If these had been plane flights, I would have had a starting point and an ending point for each one. The input file (part) looks like this:</p>
-<pre class="r"><code>categories_file &lt;- &quot;data/network/figshare-categories.json&quot;
-
-# if(! file.exists(categories_file)) {
-        categories &lt;- httr::GET(&quot;http://api.figshare.com/v2/categories&quot;) %&gt;%
-                content(as=&quot;text&quot;) %&gt;%
-                jsonlite::fromJSON(simplifyDataFrame = TRUE) %&gt;% 
-                  as_tibble() 
-#         write(categories, file = categories_file)
-# } 
-# categories &lt;- jsonlite::fromJSON(categories_file), 
-#                   simplifyDataFrame = TRUE) %&gt;% 
-#                   as_tibble()</code></pre>
-<pre><code>#head --lines=21 figshare-categories.json | tail -n+2
- &lt; figshare-categories.json jq . | head --lines=21 - | tail -n+2</code></pre>
+<div id="drawing-a-network-with-ggraph-and-tidygraph" class="section level3">
+<h3>Drawing a network with “ggraph” and “tidygraph”</h3>
+<div id="reading-in-the-data-and-storage-as-a-graph" class="section level4">
+<h4>Reading in the data, and storage as a graph</h4>
+<p>The input file (part) is a JSON File.</p>
 <p>To read this in, I treat it as a three-column json-File. Quick look at the data:</p>
-<pre class="r"><code>categories %&gt;% head(n=10)</code></pre>
-<pre><code>## # A tibble: 10 x 3
-##    parent_id    id title                  
-##        &lt;int&gt; &lt;int&gt; &lt;chr&gt;                  
-##  1        48     1 Biophysics             
-##  2        30     2 Uncategorized          
-##  3        38     4 Biochemistry           
-##  4        48     7 Medicine               
-##  5        48     8 Microbiology           
-##  6        48    10 Anatomy                
-##  7        48    11 Behavioral Neuroscience
-##  8        48    12 Cell Biology           
-##  9        48    13 Genetics               
-## 10        48    14 Molecular Biology</code></pre>
-<p>Quick visualization how category IDs were assigned by Figshare Designers</p>
+<pre class="r"><code>kable(head(categories %&gt;% select(3,2,1), 50), 
+      caption = &quot;The Figshare Categories Hierarchy (first 50). Note that the parent IDs have not been assigned a name.&quot;, row.names = 1,
+      align = &quot;lll&quot;)</code></pre>
+<table>
+<caption>
+<span id="tab:unnamed-chunk-1">Table 1: </span>The Figshare Categories Hierarchy (first 50). Note that the parent IDs have not been assigned a name.
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:left;">
+title
+</th>
+<th style="text-align:left;">
+id
+</th>
+<th style="text-align:left;">
+parent_id
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+1
+</td>
+<td style="text-align:left;">
+Biophysics
+</td>
+<td style="text-align:left;">
+1
+</td>
+<td style="text-align:left;">
+48
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+2
+</td>
+<td style="text-align:left;">
+Uncategorized
+</td>
+<td style="text-align:left;">
+2
+</td>
+<td style="text-align:left;">
+30
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+3
+</td>
+<td style="text-align:left;">
+Biochemistry
+</td>
+<td style="text-align:left;">
+4
+</td>
+<td style="text-align:left;">
+38
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+4
+</td>
+<td style="text-align:left;">
+Medicine
+</td>
+<td style="text-align:left;">
+7
+</td>
+<td style="text-align:left;">
+48
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+5
+</td>
+<td style="text-align:left;">
+Microbiology
+</td>
+<td style="text-align:left;">
+8
+</td>
+<td style="text-align:left;">
+48
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+6
+</td>
+<td style="text-align:left;">
+Anatomy
+</td>
+<td style="text-align:left;">
+10
+</td>
+<td style="text-align:left;">
+48
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+7
+</td>
+<td style="text-align:left;">
+Behavioral Neuroscience
+</td>
+<td style="text-align:left;">
+11
+</td>
+<td style="text-align:left;">
+48
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+8
+</td>
+<td style="text-align:left;">
+Cell Biology
+</td>
+<td style="text-align:left;">
+12
+</td>
+<td style="text-align:left;">
+48
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+9
+</td>
+<td style="text-align:left;">
+Genetics
+</td>
+<td style="text-align:left;">
+13
+</td>
+<td style="text-align:left;">
+48
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+10
+</td>
+<td style="text-align:left;">
+Molecular Biology
+</td>
+<td style="text-align:left;">
+14
+</td>
+<td style="text-align:left;">
+48
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+11
+</td>
+<td style="text-align:left;">
+Neuroscience
+</td>
+<td style="text-align:left;">
+15
+</td>
+<td style="text-align:left;">
+48
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+12
+</td>
+<td style="text-align:left;">
+Physiology
+</td>
+<td style="text-align:left;">
+16
+</td>
+<td style="text-align:left;">
+48
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+13
+</td>
+<td style="text-align:left;">
+Geography
+</td>
+<td style="text-align:left;">
+17
+</td>
+<td style="text-align:left;">
+26
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+14
+</td>
+<td style="text-align:left;">
+Pharmacology
+</td>
+<td style="text-align:left;">
+19
+</td>
+<td style="text-align:left;">
+48
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+15
+</td>
+<td style="text-align:left;">
+Computer Engineering
+</td>
+<td style="text-align:left;">
+20
+</td>
+<td style="text-align:left;">
+5
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+16
+</td>
+<td style="text-align:left;">
+Biotechnology
+</td>
+<td style="text-align:left;">
+21
+</td>
+<td style="text-align:left;">
+48
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+17
+</td>
+<td style="text-align:left;">
+Software Engineering
+</td>
+<td style="text-align:left;">
+23
+</td>
+<td style="text-align:left;">
+5
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+18
+</td>
+<td style="text-align:left;">
+Evolutionary Biology
+</td>
+<td style="text-align:left;">
+24
+</td>
+<td style="text-align:left;">
+48
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+19
+</td>
+<td style="text-align:left;">
+Anthropology
+</td>
+<td style="text-align:left;">
+25
+</td>
+<td style="text-align:left;">
+26
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+20
+</td>
+<td style="text-align:left;">
+Economics
+</td>
+<td style="text-align:left;">
+27
+</td>
+<td style="text-align:left;">
+26
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+21
+</td>
+<td style="text-align:left;">
+Paleontology
+</td>
+<td style="text-align:left;">
+28
+</td>
+<td style="text-align:left;">
+48
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+22
+</td>
+<td style="text-align:left;">
+Geology
+</td>
+<td style="text-align:left;">
+29
+</td>
+<td style="text-align:left;">
+33
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+23
+</td>
+<td style="text-align:left;">
+Environmental Chemistry
+</td>
+<td style="text-align:left;">
+31
+</td>
+<td style="text-align:left;">
+38
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+24
+</td>
+<td style="text-align:left;">
+Geochemistry
+</td>
+<td style="text-align:left;">
+32
+</td>
+<td style="text-align:left;">
+38
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+25
+</td>
+<td style="text-align:left;">
+Environmental Science
+</td>
+<td style="text-align:left;">
+34
+</td>
+<td style="text-align:left;">
+33
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+26
+</td>
+<td style="text-align:left;">
+Limnology
+</td>
+<td style="text-align:left;">
+35
+</td>
+<td style="text-align:left;">
+33
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+27
+</td>
+<td style="text-align:left;">
+Oceanography
+</td>
+<td style="text-align:left;">
+36
+</td>
+<td style="text-align:left;">
+33
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+28
+</td>
+<td style="text-align:left;">
+Organic Chemistry
+</td>
+<td style="text-align:left;">
+37
+</td>
+<td style="text-align:left;">
+38
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+29
+</td>
+<td style="text-align:left;">
+Ecology
+</td>
+<td style="text-align:left;">
+39
+</td>
+<td style="text-align:left;">
+33
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+30
+</td>
+<td style="text-align:left;">
+Biological Engineering
+</td>
+<td style="text-align:left;">
+42
+</td>
+<td style="text-align:left;">
+48
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+31
+</td>
+<td style="text-align:left;">
+Toxicology
+</td>
+<td style="text-align:left;">
+44
+</td>
+<td style="text-align:left;">
+48
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+32
+</td>
+<td style="text-align:left;">
+Sociology
+</td>
+<td style="text-align:left;">
+45
+</td>
+<td style="text-align:left;">
+26
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+33
+</td>
+<td style="text-align:left;">
+Immunology
+</td>
+<td style="text-align:left;">
+46
+</td>
+<td style="text-align:left;">
+48
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+34
+</td>
+<td style="text-align:left;">
+Stereochemistry
+</td>
+<td style="text-align:left;">
+47
+</td>
+<td style="text-align:left;">
+38
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+35
+</td>
+<td style="text-align:left;">
+Planetary Geology
+</td>
+<td style="text-align:left;">
+54
+</td>
+<td style="text-align:left;">
+43
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+36
+</td>
+<td style="text-align:left;">
+Stellar Astronomy
+</td>
+<td style="text-align:left;">
+55
+</td>
+<td style="text-align:left;">
+43
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+37
+</td>
+<td style="text-align:left;">
+Galactic Astronomy
+</td>
+<td style="text-align:left;">
+56
+</td>
+<td style="text-align:left;">
+43
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+38
+</td>
+<td style="text-align:left;">
+Cosmology
+</td>
+<td style="text-align:left;">
+57
+</td>
+<td style="text-align:left;">
+43
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+39
+</td>
+<td style="text-align:left;">
+Astrophysics
+</td>
+<td style="text-align:left;">
+58
+</td>
+<td style="text-align:left;">
+43
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+40
+</td>
+<td style="text-align:left;">
+Planetary Science
+</td>
+<td style="text-align:left;">
+59
+</td>
+<td style="text-align:left;">
+43
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+41
+</td>
+<td style="text-align:left;">
+Developmental Biology
+</td>
+<td style="text-align:left;">
+61
+</td>
+<td style="text-align:left;">
+48
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+42
+</td>
+<td style="text-align:left;">
+Marine Biology
+</td>
+<td style="text-align:left;">
+62
+</td>
+<td style="text-align:left;">
+48
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+43
+</td>
+<td style="text-align:left;">
+Parasitology
+</td>
+<td style="text-align:left;">
+63
+</td>
+<td style="text-align:left;">
+48
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+44
+</td>
+<td style="text-align:left;">
+Cancer
+</td>
+<td style="text-align:left;">
+64
+</td>
+<td style="text-align:left;">
+48
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+45
+</td>
+<td style="text-align:left;">
+Botany
+</td>
+<td style="text-align:left;">
+65
+</td>
+<td style="text-align:left;">
+48
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+46
+</td>
+<td style="text-align:left;">
+Crystallography
+</td>
+<td style="text-align:left;">
+66
+</td>
+<td style="text-align:left;">
+38
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+47
+</td>
+<td style="text-align:left;">
+Inorganic Chemistry
+</td>
+<td style="text-align:left;">
+69
+</td>
+<td style="text-align:left;">
+38
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+48
+</td>
+<td style="text-align:left;">
+Molecular Physics
+</td>
+<td style="text-align:left;">
+70
+</td>
+<td style="text-align:left;">
+38
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+49
+</td>
+<td style="text-align:left;">
+Nuclear Chemistry
+</td>
+<td style="text-align:left;">
+71
+</td>
+<td style="text-align:left;">
+38
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+50
+</td>
+<td style="text-align:left;">
+Radiochemistry
+</td>
+<td style="text-align:left;">
+73
+</td>
+<td style="text-align:left;">
+38
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="quick-visualization-of-how-category-ids-were-assigned-by-figshare-designers" class="section level4">
+<h4>Quick visualization of how category IDs were assigned by Figshare Designers</h4>
+<p>Plot Code:</p>
 <pre class="r"><code>p1 &lt;- ggplot(categories, aes(id, I(1:nrow(categories)))) +
         geom_point(size=0.1) +
         xlab(&quot;Category ID&quot;) + ylab(&quot;Count&quot;) +
-        ggtitle(&quot;Figshare Category IDs&quot;, subtitle=&quot;Gaps indicate that a few category-IDs have been deleted or renamed&quot;)
-p2 &lt;-  ggplot(categories, aes(parent_id)) +geom_histogram(binwidth = 5) +
-        xlab(&quot;Category Parent IDs&quot;) + ylab(&quot;Count&quot;) +
-        ggtitle(&quot;Figshare Parent Category IDs&quot;, subtitle=&quot;Gaps indicate that parent-category-IDs have small values or few distinct values &gt; 1000&quot;)
-gridExtra::grid.arrange(p1,p2, nrow=2, ncol=1)</code></pre>
-<p><img src="/post/2018-01-16-drawing-a-figshare-network-with-ggraph-and-tidygraph_files/figure-html/vis1-1.png" width="864" /></p>
-<p>Which category-ids are <em>not</em> assigned?</p>
-<pre class="r"><code>unused_ids &lt;- setdiff(1:max(categories$id), unique(categories$id))
-
-ggplot(data.frame(pos = 1:length(unused_ids), id=unused_ids), aes(pos, id)) +
-        geom_point(size=0.1) +
-        scale_x_continuous(limits=c(0,50)) +
-        ggtitle(&quot;Unused Category IDs&quot;, 
-                subtitle = &quot;Roughly every 3rd number is not assigned to a category IDs&quot;)</code></pre>
+        ggtitle(&quot;Figshare Category IDs&quot;, 
+                subtitle=&quot;Gaps indicate that a few category-IDs have been deleted or renamed&quot;)
+p2 &lt;-  ggplot(categories, aes(parent_id)) +
+        geom_histogram(binwidth = 5) +
+        xlab(&quot;Category Parent IDs&quot;) + 
+        ylab(&quot;Count&quot;) + 
+        ggtitle(&quot;Figshare Parent Category IDs&quot;, 
+                subtitle=&quot;Gaps indicate that parent-category-IDs have small values or few distinct values &gt; 1000&quot;)</code></pre>
+<p>The plot</p>
 <p><img src="/post/2018-01-16-drawing-a-figshare-network-with-ggraph-and-tidygraph_files/figure-html/unnamed-chunk-3-1.png" width="864" /></p>
+<p>Which category-ids are <em>not</em> assigned?</p>
+<p><img src="/post/2018-01-16-drawing-a-figshare-network-with-ggraph-and-tidygraph_files/figure-html/ids-1.png" width="864" /></p>
 <p><code>tidygraph</code> has a function for turning a data frame structured like this, with edges as rows, into an actual tidy graph:</p>
-<pre class="r"><code>categories_g &lt;- categories %&gt;%
-        select(id , parent_id) %&gt;% 
-        as_tbl_graph()
-
-categories_g</code></pre>
 <pre><code>## # A tbl_graph: 1401 nodes and 1380 edges
 ## #
 ## # A directed acyclic simple graph with 21 components
@@ -124,7 +814,7 @@ categories_g</code></pre>
 <p>Which edges have the parent_id 48?</p>
 <pre class="r"><code>igraph::E(categories_g)[[inc(&#39;48&#39;)]]  %&gt;%
         head(10)</code></pre>
-<pre><code>## + 10/1380 edges from 136921a (vertex names):
+<pre><code>## + 10/1380 edges from cfcbf72 (vertex names):
 ##  [1] 1 -&gt;48 7 -&gt;48 8 -&gt;48 10-&gt;48 11-&gt;48 12-&gt;48 13-&gt;48 14-&gt;48 15-&gt;48 16-&gt;48</code></pre>
 <pre class="r"><code># similar call
 # incident(categories_g, &#39;48&#39;, mode = c(&quot;in&quot;))</code></pre>
@@ -140,6 +830,7 @@ categories_g &lt;- set_edge_attr(categories_g,
                               value=categories$parent_id)</code></pre>
 <p>Now, how to assign names to the category ids.</p>
 <p>The nodes and edges are shown separately, with the nodes numbered (those numbers are used in the edges).</p>
+</div>
 </div>
 <div id="extracting-the-nodes-and-edges" class="section level2">
 <h2>Extracting the nodes and edges</h2>
@@ -184,7 +875,7 @@ categories_g &lt;- set_edge_attr(categories_g,
 <pre class="r"><code>edges %&gt;%
   left_join(nodes,by=c(&quot;from&quot;=&quot;node_number&quot;)) %&gt;%
   left_join(nodes,by=c(&quot;to&quot;=&quot;node_number&quot;)) %&gt;%
-  print(n=20)</code></pre>
+  print(n=10)</code></pre>
 <pre><code>## # A tibble: 1,380 x 7
 ##     from    to subject                    id parent_id name.x name.y
 ##    &lt;int&gt; &lt;int&gt; &lt;chr&gt;                   &lt;int&gt;     &lt;int&gt; &lt;chr&gt;  &lt;chr&gt; 
@@ -198,42 +889,30 @@ categories_g &lt;- set_edge_attr(categories_g,
 ##  8     8  1381 Cell Biology               12        48 12     48    
 ##  9     9  1381 Genetics                   13        48 13     48    
 ## 10    10  1381 Molecular Biology          14        48 14     48    
-## 11    11  1381 Neuroscience               15        48 15     48    
-## 12    12  1381 Physiology                 16        48 16     48    
-## 13    13  1384 Geography                  17        26 17     26    
-## 14    14  1381 Pharmacology               19        48 19     48    
-## 15    15  1385 Computer Engineering       20         5 20     5     
-## 16    16  1381 Biotechnology              21        48 21     48    
-## 17    17  1385 Software Engineering       23         5 23     5     
-## 18    18  1381 Evolutionary Biology       24        48 24     48    
-## 19    19  1384 Anthropology               25        26 25     26    
-## 20    20  1384 Economics                  27        26 27     26    
-## # ... with 1,360 more rows</code></pre>
-<p>This is what I started with.</p>
+## # ... with 1,370 more rows</code></pre>
+<p>Edges seem to have been determined properly by this operation. Now I can assign also The category names as attributes with the same method (TODO)</p>
 </div>
 <div id="drawing-the-graph" class="section level2">
 <h2>Drawing the graph</h2>
-<p>Thomas Lin Pedersen also wrote the package <code>ggraph</code> which allows <code>ggplot</code>-style plotting of graphs. For our example, this was my ultimate aim: I wanted to see how well the connection information enabled us to reproduce the map above.</p>
-<p>Graphs can be plotted in many different ways. For this graph, I know there is a representation in two dimensions, since the stations are scattered across the 2D-space of West categorieshire. In <code>ggraph</code>, this is controlled by the <code>layout</code> parameter of the <code>ggraph</code> command. The Kamada-Kawai method tries to plot neighbouring nodes a constant distance apart, and chooses their locations as if they are connected by unit-length springs. I find this works well here. In addition, I want to draw the edges (as lines), draw the nodes (as points), and label the nodes by which station they are. These are accomplished by <code>geom_edge_link</code>, <code>geom_node_point</code> and <code>geom_node_text</code>. Additional notes: the <code>alpha=0.3</code> draws the edges partly transparent, so that the station names stand out; the use of <code>repel=T</code> “repels” the station names away from the points they represent so that you can see them (in the manner of <code>geom_text_repel</code>):</p>
+<p>Graphs can be plotted in many different ways. For this graph, I know there is a representation in two dimensions, since the category hierarchy is quite complex. In <code>ggraph</code>, node alignment in the plotting panel is controlled by the <code>layout</code> parameter of the <code>ggraph</code> command. The <em>Kamada-Kawai</em> method tries to plot neighbouring nodes a constant distance apart, and chooses their locations as if they are connected by unit-length springs.</p>
+<p>Edges get drawn as lines and draw the nodes as points. I label the nodes by which discipline they represent. These operations are accomplished by <code>geom_edge_link</code>, <code>geom_node_point</code> and <code>geom_node_text</code>.</p>
 <pre class="r"><code>ggraph(categories_g,layout=&quot;kk&quot;)+
   geom_edge_link(colour=&quot;blue&quot;, alpha=0.1)+
-  geom_node_point()</code></pre>
-<p><img src="/post/2018-01-16-drawing-a-figshare-network-with-ggraph-and-tidygraph_files/figure-html/unnamed-chunk-10-1.png" width="864" /></p>
+  geom_node_point() +
+        theme_graph()</code></pre>
+<p><img src="/post/2018-01-16-drawing-a-figshare-network-with-ggraph-and-tidygraph_files/figure-html/unnamed-chunk-11-1.png" width="864" /></p>
 <pre class="r"><code> # geom_node_text(aes(label=id),size=2,repel=T)</code></pre>
 <p>This seems to do a nice job of reproducing the topology in a clear fashion with no overlaps where there shouldn’t be any. (I tried this using the separate stations, Westgate and Kirkgate, in Wakefield, and the display was a lot more confusing.) It doesn’t get compass directions right (it seems to have west and east reversed), but we had no right to expect that it would.</p>
-<p>Another plausible layout is the one called <code>lgl</code>. How does that work here? We leave everything else the same:</p>
-<pre class="r"><code>ggraph(categories_g,layout=&quot;lgl&quot;)+
-  geom_edge_link(colour=&quot;blue&quot;,alpha=0.1)+
-  geom_node_point()</code></pre>
-<p><img src="/post/2018-01-16-drawing-a-figshare-network-with-ggraph-and-tidygraph_files/figure-html/unnamed-chunk-11-1.png" width="864" /></p>
-<pre class="r"><code>#  geom_node_text(aes(label=name),size=2,repel=T)</code></pre>
-<pre class="r"><code>g.outd &lt;- degree(categories_g, mode = c(&quot;in&quot;))
+<div id="tabulating-out-degrees" class="section level4">
+<h4>Tabulating out-degrees</h4>
+<pre class="r"><code>g.outd &lt;- degree(categories_g, mode = c(&quot;all&quot;))
 #names(g.outd) &lt;- edge_attr(categories_g, &quot;subject&quot;)
 #View a summary of out-degree
 table(g.outd)</code></pre>
 <pre><code>## g.outd
-##    0    1    2   22   29   32   36   44   45   48   54   62   66   69   70 
-## 1380    1    1    1    1    1    1    1    1    1    1    1    1    1    1 
-##   73   79   90  114  137  144  163 
-##    1    1    1    1    1    1    1</code></pre>
+##    1    2   22   29   32   36   44   45   48   54   62   66   69   70   73 
+## 1381    1    1    1    1    1    1    1    1    1    1    1    1    1    1 
+##   79   90  114  137  144  163 
+##    1    1    1    1    1    1</code></pre>
+</div>
 </div>

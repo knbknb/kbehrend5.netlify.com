@@ -60,14 +60,14 @@ The end of the year 2017 saw the “Bitcoin Bubble”, a period of one month whe
     </item>
     
     <item>
-      <title>Drawing a network with &#34;ggraph&#34; and &#34;tidygraph&#34;</title>
+      <title>Graphs (in the sense of networks)</title>
       <link>/post/2018/01/drawing-a-figshare-network-with-ggraph-and-tidygraph/</link>
       <pubDate>Tue, 16 Jan 2018 00:00:00 +0000</pubDate>
       
       <guid>/post/2018/01/drawing-a-figshare-network-with-ggraph-and-tidygraph/</guid>
-      <description>NOTE This blogpost is inspired by this one: Drawing a network with &#34;ggraph&#34; and &#34;tidygraph&#34; by Ken Butler 
- I’m trying to learn the differences between using the igraph library directly and the new packages ggraph and tidygraph.
-Introduction Thomas Lin Pedersen is the author of a lot of packages, including two that deal with graphs (in the sense of networks), tidygraph for storing and handling graphs, and ggraph for drawing them, ggplot-style.</description>
+      <description>NOTE This blogpost is inspired by this one: Drawing a network with &#34;ggraph&#34; and &#34;tidygraph&#34; by Ken Butler. 
+ Example: the Figshare categories Data provider Figshare models their contents with and elaborate hierarchy of disciplines.
+I’m trying to learn the differences between using the igraph library directly and the new packages ggraph and tidygraph. Both new packages were authored by Thomas Lin Pedersen. created two R packages: tidygraph for storing and handling graphs, and ggraph for drawing them, ggplot-style.</description>
     </item>
     
     <item>
@@ -285,6 +285,25 @@ This zipfile contains a single file, a 313 MB sqlite Database. Let’s take a pe
 Create connection to football DB
 library(DBI) con &amp;lt;- dbConnect(odbc::odbc(), &amp;quot;well-sqlite-footballdb&amp;quot;) Read in R packages necessary to load the data:
 # tidyverse packages library(dplyr, warn.conflicts = FALSE) # library(purrr) # functional programming library(stringr) library(lubridate) # strings to datetime library(ggplot2) library(NHANES) # US health data data(NHANES) theme_set(theme_bw()) The database consists of 7 tables.</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>/about/header_include_d3/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/about/header_include_d3/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>rmarkdown example with external js</title>
+      <link>/about/2018-01-20--rmarkdown-with-eternal-js/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/about/2018-01-20--rmarkdown-with-eternal-js/</guid>
+      <description>var lodash = _.noConflict();  Let’s create a very basic graph using the d3.js Javascript library. Include it in the body tag of the page fpr now:
+   // from https://www.dashingd3js.com/svg-paths-and-d3js //The data for our line var lineData = [ { &#34;x&#34;: 1, &#34;y&#34;: 5}, { &#34;x&#34;: 20, &#34;y&#34;: 20}, { &#34;x&#34;: 40, &#34;y&#34;: 10}, { &#34;x&#34;: 60, &#34;y&#34;: 40}, { &#34;x&#34;: 80, &#34;</description>
     </item>
     
   </channel>

@@ -1,0 +1,71 @@
+---
+title: "rmarkdown example with external js"
+author: "Knut Behrends"
+date: "January 21, 2018"
+draft: true
+output:
+  html_document:
+    keep_md: true
+summary: from  https://stackoverflow.com/questions/25819539/how-to-add-an-interactive-visualization-to-r-markdown      
+---
+
+Let's create a very basic graph using the d3.js Javascript library. Include it in the body tag of the page fpr now:
+
+```{r js, echo=FALSE, eval=TRUE}
+htmltools::HTML('
+<script src="https://d3js.org/d3.v3.js"></script>
+<div id="mypanel"></div>
+<script>
+
+// from https://www.dashingd3js.com/svg-paths-and-d3js
+//The data for our line
+ var lineData = [ { "x": 1,   "y": 5},  { "x": 20,  "y": 20},
+                  { "x": 40,  "y": 10}, { "x": 60,  "y": 40},
+                  { "x": 80,  "y": 5},  { "x": 100, "y": 60}];
+
+ //This is the accessor function we talked about above
+ var lineFunction = d3.svg.line()
+                          .x(function(d) { return d.x; })
+                          .y(function(d) { return d.y; })
+                         .interpolate("linear");
+
+//The SVG Container
+var svgContainer = d3.select("#mypanel").append("svg")
+                                    .attr("width", 200)
+                                    .attr("height", 200);
+
+//The line SVG Path we draw
+var lineGraph = svgContainer.append("path")
+                            .attr("d", lineFunction(lineData))
+                            .attr("stroke", "blue")
+                            .attr("stroke-width", 2)
+                            .attr("fill", "none");
+
+</script>')
+
+```
+
+```{r echo=FALSE}
+htmltools::HTML('<div class="alert  alert-warning"><b>DOES ONLY WORK ON CHROME:</b></div>')
+``` 
+
+Package `ggviz` can create `d3.js` Diagrams out of the box:
+
+```{r eval=TRUE}
+library(ggvis)
+
+mtcars %>% ggvis(~disp, ~mpg) %>% layer_points()
+```
+
+
+```{r echo=FALSE}
+htmltools::HTML('<div class="alert  alert-danger"><b>DOES NOT WORK:</b></div>')
+``` 
+DT package renders a javascript datatable:
+
+
+```{r eval=FALSE}
+library(DT)
+datatable(mtcars) #does not work
+```
+

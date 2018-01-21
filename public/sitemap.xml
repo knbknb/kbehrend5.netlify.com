@@ -153,6 +153,10 @@
   </url>
   
   <url>
+    <loc>/about/header_include_d3/</loc>
+  </url>
+  
+  <url>
     <loc>/about/</loc>
     <lastmod>2017-11-26T00:00:00+00:00</lastmod>
   </url>
@@ -335,6 +339,10 @@
     <loc>/tags/twitter/</loc>
     <lastmod>2018-01-07T00:00:00+00:00</lastmod>
     <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>/about/2018-01-20--rmarkdown-with-eternal-js/</loc>
   </url>
   
 </urlset>
