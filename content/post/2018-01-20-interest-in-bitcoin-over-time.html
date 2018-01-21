@@ -18,7 +18,7 @@ output:
 Bitcoin. Visualizing (1) Wikipedia Pageviews, (2) Google Searches and (3) Exchange Rates from 2015 to early 2018. 
 Simple timeseries plots (created from Web-API data) show that these three are strongly correlated.
 </div>
-<p>In this post I’ll analyse global interest in Bitcoin and Ethereum over time, according to accesses to Wikipedia articles and as Google Searches. At this time, no API keys and authentication are necessary.</p>
+<p>In this post I’ll analyse global interest in Bitcoin and Ethereum over time, according to accesses to Wikipedia articles and as Google Searches.</p>
 <p>The end of the year 2017 saw the “Bitcoin Bubble”, a period of one month where 1 Bitcoin was traded for up to $20000 on most exchanges. I am not invested in Bitcoin, and never was substantially, but cryptocurrencies and the blockchain technology still interest me.</p>
 <div id="preprocessing" class="section level3">
 <h3>Preprocessing</h3>
@@ -27,6 +27,7 @@ Simple timeseries plots (created from Web-API data) show that these three are st
 <li>Define necessary R packages</li>
 <li>Fetching the data</li>
 </ul>
+<p>At this time, no user registration process is required to get to the data. No API keys and authentication steps are necessary to call the Web-APIs mentioned below.</p>
 <div id="load-r-packages" class="section level4">
 <h4>Load R packages</h4>
 <pre class="r"><code>library(pageviews) # access Wikipedia
@@ -38,8 +39,8 @@ theme_set(theme_bw()) # ggplot default</code></pre>
 </div>
 <div id="define-a-wrapper-function-to-access-a-wikipedia-api" class="section level4">
 <h4>Define a wrapper function to access a Wikipedia API</h4>
-<p>The function contains quite a few of hardwired parameters. The <a href="https://github.com/ironholds/pageviews"><code>pageviews</code></a> package fetches the data. The function could bemade a lot more flexible by adding more parameters but that is also not necessary for this blogpost.</p>
-<p>The search function only works for terms that for which an article in both wikipedias exists.</p>
+<p>The function contains quite a few of hardwired parameters. The <a href="https://github.com/ironholds/pageviews"><code>pageviews</code></a> package fetches the data. The function could be made a lot more flexible by adding more arguments, but that is not necessary for this blogpost.</p>
+<p>The search function only works for terms for which an article exists <em>with the same title</em> in both the German and the English Wikipedia.</p>
 <p>Luckily “Bitcoin” is such a term.</p>
 <pre class="r"><code># Get the pageviews for &quot;Search term&quot;
 # pageview data is available since 2015
@@ -82,14 +83,27 @@ wikipedia_de_vs_en &lt;- function(term = &quot;Bitcoin&quot;) {
       subtitle = &quot;Human Users only&quot;
     ) 
 }</code></pre>
-<p>Get some data for Bitcoin</p>
+</div>
+</div>
+<div id="data-visualization" class="section level3">
+<h3>Data Visualization</h3>
+<p>Get some data for the Wikipedia article on Bitcoin:</p>
 <p><img src="/post/2018-01-20-interest-in-bitcoin-over-time_files/figure-html/btc-1.png" width="864" /></p>
-<p>Get some data for Ethereum, another popular cryptocurrency (at this time).</p>
+<p>Get some data for the article on Ethereum, another popular cryptocurrency (at this time).</p>
 <p><img src="/post/2018-01-20-interest-in-bitcoin-over-time_files/figure-html/eth-1.png" width="864" /></p>
-<p>There is another, alternative data source: Google Trends API, here accessed with functions from the <a href="https://github.com/PMassicotte/gtrendsR">gtrendsR</a> package. The API provides aggregated and rescaled data on how many people have performed Google searches for this term.</p>
+<p>These plots show a lot of things.</p>
+<ul>
+<li>Unsurprisingly, the interest (measured in pageviews) in the English version of the Wikipedia articles is consistently higher than interest in the German version. About 5 times as high.</li>
+<li>Accesses to the Wikipedia articles peaked quite a few times even before the 2017 craze started. (I haven’t looked it up what these events were. Ransomware spreads, perhaps?).</li>
+<li>Interest in Ethereum seems to be disproportionally high in Germany: “English pageviews”&quot; were “only” 3 times as high as German pageviews (usually it’s 5 times as high).<br />
+</li>
+<li>Strong peaks in Ethereum-article pageviews often occured independently from Bitcoin-Article pageviews, for both language articles.</li>
+<li>(TBC)</li>
+</ul>
+<p>There is another, alternative data source: Google Trends API, here accessed with functions from the <a href="https://github.com/PMassicotte/gtrendsR">gtrendsR</a> package. The API provides aggregated and rescaled data on how many people have performed Google searches for any term.</p>
 <p>Show a plot for comparison:</p>
 <pre class="r"><code>bitcoin_trends$interest_over_time %&gt;%
-  filter(date &gt; as.Date(&quot;2015-01-01&quot;)) %&gt;%
+  filter(date &gt;= as.Date(&quot;2015-01-01&quot;)) %&gt;%
   ggplot(aes(date, hits)) +
   geom_line() +
   theme(legend.position = &quot;none&quot;) +
@@ -99,15 +113,22 @@ wikipedia_de_vs_en &lt;- function(term = &quot;Bitcoin&quot;) {
     subtitle = &quot;(Google internal counters)&quot;
   )</code></pre>
 <p><img src="/post/2018-01-20-interest-in-bitcoin-over-time_files/figure-html/gogl-1.png" width="864" /></p>
-</div>
+<p>In order to make the Google-Trends-API plot comparable to the other plots above, I have restricted the data to the interval from 2015 to 2018. Thus I have left out a small but notable spike in the gloabl interest in bitcoin that happended in 2014.</p>
 <div id="another-obligatory-comparison" class="section level4">
 <h4>Another obligatory comparison</h4>
-<p>Last but not least: the exchange rate for Bitcoin, here given in Euro.</p>
+<p>Last but not least: the exchange rate for Bitcoin, here given in Euro. Data are from <a href="https://www.bitcoin.de">Bitcoin.de</a>, aggregated by <a href="https://docs.quandl.com/docs/time-series">Quandl</a>.</p>
 <pre class="r"><code>btc &lt;- Quandl(code = &quot;BCHARTS/BTCDEEUR&quot;, type = &quot;xts&quot;)
 autoplot(btc$Close[&quot;2015-01-01/&quot;]) +
         ylab(&quot;Bitcoin/EUR&quot;) + xlab(&quot;Year&quot;) +
         ggtitle(&quot;Bitcoin Exchange Rate 2015-2018&quot;,
-                subtitle=&quot;in EUR, according to the Kraken.com trading platform&quot;)</code></pre>
+                subtitle=&quot;&#39;Close Price&#39; in EUR, according to the Bitcoin.de trading platform. Data from Quandl.com.&quot;)</code></pre>
 <p><img src="/post/2018-01-20-interest-in-bitcoin-over-time_files/figure-html/quandl-1.png" width="864" /></p>
+<p>What many people talk about is the ‘volatility’ of Bitcoin. Rarely have I seen someone visualizing this, so here is another plot showing the daily change in the price fo 1 bitcoin, in Euro:</p>
+<pre class="r"><code>autoplot(diff(btc$Close[&quot;2015-01-01/&quot;])) +
+        ylab(&quot;Daily Price Change, in EUR/day &quot;) + xlab(&quot;Year&quot;) +
+        ggtitle(&quot;Volatility of Bitcoin &#39;Close Price&#39; 2015-2018&quot;,
+                subtitle=&quot;in EUR, according to the Bitcoin.de trading platform. Data from Quandl.com.&quot;)</code></pre>
+<p><img src="/post/2018-01-20-interest-in-bitcoin-over-time_files/figure-html/btcdiff-1.png" width="864" /></p>
+<p>I’ve never seen any financial time series like that.</p>
 </div>
 </div>
