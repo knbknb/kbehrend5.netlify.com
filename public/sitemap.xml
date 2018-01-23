@@ -18,6 +18,11 @@
   </url>
   
   <url>
+    <loc>/post/2018/01/uk-nhs-nurses/</loc>
+    <lastmod>2018-01-23T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>/post/2018/01/bitcoin-interest/</loc>
     <lastmod>2018-01-21T00:00:00+00:00</lastmod>
   </url>
@@ -234,6 +239,12 @@
   </url>
   
   <url>
+    <loc>/tags/medicine/</loc>
+    <lastmod>2018-01-23T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
     <loc>/categories/networks/</loc>
     <lastmod>2018-01-16T00:00:00+00:00</lastmod>
     <priority>0</priority>
@@ -277,13 +288,7 @@
   
   <url>
     <loc>/post/</loc>
-    <lastmod>2018-01-20T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>/tags/r/</loc>
-    <lastmod>2017-12-18T00:00:00+00:00</lastmod>
+    <lastmod>2018-01-23T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -294,8 +299,8 @@
   </url>
   
   <url>
-    <loc>/tags/reference/</loc>
-    <lastmod>2017-12-16T00:00:00+00:00</lastmod>
+    <loc>/tags/r/</loc>
+    <lastmod>2017-12-18T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -306,14 +311,32 @@
   </url>
   
   <url>
+    <loc>/tags/reference/</loc>
+    <lastmod>2017-12-16T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
     <loc>/tags/rstats/</loc>
-    <lastmod>2018-01-16T00:00:00+00:00</lastmod>
+    <lastmod>2018-01-23T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>/tags/soccer/</loc>
     <lastmod>2017-12-17T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>/categories/society/</loc>
+    <lastmod>2018-01-23T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>/tags/society/</loc>
+    <lastmod>2018-01-23T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -325,7 +348,7 @@
   
   <url>
     <loc>/tags/tidyverse/</loc>
-    <lastmod>2018-01-16T00:00:00+00:00</lastmod>
+    <lastmod>2018-01-23T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   

@@ -67,6 +67,15 @@
     </item>
     
     <item>
+      <title>Medicine</title>
+      <link>/tags/medicine/</link>
+      <pubDate>Tue, 23 Jan 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/medicine/</guid>
+      <description></description>
+    </item>
+    
+    <item>
       <title>Note</title>
       <link>/tags/note/</link>
       <pubDate>Sat, 16 Dec 2017 00:00:00 +0000</pubDate>
@@ -114,7 +123,7 @@
     <item>
       <title>Rstats</title>
       <link>/tags/rstats/</link>
-      <pubDate>Tue, 16 Jan 2018 00:00:00 +0000</pubDate>
+      <pubDate>Tue, 23 Jan 2018 00:00:00 +0000</pubDate>
       
       <guid>/tags/rstats/</guid>
       <description></description>
@@ -130,9 +139,18 @@
     </item>
     
     <item>
+      <title>Society</title>
+      <link>/tags/society/</link>
+      <pubDate>Tue, 23 Jan 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/society/</guid>
+      <description></description>
+    </item>
+    
+    <item>
       <title>Tidyverse</title>
       <link>/tags/tidyverse/</link>
-      <pubDate>Tue, 16 Jan 2018 00:00:00 +0000</pubDate>
+      <pubDate>Tue, 23 Jan 2018 00:00:00 +0000</pubDate>
       
       <guid>/tags/tidyverse/</guid>
       <description></description>

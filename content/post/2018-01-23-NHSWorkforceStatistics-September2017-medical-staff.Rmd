@@ -1,0 +1,189 @@
+---
+title: "UK NHS Staff until Sep 2017"
+author: "Knut Behrends"
+date: "2018-01-23"
+output: html_document
+slug: uk-nhs-nurses
+banner: img/post/thumb/uk-nhs-people1-50.png
+categories:
+  - society
+tags:
+  - 'rstats'
+  - 'tidyverse'
+  - medicine
+  - society  
+---
+
+```{r setup, include=FALSE}
+library(knitr)
+opts_chunk$set(cache = TRUE, warning = FALSE, message = FALSE, 
+               echo = TRUE, tidy = FALSE, height = 3, width = 5,
+               fig.width = 9)
+options(digits = 3, tibble.print_min = 6)
+options(knitr.table.format = "html") 
+```
+
+```{r intro,echo=FALSE}
+htmltools::HTML('<div class="alert alert-info"><b>#NHSCrisis?  A quick fact check about the National Healthcare Service, NHS.</b><br/>
+Is the number of nurses in the UK really strongly decreasing, as some media outlets suggest?  Or is the opposite true, as some people on Twitter have argued? In this post I am taking a quick look at the number of employees in British healthcare system, from 2009 to 2017. <br/>
+Since 2014, the number of nurses indeed goes down for most subgroups. Most notably "outgoing" groups of nurses show marked decline. The number of "adult nurses" has stayed rather constant. 
+This loss in specialty nurses is compensated by an increase in the number of ambulance drivers and &apos;allied health professions&apos;. See plots at bottom of page. 
+</div>')
+```
+
+ This blogpost was inspired by a [lengthy twitter thread](https://twitter.com/Jeremy_Hunt/status/953688801825755136) on the 'NHSCrisis', the understaffed healthcare sector in the UK. Someone posted an infographics on a timeline with [official statistical data](https://digital.nhs.uk/article/4304/Workforce) from the British healthcare authorities. [He has argued](https://twitter.com/maxwellflitton) that there is a lot of secular (= cyclical but noisy) variation in the employee data, but in general the trend is pointing upwards, not downwards. 
+ 
+ Are there *really* more and more nurses employed in the UK? Is it oversimplified to call this an '#NHSCrisis' on social media? I've decided to check this. 
+ 
+The infographics the user posted was from a media company. (I cannot really include it here because it is probably copyrihted, and since Jan 22 2017 the user has protected his account, so I cannot link to it). What struck my eye was that the graph ended early, in mid-2017. However it is now January 2018, and a full half year is missing. 
+
+What would the graph look like when I tried to reproduce it from data?
+
+A lot of underlying data are online at the above-mentioned NHS data portal. Also the this very newest data from the [second half of 2017 is online](https://digital.nhs.uk/catalogue/PUB30189) since this week, late January 2018. 
+
+The time series we're interested in can be calculated from the timeseries data **&apos;NHS Workforce Statistics - staff excluding medical:&apos;**. What we need is an aggregated number: 
+
++ the total number of  nurses +
++ the number of 'community visitors' 
+
+I think 'community visitors' are nurses that provide caregiving by visiting sick people at home - the immobile, the very sick or the elderly.
+
+### Preprocessing 
+
+After downloading the data, the analysis is straightforward
+
+
+```{r libs}
+library(lubridate)
+library(tidyverse)
+library(gridExtra)
+theme_set(theme_bw()) 
+scale_colour_discrete <- function(...) scale_color_brewer(palette="Set2")
+library(kableExtra)
+```
+
+Read in data files:
+
+```{r read_csv}
+# where data files are actually stored (~ 1 GB)
+my_read_csv <- function(fn) read_csv(sprintf("../../../R_stuff/R_diverse/medicine_nhs_uk/%s", fn))
+
+nhs_raw_2010 <- my_read_csv("NHS Workforce Statistics - Sep09-Dec10, staff excluding medical.csv")
+nhs_raw_2011 <- my_read_csv("NHS Workforce Statistics - Jan11-Dec11, staff excluding medical.csv")
+nhs_raw_2012 <- my_read_csv("NHS Workforce Statistics - Jan12-Dec12, staff excluding medical.csv")
+nhs_raw_2013 <- my_read_csv("NHS Workforce Statistics - Jan13-Dec13, staff excluding medical.csv")
+nhs_raw_2014 <- my_read_csv("NHS Workforce Statistics - Jan14-Dec14, staff excluding medical.csv")
+nhs_raw_2015 <- my_read_csv("NHS Workforce Statistics - Jan15-Mar16, staff excluding medical.csv")
+nhs_raw_2016 <- my_read_csv("NHS Workforce Statistics - September 2016, staff excluding medical.csv")
+nhs_raw_2017 <- my_read_csv("NHS Workforce Statistics - September 2017, staff excluding medical.csv")
+
+```
+
+#### Raw data - combined 
+
+Make a single large data frame
+```{r bind_rows}
+nhs_raw <- bind_rows(nhs_raw_2010, nhs_raw_2011, nhs_raw_2012, 
+                     nhs_raw_2013, nhs_raw_2014, nhs_raw_2015, 
+                     nhs_raw_2016, nhs_raw_2017)
+
+```
+
+This data frame has `r nrow(nhs_raw)` and `r ncol(nhs_raw)` columns. 
+
+### Comparison 2009-2017
+
+Count By Staff Group:
+
+```{r count1}
+mi <- min(nhs_raw$Date) 
+mx <- max(nhs_raw$Date)
+nhs_summ1 <- nhs_raw %>% 
+        select(Date, `Main Staff Group`, `Total FTE`) %>%
+        filter(Date %in% c(mi,mx)) %>% 
+        group_by(Date, `Main Staff Group`) %>% 
+        summarise(cnt = sum(`Total FTE`)) %>% 
+        spread(Date, cnt)   
+
+nhs_summ1 %>% 
+        kable(align="lrr", row.names = 1, 
+              caption = "Employee numbers at aggregation level 1,\
+              at begin and end of the timeline") %>% 
+        kableExtra::kable_styling(bootstrap_options = 
+                                          c("striped", "hover"))
+
+```
+
+Staff numbers seem to have increased among all subgroups,
+except for "038_NHS infastrucure support". 
+
+This level of aggregation is useful, but it is too coarse. We only look at groups up and including to ID 019_Healthcare_scientists.
+
+Calculate the totals at the appropriate aggregation level, *Staff Group 2* :
+
+```{r count2}
+
+nhs_summ2 <- nhs_raw %>% 
+        select(Date, `Staff Group 2`, `Total FTE`) %>% 
+        group_by(Date, `Staff Group 2`) %>% 
+        summarise(cnt = sum(`Total FTE`))
+
+```
+
+
+
+#### Aggregation level 2
+
+```{r eval=TRUE}
+nhs_summ2 %>% spread(Date, cnt) %>% 
+        select(`Staff Group 2`, 2, 82) %>% head(20) %>% 
+        kable(caption="Aggregation Level 2 shows the nurse subgroups:",
+              row.names=1)
+
+```
+
+For plotting, we are only interested in the groups including *019_Healthcare scientists*.
+
+#### Plot: employee-count over time
+
+These time series plots show of the employee count over time, for each nurse subgroup. I prefer to show them side-by-side here just to save space. Showing them one under the other would make the blogpost too long. 
+
+Code to generate this plot is also shown.
+
+```{r}
+plot1 <- nhs_summ2 %>%
+        filter(str_detect(`Staff Group 2` , "^00") == TRUE) %>% 
+ggplot(aes(Date, cnt, color=`Staff Group 2`)) +
+        geom_point(size=0.2) +
+        geom_line() +
+        ylab("Number of People") +        
+        theme(legend.position = "none") +
+        facet_wrap(~`Staff Group 2`, ncol = 1, scales = "free_y")
+
+plot2 <- nhs_summ2 %>%
+        filter(str_detect(`Staff Group 2` , "^01") == TRUE) %>% 
+ggplot(aes(Date, cnt, color=`Staff Group 2`)) +
+        geom_point(size=0.2) +
+        geom_line() +
+        theme(legend.position = "none") +
+        ylab("Number of People") +
+        facet_wrap(~`Staff Group 2`, ncol = 1, scales = "free_y")
+
+
+```
+
+
+```{r fig.height=30, echo=FALSE, fig.cap="Temporal evolution of 'non-medical UK nursing staff'"}
+
+pl <- list(plot1, plot2)
+ml <- marrangeGrob(pl, nrow=1, ncol=2, top = "Temporal evolution of ‘non-medical UK nursing staff’")
+## non-interactive use, multipage pdf
+#ggsave("multipage.pdf", ml, height = 30, units = "cm")
+ml
+```
+
+### Further Ideas
+
+- add data from Germany for comparison 
+- calculate linear models, determine subgroups of strongest decline/growth.
+- Add link / reference to MicroTrends book ( I want to reproduce more analyses as in the book.)
