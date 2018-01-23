@@ -49,6 +49,15 @@
     </item>
     
     <item>
+      <title>Medicine</title>
+      <link>/categories/medicine/</link>
+      <pubDate>Wed, 24 Jan 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/categories/medicine/</guid>
+      <description></description>
+    </item>
+    
+    <item>
       <title>Networks</title>
       <link>/categories/networks/</link>
       <pubDate>Tue, 16 Jan 2018 00:00:00 +0000</pubDate>
@@ -90,6 +99,15 @@
       <pubDate>Sun, 26 Nov 2017 00:00:00 +0000</pubDate>
       
       <guid>/categories/reference/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Rstats</title>
+      <link>/categories/rstats/</link>
+      <pubDate>Wed, 24 Jan 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/categories/rstats/</guid>
       <description></description>
     </item>
     

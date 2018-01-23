@@ -19,6 +19,11 @@
   
   <url>
     <loc>/post/2018/01/uk-nhs-nurses/</loc>
+    <lastmod>2018-01-24T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/post/2018/01/uk-nhs-nurses/</loc>
     <lastmod>2018-01-23T00:00:00+00:00</lastmod>
   </url>
   
@@ -239,8 +244,14 @@
   </url>
   
   <url>
+    <loc>/categories/medicine/</loc>
+    <lastmod>2018-01-24T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
     <loc>/tags/medicine/</loc>
-    <lastmod>2018-01-23T00:00:00+00:00</lastmod>
+    <lastmod>2018-01-24T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -317,8 +328,14 @@
   </url>
   
   <url>
+    <loc>/categories/rstats/</loc>
+    <lastmod>2018-01-24T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
     <loc>/tags/rstats/</loc>
-    <lastmod>2018-01-23T00:00:00+00:00</lastmod>
+    <lastmod>2018-01-24T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -336,7 +353,7 @@
   
   <url>
     <loc>/tags/society/</loc>
-    <lastmod>2018-01-23T00:00:00+00:00</lastmod>
+    <lastmod>2018-01-24T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   

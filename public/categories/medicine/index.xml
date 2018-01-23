@@ -2,14 +2,14 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Medicine on Knut Behrends Personal Blog, v3</title>
-    <link>/tags/medicine/</link>
+    <link>/categories/medicine/</link>
     <description>Recent content in Medicine on Knut Behrends Personal Blog, v3</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>&amp;copy;2018 Knut Behrends</copyright>
     <lastBuildDate>Wed, 24 Jan 2018 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="/tags/medicine/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="/categories/medicine/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
@@ -19,15 +19,6 @@
       
       <guid>/post/2018/01/uk-nhs-nurses/</guid>
       <description>#NHSCrisis? A quick fact check about the UK&amp;rsquo;s National Healthcare Service, NHS.</description>
-    </item>
-    
-    <item>
-      <title>UK NHS Medical Staff, 2009-2017</title>
-      <link>/post/2018/01/uk-nhs-nurses/</link>
-      <pubDate>Tue, 23 Jan 2018 00:00:00 +0000</pubDate>
-      
-      <guid>/post/2018/01/uk-nhs-nurses/</guid>
-      <description>#NHSCrisis? A quick fact check about the National Healthcare Service, NHS. Is the number of nurses in the UK really strongly decreasing, as some media outlets suggest? Or is the opposite true, as some people on Twitter have argued? In this post I am taking a quick look at the number of employees in British healthcare system, from 2009 to 2017.  Since 2014, the number of nurses indeed goes down for most subgroups.</description>
     </item>
     
   </channel>
