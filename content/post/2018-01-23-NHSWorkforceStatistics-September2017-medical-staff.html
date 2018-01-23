@@ -16,15 +16,17 @@ tags:
 
 
 
-<div class="alert alert-info"><b>#NHSCrisis?  A quick fact check about the National Healthcare Service, NHS.</b><br/>
+<div class="alert alert-info"><b>#NHSCrisis?  A quick fact check about the National Healthcare Service, NHS.</b><br/> 
 Is the number of nurses in the UK really strongly decreasing, as some media outlets suggest?  Or is the opposite true, as some people on Twitter have argued? In this post I am taking a quick look at the number of employees in British healthcare system, from 2009 to 2017. <br/>
 Since 2014, the number of nurses indeed goes down for most subgroups. Most notably "outgoing" groups of nurses show marked decline. The number of "adult nurses" has stayed rather constant. 
 This loss in specialty nurses is compensated by an increase in the number of ambulance drivers and &apos;allied health professions&apos;. See plots at bottom of page. 
 </div>
-<p>This blogpost was inspired by a <a href="https://twitter.com/Jeremy_Hunt/status/953688801825755136">lengthy twitter thread</a> on the ‘NHSCrisis’, the understaffed healthcare sector in the UK. Someone posted an infographics on a timeline with <a href="https://digital.nhs.uk/article/4304/Workforce">official statistical data</a> from the British healthcare authorities. <a href="https://twitter.com/maxwellflitton">He has argued</a> that there is a lot of secular (= cyclical but noisy) variation in the employee data, but in general the trend is pointing upwards, not downwards.</p>
+<div id="a-short-story-about-reproducibility" class="section level4">
+<h4>A short story about reproducibility</h4>
+<p>This blogpost was inspired by a <a href="https://twitter.com/Jeremy_Hunt/status/953688801825755136">lengthy twitter thread</a> on the ‘NHSCrisis’, the understaffed healthcare sector in the UK. Someone posted an infographics on a timeline with <a href="https://digital.nhs.uk/article/4304/Workforce">official statistical data</a> from the British healthcare authorities. <a href="https://twitter.com/maxwellflitton">He has argued</a> that there was a lot of secular (= cyclical but noisy) variation in the employee data, and that general the trend was pointing upwards, not downwards. Is this true?</p>
 <p>Are there <em>really</em> more and more nurses employed in the UK? Is it oversimplified to call this an ‘#NHSCrisis’ on social media? I’ve decided to check this.</p>
-<p>The infographics the user posted was from a media company. (I cannot really include it here because it is probably copyrihted, and since Jan 22 2017 the user has protected his account, so I cannot link to it). What struck my eye was that the graph ended early, in mid-2017. However it is now January 2018, and a full half year is missing.</p>
-<p>What would the graph look like when I tried to reproduce it from data?</p>
+<p>The infographics the user posted was from a media company. (I cannot really include it here because it is probably copyrighted, and since late January, 2017 the user has protected his Twitter account, so I cannot link to the infographics in context). What struck my eye was that the graph ended early, in mid-2017. However it is now January 2018, and a full half year of data was missing.</p>
+<p>What would the graph look like when <em>I</em> tried to reproduce it from data?</p>
 <p>A lot of underlying data are online at the above-mentioned NHS data portal. Also the this very newest data from the <a href="https://digital.nhs.uk/catalogue/PUB30189">second half of 2017 is online</a> since this week, late January 2018.</p>
 <p>The time series we’re interested in can be calculated from the timeseries data <strong>‘NHS Workforce Statistics - staff excluding medical:’</strong>. What we need is an aggregated number:</p>
 <ul>
@@ -32,6 +34,7 @@ This loss in specialty nurses is compensated by an increase in the number of amb
 <li>the number of ‘community visitors’</li>
 </ul>
 <p>I think ‘community visitors’ are nurses that provide caregiving by visiting sick people at home - the immobile, the very sick or the elderly.</p>
+</div>
 <div id="preprocessing" class="section level3">
 <h3>Preprocessing</h3>
 <p>After downloading the data, the analysis is straightforward</p>
