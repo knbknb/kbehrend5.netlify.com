@@ -186,6 +186,7 @@ ml
 
 ### Further Ideas
 
+- add more observations from the plot
 - add data from Germany for comparison 
 - calculate linear models, determine subgroups of strongest decline/growth.
 - Add link / reference to MicroTrends book ( I want to reproduce more analyses as in the book.)
