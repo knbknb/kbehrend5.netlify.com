@@ -1,7 +1,7 @@
 ---
 title: "rmarkdown example with external js"
 author: "Knut Behrends"
-date: "January 21, 2018"
+date: "2018-01-21"
 draft: true
 output:
   html_document:
@@ -57,27 +57,27 @@ var lineGraph = svgContainer.append("path")
 <pre class="r"><code>library(ggvis)
 
 mtcars %&gt;% ggvis(~disp, ~mpg) %&gt;% layer_points()</code></pre>
-<div id="plot_id354936762-container" class="ggvis-output-container">
-<div id="plot_id354936762" class="ggvis-output"></div>
+<div id="plot_id300203903-container" class="ggvis-output-container">
+<div id="plot_id300203903" class="ggvis-output"></div>
 <div class="plot-gear-icon">
 <nav class="ggvis-control">
 <a class="ggvis-dropdown-toggle" title="Controls" onclick="return false;"></a>
 <ul class="ggvis-dropdown">
 <li>
 Renderer: 
-<a id="plot_id354936762_renderer_svg" class="ggvis-renderer-button" onclick="return false;" data-plot-id="plot_id354936762" data-renderer="svg">SVG</a>
+<a id="plot_id300203903_renderer_svg" class="ggvis-renderer-button" onclick="return false;" data-plot-id="plot_id300203903" data-renderer="svg">SVG</a>
  | 
-<a id="plot_id354936762_renderer_canvas" class="ggvis-renderer-button" onclick="return false;" data-plot-id="plot_id354936762" data-renderer="canvas">Canvas</a>
+<a id="plot_id300203903_renderer_canvas" class="ggvis-renderer-button" onclick="return false;" data-plot-id="plot_id300203903" data-renderer="canvas">Canvas</a>
 </li>
 <li>
-<a id="plot_id354936762_download" class="ggvis-download" data-plot-id="plot_id354936762">Download</a>
+<a id="plot_id300203903_download" class="ggvis-download" data-plot-id="plot_id300203903">Download</a>
 </li>
 </ul>
 </nav>
 </div>
 </div>
 <script type="text/javascript">
-var plot_id354936762_spec = {
+var plot_id300203903_spec = {
   "data": [
     {
       "name": ".0",
@@ -198,7 +198,7 @@ var plot_id354936762_spec = {
   },
   "handlers": null
 };
-ggvis.getPlot("plot_id354936762").parseSpec(plot_id354936762_spec);
+ggvis.getPlot("plot_id300203903").parseSpec(plot_id300203903_spec);
 </script>
 <p><div class="alert  alert-danger"><b>DOES NOT WORK:</b></div> DT package renders a javascript datatable:</p>
 <pre class="r"><code>library(DT)

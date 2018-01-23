@@ -1,7 +1,7 @@
 ---
 title: "rmarkdown example with external js"
 author: "Knut Behrends"
-date: "January 21, 2018"
+date: "2018-01-21"
 draft: true
 output:
   html_document:
