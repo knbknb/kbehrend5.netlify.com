@@ -18,7 +18,7 @@ tags:
 
 <div class="alert alert-info"><b>#NHSCrisis?  A quick fact check about the National Healthcare Service, NHS.</b><br/> 
 Is the number of nurses in the UK really strongly decreasing, as some media outlets suggest?  Or is the opposite true, as some people on Twitter have argued? In this post I am taking a quick look at the number of employees in British healthcare system, from 2009 to 2017. <br/>
-Since 2014, the number of nurses indeed goes down for most subgroups. Most notably "outgoing" groups of nurses show marked decline. The number of "adult nurses" has stayed rather constant. 
+Since 2014, the number of nurses indeed has decreased for most subtypes. Most notably "outgoing" groups of nurses show marked decline. The number of "adult nurses" has stayed rather constant. 
 This loss in specialty nurses is compensated by an increase in the number of ambulance drivers and &apos;allied health professions&apos;. See plots at bottom of page. 
 </div>
 <div id="a-short-story-about-reproducibility" class="section level4">
@@ -27,7 +27,7 @@ This loss in specialty nurses is compensated by an increase in the number of amb
 <p>Are there <em>really</em> more and more nurses employed in the UK? Is it oversimplified to call this an ‘#NHSCrisis’ on social media? I’ve decided to check this.</p>
 <p>The infographics the user posted was from a media company. (I cannot really include it here because it is probably copyrighted, and since late January, 2017 the user has protected his Twitter account, so I cannot link to the infographics in context). What struck my eye was that the graph ended early, in mid-2017. However it is now January 2018, and a full half year of data was missing.</p>
 <p>What would the graph look like when <em>I</em> tried to reproduce it from data?</p>
-<p>A lot of underlying data are online at the above-mentioned NHS data portal. Also the this very newest data from the <a href="https://digital.nhs.uk/catalogue/PUB30189">second half of 2017 is online</a> since this week, late January 2018.</p>
+<p>A lot of underlying data are online at the above-mentioned NHS data portal. Also the very newest data from the <a href="https://digital.nhs.uk/catalogue/PUB30189">second half of 2017 is online</a> since this week, late January 2018.</p>
 <p>The time series we’re interested in can be calculated from the timeseries data <strong>‘NHS Workforce Statistics - staff excluding medical:’</strong>. What we need is an aggregated number:</p>
 <ul>
 <li>the total number of nurses +</li>
@@ -62,7 +62,7 @@ nhs_raw_2017 &lt;- my_read_csv(&quot;NHS Workforce Statistics - September 2017, 
 <pre class="r"><code>nhs_raw &lt;- bind_rows(nhs_raw_2010, nhs_raw_2011, nhs_raw_2012, 
                      nhs_raw_2013, nhs_raw_2014, nhs_raw_2015, 
                      nhs_raw_2016, nhs_raw_2017)</code></pre>
-<p>This data frame has 5341793 and 12 columns.</p>
+<p>This data frame has 5341793 rows and 12 columns.</p>
 </div>
 </div>
 <div id="comparison-2009-2017" class="section level3">
