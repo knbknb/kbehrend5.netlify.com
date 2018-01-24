@@ -27,7 +27,7 @@ options(knitr.table.format = "html")
 htmltools::HTML('<div class="alert alert-info"><b>#NHSCrisis?  A quick fact check about the National Healthcare Service, NHS.</b><br/> 
 Is the number of nurses in the UK really strongly decreasing, as some media outlets suggest?  Or is the opposite true, as some people on Twitter have argued? In this post I am taking a quick look at the number of employees in British healthcare system, from 2009 to 2017. <br/>
 Since 2014, the number of nurses indeed has decreased for most subtypes. Most notably "outgoing" groups of nurses show marked decline. The number of "adult nurses" has stayed rather constant. 
-This loss in specialty nurses is compensated by an increase in the number of ambulance drivers and &apos;allied health professions&apos;. See plots at bottom of page. 
+This loss in specialty nurses is compensated by an increase in &apos;allied health professions&apos;. See plots at bottom of page. 
 </div>')
 ```
 
@@ -52,16 +52,18 @@ I think 'community visitors' are nurses that provide caregiving by visiting sick
 
 ### Preprocessing 
 
-After downloading the data, the analysis is straightforward
+After downloading the data, the analysis is straightforward.
 
+Load R packages needed:
 
 ```{r libs}
 library(lubridate)
 library(tidyverse)
-library(gridExtra)
+library(gridExtra)  # combine plots
 theme_set(theme_bw()) 
 scale_colour_discrete <- function(...) scale_color_brewer(palette="Set2")
-library(kableExtra)
+library(kableExtra) # formatting
+library(broom)      # regression models
 ```
 
 Read in data files:
@@ -184,9 +186,74 @@ ml <- marrangeGrob(pl, nrow=1, ncol=2, top = "Temporal evolution of ‘non-medic
 ml
 ```
 
+
+#### Which types of nurses experienced strongest growth or decline?
+
+Calculate regression models for each group:
+
+```{r coef}
+nhs_summ2_coefficients_2009_2017 <- nhs_summ2 %>% 
+        select(Date, `Staff Group 2`, cnt) %>%
+        group_by( `Staff Group 2`) %>% 
+        nest(-`Staff Group 2`) %>% 
+        mutate(model = map(data, ~ lm(cnt ~ Date, data = .)),
+               tidied = map(model, tidy)) %>%
+        unnest(tidied) %>% 
+        ungroup() %>% 
+        filter(term != "(Intercept)", 
+               (str_detect(`Staff Group 2`, "0[01]") == TRUE)  |
+              (str_detect(`Staff Group 2`, "Ambulance") == TRUE)) %>%
+        select(`Staff Group 2`, estimate) %>% 
+        mutate(Period = "2009-2017")
+
+nhs_summ2_coefficients_2016_2017 <- nhs_summ2 %>%
+        filter(Date >= as.Date("2016-01-01")) %>% 
+        select(Date, `Staff Group 2`, cnt) %>% 
+        group_by(`Staff Group 2`) %>% 
+        nest(-`Staff Group 2`) %>% 
+        mutate(model = map(data, ~ lm(cnt ~ Date, data = .)),
+               tidied = map(model, tidy)) %>%
+        unnest(tidied)  %>% 
+        ungroup() %>% 
+        filter(term != "(Intercept)", 
+               (str_detect(`Staff Group 2`, "0[01]") == TRUE)  |
+              (str_detect(`Staff Group 2`, "Ambulance") == TRUE)) %>%
+        select(`Staff Group 2`, estimate) %>% 
+        mutate(Period = "2016-2017")
+
+# unite 2 tables of regression-model results into one compact table
+nhs_summ2_coefficients <- rbind(
+        gather(nhs_summ2_coefficients_2009_2017, k, v, 
+               -Period, -`Staff Group 2`),
+        gather(nhs_summ2_coefficients_2016_2017, k, v,
+               -Period, -`Staff Group 2`)) %>% 
+        mutate(v =  v * 365) %>% 
+        spread(Period, v)  %>% 
+        select(-k)
+               
+```
+
+The table is a bit long, but it is worth looking at all staff groups.
+
+```{r coef2, echo=FALSE}
+
+nhs_summ2_coefficients %>% 
+        arrange(desc(`2009-2017`)) %>%
+        kable(align="lrr", row.names = 1, 
+              caption = "Growth rates of nurse subtypes in the UK,\
+              2009-2017 vs 2016-2017", col.names=c("Staff Group","2009-2017\nPeople/year", "2016-2017\nPeople/year")) %>% 
+        kableExtra::kable_styling(bootstrap_options = 
+                                          c("striped", "hover"))
+
+```
+
+
+
+
+The  increasing number of "ambulance drivers" is compensated by the  decreasing population of "ambulance staff".
+
 ### Further Ideas
 
-- add more observations from the plot
-- add data from Germany for comparison 
-- calculate linear models, determine subgroups of strongest decline/growth.
+- add more observations from the plots
+- add data from/for Germany for comparison (where to git?)
 - Add link / reference to MicroTrends book ( I want to reproduce more analyses as in the book.)
