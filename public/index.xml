@@ -64,7 +64,7 @@ Still experimenting with the Hugo software.</description>
       <pubDate>Sun, 21 Jan 2018 00:00:00 +0000</pubDate>
       
       <guid>/post/2018/01/bitcoin-interest/</guid>
-      <description>Visualizing (1) Wikipedia Pageviews, (2) Google Searches and (3) Exchange Rates from 2015 to early 2018.</description>
+      <description>Visualizing (1) Wikipedia Pageviews, (2) NYT Article Mentions, (3) Google Searches and (4) Exchange Rates from 2012 to early 2018.</description>
     </item>
     
     <item>
@@ -83,8 +83,7 @@ Still experimenting with the Hugo software.</description>
       <pubDate>Sat, 20 Jan 2018 00:00:00 +0000</pubDate>
       
       <guid>/post/2018/01/bitcoin-interest/</guid>
-      <description>Bitcoin: Visualizing (1) Wikipedia Pageviews, (2) Google Searches and (3) Exchange Rates from 2015 to early 2018. Simple timeseries plots (created from Web-API data) show that these three are strongly correlated, except when they aren&#39;t.  In this post I’ll analyse global interest in Bitcoin and Ethereum over time, according to accesses to their Wikipedia articles and as Google Searches.
-The end of the year 2017 saw the “Bitcoin Bubble”, a period of one month where 1 Bitcoin was traded for up to $20000 on most exchanges.</description>
+      <description>Bitcoin: Visualizing (1) Wikipedia Pageviews, (2) Mentions in the New York Times, (3) Google Searches and (4) Exchange Rates from 2015 to early 2018. Simple timeseries plots (created from Web-API data) show that these four are strongly correlated, except when they aren&amp;apos;t.  In this post I’ll display global interest in Bitcoin and Ethereum over time, according to accesses to their Wikipedia articles, mentions in the New York Times, and as Google Searches.</description>
     </item>
     
     <item>

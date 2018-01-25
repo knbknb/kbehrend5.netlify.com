@@ -126,7 +126,7 @@ ga('send', 'pageview');
 
   <article class="article">
     
-    <span class="article-duration">4 min read</span>
+    <span class="article-duration">5 min read</span>
     
 
     <h1 class="article-title">Global interest in Bitcoin over Time</h1>
@@ -137,10 +137,10 @@ ga('send', 'pageview');
 
     <div class="article-content">
       <div class="alert alert-info"><b>Bitcoin:</b>
-Visualizing (1) Wikipedia Pageviews, (2) Google Searches and (3) Exchange Rates from 2015 to early 2018. 
-Simple timeseries plots (created from Web-API data) show that these three are strongly correlated, except when they aren't.
+Visualizing (1) Wikipedia Pageviews, (2) Mentions in the New York Times, (3) Google Searches and (4) Exchange Rates from 2015 to early 2018. 
+Simple timeseries plots (created from Web-API data) show that these four are strongly correlated, except when they aren&apos;t.
 </div>
-<p>In this post I’ll analyse global interest in <a href="https://en.wikipedia.org/wiki/Bitcoin">Bitcoin</a> and <a href="https://en.wikipedia.org/wiki/Ethereum">Ethereum</a> over time, according to accesses to their Wikipedia articles and as Google Searches.</p>
+<p>In this post I’ll display global interest in <a href="https://en.wikipedia.org/wiki/Bitcoin">Bitcoin</a> and <a href="https://en.wikipedia.org/wiki/Ethereum">Ethereum</a> over time, according to accesses to their Wikipedia articles, mentions in the New York Times, and as Google Searches.</p>
 <p>The end of the year 2017 saw the “Bitcoin <a href="https://www.bloomberg.com/news/audio/2017-03-31/this-is-how-you-know-when-the-stock-market-is-in-a-bubble">Bubble</a>”, a period of one month where 1 Bitcoin was traded for up to $20000 on most exchanges. I am not invested in Bitcoin, and never was substantially, but cryptocurrencies and the blockchain technology still interest me.</p>
 <div id="preprocessing" class="section level3">
 <h3>Preprocessing</h3>
@@ -225,10 +225,39 @@ wikipedia_de_vs_en &lt;- function(term = &quot;Bitcoin&quot;) {
 <li>Strong peaks in Ethereum-article pageviews often occured independently from Bitcoin-Article pageviews, for both language articles.</li>
 <li>(TBC)</li>
 </ul>
-<p>There is another, alternative data source: Google Trends API, here accessed with functions from the <a href="https://github.com/PMassicotte/gtrendsR">gtrendsR</a> package. The API provides aggregated and rescaled data on how many people have performed Google searches for any term.</p>
+<div id="mentions-in-the-new-york-times" class="section level4">
+<h4>Mentions in the New York Times</h4>
+<p>It is also instructive to check when the Media turned their attention to Bitcoin, and how often they did this over time. The New York Times has a Search API which can be queried for free if you have an API key. <a href="https://github.com/jeroenjanssens/data-science-at-the-command-line/blob/master/book/01.Rmd">This shell script</a> queries the NYT Search API and saves the results into a CSV file:</p>
+<pre class="bash"><code>#!/bin/sh 
+# following this example:
+# https://github.com/jeroenjanssens/data-science-at-the-command-line/blob/master/book/01.Rmd
+apikey=c62ffea...........................
+
+
+parallel --gnu -j1 --delay 8 --results bitcoin \
+ &quot;curl -sL  &#39;http://api.nytimes.com/svc/search/v2/articlesearch.json?q=bitcoin&amp;begin_date={1}0101&amp;end_date={1}1231&amp;page={2}&amp;api-key=$apikey&#39;&quot; ::: {2009..2018} ::: {0..99}
+
+# create csv file with command line tools: (cat, jq and json2csv)
+cat bitcoin/1/*/2/*/stdout | \
+jq -c &#39;.response.docs[] | {date: .pub_date, type: .document_type, title: .headline.main }&#39; \
+| json2csv -p -k date,type,title &gt; bitcoin-nytimes.csv </code></pre>
+<p>Result - raw data</p>
+<pre class="r"><code># date,type,title
+# 2011-11-29T00:40:30Z,blogpost,&quot;Today&#39;s Scuttlebot: Drones for Everyone, and Bitcoin&#39;s Decline&quot;
+# 2011-09-07T00:20:26Z,blogpost,Golden Cyberfetters
+# 2011-07-04T00:00:00Z,article,Speed Bumps on the Road to Virtual Cash
+# 2011-05-30T00:00:00Z,article,Some Faint Praise for Mr. Ballmer
+# ...</code></pre>
+<p>How often did the word ‘Bitcoin’ appear in articles of the New York Times over the years?</p>
+<p><img src="/post/2018-01-20-interest-in-bitcoin-over-time_files/figure-html/nytplot-1.png" width="864" /></p>
+<p>The term ‘Bitcoin’ did hardly appear at all until 2012. The New York Times provides a platform for bloggers and experts such as <a href="https://krugman.blogs.nytimes.com/2013/12/28/bitcoin-is-evil/">Paul Krugman for instance. He has talked</a> about Bitcoin in 2014.</p>
+</div>
+<div id="google-trends" class="section level4">
+<h4>Google Trends</h4>
+<p>There is yet another, alternative data source: Google Trends API, here accessed with functions from the <a href="https://github.com/PMassicotte/gtrendsR">gtrendsR</a> package. The API provides aggregated and rescaled data on how many people have performed Google searches for any term.</p>
 <p>Show a plot for comparison:</p>
 <pre class="r"><code>bitcoin_trends$interest_over_time %&gt;%
-  filter(date &gt;= as.Date(&quot;2015-01-01&quot;)) %&gt;%
+  #filter(date &gt;= as.Date(&quot;2015-01-01&quot;)) %&gt;%
   ggplot(aes(date, hits)) +
   geom_line() +
   theme(legend.position = &quot;none&quot;) +
@@ -238,7 +267,8 @@ wikipedia_de_vs_en &lt;- function(term = &quot;Bitcoin&quot;) {
     subtitle = &quot;(Google internal counters)&quot;
   )</code></pre>
 <p><img src="/post/2018-01-20-interest-in-bitcoin-over-time_files/figure-html/gogl-1.png" width="864" /></p>
-<p>In order to make the Google-Trends-API plot comparable to the other plots above, I have restricted the data to the interval from 2015 to 2018. Thus I have left out a small but notable spike in the gloabl interest in bitcoin that happended in 2014.</p>
+<p>Just as in the Search-API data from the New York Times, a notable spike in the global interest in bitcoin happended in early 2014.</p>
+</div>
 <div id="another-obligatory-comparison" class="section level4">
 <h4>Another obligatory comparison</h4>
 <p>Last but not least: the exchange rate for Bitcoin, here given in Euro. Data are from <a href="https://www.bitcoin.de">Bitcoin.de</a>, aggregated by <a href="https://docs.quandl.com/docs/time-series">Quandl</a>.</p>
@@ -255,6 +285,14 @@ autoplot(btc$Close[&quot;2015-01-01/&quot;]) +
                 subtitle=&quot;in EUR, according to the Bitcoin.de trading platform. Data from Quandl.com.&quot;)</code></pre>
 <p><img src="/post/2018-01-20-interest-in-bitcoin-over-time_files/figure-html/btcdiff-1.png" width="864" /></p>
 <p>I’ve never seen any financial time series like that.</p>
+<div class="alert alert-success"><b>Conclusion</b></br>
+What I learned from doing this:
+<ul>
+<li> Collecting API data
+<li> <a href="/post/2017/12/learning-jq/">jq</a> usage
+<li> Many small R tricks (primarily ggplot2 and RMarkdown stuff)
+</ul>
+</div>
 </div>
 </div>
 

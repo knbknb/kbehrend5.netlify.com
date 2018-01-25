@@ -16,4 +16,4 @@ keywords:
 usePhotoswipe: no
 ---
 
-Visualizing (1) Wikipedia Pageviews, (2) Google Searches and (3) Exchange Rates from 2015 to early 2018.
+Visualizing (1) Wikipedia Pageviews, (2) NYT Article Mentions, (3) Google Searches and (4) Exchange Rates from 2012 to early 2018.
