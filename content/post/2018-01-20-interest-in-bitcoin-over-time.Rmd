@@ -221,6 +221,7 @@ Just as in the Search-API data from the New York Times, a notable spike in the g
 Last but not least:  the exchange rate for Bitcoin, here given in Euro. Data are from [Bitcoin.de](https://www.bitcoin.de), aggregated by [Quandl](https://docs.quandl.com/docs/time-series).
 
 ```{r quandl}
+library(Quandl)
 btc <- Quandl(code = "BCHARTS/BTCDEEUR", type = "xts")
 autoplot(btc$Close["2015-01-01/"]) +
         ylab("Bitcoin/EUR") + xlab("Year") +

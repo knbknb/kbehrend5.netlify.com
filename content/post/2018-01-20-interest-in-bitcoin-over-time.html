@@ -150,7 +150,8 @@ jq -c &#39;.response.docs[] | {date: .pub_date, type: .document_type, title: .he
 <div id="another-obligatory-comparison" class="section level4">
 <h4>Another obligatory comparison</h4>
 <p>Last but not least: the exchange rate for Bitcoin, here given in Euro. Data are from <a href="https://www.bitcoin.de">Bitcoin.de</a>, aggregated by <a href="https://docs.quandl.com/docs/time-series">Quandl</a>.</p>
-<pre class="r"><code>btc &lt;- Quandl(code = &quot;BCHARTS/BTCDEEUR&quot;, type = &quot;xts&quot;)
+<pre class="r"><code>library(Quandl)
+btc &lt;- Quandl(code = &quot;BCHARTS/BTCDEEUR&quot;, type = &quot;xts&quot;)
 autoplot(btc$Close[&quot;2015-01-01/&quot;]) +
         ylab(&quot;Bitcoin/EUR&quot;) + xlab(&quot;Year&quot;) +
         ggtitle(&quot;Bitcoin Exchange Rate 2015-2018&quot;,

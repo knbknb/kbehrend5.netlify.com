@@ -5,9 +5,9 @@ title: Get in touch
 
 Well, I am not looking for work at this time. 
 
-I've created this blog just for [personal development](/about).
+I've created this blog just for [personal development](/about), to create a new habit.
 
-But you can always contact me via the links shown in the sidebar, or by using the form below. 
+You can contact me via the links shown in the sidebar, or by using the form below. 
 
 Ask me anything (but not too diffcult) about 
 
@@ -18,3 +18,4 @@ Ask me anything (but not too diffcult) about
 - Ubuntu tinkering,
 - anything else. 
 
+*I'll check the mail account for this form infrequently, maybe once a week. Don't expect a quick response.*
