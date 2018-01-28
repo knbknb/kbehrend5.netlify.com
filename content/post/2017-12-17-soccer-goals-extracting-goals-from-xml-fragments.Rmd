@@ -24,7 +24,7 @@ keywords: ["Personal-Blog", "Fun", "rstats", "Sports-Data", "Soccer", "XML"]
 ```{r setup, include=FALSE}
 library(knitr)
 opts_chunk$set(cache = TRUE, warning = FALSE, message = FALSE, 
-               echo = TRUE, tidy = FALSE, height = 3, width = 5)
+               echo = TRUE, tidy = FALSE, width = 7)
 options(digits = 3, tibble.print_min = 6)
 options(knitr.table.format = "html") 
 ```
@@ -169,7 +169,7 @@ Match_Player_Goal <- Match %>%
 ```{r xml3, echo=TRUE, eval=TRUE, warning=FALSE}
 
 # assume there are no more than 20 goals per match
-into <- map2_chr("Player", 1:20, str_c)
+into <- map2_chr("Goal", 1:20, str_c)
 
 # convert them into key-value table
 Match_Player_Goal.2 <- Match_Player_Goal %>%
@@ -232,9 +232,9 @@ Player_most_goals_season <- Player_most_goals %>%
 
 ```
 
-This table is not particularly insightful; it just shows that I've correctly parsed the XML-fragments in the datatable. We have `r nrow(Player_most_goals_season)` players which shot `r sum(Player_most_goals_season$goals)` goals in total, in `r length(unique(Player_most_goals_season$season))` seasons. 
+The following table is not particularly insightful; it just shows that I've more or less correctly parsed the XML-fragments in the datatable. We have `r nrow(Player_most_goals_season)` players which shot `r sum(Player_most_goals_season$goals)` goals in total, in `r length(unique(Player_most_goals_season$season))` seasons. 
 
-```{r mostg}
+```{r mostg, echo=FALSE}
 Player_most_goals_season %>% 
         select(-height, -weight, -player_fifa_api_id) %>%
         mutate(birthday = year(birthday)) %>% 
@@ -245,3 +245,58 @@ Player_most_goals_season %>%
 
 ```
 
+Someone has counted Messi's goals independently and [found 52 goals](https://www.barcablaugranes.com/2012/8/15/3242689/fc-barcelona-2011-12-season-in-review-lionel-messi), confirming the  data listed in this table.
+
+Goals per match
+
+```{r}
+n_matches = n_distinct(Match_Player_Goal.3$match_api_id)
+Match_Player_Goal.3 %>% 
+        select(match_api_id, player_api_id) %>% 
+        group_by(match_api_id) %>% 
+        summarize(cnt_goals =n()) %>%
+        ggplot(aes(cnt_goals) ) +
+        geom_histogram(binwidth=0.5,  fill="navy") +
+        ggtitle("Goals per Match", subtitle=sprintf("%s Matches with at least 1 goal", n_matches)) +
+        xlab("Goals Count [per Match]") + ylab("Number of Matches")+
+        theme(legend.position = "none") +
+        scale_x_continuous(labels = 1:14, breaks=1:14)
+
+
+```
+
+We can see that the curve peaks at 2 goals per match, but the curve is skewed to the right (fatter on the right half of the peak).
+
+### What is the average number of goals any player will score?
+
+This is much more difficult to determine, because we don't know how many times the player was in the squad but did not play, or when I was sick and could not play. 
+Thus We only can calculate an average for players who have actually scored: 
+
+```{r echo=FALSE}
+n_players <- n_distinct(Match_Player_Goal.3$player_api_id)
+Match_Player_Goal.3 %>% 
+        select(player_api_id, match_api_id, k) %>% 
+        mutate(match_api_id = ifelse(is.na(match_api_id) , 0, 
+                                        match_api_id),
+               k = ifelse(is.na(k) , 0, 
+                                        1)) %>% 
+        group_by(player_api_id, match_api_id) %>%
+        summarize(cnt_goals = n()) %>%
+        summarize(cnt_goals = mean(cnt_goals)) %>% 
+        ggplot(aes(cnt_goals) ) +
+        geom_histogram(fill="navy", binwidth=0.05) +
+        ggtitle("Goals per Match and Player", subtitle=sprintf("%s Matches by %s  Players who scored at least once", n_matches, n_players)) +
+        xlab("Goals per Match and Player") + ylab("Number of Matches")+
+        theme(legend.position = "none") +
+        scale_x_continuous(labels = seq(0.5,2.5, 0.1), 
+                           breaks=seq(.5,2.5, 0.1), 
+                           limits = c(0.5,2.5)) +
+        scale_y_log10()
+        
+```
+
+Note logarithmic scale on the y axis.
+
+We see that even among those players who actually scored, the scoring average per match declines exponentially very quickly. Scoring 1.3 goals per match is very good, and 1.5 goals is extraordinary, very few players actually achieve this. (The peak at 2 goals per match and player is probably due to a few players who have played only in a single game but have shot two goals in that game.)
+
+These numbers can be used as Priors for any subsequent Bayesian analysis. (TBC)

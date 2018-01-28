@@ -146,7 +146,7 @@ Match_Player_Goal &lt;- Match %&gt;%
         transmute(match_api_id = match_api_id,
                   goals_by = map_chr(goal, xmlparse2))</code></pre>
 <pre class="r"><code># assume there are no more than 20 goals per match
-into &lt;- map2_chr(&quot;Player&quot;, 1:20, str_c)
+into &lt;- map2_chr(&quot;Goal&quot;, 1:20, str_c)
 
 # convert them into key-value table
 Match_Player_Goal.2 &lt;- Match_Player_Goal %&gt;%
@@ -166,12 +166,12 @@ if(!file.exists(mplg_rds)){
 }</code></pre>
 <p>A few sample datasets from the new <code>Match_Player_Goal.3</code> dataframe, which has 39872 rows:</p>
 <pre class="r"><code>head(Match_Player_Goal.3, 5)</code></pre>
-<pre><code>##   player_api_id     player_name match_api_id       k
-## 1         24148 Darren Fletcher       489042 Player2
-## 2         37799 Obafemi Martins       489042 Player1
-## 3         26181     Samir Nasri       489043 Player1
-## 4         30853 Fernando Torres       489044 Player1
-## 5         23139     Dean Ashton       489045 Player1</code></pre>
+<pre><code>##   player_api_id     player_name match_api_id     k
+## 1         24148 Darren Fletcher       489042 Goal2
+## 2         37799 Obafemi Martins       489042 Goal1
+## 3         26181     Samir Nasri       489043 Goal1
+## 4         30853 Fernando Torres       489044 Goal1
+## 5         23139     Dean Ashton       489045 Goal1</code></pre>
 <p>Which player has scored the most goals?</p>
 <pre class="r"><code>#saveRDS(Match_Player_Goal.3, file=&quot;data/Match_Player_Goal.3.RDS&quot;)
 
@@ -187,14 +187,7 @@ Player_most_goals &lt;- Match_Player_Goal.3 %&gt;%
 
 Player_most_goals_season &lt;- Player_most_goals %&gt;% 
         inner_join(Player )</code></pre>
-<p>This table is not particularly insightful; it just shows that I’ve correctly parsed the XML-fragments in the datatable. We have 10629 players which shot 39665 goals in total, in 8 seasons.</p>
-<pre class="r"><code>Player_most_goals_season %&gt;% 
-        select(-height, -weight, -player_fifa_api_id) %&gt;%
-        mutate(birthday = year(birthday)) %&gt;% 
-        select(season, player_name, goals, birthday, player_api_id) %&gt;% 
-        head(30) %&gt;% 
-        knitr::kable(caption=&quot;Goals per player and season&quot;, row.names=1, align=&quot;clccc&quot;) %&gt;% 
-        kableExtra::kable_styling(bootstrap_options = c(&quot;striped&quot;, &quot;hover&quot;))</code></pre>
+<p>The following table is not particularly insightful; it just shows that I’ve more or less correctly parsed the XML-fragments in the datatable. We have 10629 players which shot 39665 goals in total, in 8 seasons.</p>
 <table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption>
 <span id="tab:mostg">Table 1: </span>Goals per player and season
@@ -823,4 +816,27 @@ Wayne Rooney
 </tr>
 </tbody>
 </table>
+<p>Someone has counted Messi’s goals independently and <a href="https://www.barcablaugranes.com/2012/8/15/3242689/fc-barcelona-2011-12-season-in-review-lionel-messi">found 52 goals</a>, confirming the data listed in this table.</p>
+<p>Goals per match</p>
+<pre class="r"><code>n_matches = n_distinct(Match_Player_Goal.3$match_api_id)
+Match_Player_Goal.3 %&gt;% 
+        select(match_api_id, player_api_id) %&gt;% 
+        group_by(match_api_id) %&gt;% 
+        summarize(cnt_goals =n()) %&gt;%
+        ggplot(aes(cnt_goals) ) +
+        geom_histogram(binwidth=0.5,  fill=&quot;navy&quot;) +
+        ggtitle(&quot;Goals per Match&quot;, subtitle=sprintf(&quot;%s Matches with at least 1 goal&quot;, n_matches)) +
+        xlab(&quot;Goals Count [per Match]&quot;) + ylab(&quot;Number of Matches&quot;)+
+        theme(legend.position = &quot;none&quot;) +
+        scale_x_continuous(labels = 1:14, breaks=1:14)</code></pre>
+<p><img src="/post/2017-12-17-soccer-goals-extracting-goals-from-xml-fragments_files/figure-html/unnamed-chunk-7-1.png" width="480" /></p>
+<p>We can see that the curve peaks at 2 goals per match, but the curve is skewed to the right (fatter on the right half of the peak).</p>
+</div>
+<div id="what-is-the-average-number-of-goals-any-player-will-score" class="section level3">
+<h3>What is the average number of goals any player will score?</h3>
+<p>This is much more difficult to determine, because we don’t know how many times the player was in the squad but did not play, or when I was sick and could not play. Thus We only can calculate an average for players who have actually scored:</p>
+<p><img src="/post/2017-12-17-soccer-goals-extracting-goals-from-xml-fragments_files/figure-html/unnamed-chunk-8-1.png" width="480" /></p>
+<p>Note logarithmic scale on the y axis.</p>
+<p>We see that even among those players who actually scored, the scoring average per match declines exponentially very quickly. Scoring 1.3 goals per match is very good, and 1.5 goals is extraordinary, very few players actually achieve this. (The peak at 2 goals per match and player is probably due to a few players who have played only in a single game but have shot two goals in that game.)</p>
+<p>These numbers can be used as Priors for any subsequent Bayesian analysis. (TBC)</p>
 </div>
