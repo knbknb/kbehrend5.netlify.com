@@ -22,7 +22,10 @@ keywords: ["Personal-Blog", "Fun", "rstats", "Sports-Data", "Soccer", "XML"]
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE)
+library(knitr)
+opts_chunk$set(cache = TRUE, warning = FALSE, message = FALSE, 
+               echo = TRUE, tidy = FALSE, height = 3, width = 5)
+options(digits = 3, tibble.print_min = 6)
 options(knitr.table.format = "html") 
 ```
 
@@ -46,19 +49,13 @@ library(DBI)
 con <- dbConnect(odbc::odbc(), "well-sqlite-footballdb")
 
 ```
-For the sake of brevity, to see database internals, see the [previous blogpost](/post/2017/12/soccerdb-schema-diagrams/). 
+For the sake of brevity, I cannot repeat this information here. To see database internals, see the [previous blogpost](/post/2017/12/soccerdb-schema-diagrams/). 
 
-```{r message=FALSE, warning=FALSE, results='hide', echo=FALSE}
-# tidyverse packages
-library(dplyr, warn.conflicts = FALSE) #
-library(tidyr)   # gather
-library(purrr)   # functional programming
-library(stringr)
+```{r }
 library(lubridate) # strings to datetime
-library(ggplot2)
+library(tidyverse, warn.conflicts = FALSE)
 
 theme_set(theme_bw())
-
 ```
 
 
@@ -81,7 +78,7 @@ dbDisconnect(con)
 
 #### The problem 
 
-The problem I am solving here: Important information is stored inside the database, but still in an unusable format. In this post I show how to transform the data content from these columns.
+The problem I am solving here: Important information is stored inside the database, but the data is given in an unusable format. In this post I show how to transform the data content from these columns into a usable format.
 
 The "goal" column, which is column 34 in the "Match" table has a TEXT datatype: `r htmltools::HTML('{{< figure src="/img/post/footballb--diagram--matchtable-goalscolumn.png" title="" >}}')`
 
@@ -116,8 +113,9 @@ xmlout <- system(command = "tidy -q -i -xml ",
 `r paste(xmlout, collapse = '\n')`
 ```
 
-This is XML text. The XML fragment was scraped from some website, and the curator of the database did not fully finish the job of parsing the information out of this. There is very detailed information (team ids; goaltype,...) inside, which is tedious to extract. And if it was extraacted, it would make the database design even more complicated, because more tables would be needed.
+This is XML text. The XML fragment was scraped from some website, and the curator of the database did not fully finish the job of parsing the information out of this. There is very detailed information (team ids; goaltype,...) inside, which is tedious to extract. And if the data was fully extracted, the new data would make the database design even more complicated, because more tables would be needed.
 
+#### What does the XML text fragments contain?
 
 With regard to the XML fragment, I think the `<player1>` element means this guy scored, `<player2>` made the assist. 
 
@@ -141,58 +139,67 @@ Player %>%
         mutate(birthday = format.Date(birthday, "%Y-%m-%d"))
 ```
 
-These guys actually scored.
+These guys actually scored in that game.
 
 
-#### Extracting goals
+#### Extracting goals from XML text
 
 There are `r nrow(Match)` Matches in the database, and we have goal information for about 50% of them.
 
 The goals can be extracted with this code:
 
 ```{r xml2, echo=TRUE, eval=TRUE, warning=FALSE}
-xmlparse2 <- function(s, m){
-        unlist(s) %>%
-                read_xml() %>%
+xmlparse2 <- function(s){
+                read_xml(s) %>%
                 xml_find_all(".//player1") %>%
                 xml_text(trim = TRUE) %>%
-                data_frame( match_api_id = m , 
-                            goals_by = str_c(., collapse = "\t"))
+                str_c(collapse = "\t") %>% 
+                str_c("")
 }
 
-# Parse xml and store result in nested data structure
+# Parse xml and store result in tab-sep string
 Match_Player_Goal <- Match %>%
         select(match_api_id, goal) %>%
         filter(!is.na(goal)) %>%
-        filter(goal != "<goal />")  %>%
-        nest(-match_api_id) %>%
-        rowwise() %>%
-        do(goals_by = xmlparse2(.$data, .$match_api_id)) 
-
-
+        filter(goal != "<goal />") %>%
+        transmute(match_api_id = match_api_id,
+                  goals_by = map_chr(goal, xmlparse2))
 ```
 
 ```{r xml3, echo=TRUE, eval=TRUE, warning=FALSE}
-Match_Player_Goal.2 <- Match_Player_Goal %>% 
-        unnest(goals_by) %>%
-        select(-`.`) %>%
-        unique()
 
-# assume there are no more than 12 goals per match
-into <- map2_chr("Player", 1:12, str_c)
+# assume there are no more than 20 goals per match
+into <- map2_chr("Player", 1:20, str_c)
 
 # convert them into key-value table
-Match_Player_Goal.3 <- Match_Player_Goal.2 %>%
+Match_Player_Goal.2 <- Match_Player_Goal %>%
         separate(goals_by, into = into, "\t") %>%
         gather(k, player_api_id, -match_api_id) %>%
         filter(!is.na(player_api_id)) %>%
-        mutate(player_api_id = as.integer(player_api_id)) %>%
+        mutate(player_api_id =  as.integer(player_api_id)) %>%
         arrange(match_api_id, k)
 
 ```
 
+Add Player Names and Match names to this data frame:
+
+```{r}
+
+Match_Player_Goal.3 <- Player %>% 
+        select(player_api_id, player_name) %>% 
+        right_join(Match_Player_Goal.2, by = "player_api_id") %>% 
+        arrange(match_api_id, player_api_id) 
+        
+        
+
+```
+
+
 ```{r read, eval=FALSE}
-Match_Player_Goal.3 <- readRDS("data/Match_Player_Goal.3.RDS")
+mplg_rds <- "data/Match_Player_Goal.3.RDS"
+if(!file.exists(mplg_rds)){
+ Match_Player_Goal.3 <- readRDS(mplg_rds)        
+}
 
 ```
 
@@ -210,23 +217,22 @@ Which player has scored the most goals?
 ```{r season, eval=TRUE}
 #saveRDS(Match_Player_Goal.3, file="data/Match_Player_Goal.3.RDS")
 
-Match_Season <- Match %>% 
+Match_Season <- Match %>%
         select(match_api_id, season)
 
 Player_most_goals <- Match_Player_Goal.3 %>%
-        inner_join(Match_Season, by="match_api_id") %>%
-        group_by(player_api_id, season) %>%
+        left_join(Match_Season) %>% 
+        group_by(player_api_id, player_name, season) %>%
         summarise(goals = n()) %>%
         arrange(desc(goals)) %>% 
         ungroup()
 
 Player_most_goals_season <- Player_most_goals %>% 
-        left_join(Player, by = "player_api_id") %>% 
-        select(-id)
+        inner_join(Player )
 
 ```
 
-This table is not particularly insightful, it just shows that I've correctly parsed the XML-fragments in the datatable. We have `r nrow(Player_most_goals_season)` players which shot `r sum(Player_most_goals_season$goals)` goals in total, in `r length(unique(Player_most_goals_season$season))` seasons. 
+This table is not particularly insightful; it just shows that I've correctly parsed the XML-fragments in the datatable. We have `r nrow(Player_most_goals_season)` players which shot `r sum(Player_most_goals_season$goals)` goals in total, in `r length(unique(Player_most_goals_season$season))` seasons. 
 
 ```{r mostg}
 Player_most_goals_season %>% 

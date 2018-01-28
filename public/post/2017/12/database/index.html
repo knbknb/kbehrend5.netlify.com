@@ -128,7 +128,7 @@ ga('send', 'pageview');
 
   <article class="article">
     
-    <span class="article-duration">5 min read</span>
+    <span class="article-duration">6 min read</span>
     
 
     <h1 class="article-title">Soccer-Database: Extracting goal data from XML fragments</h1>
@@ -147,12 +147,16 @@ ga('send', 'pageview');
 <div id="dataset" class="section level4">
 <h4>Dataset</h4>
 <p>The dataset used here is the <a href="https://www.kaggle.com/hugomathien/soccer/">“European Soccer Database” - 25k+ matches, players &amp; teams attributes for European Professional Football</a> from Kaggle.com. This dataset is delivered as an Sqlite database. It contains 7 tables which have been populated by the original curator in 2014-2016. The data comes from many internet sources.</p>
-<p>For the sake of brevity, to see database internals, see the <a href="/post/2017/12/soccerdb-schema-diagrams/">previous blogpost</a>.</p>
+<p>For the sake of brevity, I cannot repeat this information here. To see database internals, see the <a href="/post/2017/12/soccerdb-schema-diagrams/">previous blogpost</a>.</p>
+<pre class="r"><code>library(lubridate) # strings to datetime
+library(tidyverse, warn.conflicts = FALSE)
+
+theme_set(theme_bw())</code></pre>
 <p>The database consists of 7 tables. We’ll read in all of them. The <code>Player</code> table contains basic data of ~10000 soccer players from the top leagues of 14 European countries. They are not strictly “European soccer players”, but players from all over the globe, competing in the top leagues of certain Western European countries.</p>
 </div>
 <div id="the-problem" class="section level4">
 <h4>The problem</h4>
-<p>The problem I am solving here: Important information is stored inside the database, but still in an unusable format. In this post I show how to transform the data content from these columns.</p>
+<p>The problem I am solving here: Important information is stored inside the database, but the data is given in an unusable format. In this post I show how to transform the data content from these columns into a usable format.</p>
 <p>The “goal” column, which is column 34 in the “Match” table has a TEXT datatype: 
 
 <div class="box" >
@@ -165,6 +169,27 @@ ga('send', 'pageview');
 </div>
 </p>
 <p>This in itself is not a problem. However, an entry in this table typically looks like this:</p>
+<pre class="r"><code>library(xml2)
+xmlparse &lt;- function(s){
+        read_xml(s) %&gt;% 
+                xml_find_all(&quot;.//player1&quot;)  %&gt;% 
+                xml_text()  %&gt;% 
+                str_c( collapse=&quot;\t&quot;)
+}
+
+
+# get 1 XML fragment for game 489042
+xmlfrag &lt;- Match %&gt;% 
+        select(match_api_id, goal)  %&gt;% 
+        filter(!is.na(goal)) %&gt;% 
+        filter(match_api_id == 489042) %&gt;%
+        select(goal) %&gt;% 
+        unique() %&gt;% 
+        rename(&quot;Goals for Game 489042:&quot; = &quot;goal&quot;) 
+
+xmlout &lt;- system(command = &quot;tidy -q -i -xml &quot;,
+        input = as.character(xmlfrag), 
+       intern = TRUE)</code></pre>
 <pre class="xml"><code>&lt;goal&gt;
   &lt;value&gt;
     &lt;comment&gt;n&lt;/comment&gt;
@@ -203,63 +228,98 @@ ga('send', 'pageview');
     &lt;goal_type&gt;n&lt;/goal_type&gt;
   &lt;/value&gt;
 &lt;/goal&gt;</code></pre>
-<p>This is XML text. The XML fragment was scraped from some website, and the curator of the database did not fully finish the job of parsing the information out of this. There is very detailed information (team ids; goaltype,…) inside, which is tedious to extract. And if it was extraacted, it would make the database design even more complicated, because more tables would be needed.</p>
+<p>This is XML text. The XML fragment was scraped from some website, and the curator of the database did not fully finish the job of parsing the information out of this. There is very detailed information (team ids; goaltype,…) inside, which is tedious to extract. And if the data was fully extracted, the new data would make the database design even more complicated, because more tables would be needed.</p>
+</div>
+<div id="what-does-the-xml-text-fragments-contain" class="section level4">
+<h4>What does the XML text fragments contain?</h4>
 <p>With regard to the XML fragment, I think the <code>&lt;player1&gt;</code> element means this guy scored, <code>&lt;player2&gt;</code> made the assist.</p>
 <p>These are the two <code>&lt;player1&gt;</code> we are interested in, with the following <code>player_api_id</code>s:</p>
+<pre class="r"><code>(scorer_api_ids &lt;- xmlfrag  %&gt;% 
+        as.character() %&gt;%
+        xmlparse() %&gt;%
+        str_split(pattern =  &quot;\t&quot;) %&gt;% 
+        unlist() %&gt;% 
+        as.numeric())</code></pre>
 <pre><code>## [1] 37799 24148</code></pre>
 <p>I’ve looked it up for game 489042, <a href="https://en.wikipedia.org/wiki/2008%E2%80%9309_Manchester_United_F.C._season">Manchester United vs Newcastle, first PL game in Season 2008/2009, on August 17, 2008</a>, the player IDs are correct.</p>
+<pre class="r"><code>Player %&gt;% 
+        filter(player_api_id %in% scorer_api_ids) %&gt;% 
+        select(player_api_id, player_name, birthday) %&gt;% 
+        mutate(birthday = format.Date(birthday, &quot;%Y-%m-%d&quot;))</code></pre>
 <pre><code>##   player_api_id     player_name   birthday
 ## 1         24148 Darren Fletcher 1984-02-01
 ## 2         37799 Obafemi Martins 1984-10-28</code></pre>
-<p>These guys actually scored.</p>
+<p>These guys actually scored in that game.</p>
 </div>
-<div id="extracting-goals" class="section level4">
-<h4>Extracting goals</h4>
+<div id="extracting-goals-from-xml-text" class="section level4">
+<h4>Extracting goals from XML text</h4>
 <p>There are 25979 Matches in the database, and we have goal information for about 50% of them.</p>
 <p>The goals can be extracted with this code:</p>
-<pre class="r"><code>xmlparse2 &lt;- function(s, m){
-        unlist(s) %&gt;%
-                read_xml() %&gt;%
+<pre class="r"><code>xmlparse2 &lt;- function(s){
+                read_xml(s) %&gt;%
                 xml_find_all(&quot;.//player1&quot;) %&gt;%
                 xml_text(trim = TRUE) %&gt;%
-                data_frame( match_api_id = m , 
-                            goals_by = str_c(., collapse = &quot;\t&quot;))
+                str_c(collapse = &quot;\t&quot;) %&gt;% 
+                str_c(&quot;&quot;)
 }
 
-# Parse xml and store result in nested data structure
+# Parse xml and store result in tab-sep string
 Match_Player_Goal &lt;- Match %&gt;%
         select(match_api_id, goal) %&gt;%
         filter(!is.na(goal)) %&gt;%
-        filter(goal != &quot;&lt;goal /&gt;&quot;)  %&gt;%
-        nest(-match_api_id) %&gt;%
-        rowwise() %&gt;%
-        do(goals_by = xmlparse2(.$data, .$match_api_id)) </code></pre>
-<pre class="r"><code>Match_Player_Goal.2 &lt;- Match_Player_Goal %&gt;% 
-        unnest(goals_by) %&gt;%
-        select(-`.`) %&gt;%
-        unique()
-
-# assume there are no more than 12 goals per match
-into &lt;- map2_chr(&quot;Player&quot;, 1:12, str_c)
+        filter(goal != &quot;&lt;goal /&gt;&quot;) %&gt;%
+        transmute(match_api_id = match_api_id,
+                  goals_by = map_chr(goal, xmlparse2))</code></pre>
+<pre class="r"><code># assume there are no more than 20 goals per match
+into &lt;- map2_chr(&quot;Player&quot;, 1:20, str_c)
 
 # convert them into key-value table
-Match_Player_Goal.3 &lt;- Match_Player_Goal.2 %&gt;%
+Match_Player_Goal.2 &lt;- Match_Player_Goal %&gt;%
         separate(goals_by, into = into, &quot;\t&quot;) %&gt;%
         gather(k, player_api_id, -match_api_id) %&gt;%
         filter(!is.na(player_api_id)) %&gt;%
-        mutate(player_api_id = as.integer(player_api_id)) %&gt;%
+        mutate(player_api_id =  as.integer(player_api_id)) %&gt;%
         arrange(match_api_id, k)</code></pre>
-<p>A few sample datasets from the new <code>Match_Player_Goal.3</code> dataframe, which has 39863 rows:</p>
-<pre><code>## # A tibble: 5 x 3
-##   match_api_id k       player_api_id
-##          &lt;int&gt; &lt;chr&gt;           &lt;int&gt;
-## 1       489042 Player1         37799
-## 2       489042 Player2         24148
-## 3       489043 Player1         26181
-## 4       489044 Player1         30853
-## 5       489045 Player1         23139</code></pre>
+<p>Add Player Names and Match names to this data frame:</p>
+<pre class="r"><code>Match_Player_Goal.3 &lt;- Player %&gt;% 
+        select(player_api_id, player_name) %&gt;% 
+        right_join(Match_Player_Goal.2, by = &quot;player_api_id&quot;) %&gt;% 
+        arrange(match_api_id, player_api_id) </code></pre>
+<pre class="r"><code>mplg_rds &lt;- &quot;data/Match_Player_Goal.3.RDS&quot;
+if(!file.exists(mplg_rds)){
+ Match_Player_Goal.3 &lt;- readRDS(mplg_rds)        
+}</code></pre>
+<p>A few sample datasets from the new <code>Match_Player_Goal.3</code> dataframe, which has 39872 rows:</p>
+<pre class="r"><code>head(Match_Player_Goal.3, 5)</code></pre>
+<pre><code>##   player_api_id     player_name match_api_id       k
+## 1         24148 Darren Fletcher       489042 Player2
+## 2         37799 Obafemi Martins       489042 Player1
+## 3         26181     Samir Nasri       489043 Player1
+## 4         30853 Fernando Torres       489044 Player1
+## 5         23139     Dean Ashton       489045 Player1</code></pre>
 <p>Which player has scored the most goals?</p>
-<p>This table is not particularly insightful, it just shows that I’ve correctly parsed the XML-fragments in the datatable. We have 10718 players which shot 39863 goals in total, in 8 seasons.</p>
+<pre class="r"><code>#saveRDS(Match_Player_Goal.3, file=&quot;data/Match_Player_Goal.3.RDS&quot;)
+
+Match_Season &lt;- Match %&gt;%
+        select(match_api_id, season)
+
+Player_most_goals &lt;- Match_Player_Goal.3 %&gt;%
+        left_join(Match_Season) %&gt;% 
+        group_by(player_api_id, player_name, season) %&gt;%
+        summarise(goals = n()) %&gt;%
+        arrange(desc(goals)) %&gt;% 
+        ungroup()
+
+Player_most_goals_season &lt;- Player_most_goals %&gt;% 
+        inner_join(Player )</code></pre>
+<p>This table is not particularly insightful; it just shows that I’ve correctly parsed the XML-fragments in the datatable. We have 10629 players which shot 39665 goals in total, in 8 seasons.</p>
+<pre class="r"><code>Player_most_goals_season %&gt;% 
+        select(-height, -weight, -player_fifa_api_id) %&gt;%
+        mutate(birthday = year(birthday)) %&gt;% 
+        select(season, player_name, goals, birthday, player_api_id) %&gt;% 
+        head(30) %&gt;% 
+        knitr::kable(caption=&quot;Goals per player and season&quot;, row.names=1, align=&quot;clccc&quot;) %&gt;% 
+        kableExtra::kable_styling(bootstrap_options = c(&quot;striped&quot;, &quot;hover&quot;))</code></pre>
 <table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption>
 <span id="tab:mostg">Table 1: </span>Goals per player and season
