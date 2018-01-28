@@ -1,0 +1,42 @@
+---
+title: 'Gallery: 3D stuff'
+author: Knut Behrends
+date: '2018-01-28'
+slug: 3D
+banner: img/gallery/thumb/rotated-cubes-50.png
+categories: [fun]
+tags: [creative, fun, 3D]
+---
+
+
+```{r echo=FALSE}
+htmltools::HTML('<div class="alert alert-info"><b>TEST</b>
+                There should be a 3D scene below
+
+                </div>')
+```
+
+#### A red cube oribiting two other cubes
+
+This 3D scene is from a Pluralsight course on [WebGL/three.js fundamentals](https://www.pluralsight.com/courses/webgl-threejs-fundamentals) by Alex Mackey. I have included this example here for testing purposes. I want to have a reference, or a simpler alternative, for verifying that [exporting 3D plots ](/post/2018/01/constructing-a-tiny-social-network-visualization-from-the-rstats-hashtag/) from the [R package $threejs$](https://bwlewis.github.io/rthreejs) works.
+
+```{javascript eval=FALSE}
+// Some javascript for debugging:
+example.scene.getObjectByName("box");
+
+```
+
+```{r echo=FALSE}
+htmltools::HTML('<div id="webgl-container"></div>
+<script type="text/javascript" src="/js/vendor/dat.gui.min.js"></script>   
+<script src="/js/vendor/three.min.js"></script>
+<script src="/js/threejs-knbknb/threejs-orbiting-cube.js"></script>')
+# //<script src="/js/threejs-knbknb/threejs-boilerplate.js"></script>
+```
+
+**Links to threejs stuff:**
+
+- [Github Repo](https://github.com/mrdoob/three.js/)
+- [Examples from Book: 3D Programming for Kids](https://pragprog.com/book/csjava/3d-game-programming-for-kids)
+- [Examples from another Book](http://www.smartjava.org/content/all-109-examples-my-book-threejs-threejs-version-r63)
+- [Three.js examples](http://stemkoski.github.io/Three.js/)

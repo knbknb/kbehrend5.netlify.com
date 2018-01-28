@@ -1,0 +1,56 @@
+---
+title: Testing stuff
+author: Knut Behrends
+date: '2018-01-27'
+slug: testing
+categories: []
+tags: []
+---
+```{r setup, echo=FALSE}
+library(knitr)
+opts_chunk$set(cache = TRUE, warning = FALSE, message = FALSE,
+               echo = TRUE, tidy = FALSE, height = 3, width = 5,
+               fig.width = 9)
+#options(digits = 3) #, tibble.print_min = 6
+
+```
+
+```{r echo=FALSE}
+library(ggvis)
+
+library(dplyr)
+
+htmltools::HTML('<div class="alert  alert-warning"><b>DOES ONLY WORK ON CHROME:</b></div>')
+``` 
+
+
+```{r}
+mtcars %>% ggvis(~disp, ~mpg) %>% layer_points()
+pressure %>%
+  ggvis(~temperature, ~pressure, stroke := "darkred") %>%
+  layer_lines(stroke := "orange", strokeDash := 5, strokeWidth := 5) %>%
+  layer_points(size := 100, shape := "circle", fill := "lightgreen") %>%
+  layer_smooths()
+```
+
+```{r}
+mtcars %>% group_by(cyl) %>% ggvis(~mpg, fill = ~factor(cyl)) %>% layer_densities()
+
+# tmp <- mtcars %>%   group_by(cyl, am) 
+# interaction(tmp$cyl, tmp$am)
+
+```
+
+```{r echo=FALSE}
+htmltools::HTML('<div class="alert  alert-danger"><b>DOES NOT WORK:</b></div>')
+``` 
+
+
+```{r eval=FALSE}
+mtcars %>%
+  group_by(am) %>%
+  ggvis(~mpg, ~hp) %>%
+  layer_points(fill = ~factor(am)) %>%
+  layer_smooths(stroke = ~factor(am))         
+```
+

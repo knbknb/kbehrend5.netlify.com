@@ -4,7 +4,7 @@ date: '2018-01-11'
 slug: Gallery
 output: 
     html_document:
-        keep_md: yes
+        keep_md: no
 ---
 
 ```{r setup, include=FALSE}
@@ -16,3 +16,14 @@ knitr::opts_chunk$set(echo = TRUE)
 #### Photography
 
 *Coming soon.*
+
+
+#### Imaging
+
+[3D Stuff](/gallery/3D): This is just a test page to see if my brower can render deal with cerrtain technologies. If you can see something on the page I'm linking to here, that's good.
+
+
+```{r}
+
+```
+

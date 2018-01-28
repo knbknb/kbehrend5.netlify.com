@@ -1,4 +1,4 @@
 blogdown::html_page:
   toc: false
-  fig_width: 9
+  fig_width: 3
   dev: "png"

@@ -22,13 +22,22 @@
     </item>
     
     <item>
+      <title>Testing stuff</title>
+      <link>/about/testing/</link>
+      <pubDate>Sat, 27 Jan 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/about/testing/</guid>
+      <description>var lodash = _.noConflict();  DOES ONLY WORK ON CHROME: mtcars %&amp;gt;% ggvis(~disp, ~mpg) %&amp;gt;% layer_points()    Renderer: SVG | Canvas   Download      var plot_id386320900_spec = { &#34;data&#34;: [ { &#34;name&#34;: &#34;.0&#34;, &#34;format&#34;: { &#34;type&#34;: &#34;csv&#34;, &#34;parse&#34;: { &#34;disp&#34;: &#34;number&#34;, &#34;mpg&#34;: &#34;number&#34; } }, &#34;values&#34;: &#34;\&#34;disp\&#34;,\&#34;mpg\&#34;\n160,21\n160,21\n108,22.8\n258,21.4\n360,18.7\n225,18.1\n360,14.3\n146.7,24.4\n140.8,22.8\n167.6,19.2\n167.6,17.8\n275.8,16.4\n275.8,17.3\n275.8,15.2\n472,10.4\n460,10.4\n440,14.7\n78.7,32.4\n75.7,30.4\n71.1,33.9\n120.1,21.5\n318,15.5\n304,15.2\n350,13.3\n400,19.2\n79,27.3\n120.3,26\n95.1,30.4\n351,15.8\n145,19.7\n301,15\n121,21.4&#34; }, { &#34;name&#34;: &#34;scale/x&#34;, &#34;format&#34;: { &#34;type&#34;: &#34;csv&#34;, &#34;parse&#34;: { &#34;</description>
+    </item>
+    
+    <item>
       <title>rmarkdown example with external js</title>
       <link>/about/2018-01-20--rmarkdown-with-eternal-js/</link>
       <pubDate>Sun, 21 Jan 2018 00:00:00 +0000</pubDate>
       
       <guid>/about/2018-01-20--rmarkdown-with-eternal-js/</guid>
-      <description>var lodash = _.noConflict();  Let’s create a very basic graph using the d3.js Javascript library. Include it in the body tag of the page fpr now:
-   // from https://www.dashingd3js.com/svg-paths-and-d3js //The data for our line var lineData = [ { &#34;x&#34;: 1, &#34;y&#34;: 5}, { &#34;x&#34;: 20, &#34;y&#34;: 20}, { &#34;x&#34;: 40, &#34;y&#34;: 10}, { &#34;x&#34;: 60, &#34;y&#34;: 40}, { &#34;x&#34;: 80, &#34;</description>
+      <description>Let’s create a very basic graph using the d3.js Javascript library. Include it in the body tag of the page fpr now:
+   // from https://www.dashingd3js.com/svg-paths-and-d3js //The data for our line var lineData = [ { &#34;x&#34;: 1, &#34;y&#34;: 5}, { &#34;x&#34;: 20, &#34;y&#34;: 20}, { &#34;x&#34;: 40, &#34;y&#34;: 10}, { &#34;x&#34;: 60, &#34;y&#34;: 40}, { &#34;x&#34;: 80, &#34;y&#34;: 5}, { &#34;x&#34;: 100, &#34;y&#34;: 60}]; //This is the accessor function we talked about above var lineFunction = d3.</description>
     </item>
     
     <item>

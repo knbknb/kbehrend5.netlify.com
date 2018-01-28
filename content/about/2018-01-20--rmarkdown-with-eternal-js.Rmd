@@ -45,27 +45,4 @@ var lineGraph = svgContainer.append("path")
 
 ```
 
-```{r echo=FALSE}
-htmltools::HTML('<div class="alert  alert-warning"><b>DOES ONLY WORK ON CHROME:</b></div>')
-``` 
-
-Package `ggviz` can create `d3.js` Diagrams out of the box:
-
-```{r eval=TRUE}
-library(ggvis)
-
-mtcars %>% ggvis(~disp, ~mpg) %>% layer_points()
-```
-
-
-```{r echo=FALSE}
-htmltools::HTML('<div class="alert  alert-danger"><b>DOES NOT WORK:</b></div>')
-``` 
-DT package renders a javascript datatable:
-
-
-```{r eval=FALSE}
-library(DT)
-datatable(mtcars) #does not work
-```
 

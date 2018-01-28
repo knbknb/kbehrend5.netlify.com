@@ -117,11 +117,6 @@ ga('send', 'pageview');
 
 
 
-<link href='//cdn.bootcss.com/highlight.js/9.11.0/styles/github.min.css' rel='stylesheet' type='text/css' />
-
-
-
-
 <main class="content" role="main">
 
   <article class="article">
@@ -132,19 +127,7 @@ ga('send', 'pageview');
     
 
     <div class="article-content">
-      <script src="/rmarkdown-libs/jquery/jquery.min.js"></script>
-<script src="/rmarkdown-libs/detect-resize/jquery.resize.js"></script>
-<link href="/rmarkdown-libs/jquery-ui/jquery-ui.min.css" rel="stylesheet" />
-<script src="/rmarkdown-libs/jquery-ui/jquery-ui.min.js"></script>
-<script src="/rmarkdown-libs/d3/d3.min.js"></script>
-<script src="/rmarkdown-libs/vega/vega.min.js"></script>
-<script src="/rmarkdown-libs/lodash/lodash.min.js"></script>
-<script>var lodash = _.noConflict();</script>
-<link href="/rmarkdown-libs/ggvis/css/ggvis.css" rel="stylesheet" />
-<script src="/rmarkdown-libs/ggvis/js/ggvis.js"></script>
-
-
-<p>Let’s create a very basic graph using the d3.js Javascript library. Include it in the body tag of the page fpr now:</p>
+      <p>Let’s create a very basic graph using the d3.js Javascript library. Include it in the body tag of the page fpr now:</p>
 
 <script src="https://d3js.org/d3.v3.js"></script>
 <div id="mypanel"></div>
@@ -175,157 +158,6 @@ var lineGraph = svgContainer.append("path")
                             .attr("fill", "none");
 
 </script>
-<div class="alert  alert-warning"><b>DOES ONLY WORK ON CHROME:</b></div>
-<p>Package <code>ggviz</code> can create <code>d3.js</code> Diagrams out of the box:</p>
-<pre class="r"><code>library(ggvis)
-
-mtcars %&gt;% ggvis(~disp, ~mpg) %&gt;% layer_points()</code></pre>
-<div id="plot_id300203903-container" class="ggvis-output-container">
-<div id="plot_id300203903" class="ggvis-output"></div>
-<div class="plot-gear-icon">
-<nav class="ggvis-control">
-<a class="ggvis-dropdown-toggle" title="Controls" onclick="return false;"></a>
-<ul class="ggvis-dropdown">
-<li>
-Renderer: 
-<a id="plot_id300203903_renderer_svg" class="ggvis-renderer-button" onclick="return false;" data-plot-id="plot_id300203903" data-renderer="svg">SVG</a>
- | 
-<a id="plot_id300203903_renderer_canvas" class="ggvis-renderer-button" onclick="return false;" data-plot-id="plot_id300203903" data-renderer="canvas">Canvas</a>
-</li>
-<li>
-<a id="plot_id300203903_download" class="ggvis-download" data-plot-id="plot_id300203903">Download</a>
-</li>
-</ul>
-</nav>
-</div>
-</div>
-<script type="text/javascript">
-var plot_id300203903_spec = {
-  "data": [
-    {
-      "name": ".0",
-      "format": {
-        "type": "csv",
-        "parse": {
-          "disp": "number",
-          "mpg": "number"
-        }
-      },
-      "values": "\"disp\",\"mpg\"\n160,21\n160,21\n108,22.8\n258,21.4\n360,18.7\n225,18.1\n360,14.3\n146.7,24.4\n140.8,22.8\n167.6,19.2\n167.6,17.8\n275.8,16.4\n275.8,17.3\n275.8,15.2\n472,10.4\n460,10.4\n440,14.7\n78.7,32.4\n75.7,30.4\n71.1,33.9\n120.1,21.5\n318,15.5\n304,15.2\n350,13.3\n400,19.2\n79,27.3\n120.3,26\n95.1,30.4\n351,15.8\n145,19.7\n301,15\n121,21.4"
-    },
-    {
-      "name": "scale/x",
-      "format": {
-        "type": "csv",
-        "parse": {
-          "domain": "number"
-        }
-      },
-      "values": "\"domain\"\n51.055\n492.045"
-    },
-    {
-      "name": "scale/y",
-      "format": {
-        "type": "csv",
-        "parse": {
-          "domain": "number"
-        }
-      },
-      "values": "\"domain\"\n9.225\n35.075"
-    }
-  ],
-  "scales": [
-    {
-      "name": "x",
-      "domain": {
-        "data": "scale/x",
-        "field": "data.domain"
-      },
-      "zero": false,
-      "nice": false,
-      "clamp": false,
-      "range": "width"
-    },
-    {
-      "name": "y",
-      "domain": {
-        "data": "scale/y",
-        "field": "data.domain"
-      },
-      "zero": false,
-      "nice": false,
-      "clamp": false,
-      "range": "height"
-    }
-  ],
-  "marks": [
-    {
-      "type": "symbol",
-      "properties": {
-        "update": {
-          "fill": {
-            "value": "#000000"
-          },
-          "size": {
-            "value": 50
-          },
-          "x": {
-            "scale": "x",
-            "field": "data.disp"
-          },
-          "y": {
-            "scale": "y",
-            "field": "data.mpg"
-          }
-        },
-        "ggvis": {
-          "data": {
-            "value": ".0"
-          }
-        }
-      },
-      "from": {
-        "data": ".0"
-      }
-    }
-  ],
-  "legends": [],
-  "axes": [
-    {
-      "type": "x",
-      "scale": "x",
-      "orient": "bottom",
-      "layer": "back",
-      "grid": true,
-      "title": "disp"
-    },
-    {
-      "type": "y",
-      "scale": "y",
-      "orient": "left",
-      "layer": "back",
-      "grid": true,
-      "title": "mpg"
-    }
-  ],
-  "padding": null,
-  "ggvis_opts": {
-    "keep_aspect": false,
-    "resizable": true,
-    "padding": {},
-    "duration": 250,
-    "renderer": "svg",
-    "hover_duration": 0,
-    "width": 864,
-    "height": 480
-  },
-  "handlers": null
-};
-ggvis.getPlot("plot_id300203903").parseSpec(plot_id300203903_spec);
-</script>
-<p><div class="alert  alert-danger"><b>DOES NOT WORK:</b></div> DT package renders a javascript datatable:</p>
-<pre class="r"><code>library(DT)
-datatable(mtcars) #does not work</code></pre>
 
     </div>
   </article>
@@ -352,22 +184,7 @@ datatable(mtcars) #does not work</code></pre>
   
 
 
-
-
-<script src="//cdn.bootcss.com/highlight.js/9.11.0/highlight.min.js"></script>
-
-
-
-<script src="//cdn.bootcss.com/highlight.js/9.11.0/languages/r.min.js"></script>
-<script src="//cdn.bootcss.com/highlight.js/9.11.0/languages/yaml.min.js"></script>
-<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
-
-
-
   
-<script src="/js/math-code.js"></script>
-<script async src="//cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
-
 
   
 

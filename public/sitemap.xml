@@ -18,6 +18,16 @@
   </url>
   
   <url>
+    <loc>/gallery/3d/</loc>
+    <lastmod>2018-01-28T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/about/testing/</loc>
+    <lastmod>2018-01-27T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>/post/2018/01/uk-nhs-nurses/</loc>
     <lastmod>2018-01-24T00:00:00+00:00</lastmod>
   </url>
@@ -172,6 +182,12 @@
   </url>
   
   <url>
+    <loc>/tags/3d/</loc>
+    <lastmod>2018-01-28T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
     <loc>/about/</loc>
     <lastmod>2017-11-26T00:00:00+00:00</lastmod>
   </url>
@@ -207,6 +223,12 @@
   </url>
   
   <url>
+    <loc>/tags/creative/</loc>
+    <lastmod>2018-01-28T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
     <loc>/categories/external/</loc>
     <lastmod>2017-11-26T00:00:00+00:00</lastmod>
     <priority>0</priority>
@@ -220,7 +242,13 @@
   
   <url>
     <loc>/tags/fun/</loc>
-    <lastmod>2018-01-07T00:00:00+00:00</lastmod>
+    <lastmod>2018-01-28T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>/categories/fun/</loc>
+    <lastmod>2018-01-28T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -364,7 +392,7 @@
   
   <url>
     <loc>/tags/</loc>
-    <lastmod>2018-01-21T00:00:00+00:00</lastmod>
+    <lastmod>2018-01-28T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
