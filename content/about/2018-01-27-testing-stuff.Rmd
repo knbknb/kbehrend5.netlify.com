@@ -54,3 +54,13 @@ mtcars %>%
   layer_smooths(stroke = ~factor(am))         
 ```
 
+```{r}
+library(wordcloud)
+dat <- sweep(USArrests,2,colMeans(USArrests))
+dat <- sweep(dat,2,sqrt(diag(var(dat))),"/")
+loc <- cmdscale(dist(dat))
+
+#plot with no overlap
+#textplot(loc[,1],loc[,2],rownames(loc))
+```
+

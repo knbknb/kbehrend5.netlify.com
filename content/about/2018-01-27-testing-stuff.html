@@ -641,3 +641,10 @@ ggvis.getPlot("plot_id726932110").parseSpec(plot_id726932110_spec);
   ggvis(~mpg, ~hp) %&gt;%
   layer_points(fill = ~factor(am)) %&gt;%
   layer_smooths(stroke = ~factor(am))         </code></pre>
+<pre class="r"><code>library(wordcloud)
+dat &lt;- sweep(USArrests,2,colMeans(USArrests))
+dat &lt;- sweep(dat,2,sqrt(diag(var(dat))),&quot;/&quot;)
+loc &lt;- cmdscale(dist(dat))
+
+#plot with no overlap
+#textplot(loc[,1],loc[,2],rownames(loc))</code></pre>

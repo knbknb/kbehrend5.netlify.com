@@ -18,8 +18,8 @@
       <pubDate>Sun, 28 Jan 2018 00:00:00 +0000</pubDate>
       
       <guid>/gallery/3d/</guid>
-      <description>TEST There should be a 3D scene below  A red cube oribiting two other cubes This 3D scene is from a Pluralsight course on WebGL/three.js fundamentals by Alex Mackey. I have included this example here for testing purposes. I want to have a reference, or a simpler alternative, for verifying that exporting 3D plots from the R package \(threejs\) works.
-// Some javascript for debugging: example.scene.getObjectByName(&amp;quot;box&amp;quot;);      Links to threejs stuff:</description>
+      <description>TEST There should be a 3D scene below  A red cube orbiting two other shapes This 3D scene is from a Pluralsight course on WebGL/three.js fundamentals by Alex Mackey. I have included this example here for testing purposes. I want to have a reference, or a simpler alternative, for verifying that exporting 3D plots from the R package \(threejs\) works.
+In the future I want to include more complex renderings.</description>
     </item>
     
   </channel>

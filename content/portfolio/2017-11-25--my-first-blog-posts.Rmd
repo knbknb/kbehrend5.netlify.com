@@ -13,5 +13,5 @@ url: '/about/'
 
 🐣 I've made a new attempt to start blogging in November 2017. 
 
-Still experimenting with the Hugo software.
+Still experimenting with the 'serverless' way of website management, and trying out many different ways of publishing and visualizing. 
 

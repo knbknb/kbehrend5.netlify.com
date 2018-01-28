@@ -16,17 +16,20 @@ htmltools::HTML('<div class="alert alert-info"><b>TEST</b>
                 </div>')
 ```
 
-#### A red cube oribiting two other cubes
+#### A red cube orbiting two other shapes
 
 This 3D scene is from a Pluralsight course on [WebGL/three.js fundamentals](https://www.pluralsight.com/courses/webgl-threejs-fundamentals) by Alex Mackey. I have included this example here for testing purposes. I want to have a reference, or a simpler alternative, for verifying that [exporting 3D plots ](/post/2018/01/constructing-a-tiny-social-network-visualization-from-the-rstats-hashtag/) from the [R package $threejs$](https://bwlewis.github.io/rthreejs) works.
 
-```{javascript eval=FALSE}
-// Some javascript for debugging:
-example.scene.getObjectByName("box");
+In the future  I want to include more complex renderings. In particular I want to experiment with light and camera settings, because of my other hobby, photography.
 
+```{javascript eval=FALSE}
+// Some javascript for debugging (try in devtools console):
+// demo.scene.getObjectByName("cube"); // or plane, cube2
 ```
 
 ```{r echo=FALSE}
+#//example.scene.getObjectByName("box");
+
 htmltools::HTML('<div id="webgl-container"></div>
 <script type="text/javascript" src="/js/vendor/dat.gui.min.js"></script>   
 <script src="/js/vendor/three.min.js"></script>
