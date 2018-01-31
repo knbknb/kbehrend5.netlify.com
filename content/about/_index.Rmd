@@ -37,8 +37,10 @@ Also, just by blogging I get to learn new programming languages. The basics of G
 
 I've started the blog with a few posts about soccer data, for several reasons. One of them is that this sport fascinates a lot of people. Everyone understands something about soccer. Maybe this content will attract some readers. However I want to write about any other subjects: books, travel, biology, maybe even personal finance.  I have a wide range of interests.
 
+Further strategy:
+
 - Writing up something quickly, performing an analysis quickly is more important than calculating something sophisticated.  
 - Towards my long term goal of establishing a reproducible-research workflow for myself, having a personal blog is a nice warm-up exercise, or routine.
 
 
-*The logo is from a medical paper I don't remember the authors of. Colorization subtly modified by me.*
+*The logo is from a medical paper I don't remember the authors of. Original colorization subtly modified by me.*
