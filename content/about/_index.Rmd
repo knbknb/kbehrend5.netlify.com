@@ -8,7 +8,7 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-![My Logo](/img/logo-knutbehrends-square-circle.72x72.png)
+![My Logo - besides being colorful, it signifies brain activity](/img/logo-knutbehrends-square-circle.72x72.png)
 
 #### Why this blog?
 
@@ -16,10 +16,29 @@ knitr::opts_chunk$set(echo = TRUE)
 This Blog will include musings about my personal interests:  geosciences, datascience(s), coding, photography, and more.
 
 - I've slowly realized that I need to practice writing clearly.
+- Writing is the creative activity I enjoy most. I've realized I can do it seriously, persistently, almost daily, enjoying moments of total immersion. It changes the way I read any text.
+- On my hard drive, many older documents and side projects wait for fine-tuning or completion. As long as they are not on the net, they are "dead".
+
+#### Purely personal  
+
+I've contributed stuff to a few forums and online exchanges, but in the long-term this is too widely dispersed to have any impact. Sometimes a series of postings really belongs together (to be useful to me), but is incoherently distributed over several sites. Often I cannot recover it myself, when I need it again. So I had to look something up that I once knew in greater detail, and wrote about. For example, my ~5 documents on RPubs.com (the default site where you can publish/upload to, from within the RStudio IDE), for instance, are also not really under version control. In fact they are not under anyone's control. 
+
+Here in this blog I can refine and rewrite my texts in-place, as often as I want.
+
+#### Continuous technical education
+
+There is still so much to learn about building and maintaining a web site. These days a modern web site is quite different from the database backed CMS web sites I used to build before, at work. 
+
+Modern web sites rely much more on third party compontents: Hosting provided by Github and Netlify, commenting-system by Disqus, tracker by Google, and the list could go on and on. What I don't use (yet): Photo galleries, user authentication systems, payment systems, third-party realtime data-APIs (e.g. a weather service, embeddings from other social networks.... 
+
+Also, I get to learn new programming languages. The basics of Go. Modern Javascript, its tools and libraries. The R ecosystem, for calculating things, but also for publishing. R bindings to other programming languages. Some domain-specific languages.  
+
+#### Wide range of content categories 
+
+I've started the blog with a few posts about soccer data, for several reasons. One of them is that this sport fascinates a lot of people. Everyone understands something about soccer. Maybe this content will attract some readers. However I want to write about any other subjects: books, travel, biology, maybe even personal finance.  I have a wide range of interests.
+
 - Writing up something quickly, performing an analysis quickly is more important than calculating something sophisticated.  
 - Towards my long term goal of establishing a reproducible-research workflow for myself, having a personal blog is a nice warm-up exercise, or routine.
-- On my hard drive I have many older documents and side projects. As long as they are not on the net, they are "dead".
-- I've contributed stuff to a few forums and online exchanges, but in the long-term this is too widely dispersed to have any impact. Sometimes a series of postings really belongs together (to be useful to me), but is incoherently distributed over several sites. Often I cannot recover it myself, when I need to look something up that I once knew in greater detail, and wrote about.
-- For example, my ~5 documents on RPubs.com (the default site where you can publish/upload to, from within the RStudio IDE), for instance, are also not really under version control. In fact they are not under anyone's control. It is nice to refine and rewrite my texts in-place, as often as I want. 
- 
- I've started the blog with a few posts about soccer data, for several reasons. One of them is that this subject fascinates a lot of people. Everyone understands something about soccer. Maybe this content will attract some readers. However I want to write about any other subjects: books, travel, biology, maybe even personal finance.  
+
+
+*The logo is from a medical paper I don't remember the authors of. Colorization subtly modified by me.*
