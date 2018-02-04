@@ -3,7 +3,6 @@ title: "{{ .Date }}-{{ replace .Name "-" " " | title }}"
 date: {{ .Date }}
 draft: true
 author: Knut Behrends
-date: {{ .Date }}
 slug: {{ .Date }}
 output:
   html_document:

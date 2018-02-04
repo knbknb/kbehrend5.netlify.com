@@ -12,7 +12,6 @@ You can contact me via the links shown in the sidebar, or by using the form belo
 Ask me anything (but not too diffcult) about 
 
 - working as a developer (focus on Geosciences), 
-- the Berlin area, or Germany, 
 - R programming, 
 - Typo3/LAMP development, 
 - Ubuntu tinkering,

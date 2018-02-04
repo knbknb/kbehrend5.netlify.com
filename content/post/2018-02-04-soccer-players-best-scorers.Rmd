@@ -1,0 +1,22 @@
+---
+title: 'Soccer Players: Best Scorers'
+author: Knut Behrends
+date: '2018-02-04'
+slug: soccer-scoring-best
+categories: []
+tags: []
+draft: yes
+output:
+  html_document:
+    toc: no
+    css: styles.css
+    fig_caption: yes
+    keep_md: no
+image: /static/img/football.png
+banner: img/post/thumb/football.png
+summary: ''
+keywords:
+  - Personal-Blog
+  - Fun
+  - rstats
+---
