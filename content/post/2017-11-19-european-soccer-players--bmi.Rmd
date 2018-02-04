@@ -263,7 +263,7 @@ players_large_top_detail <- w %>%
                  str_replace_all(long_description, "\\.\\s.*", ".")) %>%
   inner_join(players_large_top, by=c("name" = "player_name")) %>%
   mutate(Name =str_c("[", name, "](", url, ")")) %>% 
-  select(Name, BMI=bmi, description, long_description) %>% 
+  select(Name, BMI=bmi, description, long_description, name) %>% 
   arrange(desc(BMI))
 #players_large_top_detail
 
@@ -271,14 +271,14 @@ players_large_top_detail <- w %>%
 
 End result, see Table 1:
 
-```{r table1, echo=FALSE}
+```{r table1, eval=TRUE, echo=FALSE}
 capstr <- "Table 1: Soccer players over 190 size 
 ranked by Body Mass Index, BMI. 
 (source: Kaggle Dataset, Wikipedia via Google Knowledge Graph API)"
-knitr::kable(players_large_top_detail, 
+knitr::kable(players_large_top_detail[,1:4], 
              caption = capstr, col.names = c("Player Name", "BMI", "Short Desc", "Long Description"),
              table.attr = "id=\"mytable\"",
-             row.names = FALSE,  format = "markdown" )
+             row.names = FALSE)
 
 ```
 
@@ -288,7 +288,7 @@ wiese_bmi <- players_large %>%
         filter(player_name == "Tim Wiese") %>%  select(bmi)
 ```
 
-Surprisingly, German goalie [Tim Wiese](https://en.wikipedia.org/wiki/Tim_Wiese) has the highest BMI. His career in the Bundesliga has ended, but he made some headlines in 2014-2016 because he did bodybuilding, an tried -temporarily- to pursue a career in Wrestling. See German Wikipedia.
+Surprisingly, German goalie [Tim Wiese](https://en.wikipedia.org/wiki/Tim_Wiese) has the highest BMI. His career in the Bundesliga has ended, but he made some headlines in 2014-2016 because he did bodybuilding, and tried -temporarily- to pursue a career in Wrestling. See [German Wikipedia](https://de.wikipedia.org/wiki/Tim_Wiese).
 
 His BMI is `r sprintf("%.1f", wiese_bmi)` m/kg². How large an outlier is this? Let's plot some histograms:
 
@@ -296,12 +296,14 @@ His BMI is `r sprintf("%.1f", wiese_bmi)` m/kg². How large an outlier is this? 
 
 ```{r histogram_all}
 vlines <- map(players_large_top_detail[, "BMI"], c) %>%  unlist()
-Player %>%
-  ggplot(aes(bmi, fill=size)) +
-  geom_vline(xintercept = vlines, linetype="dotted") +
-  geom_histogram(aes(y = ..density..), alpha=0.5, bins = diff_bmi *3) +
-  decorate(np)
 
+Player %>%
+  ggplot() +
+  geom_vline(xintercept = vlines, linetype="dotted") +
+  geom_histogram(aes(bmi, y = ..density.., fill=size), alpha=0.5, bins = diff_bmi *3) +
+  decorate(np) +
+  geom_text(aes(x = BMI, y = -0.022, label = name), data = players_large_top_detail[1:4,], hjust = 1, vjust = 1, angle = 270) 
+  
 ```
 
 
@@ -319,8 +321,8 @@ Player %>%
   geom_density(alpha = 0.5) +
   stat_function(
     fun = function(x) dnorm(x, 
-                            dnorm_fit$estimate["mean"], 
-                            dnorm_fit$estimate["sd"]),
+                dnorm_fit$estimate["mean"], 
+                dnorm_fit$estimate["sd"]),
     color = "red",
     size = 0.5
   ) +
@@ -347,6 +349,6 @@ So we see that the BMI of soccer players in the top European Leagues fits pretty
 
 ### Appendix 
 
-This post is also available - maybe in a better, more readable version at [my Github Repo for this site](https://github.com/knbknb/kbehrends.netlify.com/blob/master/content/post/.
+This post is also available - maybe in a better, more readable version at [my Github Repo for this site](https://github.com/knbknb/kbehrends.netlify.com/blob/master/content/post/).
 
 My blog: <a href="https://kbehrends.netlify.com">https://kbehrends.netlify.com</a>.

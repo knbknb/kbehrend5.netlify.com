@@ -12,7 +12,7 @@ categories:
   - blog-post
 tags:
   - fun
-url: /post/2017/12/soccerdb-schema-diagrams/
+url: /post/2018/02/soccerdb-schema-diagrams/
 summary: none
 keywords: ["Personal-Blog"]
 usePhotoswipe: false
