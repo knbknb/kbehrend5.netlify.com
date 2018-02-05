@@ -14,9 +14,49 @@ output:
     keep_md: no
 image: /static/img/football.png
 banner: img/post/thumb/football.png
-summary: ''
-keywords:
-  - Personal-Blog
-  - Fun
-  - rstats
+summary: 'part 3 of a series on Bayesian Analysis'
+keywords:  ["Personal-Blog", "Fun", "rstats", "Sports-Data", "Soccer", "XML"]   
 ---
+
+```{r setup, include=FALSE}
+library(knitr)
+opts_chunk$set(cache = TRUE, warning = FALSE, message = FALSE, 
+               echo = TRUE, tidy = FALSE, width = 7)
+options(digits = 3, tibble.print_min = 6)
+options(knitr.table.format = "html") 
+```
+
+#### Scoring averages of soccer players
+
+This is part 3 of a 3-part series about Statistical Analysis of Soccer data. 
+
+- [Part 1](/post/2017/12/soccerdb-schema-diagrams/) shows the database diagram of the Sqlite database mentioned below.
+- [Part 2](/post/2017/12/database/) describes how to preprocess some text data that was stored in an cryptic format inside the database
+- Part 3  (this page)  describes some statistical analysis of some aspect of this dataset.
+
+#### Dataset 
+
+
+The dataset used here is the ["European Soccer Database" - 25k+ matches, players & teams attributes for European Professional Football](https://www.kaggle.com/hugomathien/soccer/) from Kaggle.com. This dataset is delivered as an Sqlite database. It contains 7 tables which have been populated by the original curator in 2014-2016.
+The data comes from many internet sources.
+
+```{r DBI, message=FALSE, warning=FALSE, echo=FALSE}
+
+library(DBI)
+con <- dbConnect(odbc::odbc(), "well-sqlite-footballdb")
+
+```
+For the sake of brevity, I cannot repeat this information here. To see database internals, see the [previous blogpost](/post/2017/12/soccerdb-schema-diagrams/). 
+
+```{r }
+library(lubridate) # strings to datetime
+library(tidyverse, warn.conflicts = FALSE)
+
+theme_set(theme_bw())
+```
+
+
+```{r}
+
+```
+

@@ -13,7 +13,7 @@ knitr::opts_chunk$set(echo = TRUE)
 #### Why this blog?
 
 
-This Blog will include musings about my personal interests:  geosciences, datascience(s), coding, photography, and more.
+This Blog will include musings about my personal interests:  geosciences, datasciences, coding, photography, and more.
 
 - I've slowly realized that I need to practice writing clearly.
 - Writing is the creative activity I enjoy most. I've realized I can do it seriously, persistently, almost daily, enjoying moments of fun and total immersion. It changes the way I read any text.
