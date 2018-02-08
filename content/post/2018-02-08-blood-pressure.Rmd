@@ -1,0 +1,131 @@
+---
+title: Blood Pressure in the US population
+author: Knut Behrends
+date: '2018-02-08'
+slug: bloodpressure-nhanes
+categories: [health, rstats]
+tags: [rstats]
+draft: yes
+output:
+  html_document:
+    toc: no
+    css: styles.css
+    fig_caption: yes
+    keep_md: no
+image: /static/img/football.png
+banner: img/post/thumb/football.png
+summary: 'Blood Pressure in Americans, two different datasets.'
+keywords:
+  - Personal-Blog
+  - Fun
+  - rstats
+  - blood-pressure
+  - Health
+  - Open-data
+---
+
+
+```{r setup, include=FALSE}
+library(knitr)
+opts_chunk$set(cache = TRUE, warning = FALSE, message = FALSE, 
+               echo = FALSE, tidy = FALSE, width = 7)
+options(digits = 3, tibble.print_min = 6)
+options(knitr.table.format = "html") 
+```
+
+#### Blood Pressure as a function of age and body weight
+
+
+```{r abstr, echo=FALSE}
+htmltools::HTML('<div class="alert alert-info"><b>Very basic analysis of two health datasets about the  General US Population in 2010.</b>
+                The data were gathered independently. One of them is a tiny teaching dataset, the other is a large study. Both datasets show that blood pressure rises about 5 mm Hg per decade. </div>')
+```
+
+Conversations with friends and colleagues  kept me  thinking about blood pressure lately.
+Then I've remembered that weekend project from late 2017. Back then I had analysed two datasets:   one available on the internet, the other available as R package NHANES on CRAN. 
+My motivation in writing this up was half learning *ggplot*, half gaining insights from data by moving from a small teaching dataset to a messy, much larger dataset from a real medical study.
+
+Load the necessary packages. Nothing fancy here.
+
+```{r pkgs}
+library(readxl)
+library(tidyverse)
+theme_set(theme_bw())
+```
+
+Download **dataset 1**: A tiny 11x4 table called `Systolic Blood Pressure`. It comes from [a book publisher's website.](http://college.cengage.com/mathematics/brase/understandable_statistics/7e/students/datasets/mlr/frames/frame.html). Maybe it is a teaching dataset, perhaps supplementary material for a college textbook.
+
+The [markdown version  of this blog post](https://github.com/knbknb/kbehrends.netlify.com/tree/master/content) contains the necessary instructions on how to download and import the data.
+
+```{r IOstuff, echo=FALSE}
+xlsurl <- "http://college.cengage.com/mathematics/brase/understandable_statistics/7e/students/datasets/mlr/excel/mlr02.xls"
+xls <- basename(xlsurl)
+folder <- "data_private"
+destfile <- here::here(file.path(folder, xls))
+destfile2 <- here::here(file.path(folder, "mlr02.csv"))
+
+if (!file.exists(destfile)) {
+  download.file(xlsurl, destfile = destfile, method = "curl")
+  xlstmp <- read_xls(destfile)
+  # col1 = systolic blood pressure
+  # col2 = age in years
+  # col3 = weight in pounds
+  # TODO: document how converted to csv
+}
+# read in a properly formatted csv file
+bloodpressure <- read_csv(destfile2, col_names = TRUE)
+# Convert bodyweights from pounts to kilograms:
+bloodpressure <- bloodpressure %>%
+  mutate(weight = weight_pounds * 0.453592)
+
+```
+
+The dataset is tiny:
+
+```{r ds1, echo=FALSE}
+glimpse(bloodpressure)
+```
+
+```{r echo=FALSE, eval=FALSE}
+# The summary takes up more room than the data itself.
+summary(bloodpressure)
+```
+
+We can plot it in its entirety. I also fit a simple linear regression mode to the data. Blood Pressure as a function of a person's age and body weight.
+```{r tiny1, echo=FALSE}
+bloodpressure_model <- lm(blood_pressure ~ age + weight, data = bloodpressure)
+
+# Print bloodpressure_model and call summary()
+bloodpressure_model
+summary(bloodpressure_model)
+
+# predict blood pressure using bloodpressure_model :prediction
+bloodpressure$prediction <- predict(bloodpressure_model, data = bloodpressure)
+
+ggplot(bloodpressure, aes(prediction, blood_pressure)) +
+  geom_point() +
+  geom_abline(color = "blue")
+
+```
+
+Adding the predictions from the model:
+
+```{r tiny2, echo=FALSE, fig.cap="Predicted values are shown in red."}
+
+ggplot(bloodpressure, aes(age, blood_pressure)) +
+  geom_point() +
+  geom_smooth(method="lm") +
+  geom_point(aes(age, prediction), color = "red", size = 1)
+
+```
+
+
+```{r}
+htmltools::HTML('<div class="alert alert-info"><b>What I learned from doing this</b>
+<ul>
+<li> Gaining insights by switching from a tiny to a big dataset.
+<li> New tricks with ggplot2
+<li> Splitting continuous data into categories / age classes was really helpful here
+    </ul>
+</div>')
+```
