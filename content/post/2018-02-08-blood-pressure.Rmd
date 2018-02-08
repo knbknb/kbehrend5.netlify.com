@@ -5,7 +5,7 @@ date: '2018-02-08'
 slug: bloodpressure-nhanes
 categories: [health, rstats]
 tags: [rstats]
-draft: yes
+draft: no
 output:
   html_document:
     toc: no
@@ -28,7 +28,7 @@ keywords:
 ```{r setup, include=FALSE}
 library(knitr)
 opts_chunk$set(cache = TRUE, warning = FALSE, message = FALSE, 
-               echo = FALSE, tidy = FALSE, width = 7)
+               echo = FALSE, tidy = FALSE, width = 7, fig.width=7)
 options(digits = 3, tibble.print_min = 6)
 options(knitr.table.format = "html") 
 ```
@@ -37,8 +37,8 @@ options(knitr.table.format = "html")
 
 
 ```{r abstr, echo=FALSE}
-htmltools::HTML('<div class="alert alert-info"><b>Very basic analysis of two health datasets about the  General US Population in 2010.</b>
-                The data were gathered independently. One of them is a tiny teaching dataset, the other is a large study. Both datasets show that blood pressure rises about 5 mm Hg per decade. </div>')
+htmltools::HTML('<div class="alert alert-info"><b>Very basic analysis of two health datasets from ~ 2010, about the  general US Population.</b>
+                The data were gathered independently. One of them is a tiny teaching dataset, the other is a large study. Both datasets show that systolic blood pressure rises about 5-10 mm Hg per decade. </div>')
 ```
 
 Conversations with friends and colleagues  kept me  thinking about blood pressure lately.
@@ -126,6 +126,198 @@ The  model predicts that for every year of one's life the systolic pressure incr
 
 Let's try a larger dataset!
 
+#### NHANES dataset
+
+
+The NHANES dataset is available as an R package on CRAN. It contains data from the US **N**ational **H**ealth **a**nd **N**utrition **E**xamination **S**tudy. I have used package version 2.1.0, specifically "NHANES 2009-2012 with adjusted weighting". This dataset contains some corrections for undersampling racial minorities. Uncorrected data is also available in the NHANESraw package.
+
+See [http://www.cdc.gov/nchs/nhanes.htm](http://www.cdc.gov/nchs/nhanes.htm) for details.
+
+```{r}
+library(NHANES) # Body Shape and related measurements from 10000 US citizens
+data(NHANES)
+
+```
+
+The dataset is big, very big. It contains `r nrow(NHANES)` rows and `r ncol(NHANES)` columns, so even listing all of them here would waste too much screen space. I'll concentrate on the relevant columns here.
+
+#### Column names containing "Age":
+
+```{r}
+
+ages <- names(NHANES) %>% str_which("Age")
+names(NHANES)[ages]
+
+```
+#### Column names containing "Weight":
+```{r}
+weights <- names(NHANES) %>% 
+        str_detect(pattern=regex("weight", ignore_case = TRUE))
+names(NHANES)[weights]
+
+```
+
+```{r wghtm, eval=FALSE}
+# Column names containing "Weight":
+bmi <- names(NHANES) %>% str_which(regex("BMI", ignore_case = TRUE))
+names(NHANES)[bmi]
+
+```
+
+#### Column names containing the prefix "BP" (Blood Pressure):
+
+```{r press}
+pressures <- names(NHANES) %>% str_which("BP")
+names(NHANES)[pressures]
+
+```
+
+ Create a smaller NHANES dataset, `bloodpressure2`, containing relevant columns only: 
+
+```{r echo=TRUE}
+bloodpressure2 <- NHANES %>%
+    select(BPSys1, Age, Weight, Gender, BMI) %>%
+    filter(!is.na(BPSys1))
+
+```
+
+The dataset contains `r nrow(bloodpressure2)` rows (People) and `r ncol(bloodpressure2)` columns.
+
+Summary of Blood Pressure Data:
+
+```{r}
+summary(bloodpressure2)
+```
+
+
+#### Blood Pressure by Gender:
+
+```{r}
+
+bloodpressure2 %>%
+        ggplot(aes(BPSys1, color=Gender, fill=Gender)) +
+        geom_histogram(binwidth = 1) +
+        xlab("Systolic Blood Pressure [mm Hg]") + ylab("") +
+        ggtitle("", subtitle = "Number of People") +
+        facet_grid(. ~ Gender ) +
+        theme(legend.position = "none")
+
+```
+
+
+Focus on the 19-year old Americans. How healthy is this subgroup? There are lots of participants at this age, and they are grown-ups. We can assume they themselves are  in charge of their own bodies.
+
+Tabulate the 19-year-olds: 
+
+```{r table1}
+bloodpressure2 %>%
+        filter(Age >= 19, Age < 20) %>%
+        select(Gender) %>%
+        table( )
+
+```
+
+For each year of age, there are about 100 participants in the study.
+
+```{r plot3a, eval=FALSE}
+Median values:
+
+(medians <- bloodpressure2 %>%
+        select(BMI, Gender) %>%
+                rename("19-year-olds" = Gender) %>%
+        group_by(`19-year-olds`) %>%
+        summarise(median_BMI = median(BMI, na.rm = TRUE)) )
+#By the way, 19-year-old Americans are quite fat.
+
+```
+
+
+```{r plot3BMI, eval=FALSE }
+
+medians <- medians %>%
+        select(median_BMI) %>%
+        unlist()
+
+ggplot(bloodpressure2, aes(BMI, fill=Gender)) +
+        geom_histogram(alpha=0.3, binwidth=1, position="identity") +
+        geom_vline(xintercept = medians, alpha = 0.2 )
+
+```
+
+#### Blood Pressure by Age Group
+
+After splitting the dataset by decade, we get this:
+
+```{r plot4, fig.height=12}
+bloodpressure2 %>%
+        ggplot(aes(BPSys1)) +
+        geom_histogram(binwidth = 1) +
+        facet_wrap(~cut_interval(x = Age, length = 10), ncol=1) +
+        ggtitle("Blood Pressure by decade", subtitle="Number of People") +
+        xlab("Systolic Blood Pressure [mm Hg]")
+
+```
+
+
+Fit a linear regression model to the entire `bloodpressure2` subset, just as above for the tiny dataset. 
+
+```{r}
+# Fit the model: bloodpressure_model
+bloodpressure2_model <- lm(BPSys1 ~ Age, data = bloodpressure2)
+
+# predict blood pressure using bloodpressure_model :prediction
+bloodpressure2$prediction <- predict(bloodpressure2_model, data = bloodpressure2)
+
+```
+```{r}
+summary(bloodpressure2_model)
+
+```
+
+```{r fig.cap="Small gaps are created on purpose to avoid overplotting."}
+ggplot(bloodpressure2, aes(prediction, BPSys1)) +
+  geom_jitter(size=0.1, alpha=0.4) +
+  geom_abline(color = "blue") +
+        xlim(c(90, 150)) +
+        ylim(c(90, 150)) +
+        ggtitle("Predicted vs Actual Blood Pressure",
+                subtitle = "mm Hg")
+
+
+```
+
+```{r}
+###############################################
+
+# Age-related plots
+ggplot(bloodpressure2, aes(Age, BPSys1)) +
+  geom_jitter(size=0.1, alpha=0.4) +
+  geom_point(aes(Age, prediction), color = "red", size = 0.2)
+
+```
+
+#### Boxplots of 10-year age groups
+
+```{r plot8}
+ggplot(bloodpressure2, aes(cut_interval(x = Age, length = 10), BPSys1)) +
+  #geom_boxplot(varwidth = TRUE,  outlier.shape = NA) +
+  geom_violin(alpha = 0.1, aes(color = Gender), size=0.5) +
+  theme(legend.position = "none") +
+  stat_summary(fun.data = "mean_cl_normal",
+               geom = "crossbar",
+               width = 0.2,
+               col = "red") +
+  scale_y_continuous(limits = c(50, 250), breaks = seq(50, 250, 25), minor_breaks = seq(50, 250, 5)) +
+        theme(axis.text.x = element_text(angle=60)) +
+  xlab("Age group [years]") +
+  ylab("Blood Pressure [mmHg]") +
+  ggtitle("Blood Pressure of 8200 Americans", subtitle = "Systolic Blood Pressure [mmHg] by age group. NHANES Dataset, 2009-2012.") +
+  facet_grid(. ~ Gender )
+
+
+```
+
+#### To be continued.
 
 ```{r}
 htmltools::HTML('<div class="alert alert-info"><b>What I learned from doing this</b>

@@ -5,7 +5,7 @@ date: '2018-02-08'
 slug: bloodpressure-nhanes
 categories: [health, rstats]
 tags: [rstats]
-draft: yes
+draft: no
 output:
   html_document:
     toc: no
@@ -28,8 +28,8 @@ keywords:
 
 <div id="blood-pressure-as-a-function-of-age-and-body-weight" class="section level4">
 <h4>Blood Pressure as a function of age and body weight</h4>
-<div class="alert alert-info"><b>Very basic analysis of two health datasets about the  General US Population in 2010.</b>
-                The data were gathered independently. One of them is a tiny teaching dataset, the other is a large study. Both datasets show that blood pressure rises about 5 mm Hg per decade. </div>
+<div class="alert alert-info"><b>Very basic analysis of two health datasets from ~ 2010, about the  general US Population.</b>
+                The data were gathered independently. One of them is a tiny teaching dataset, the other is a large study. Both datasets show that systolic blood pressure rises about 5-10 mm Hg per decade. </div>
 <p>Conversations with friends and colleagues kept me thinking about blood pressure lately. Then I’ve remembered that weekend project from late 2017. Back then I had analysed two datasets: one available on the internet, the other available as R package NHANES on CRAN. My motivation in writing this up was half learning <em>ggplot</em>, half gaining insights from data by moving from a small teaching dataset to a messy, much larger dataset from a real medical study.</p>
 <p>Load the necessary packages. Nothing fancy here.</p>
 <p>Download <strong>dataset 1</strong>: A tiny 11x4 table called <code>Systolic Blood Pressure</code>. It comes from <a href="http://college.cengage.com/mathematics/brase/understandable_statistics/7e/students/datasets/mlr/frames/frame.html">a book publisher’s website.</a>. Maybe it is a teaching dataset, perhaps supplementary material for a college textbook.</p>
@@ -44,7 +44,7 @@ keywords:
 <p>We can plot it in its entirety. I also fit a simple linear regression mode to the data. Blood Pressure as a function of a person’s age and body weight.</p>
 <p>Adding the predictions from the model:</p>
 <div class="figure"><span id="fig:tiny2"></span>
-<img src="/post/2018-02-08-blood-pressure_files/figure-html/tiny2-1.png" alt=" Predicted values are shown in red." width="480" />
+<img src="/post/2018-02-08-blood-pressure_files/figure-html/tiny2-1.png" alt=" Predicted values are shown in red." width="672" />
 <p class="caption">
 Figure 1:  Predicted values are shown in red.
 </p>
@@ -71,6 +71,89 @@ Figure 1:  Predicted values are shown in red.
 ## F-statistic:  169 on 2 and 8 DF,  p-value: 2.87e-07</code></pre>
 <p>The model predicts that for every year of one’s life the systolic pressure increases 0.861 mm Hg/year. That’s almost <strong>10 mm Hg per decade</strong>! Quite a lot. Is this realistic? Or is this a fictitious dataset? Is the trend correct, but the value is not? In other words, is the sample nonrepresentative of the population? Is there a confounding factor? We haven’t looked at body weight yet!</p>
 <p>Let’s try a larger dataset!</p>
+</div>
+<div id="nhanes-dataset" class="section level4">
+<h4>NHANES dataset</h4>
+<p>The NHANES dataset is available as an R package on CRAN. It contains data from the US <strong>N</strong>ational <strong>H</strong>ealth <strong>a</strong>nd <strong>N</strong>utrition <strong>E</strong>xamination <strong>S</strong>tudy. I have used package version 2.1.0, specifically “NHANES 2009-2012 with adjusted weighting”. This dataset contains some corrections for undersampling racial minorities. Uncorrected data is also available in the NHANESraw package.</p>
+<p>See <a href="http://www.cdc.gov/nchs/nhanes.htm" class="uri">http://www.cdc.gov/nchs/nhanes.htm</a> for details.</p>
+<p>The dataset is big, very big. It contains 10000 rows and 76 columns, so even listing all of them here would waste too much screen space. I’ll concentrate on the relevant columns here.</p>
+</div>
+<div id="column-names-containing-age" class="section level4">
+<h4>Column names containing “Age”:</h4>
+<pre><code>## [1] &quot;Age&quot;           &quot;AgeDecade&quot;     &quot;AgeMonths&quot;     &quot;DiabetesAge&quot;  
+## [5] &quot;Age1stBaby&quot;    &quot;SmokeAge&quot;      &quot;AgeFirstMarij&quot; &quot;AgeRegMarij&quot;  
+## [9] &quot;SexAge&quot;</code></pre>
+</div>
+<div id="column-names-containing-weight" class="section level4">
+<h4>Column names containing “Weight”:</h4>
+<pre><code>## [1] &quot;Weight&quot;</code></pre>
+</div>
+<div id="column-names-containing-the-prefix-bp-blood-pressure" class="section level4">
+<h4>Column names containing the prefix “BP” (Blood Pressure):</h4>
+<pre><code>## [1] &quot;BPSysAve&quot; &quot;BPDiaAve&quot; &quot;BPSys1&quot;   &quot;BPDia1&quot;   &quot;BPSys2&quot;   &quot;BPDia2&quot;  
+## [7] &quot;BPSys3&quot;   &quot;BPDia3&quot;</code></pre>
+<p>Create a smaller NHANES dataset, <code>bloodpressure2</code>, containing relevant columns only:</p>
+<pre class="r"><code>bloodpressure2 &lt;- NHANES %&gt;%
+    select(BPSys1, Age, Weight, Gender, BMI) %&gt;%
+    filter(!is.na(BPSys1))</code></pre>
+<p>The dataset contains 8237 rows (People) and 5 columns.</p>
+<p>Summary of Blood Pressure Data:</p>
+<pre><code>##      BPSys1         Age         Weight         Gender          BMI      
+##  Min.   : 72   Min.   : 8   Min.   : 17.1   female:4116   Min.   :12.9  
+##  1st Qu.:106   1st Qu.:24   1st Qu.: 62.2   male  :4121   1st Qu.:22.7  
+##  Median :116   Median :40   Median : 76.0                 Median :26.6  
+##  Mean   :119   Mean   :41   Mean   : 77.7                 Mean   :27.6  
+##  3rd Qu.:128   3rd Qu.:56   3rd Qu.: 91.0                 3rd Qu.:31.3  
+##  Max.   :232   Max.   :80   Max.   :223.0                 Max.   :80.6  
+##                             NA&#39;s   :55                    NA&#39;s   :61</code></pre>
+</div>
+<div id="blood-pressure-by-gender" class="section level4">
+<h4>Blood Pressure by Gender:</h4>
+<p><img src="/post/2018-02-08-blood-pressure_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<p>Focus on the 19-year old Americans. How healthy is this subgroup? There are lots of participants at this age, and they are grown-ups. We can assume they themselves are in charge of their own bodies.</p>
+<p>Tabulate the 19-year-olds:</p>
+<pre><code>## .
+## female   male 
+##     55     70</code></pre>
+<p>For each year of age, there are about 100 participants in the study.</p>
+</div>
+<div id="blood-pressure-by-age-group" class="section level4">
+<h4>Blood Pressure by Age Group</h4>
+<p>After splitting the dataset by decade, we get this:</p>
+<p><img src="/post/2018-02-08-blood-pressure_files/figure-html/plot4-1.png" width="672" /></p>
+<p>Fit a linear regression model to the entire <code>bloodpressure2</code> subset, just as above for the tiny dataset.</p>
+<pre><code>## 
+## Call:
+## lm(formula = BPSys1 ~ Age, data = bloodpressure2)
+## 
+## Residuals:
+##    Min     1Q Median     3Q    Max 
+## -63.26  -9.26  -0.95   8.12 106.43 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept) 100.1802     0.3699     271   &lt;2e-16 ***
+## Age           0.4616     0.0081      57   &lt;2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 14.8 on 8235 degrees of freedom
+## Multiple R-squared:  0.283,  Adjusted R-squared:  0.283 
+## F-statistic: 3.25e+03 on 1 and 8235 DF,  p-value: &lt;2e-16</code></pre>
+<div class="figure"><span id="fig:unnamed-chunk-11"></span>
+<img src="/post/2018-02-08-blood-pressure_files/figure-html/unnamed-chunk-11-1.png" alt="Small gaps are created on purpose to avoid overplotting." width="672" />
+<p class="caption">
+Figure 2: Small gaps are created on purpose to avoid overplotting.
+</p>
+</div>
+<p><img src="/post/2018-02-08-blood-pressure_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
+</div>
+<div id="boxplots-of-10-year-age-groups" class="section level4">
+<h4>Boxplots of 10-year age groups</h4>
+<p><img src="/post/2018-02-08-blood-pressure_files/figure-html/plot8-1.png" width="672" /></p>
+</div>
+<div id="to-be-continued." class="section level4">
+<h4>To be continued.</h4>
 <div class="alert alert-info"><b>What I learned from doing this</b>
 <ul>
 <li> Gaining insights by switching from a tiny to a big dataset.
