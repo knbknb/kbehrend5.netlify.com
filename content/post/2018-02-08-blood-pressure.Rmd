@@ -92,32 +92,39 @@ summary(bloodpressure)
 ```
 
 We can plot it in its entirety. I also fit a simple linear regression mode to the data. Blood Pressure as a function of a person's age and body weight.
-```{r tiny1, echo=FALSE}
+```{r tiny1,  results='hide'}
 bloodpressure_model <- lm(blood_pressure ~ age + weight, data = bloodpressure)
 
-# Print bloodpressure_model and call summary()
-bloodpressure_model
-summary(bloodpressure_model)
 
 # predict blood pressure using bloodpressure_model :prediction
 bloodpressure$prediction <- predict(bloodpressure_model, data = bloodpressure)
 
-ggplot(bloodpressure, aes(prediction, blood_pressure)) +
-  geom_point() +
-  geom_abline(color = "blue")
 
 ```
 
 Adding the predictions from the model:
 
-```{r tiny2, echo=FALSE, fig.cap="Predicted values are shown in red."}
+```{r tiny2, echo=FALSE, fig.cap=" Predicted values are shown in red."}
 
 ggplot(bloodpressure, aes(age, blood_pressure)) +
   geom_point() +
   geom_smooth(method="lm") +
-  geom_point(aes(age, prediction), color = "red", size = 1)
+  geom_point(aes(age, prediction), color = "red", size = 1) +
+        ggtitle("Blood pressure as a function of age.", subtitle="Systolic Blood pressure [mm Hg]")+
+        xlab("Age/years") + ylab("")
 
 ```
+
+The linear regression model shows a strong correlation with age. 
+
+```{r}
+summary(bloodpressure_model)
+
+```
+
+The  model predicts that for every year of one's life the systolic pressure increases  `r coef(bloodpressure_model)[2]` mm Hg/year. That's almost **10 mm Hg per decade**! Quite a lot. Is this realistic? Or  is this a fictitious dataset? Is the trend correct, but the value is not? In other words, is the sample nonrepresentative of the population? Is there a confounding factor? We haven't looked at body weight yet!
+
+Let's try a larger dataset!
 
 
 ```{r}

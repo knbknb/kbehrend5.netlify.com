@@ -42,13 +42,14 @@ keywords:
 ## $ weight_pounds  &lt;int&gt; 173, 184, 194, 211, 196, 220, 188, 188, 207, 16...
 ## $ weight         &lt;dbl&gt; 78.5, 83.5, 88.0, 95.7, 88.9, 99.8, 85.3, 85.3,...</code></pre>
 <p>We can plot it in its entirety. I also fit a simple linear regression mode to the data. Blood Pressure as a function of a person’s age and body weight.</p>
-<pre><code>## 
-## Call:
-## lm(formula = blood_pressure ~ age + weight, data = bloodpressure)
-## 
-## Coefficients:
-## (Intercept)          age       weight  
-##      30.994        0.861        0.738</code></pre>
+<p>Adding the predictions from the model:</p>
+<div class="figure"><span id="fig:tiny2"></span>
+<img src="/post/2018-02-08-blood-pressure_files/figure-html/tiny2-1.png" alt=" Predicted values are shown in red." width="480" />
+<p class="caption">
+Figure 1:  Predicted values are shown in red.
+</p>
+</div>
+<p>The linear regression model shows a strong correlation with age.</p>
 <pre><code>## 
 ## Call:
 ## lm(formula = blood_pressure ~ age + weight, data = bloodpressure)
@@ -68,14 +69,8 @@ keywords:
 ## Residual standard error: 2.32 on 8 degrees of freedom
 ## Multiple R-squared:  0.977,  Adjusted R-squared:  0.971 
 ## F-statistic:  169 on 2 and 8 DF,  p-value: 2.87e-07</code></pre>
-<p><img src="/post/2018-02-08-blood-pressure_files/figure-html/tiny1-1.png" width="480" /></p>
-<p>Adding the predictions from the model:</p>
-<div class="figure"><span id="fig:tiny2"></span>
-<img src="/post/2018-02-08-blood-pressure_files/figure-html/tiny2-1.png" alt="Predicted values are shown in red." width="480" />
-<p class="caption">
-Figure 1: Predicted values are shown in red.
-</p>
-</div>
+<p>The model predicts that for every year of one’s life the systolic pressure increases 0.861 mm Hg/year. That’s almost <strong>10 mm Hg per decade</strong>! Quite a lot. Is this realistic? Or is this a fictitious dataset? Is the trend correct, but the value is not? In other words, is the sample nonrepresentative of the population? Is there a confounding factor? We haven’t looked at body weight yet!</p>
+<p>Let’s try a larger dataset!</p>
 <div class="alert alert-info"><b>What I learned from doing this</b>
 <ul>
 <li> Gaining insights by switching from a tiny to a big dataset.
