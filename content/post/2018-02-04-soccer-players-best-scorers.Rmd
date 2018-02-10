@@ -53,6 +53,7 @@ library(lubridate) # strings to datetime
 library(tidyverse, warn.conflicts = FALSE)
 
 theme_set(theme_bw())
+scale_colour_discrete <- function(...) scale_color_brewer(palette="Set2")
 ```
 
 
