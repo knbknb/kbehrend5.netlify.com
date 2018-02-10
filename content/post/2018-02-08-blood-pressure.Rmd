@@ -397,7 +397,7 @@ bloodpressure3 <- bloodpressure2 %>%
 summary(bloodpressure3)        
 ```
 
-```{r bpplot, fig.cap="Blood pressure as a function of age and body weight. NHANES data filtered to match my own age-, BMI-, and weight-range. Red dots are predicted values by the two-predictor model."}
+```{r bpplot, fig.cap="Blood pressure as a function of age and body weight. NHANES data filtered to match age-range of Figure 1, and my own  BMI- and weight-range. Red dots are predicted values by the two-predictor model."}
 
 bloodpressure3_model <- lm(BPSysAve ~ Age + Weight, data = bloodpressure3)
 bloodpressure3$Predictions <- predict(bloodpressure3_model)
