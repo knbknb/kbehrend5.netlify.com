@@ -8,7 +8,7 @@ tags: []
 showonlyimage: no
 css: custom.css
 output: html_document
-image: img/post/tweets--33c3--34cc-histo-per-day--250x.png
+image: img/post/thumb/tweets--33c3--34cc-histo-per-day.png
 url: /post/2018/01/tweets-33c3-vs-33c4/
 summary: none
 keywords:

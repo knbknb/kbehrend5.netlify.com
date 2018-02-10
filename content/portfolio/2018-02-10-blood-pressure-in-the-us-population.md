@@ -1,0 +1,20 @@
+---
+title: Blood Pressure in the US population
+author: Knut Behrends
+date: '2018-02-10'
+slug: bloodpressure-nhanes
+categories: []
+tags: []
+draft: no
+showonlyimage: no
+css: custom.css
+output: html_document
+image: img/post/thumb/bloodpr-Boxplots-1-350.png
+url: /post/2018/02/bloodpressure-nhanes/
+summary: none
+keywords:
+  - Personal-Blog
+usePhotoswipe: no
+---
+
+Moving from a small dataset to a bigger dataset. Gaining insight into health data.

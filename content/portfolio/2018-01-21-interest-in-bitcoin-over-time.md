@@ -8,7 +8,7 @@ tags: ['code', 'finance', 'time-series']
 showonlyimage: no
 css: custom.css
 output: html_document
-image: img/post/thumb/btc-1--2013-2018-200.png
+image: img/post/thumb/btc-1--2013-2018-350.png
 url: /post/2018/01/bitcoin-interest/
 summary: Simple timeseries plots (created from Web-API data) show that these three are strongly correlated.
 keywords:
