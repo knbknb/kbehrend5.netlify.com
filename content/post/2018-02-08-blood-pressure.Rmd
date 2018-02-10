@@ -302,7 +302,7 @@ bloodpressure2$prediction <- predict(bloodpressure2_model, data = bloodpressure2
 ```{r bpr}
 bpr <- round(coef(bloodpressure2_model)[2],3)
 
-htmltools::HTML(sprintf('<div class="alert alert-warning">So the rate is more like <b>%s mmHg/year.</b> Half as much as for the toy dataset.</div>', bpr))
+htmltools::HTML(sprintf('<div class="alert alert-warning">So the rate is more like <b>%s mm Hg/year.</b> Half as much as for the toy dataset.</div>', bpr))
 
 ```
 
