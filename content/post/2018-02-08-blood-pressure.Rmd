@@ -302,7 +302,7 @@ bloodpressure2$prediction <- predict(bloodpressure2_model, data = bloodpressure2
 ```{r bpr}
 bpr <- round(coef(bloodpressure2_model)[2],3)
 
-htmltools::HTML(sprintf('<div class="alert alert-warning">So the rate is more like <b>%s mm Hg/year.</b> Half as much as for the toy dataset.</div>', bpr))
+htmltools::HTML(sprintf('<div class="alert alert-warning">So the rate is more like <b>%s mm Hg/year.</b> Half as much as for the toy dataset. For data from an equivalent control group (men only, same age) the rate is a bit higher than %s mmHg/yr. (See last figure below)</div>', bpr,  bpr))
 
 ```
 
@@ -313,7 +313,7 @@ summary(bloodpressure2_model)
 
 ```
 
-The significance of Age and Body Weight is very high, but the general correlation is very weak ( R^2 = `r  summary(bloodpressure2_model)$r.squared`). This can also be seen in the following plots. 
+The significance of Age and Body Weight is very high, but the general correlation is very weak ( R² = `r  summary(bloodpressure2_model)$r.squared`). This can also be seen in the following plots. 
 
 ```{r fig.cap="Predicted vs Actual Blood Pressure."}
 minBP <- min(bloodpressure2$prediction)
@@ -377,14 +377,13 @@ ggplot(bloodpressure2, aes(cut_interval(x = Age, length = 10), BPSysAve)) +
 
 Note that this plot is essentially the same as Figure 3, only the density plots are rotated 90 degrees.
 
-Comparing this with Figure 1, the toy dataset, I think the violin plot above shows that it is the Blood Pressures from the *female subgroup* that increase linearly by age.  Blood Pressures of men have already increased earlier, in their twenties. Men generally have unhealthier values also for body weight, at earlier ages.
+Comparing this with Figure 1, the toy dataset, I think the violin plot above shows that it is the Blood Pressures from the *female subgroup* that increase linearly with age.  Blood Pressure of men has already increased earlier, in their twenties. Men generally have "unhealthier" values also for body weight, annd do so at earlier ages (BMI distributions by age group not shown).
 
-#### Comparing myself with men of my similar weight and BMI 
+#### Comparing myself with men of similar age, weight and BMI 
 
-In the last years my weight was between 70 and 80 Kilos, and I was always slightly  to moderately overweight, so let's say my [Body Mass Index](https://en.wikipedia.org/wiki/File:BMI_chart.svg) varied between 25-30.
+In the last years my weight was between 70 and 80 Kilos, and I was always slightly  to moderately overweight, so let's say my [Body Mass Index](https://en.wikipedia.org/wiki/File:BMI_chart.svg) varied between 25  to 30.
 
-
-Let's build a new dataset `bloodpressure3` similar to the toy dataset from Figure 1.
+Let's build a new dataset `bloodpressure3` similar to the toy dataset from Figure 1, but with data from real people.
 We'll use our subset `bloodpressure2` from the NHANES data, by filtering with these citeria:
 
 ```{r bp3, echo=TRUE}

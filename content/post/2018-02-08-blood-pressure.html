@@ -149,7 +149,7 @@ Figure 3: Blood Pressure by Age Group.
 <div id="linear-modeling" class="section level4">
 <h4>Linear modeling</h4>
 <p>Fit a linear regression model (Blood Pressure as a function of Age and Body Weight) to the entire <code>bloodpressure2</code> subset, just as above for the tiny dataset.</p>
-<div class="alert alert-warning">So the rate is more like <b>0.405 mm Hg/year.</b> Half as much as for the toy dataset.</div>
+<div class="alert alert-warning">So the rate is more like <b>0.405 mm Hg/year.</b> Half as much as for the toy dataset. For data from an equivalent control group (men only, same age) the rate is a bit higher than 0.405 mmHg/yr. (See last figure below)</div>
 <p>For the R experts:</p>
 <pre><code>## 
 ## Call:
@@ -170,7 +170,7 @@ Figure 3: Blood Pressure by Age Group.
 ## Residual standard error: 14.5 on 8484 degrees of freedom
 ## Multiple R-squared:  0.286,  Adjusted R-squared:  0.286 
 ## F-statistic: 1.7e+03 on 2 and 8484 DF,  p-value: &lt;2e-16</code></pre>
-<p>The significance of Age and Body Weight is very high, but the general correlation is very weak ( R^2 = 0.286). This can also be seen in the following plots.</p>
+<p>The significance of Age and Body Weight is very high, but the general correlation is very weak ( R² = 0.286). This can also be seen in the following plots.</p>
 <div class="figure"><span id="fig:unnamed-chunk-10"></span>
 <img src="/post/2018-02-08-blood-pressure_files/figure-html/unnamed-chunk-10-1.png" alt="Predicted vs Actual Blood Pressure." width="864" />
 <p class="caption">
@@ -196,12 +196,12 @@ Figure 6: Blood Pressure by Age group. Orange Symbols are sample mean and lower 
 </p>
 </div>
 <p>Note that this plot is essentially the same as Figure 3, only the density plots are rotated 90 degrees.</p>
-<p>Comparing this with Figure 1, the toy dataset, I think the violin plot above shows that it is the Blood Pressures from the <em>female subgroup</em> that increase linearly by age. Blood Pressures of men have already increased earlier, in their twenties. Men generally have unhealthier values also for body weight, at earlier ages.</p>
+<p>Comparing this with Figure 1, the toy dataset, I think the violin plot above shows that it is the Blood Pressures from the <em>female subgroup</em> that increase linearly with age. Blood Pressure of men has already increased earlier, in their twenties. Men generally have “unhealthier” values also for body weight, annd do so at earlier ages (BMI distributions by age group not shown).</p>
 </div>
-<div id="comparing-myself-with-men-of-my-similar-weight-and-bmi" class="section level4">
-<h4>Comparing myself with men of my similar weight and BMI</h4>
-<p>In the last years my weight was between 70 and 80 Kilos, and I was always slightly to moderately overweight, so let’s say my <a href="https://en.wikipedia.org/wiki/File:BMI_chart.svg">Body Mass Index</a> varied between 25-30.</p>
-<p>Let’s build a new dataset <code>bloodpressure3</code> similar to the toy dataset from Figure 1. We’ll use our subset <code>bloodpressure2</code> from the NHANES data, by filtering with these citeria:</p>
+<div id="comparing-myself-with-men-of-similar-age-weight-and-bmi" class="section level4">
+<h4>Comparing myself with men of similar age, weight and BMI</h4>
+<p>In the last years my weight was between 70 and 80 Kilos, and I was always slightly to moderately overweight, so let’s say my <a href="https://en.wikipedia.org/wiki/File:BMI_chart.svg">Body Mass Index</a> varied between 25 to 30.</p>
+<p>Let’s build a new dataset <code>bloodpressure3</code> similar to the toy dataset from Figure 1, but with data from real people. We’ll use our subset <code>bloodpressure2</code> from the NHANES data, by filtering with these citeria:</p>
 <pre class="r"><code>bloodpressure3 &lt;- bloodpressure2 %&gt;% 
         filter(BMI &gt;= 25 , BMI &lt;=30,
                Weight &gt;=70, Weight &lt;= 80, 
