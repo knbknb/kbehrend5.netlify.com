@@ -37,14 +37,16 @@ options(knitr.table.format = "html")
 
 
 ```{r abstr, echo=FALSE}
-htmltools::HTML('<div class="alert alert-info"><b>Very basic analysis of two health datasets from ~ 2010, about the  general US Population.</b>
-                The data were gathered independently. One of them is a tiny teaching dataset, the other is a large study. Both datasets show that systolic blood pressure rises about 5-10 mm Hg per decade of a person &apos;s life. </div>')
+htmltools::HTML('<div class="alert alert-info"><b>Very basic analysis of two health datasets from ~ 2010, about the general US Population.</b>
+The data were gathered independently. One of them is a tiny teaching dataset, the other is a larger study. Both datasets show that systolic blood pressure rises about 5-10 mm Hg per decade of a person &apos;s life. </div>')
 ```
 
 Recently, conversations with friends and colleagues  kept me  thinking about blood pressure.
-Then I've remembered that weekend project from late 2017. Back then I had analysed two datasets:   one available on the internet, the other available as R package NHANES on CRAN. 
+Then I've remembered that weekend project from late 2017. Back then I had analysed two datasets:   one available on the internet, the other available as R package [NHANES on CRAN](https://cran.r-project.org/web/packages/NHANES/index.html). 
 
-My motivation in writing this up was (1) learning more *ggplot* tricks, and more imortantly (2) gaining insights from a real data that interests me. It was also helpful to start with a small teaching dataset, then switch  to a messy, much larger dataset; a real medical study.
+My motivation in writing this up was (1) learning more *ggplot* tricks, and more imortantly, (2) gaining insights from a real data that interests me. It was also a helpful exercise to start with a small teaching dataset, then switch to a messier, larger dataset: a real medical study with data from 10000 people.
+
+#### Preprocessing 
 
 Load the necessary packages. Nothing fancy here.
 
@@ -84,6 +86,8 @@ bloodpressure <- bloodpressure %>%
 
 ```
 
+#### Dataset 1
+
 The dataset is tiny:
 
 ```{r ds1, echo=FALSE}
@@ -120,7 +124,10 @@ ggplot(bloodpressure, aes(age, blood_pressure)) +
 
 ```
 
-The linear regression model shows a moderately strong correlation with age and weight. For a single-parameter model, (age as sole predictive variable), the predicted values would fall on the blue line. Inclusion of body weight as a second predicitve variable seems to improve the fitted values slightly, as the red dots show.
+The linear regression model shows a moderately strong correlation with age and weight. For a single-parameter model, (age as sole predictive variable), the predicted values would fall on the blue line. Inclusion of body weight as a second predicitive variable seems to improve the fitted values slightly, as the red dots show.
+
+Also, for 45-year olds the average blood pressure is already well over 120. Some doctors consider this  unhealthy already.
+
 
 For the R specialists, this is the summary of the regression model:
 
@@ -132,17 +139,15 @@ summary(bloodpressure_model)
 ```{r}
 htmltools::HTML(sprintf('<div class="alert alert-warning">The model predicts that for every year of in a middle-aged person&apos;s life, the systolic blood pressure increases  <b>%s mm Hg/year</b>. That&apos;s almost 9 mm Hg per life decade! Quite a lot. </div>',  round(coef(bloodpressure_model)[2], 3)))
 ```
-
 Is this realistic? Or  is this a fictitious, simplified, toy-dataset, after all? Is the trend correct, but the value is not? In other words, is the sample nonrepresentative of the population? What is the real importance of the confounding factor, body weight?
 
 Let's try a larger dataset!
 
 #### NHANES dataset
 
-
 The *NHANES* dataset is available as an R package on [CRAN](https://cran.r-project.org/package=NHANES). It contains data from the US National Health and Nutrition Examination Study. I have used package version 2.1.0, specifically "NHANES 2009-2012 with adjusted weighting". This dataset contains some corrections for undersampling racial minorities. Uncorrected data is also available, in the *NHANESraw* package.
 
-See [http://www.cdc.gov/nchs/nhanes.htm](http://www.cdc.gov/nchs/nhanes.htm) for details.
+
 
 ```{r lib, echo=TRUE}
 library(NHANES) # Body Shape + related measurements from 10000 US citizens
@@ -161,6 +166,7 @@ names(NHANES)[ages]
 
 ```
 
+See [http://www.cdc.gov/nchs/nhanes.htm](http://www.cdc.gov/nchs/nhanes.htm) for details.
 Column names containing "Weight":
 
 ```{r}
@@ -202,6 +208,8 @@ bloodpressure2 <- NHANES %>%
     filter(!is.na(BPSysAve), !is.na(Weight), !is.na(BMI))
 
 ```
+
+The NAs are gone.
 
 We include *Gender* and *BMI* (Body Mass Index) for later. 
 
@@ -368,10 +376,11 @@ Comparing this with Figure 1, the toy dataset, I think the violin plot above sho
 
 In the last years my weight was between 70 and 80 Kilos, and I was always slightly  to moderately overweight, so let's say my [Body Mass Index](https://en.wikipedia.org/wiki/File:BMI_chart.svg) varied between 25-30.
 
+
 Let's build a new dataset `bloodpressure3` similar to the toy dataset from Figure 1.
 We'll use our subset `bloodpressure2` from the NHANES data, by filtering with these citeria:
 
-```{r echo=TRUE}
+```{r bp3, echo=TRUE}
 bloodpressure3 <- bloodpressure2 %>% 
         filter(BMI >= 25 , BMI <=30,
                Weight >=70, Weight <= 80, 
