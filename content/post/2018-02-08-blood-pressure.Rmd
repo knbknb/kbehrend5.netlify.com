@@ -4,7 +4,7 @@ author: Knut Behrends
 date: '2018-02-08'
 slug: bloodpressure-nhanes
 categories: [health, rstats]
-tags: [rstats]
+tags: [health, rstats]
 draft: no
 output:
   html_document:
@@ -41,7 +41,7 @@ htmltools::HTML('<div class="alert alert-info"><b>Very basic analysis of two hea
 The data were gathered independently. One of them is a tiny teaching dataset, the other is a larger study. Both datasets show that systolic blood pressure rises about 5-10 mm Hg per decade of a person &apos;s life. </div>')
 ```
 
-Recently, conversations with friends and colleagues  kept me  thinking about blood pressure.
+Recently, conversations with friends and colleagues  had me  thinking about blood pressure.
 Then I've remembered that weekend project from late 2017. Back then I had analysed two datasets:   one available on the internet, the other available as R package [NHANES on CRAN](https://cran.r-project.org/web/packages/NHANES/index.html). 
 
 My motivation in writing this up was (1) learning more *ggplot* tricks, and more imortantly, (2) gaining insights from a real data that interests me. It was also a helpful exercise to start with a small teaching dataset, then switch to a messier, larger dataset: a real medical study with data from 10000 people.
@@ -139,7 +139,7 @@ summary(bloodpressure_model)
 ```{r}
 htmltools::HTML(sprintf('<div class="alert alert-warning">The model predicts that for every year of in a middle-aged person&apos;s life, the systolic blood pressure increases  <b>%s mm Hg/year</b>. That&apos;s almost 9 mm Hg per life decade! Quite a lot. </div>',  round(coef(bloodpressure_model)[2], 3)))
 ```
-Is this realistic? Or  is this a fictitious, simplified, toy-dataset, after all? Is the trend correct, but the value is not? In other words, is the sample nonrepresentative of the population? What is the real importance of the confounding factor, body weight?
+Is this realistic? Or is this a fictitious, simplified, toy-dataset, after all? Is the trend correct, but the value is not? In other words, is the sample nonrepresentative of the population? What is the real importance of the confounding factor, body weight?
 
 Let's try a larger dataset!
 
