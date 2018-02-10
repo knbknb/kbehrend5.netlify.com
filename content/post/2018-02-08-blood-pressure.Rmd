@@ -159,7 +159,7 @@ The dataset is big, very big. It contains `r nrow(NHANES)` rows and `r ncol(NHAN
 
 Column names containing "Age":
 
-```{r}
+```{r nm}
 
 ages <- names(NHANES) %>% str_which("Age")
 names(NHANES)[ages]
@@ -169,7 +169,7 @@ names(NHANES)[ages]
 See [http://www.cdc.gov/nchs/nhanes.htm](http://www.cdc.gov/nchs/nhanes.htm) for details.
 Column names containing "Weight":
 
-```{r}
+```{r nm2}
 weights <- names(NHANES) %>% 
         str_detect(pattern=regex("weight", ignore_case = TRUE)) %>% which()
 names(NHANES)[weights]
@@ -202,7 +202,7 @@ colSums(apply(NHANES[, c(ages[1],weights, bps)], 2, is.na))
 
  Create a smaller NHANES dataset, `bloodpressure2`, containing relevant columns only: 
 
-```{r echo=TRUE}
+```{r filt1, echo=TRUE}
 bloodpressure2 <- NHANES %>%
     select(BPSysAve, Age, Weight, Gender, BMI) %>%
     filter(!is.na(BPSysAve), !is.na(Weight), !is.na(BMI))
@@ -217,14 +217,14 @@ The dataset contains `r nrow(bloodpressure2)` rows (People) and `r ncol(bloodpre
 
 Summary of Blood Pressure Data:
 
-```{r}
+```{r summ1}
 summary(bloodpressure2)
 ```
 The maximum value of `r max(bloodpressure2$Age)` for Age actually represents "Adults of age 80 and older". See plots below.
 
 #### Blood Pressure by Gender:
 
-```{r fig.cap="Blood Pressure by Gender, NHANES Dataset."}
+```{r plot1, fig.cap="Blood Pressure by Gender, NHANES Dataset."}
 bp2 <- bloodpressure2 %>% 
         select(BPSysAve, Gender) %>% 
         group_by(Gender) %>% 
@@ -279,7 +279,7 @@ bloodpressure2 %>%
 
 ```
 For kids below 10 years of age, Blood Pressures (BP) of Boys and Girls are equal. BP values are about 100 mm HG for most both genders. Blood Pressures of teenage boys and 20-30 year-old men are already higher their female "counterparts".
-```{r}
+```{r html2}
 htmltools::HTML('<div class="alert alert-warning"><b></b>Middle-Aged men generally have higher blood pressures than women of the same age. This remains so until late middle age, when blood pressures of women seem to catch up. The 60-70 year old women have blood pressures just as high as the men; maybe because men with cardiovalscular problems have already died away?</div>')
 ```
 
@@ -315,7 +315,7 @@ summary(bloodpressure2_model)
 
 The significance of Age and Body Weight is very high, but the general correlation is very weak ( R² = `r  summary(bloodpressure2_model)$r.squared`). This can also be seen in the following plots. 
 
-```{r fig.cap="Predicted vs Actual Blood Pressure."}
+```{r actvspred, fig.cap="Predicted vs Actual Blood Pressure."}
 minBP <- min(bloodpressure2$prediction)
 ggplot(bloodpressure2, aes(prediction, BPSysAve)) +
   geom_jitter(size=0.1, alpha=0.4) +
