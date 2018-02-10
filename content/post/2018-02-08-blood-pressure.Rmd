@@ -44,7 +44,7 @@ The data were gathered independently. One of them is a tiny teaching dataset, th
 Recently, conversations with friends and colleagues  had me  thinking about blood pressure.
 Then I've remembered that weekend project from late 2017. Back then I had analysed two datasets:   one available on the internet, the other available as R package [NHANES on CRAN](https://cran.r-project.org/web/packages/NHANES/index.html). 
 
-My motivation in writing this up was (1) learning more *ggplot* tricks, and more imortantly, (2) gaining insights from a real data that interests me. It was also a helpful exercise to start with a small teaching dataset, then switch to a messier, larger dataset: a real medical study with data from 10000 people.
+My motivation in writing this up was (1) learning more *ggplot* tricks, and more importantly, (2) gaining insights from a real data that interests me. It was also a helpful exercise to start with a small teaching dataset, then switch to a messier, larger dataset: a real medical study with data from 10000 people.
 
 #### Preprocessing 
 
@@ -278,9 +278,11 @@ bloodpressure2 %>%
 
 
 ```
-For kids below 10 years of age, Blood Pressures (BP) of Boys and Girls are equal. BP values are about 100 mm HG for most both genders. Blood Pressures of teenage boys and 20-30 year-old men are already higher their female "counterparts".
+
+For kids below 10 years of age, Blood Pressures (BP) of boys and girls are equal. BP values are about 100 mm Hg for most both genders. Blood Pressures of teenage boys and 20-30 year-old men are already higher their female "counterparts".
+
 ```{r html2}
-htmltools::HTML('<div class="alert alert-warning"><b></b>Middle-Aged men generally have higher blood pressures than women of the same age. This remains so until late middle age, when blood pressures of women seem to catch up. The 60-70 year old women have blood pressures just as high as the men; maybe because men with cardiovalscular problems have already died away?</div>')
+htmltools::HTML('<div class="alert alert-warning"><b></b>Middle-aged men generally have higher blood pressures than women of the same age. This remains so until late middle age, when blood pressures of women seem to catch up. The 60-70 year old women have blood pressures just as high as the men; maybe because men with cardiovalscular problems have already died away?</div>')
 ```
 
 
@@ -313,7 +315,7 @@ summary(bloodpressure2_model)
 
 ```
 
-The significance of Age and Body Weight is very high, but the general correlation is very weak ( R² = `r  summary(bloodpressure2_model)$r.squared`). This can also be seen in the following plots. 
+The significance of Age and Body Weight is very high, but the general correlation is weak ( R² = `r  summary(bloodpressure2_model)$r.squared`). This can also be seen in the following plots. 
 
 ```{r actvspred, fig.cap="Predicted vs Actual Blood Pressure."}
 minBP <- min(bloodpressure2$prediction)
@@ -329,9 +331,9 @@ ggplot(bloodpressure2, aes(prediction, BPSysAve)) +
 
 ```
 
-Light blue line is the 1:1 line. No systematic under- or overestimation here.
+Light blue line is the 1:1 line. 
 
-Predicted values of the full model fall short of capturing the variability in the data. Maybe other factors have to taken into into account (but not in this blogpost).
+Predicted values of the full model fall short of capturing the variability in the data. Maybe other factors have to be taken into into account (but not in this blogpost).
 
 ```{r agepl, fig.cap="Blood Pressure as a function of Age and Weight.  Predicted values are shown in red, observed values in black. Blue line is BP predicted a function of Age alone."}
 ###############################################
@@ -348,11 +350,11 @@ ggplot(bloodpressure2, aes(Age, BPSysAve)) +
 
 ```
 
-Maybe we need to split by Age-Class again?
+Maybe we need to split by age group again?
 
 #### Boxplots of Blood Pressures of 10-year age groups
 
-```{r Boxplots, fig.cap="Blood Pressure by Age group. Orange Symbols are sample mean and lower and upper Gaussian confidence limits based on the t-distribution."}
+```{r Boxplots, fig.cap="Blood Pressure by Age group. Orange Symbols are sample means."}
 ggplot(bloodpressure2, aes(cut_interval(x = Age, length = 10), BPSysAve)) +
   #geom_boxplot(varwidth = TRUE,  outlier.shape = NA) +
   geom_violin(alpha = 0.1, aes(color = Gender, fill=Gender, alpha=0.3), size=0.5) +

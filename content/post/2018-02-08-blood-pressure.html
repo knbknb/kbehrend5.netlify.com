@@ -31,7 +31,7 @@ keywords:
 <div class="alert alert-info"><b>Very basic analysis of two health datasets from ~ 2010, about the general US Population.</b>
 The data were gathered independently. One of them is a tiny teaching dataset, the other is a larger study. Both datasets show that systolic blood pressure rises about 5-10 mm Hg per decade of a person &apos;s life. </div>
 <p>Recently, conversations with friends and colleagues had me thinking about blood pressure. Then I’ve remembered that weekend project from late 2017. Back then I had analysed two datasets: one available on the internet, the other available as R package <a href="https://cran.r-project.org/web/packages/NHANES/index.html">NHANES on CRAN</a>.</p>
-<p>My motivation in writing this up was (1) learning more <em>ggplot</em> tricks, and more imortantly, (2) gaining insights from a real data that interests me. It was also a helpful exercise to start with a small teaching dataset, then switch to a messier, larger dataset: a real medical study with data from 10000 people.</p>
+<p>My motivation in writing this up was (1) learning more <em>ggplot</em> tricks, and more importantly, (2) gaining insights from a real data that interests me. It was also a helpful exercise to start with a small teaching dataset, then switch to a messier, larger dataset: a real medical study with data from 10000 people.</p>
 </div>
 <div id="preprocessing" class="section level4">
 <h4>Preprocessing</h4>
@@ -143,7 +143,8 @@ Figure 2: Blood Pressure by Gender, NHANES Dataset.
 Figure 3: Blood Pressure by Age Group.
 </p>
 </div>
-<p>For kids below 10 years of age, Blood Pressures (BP) of Boys and Girls are equal. BP values are about 100 mm HG for most both genders. Blood Pressures of teenage boys and 20-30 year-old men are already higher their female “counterparts”. <div class="alert alert-warning"><b></b>Middle-Aged men generally have higher blood pressures than women of the same age. This remains so until late middle age, when blood pressures of women seem to catch up. The 60-70 year old women have blood pressures just as high as the men; maybe because men with cardiovalscular problems have already died away?</div></p>
+<p>For kids below 10 years of age, Blood Pressures (BP) of boys and girls are equal. BP values are about 100 mm Hg for most both genders. Blood Pressures of teenage boys and 20-30 year-old men are already higher their female “counterparts”.</p>
+<div class="alert alert-warning"><b></b>Middle-aged men generally have higher blood pressures than women of the same age. This remains so until late middle age, when blood pressures of women seem to catch up. The 60-70 year old women have blood pressures just as high as the men; maybe because men with cardiovalscular problems have already died away?</div>
 <p>Blood Pressures generally increase, but is this rate really 9 mm/year, as indicated above?</p>
 </div>
 <div id="linear-modeling" class="section level4">
@@ -170,29 +171,29 @@ Figure 3: Blood Pressure by Age Group.
 ## Residual standard error: 14.5 on 8484 degrees of freedom
 ## Multiple R-squared:  0.286,  Adjusted R-squared:  0.286 
 ## F-statistic: 1.7e+03 on 2 and 8484 DF,  p-value: &lt;2e-16</code></pre>
-<p>The significance of Age and Body Weight is very high, but the general correlation is very weak ( R² = 0.286). This can also be seen in the following plots.</p>
+<p>The significance of Age and Body Weight is very high, but the general correlation is weak ( R² = 0.286). This can also be seen in the following plots.</p>
 <div class="figure"><span id="fig:actvspred"></span>
 <img src="/post/2018-02-08-blood-pressure_files/figure-html/actvspred-1.png" alt="Predicted vs Actual Blood Pressure." width="864" />
 <p class="caption">
 Figure 4: Predicted vs Actual Blood Pressure.
 </p>
 </div>
-<p>Light blue line is the 1:1 line. No systematic under- or overestimation here.</p>
-<p>Predicted values of the full model fall short of capturing the variability in the data. Maybe other factors have to taken into into account (but not in this blogpost).</p>
+<p>Light blue line is the 1:1 line.</p>
+<p>Predicted values of the full model fall short of capturing the variability in the data. Maybe other factors have to be taken into into account (but not in this blogpost).</p>
 <div class="figure"><span id="fig:agepl"></span>
 <img src="/post/2018-02-08-blood-pressure_files/figure-html/agepl-1.png" alt="Blood Pressure as a function of Age and Weight.  Predicted values are shown in red, observed values in black. Blue line is BP predicted a function of Age alone." width="864" />
 <p class="caption">
 Figure 5: Blood Pressure as a function of Age and Weight. Predicted values are shown in red, observed values in black. Blue line is BP predicted a function of Age alone.
 </p>
 </div>
-<p>Maybe we need to split by Age-Class again?</p>
+<p>Maybe we need to split by age group again?</p>
 </div>
 <div id="boxplots-of-blood-pressures-of-10-year-age-groups" class="section level4">
 <h4>Boxplots of Blood Pressures of 10-year age groups</h4>
 <div class="figure"><span id="fig:Boxplots"></span>
-<img src="/post/2018-02-08-blood-pressure_files/figure-html/Boxplots-1.png" alt="Blood Pressure by Age group. Orange Symbols are sample mean and lower and upper Gaussian confidence limits based on the t-distribution." width="864" />
+<img src="/post/2018-02-08-blood-pressure_files/figure-html/Boxplots-1.png" alt="Blood Pressure by Age group. Orange Symbols are sample means." width="864" />
 <p class="caption">
-Figure 6: Blood Pressure by Age group. Orange Symbols are sample mean and lower and upper Gaussian confidence limits based on the t-distribution.
+Figure 6: Blood Pressure by Age group. Orange Symbols are sample means.
 </p>
 </div>
 <p>Note that this plot is essentially the same as Figure 3, only the density plots are rotated 90 degrees.</p>
