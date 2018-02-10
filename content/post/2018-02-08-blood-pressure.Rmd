@@ -126,7 +126,7 @@ ggplot(bloodpressure, aes(age, blood_pressure)) +
 
 The linear regression model shows a moderately strong correlation with age and weight. For a single-parameter model, (age as sole predictive variable), the predicted values would fall on the blue line. Inclusion of body weight as a second predicitive variable seems to improve the fitted values slightly, as the red dots show.
 
-Also, for 45-year olds the average blood pressure is already well over 120. Some doctors consider this  unhealthy already.
+Also, for 45-year olds the average blood pressure is already well over 120. Some doctors consider this  unhealthy.
 
 
 For the R specialists, this is the summary of the regression model:
@@ -398,7 +398,8 @@ bloodpressure3 <- bloodpressure2 %>%
 summary(bloodpressure3)        
 ```
 
-```{r bpplot, fig.cap="Blood pressure as a function of age and body weight. NHANES data filtered to match my own age- BMI- and weight-range. Red dots are predicted values."}
+```{r bpplot, fig.cap="Blood pressure as a function of age and body weight. NHANES data filtered to match my own age-, BMI-, and weight-range. Red dots are predicted values by the two-predictor model."}
+
 bloodpressure3_model <- lm(BPSysAve ~ Age + Weight, data = bloodpressure3)
 bloodpressure3$Predictions <- predict(bloodpressure3_model)
 dashed_line <- bloodpressure %>% arrange(age) %>% select(age, prediction) %>% head(1) %>% 
@@ -442,6 +443,6 @@ htmltools::HTML('<div class="alert alert-info"><b>What I learned from doing this
 <li> Compared my own health status relative to others
 <li> Studied Health status of the US society as a whole.
     </ul>
-I did not write everything down, though.
+Countless other thoughts that I did not bother to write down.
 </div>')
 ```
