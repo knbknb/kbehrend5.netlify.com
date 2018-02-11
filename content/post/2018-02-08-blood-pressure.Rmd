@@ -1,5 +1,5 @@
 ---
-title: Blood Pressure in the US population
+title: Blood Pressure in the US population, and me
 author: Knut Behrends
 date: '2018-02-08'
 slug: bloodpressure-nhanes
@@ -12,7 +12,7 @@ output:
     css: styles.css
     fig_caption: yes
     keep_md: no
-image: /static/img/football.png
+image: /static/img/bloodpr-Boxplots-1.png
 banner: img/post/thumb//bloodpr-Boxplots-1-150.png
 summary: 'Blood Pressure in Americans, two different datasets.'
 keywords:
@@ -27,7 +27,7 @@ keywords:
 
 ```{r setup, include=FALSE}
 library(knitr)
-opts_chunk$set(cache = FALSE, warning = FALSE, message = FALSE, 
+opts_chunk$set(cache = TRUE, warning = FALSE, message = FALSE, 
                echo = FALSE, tidy = FALSE, width = 7, fig.width=9)
 options(digits = 3, tibble.print_min = 6)
 options(knitr.table.format = "html") 
@@ -37,26 +37,30 @@ options(knitr.table.format = "html")
 
 
 ```{r abstr, echo=FALSE}
-htmltools::HTML('<div class="alert alert-info"><b>Very basic analysis of two health datasets from ~ 2010, about the general US Population.</b>
-The data were gathered independently. One of them is a tiny teaching dataset, the other is a larger study. Both datasets show that systolic blood pressure rises about 5-10 mm Hg per decade of a person &apos;s life. </div>')
+htmltools::HTML('<div class="alert alert-info"><b>Basic analysis of two health datasets from ~ 2010, about the general US Population.</b>
+The datasets were gathered independently. One of them is a tiny teaching dataset, the other is a larger study. Both datasets show that systolic blood pressure rises about 5-10 mm Hg per decade of a person &apos;s life. </div>')
 ```
 
 Recently, conversations with friends and colleagues  had me  thinking about blood pressure.
-Then I've remembered that weekend project from late 2017. Back then I had analysed two datasets:   one available on the internet, the other available as R package [NHANES on CRAN](https://cran.r-project.org/web/packages/NHANES/index.html). 
+Then I've remembered that weekend project from late 2017. Back then I had analysed two datasets: one available [on the internet](http://college.cengage.com/mathematics/brase/understandable_statistics/7e/students/datasets/mlr/excel/mlr02.xls), the other available as R package [NHANES on CRAN](https://cran.r-project.org/web/packages/NHANES/index.html). 
 
-My motivation in writing this up was (1) learning more *ggplot* tricks, and more importantly, (2) gaining insights from a real data that interests me. It was also a helpful exercise to start with a small teaching dataset, then switch to a messier, larger dataset: a real medical study with data from 10000 people.
+My motivation for writing this up was (1) learning more tricks with visualization library *ggplot*, and more importantly, (2) gaining insights from a real study that interests me. It was also a helpful exercise to start with a small teaching dataset, then switch to a messier, larger dataset: a real medical study with data from 10000 people.
 
 #### Preprocessing 
 
 Load the necessary packages. Nothing fancy here.
 
 ```{r pkgs, echo=TRUE, cache=FALSE}
-library(readxl)
+library(readxl) # for mlr02.xls from http://college.cengage.com/  
 library(tidyverse)
+library(NHANES) # Body Shape + related measurements from 10000 US citizens
+data(NHANES)
+```
+
+```{r theme}
 library(ggthemes)
 theme_set(theme_economist_white())
 scale_colour_discrete <- function(...) scale_color_brewer(palette="Set1")
-
 ```
 
 Download **dataset 1**: A tiny 11*4 table called `Systolic Blood Pressure`. It comes from [a book publisher's website](http://college.cengage.com/mathematics/brase/understandable_statistics/7e/students/datasets/mlr/frames/frame.html). Maybe it is a teaching dataset; perhaps is is supplementary material for a college textbook.
@@ -124,7 +128,7 @@ ggplot(bloodpressure, aes(age, blood_pressure)) +
 
 ```
 
-The linear regression model shows a moderately strong correlation with age and weight. For a single-parameter model, (age as sole predictive variable), the predicted values would fall on the blue line. Inclusion of body weight as a second predicitive variable seems to improve the fitted values slightly, as the red dots show.
+The linear regression model shows a strong correlation of blood pressure with age and weight. For a single-parameter model, (age as sole predictive variable), the predicted values would fall on the blue line. Inclusion of body weight as a second predicitive variable seems to improve the fitted values slightly, as the red dots show.
 
 Also, for 45-year olds the average blood pressure is already well over 120. Some doctors consider this  unhealthy.
 
@@ -149,13 +153,8 @@ The *NHANES* dataset is available as an R package on [CRAN](https://cran.r-proje
 
 
 
-```{r lib, echo=TRUE}
-library(NHANES) # Body Shape + related measurements from 10000 US citizens
-data(NHANES)
 
-```
-
-The dataset is big, very big. It contains `r nrow(NHANES)` rows and `r ncol(NHANES)` columns. Listing all column definitions here would waste too much screen space. I'll concentrate on the relevant columns here.
+The dataset is big, very big. It contains `r nrow(NHANES)` rows (People) and `r ncol(NHANES)` columns (features). Listing all column definitions here would waste too much screen space. I'll concentrate on the relevant columns:
 
 Column names containing "Age":
 
@@ -213,7 +212,7 @@ The NAs are gone.
 
 We include *Gender* and *BMI* (Body Mass Index) for later. 
 
-The dataset contains `r nrow(bloodpressure2)` rows (People) and `r ncol(bloodpressure2)` columns.
+The reduced dataset contains `r nrow(bloodpressure2)` rows (People) and `r ncol(bloodpressure2)` columns.
 
 Summary of Blood Pressure Data:
 
@@ -224,7 +223,7 @@ The maximum value of `r max(bloodpressure2$Age)` for Age actually represents "Ad
 
 #### Blood Pressure by Gender:
 
-```{r plot1, fig.cap="Blood Pressure by Gender, NHANES Dataset."}
+```{r plot2, fig.cap="Blood Pressure by Gender, NHANES Dataset."}
 bp2 <- bloodpressure2 %>% 
         select(BPSysAve, Gender) %>% 
         group_by(Gender) %>% 
@@ -261,7 +260,7 @@ agegroup_labeller <- function(variable, value) {
 ```
 
 
-```{r plot4, fig.height=12, fig.cap="Blood Pressure by Age Group."}
+```{r plot3, fig.height=12, fig.cap="Blood Pressure by Age Group."}
 bloodpressure2 %>%
         ggplot(aes(BPSysAve, group=Gender, color=Gender, fill=Gender)) +
         #geom_histogram(binwidth = 1) +
@@ -273,20 +272,23 @@ bloodpressure2 %>%
         theme(axis.text.y =  element_blank(),
               panel.grid.minor.x = element_line(color="lightgrey", size=0.1),
               panel.grid.major.x = element_line(color="grey", size=0.1),
-              panel.grid.major.y = element_blank())
+              panel.grid.major.y = element_blank()) +
+        scale_x_continuous(limits = c(70, 220), 
+                     breaks = seq(70, 220, 10), 
+                     minor_breaks = seq(70, 220, 10))
         
 
 
 ```
 
-For kids below 10 years of age, Blood Pressures (BP) of boys and girls are equal. BP values are about 100 mm Hg for most both genders. Blood Pressures of teenage boys and 20-30 year-old men are already higher their female "counterparts".
+For kids below 10 years of age, Blood Pressures (BP) of boys and girls are equal. BP values are about 100 mm Hg for most both genders. Blood Pressures of teenage boys and 20-30 year-old men are already higher their female "counterparts". (Originally I made the above plot with BMI data instead of BP. This was also very informative, especially the "young people"" agegroups, but I'll focus on BP here.)
 
 ```{r html2}
-htmltools::HTML('<div class="alert alert-warning"><b></b>Middle-aged men generally have higher blood pressures than women of the same age. This remains so until late middle age, when blood pressures of women seem to catch up. The 60-70 year old women have blood pressures just as high as the men; maybe because men with cardiovalscular problems have already died away?</div>')
+htmltools::HTML('<div class="alert alert-warning"><b></b>Middle-aged men generally have higher blood pressures than women of the same age. This remains so until late middle age, when blood pressures of women seem to catch up. The 60-70 year old women have blood pressures just as high as the men; maybe because men with cardiovascular problems have already died away?</div>')
 ```
 
 
-Blood Pressures generally increase, but is this rate really 9 mm/year, as indicated above?
+Blood Pressures generally increase over the years, but is this rate *really* 9 mm/year, as indicated above in Fig.1?
 
 #### Linear modeling
 
@@ -304,7 +306,7 @@ bloodpressure2$prediction <- predict(bloodpressure2_model, data = bloodpressure2
 ```{r bpr}
 bpr <- round(coef(bloodpressure2_model)[2],3)
 
-htmltools::HTML(sprintf('<div class="alert alert-warning">So the rate is more like <b>%s mm Hg/year.</b> Half as much as for the toy dataset. For data from an equivalent control group (men only, same age) the rate is a bit higher than %s mmHg/yr. (See last figure below)</div>', bpr,  bpr))
+htmltools::HTML(sprintf('<div class="alert alert-warning">So the rate is more like <b>%s mm Hg/year.</b> Half as much as for the toy dataset. For data from an equivalent group (men only, same weight) the rate is ~6 mmHg/decade, a bit higher than %s mmHg/decade. (See last figure below)</div>', bpr,  round(10*bpr,1)))
 
 ```
 
@@ -317,21 +319,25 @@ summary(bloodpressure2_model)
 
 The significance of Age and Body Weight is very high, but the general correlation is weak ( R² = `r  summary(bloodpressure2_model)$r.squared`). This can also be seen in the following plots. 
 
-```{r actvspred, fig.cap="Predicted vs Actual Blood Pressure."}
+```{r actvspred, fig.cap="Predicted vs Measured Blood Pressure."}
 minBP <- min(bloodpressure2$prediction)
 ggplot(bloodpressure2, aes(prediction, BPSysAve)) +
+        geom_density2d(aes(alpha=0.4)) +
   geom_jitter(size=0.1, alpha=0.4) +
-  geom_abline(slope = 1, size=2, alpha=.4,
-              color = "dodgerblue") +
-        xlim(c(minBP, 150)) +
+  geom_abline(slope = 1, size=0.5, alpha=.6,
+              color = "black") +
         xlab("Systolic Blood Pressure, predicted from Age and Weight alone [mmHg]") +
         ylim(c(minBP, 150)) +
-        ggtitle("Predicted vs Actual Blood Pressure",
-                subtitle = "mm Hg")
-
+        ggtitle("Predicted vs Measured Blood Pressure",
+                subtitle =sprintf("Average Systolic Blood Pressure, mm Hg, %s people", nrow(bloodpressure2)) ) +
+        theme(panel.grid.major.x = element_line(color="lightgrey", linetype = "solid"),
+              legend.position="none") +
+        scale_x_continuous(limits = c(100, 150), 
+                     breaks = seq(100, 150, 10), 
+                     minor_breaks = seq(100, 150, 10))
 ```
 
-Light blue line is the 1:1 line. 
+The back diagonal line is the 1:1 line. Blue isolines indicate statistical density.
 
 Predicted values of the full model fall short of capturing the variability in the data. Maybe other factors have to be taken into into account (but not in this blogpost).
 
@@ -379,7 +385,7 @@ ggplot(bloodpressure2, aes(cut_interval(x = Age, length = 10), BPSysAve)) +
 
 Note that this plot is essentially the same as Figure 3, only the density plots are rotated 90 degrees.
 
-Comparing this with Figure 1, the toy dataset, I think the violin plot above shows that it is the Blood Pressures from the *female subgroup* that increase linearly with age.  Blood Pressure of men has already increased earlier, in their twenties. Men generally have "unhealthier" values also for body weight, annd do so at earlier ages (BMI distributions by age group not shown).
+Comparing this with Figure 1, the toy dataset, I think the violin plot above shows that it is the Blood Pressures from the *female subgroup* that increase linearly with age.  Blood Pressure of men has already increased earlier, in their twenties. Men generally have "unhealthier" values also for body weight, and do so at earlier ages (again: informative BMI distributions by age group not shown).
 
 #### Comparing myself with men of similar age, weight and BMI 
 
@@ -428,7 +434,7 @@ ggplot(bloodpressure3, aes(Age, BPSysAve)) +
 
 The solid blue line shows the predictions by age alone. The slope is `r coef(bloodpressure3_model)[2]` mmHg/yr, much lower than the slope in Figure 1 which was  `r coef(bloodpressure_model)[2]`. The equivalent regression line from Figure 1 is shown as a dashed blue line.
 
-The green dot shows my personal Age/BP data at the time of writing .
+The green dot shows my personal Age/BP data, measured 2014-2017 by my doctor, as far I remember it.
 
 ```{r bp3summ}
 summary(bloodpressure3_model)
