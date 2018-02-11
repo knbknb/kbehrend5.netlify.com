@@ -233,13 +233,13 @@ bloodpressure2 %>%
         group_by(Gender) %>% 
         mutate(md = median(BPSysAve)) %>% 
         ungroup() %>% 
-        ggplot(aes(BPSysAve, color=Gender, fill=Gender, alpha=0.3)) +
-        geom_histogram(binwidth = 1) +
+        ggplot(aes(BPSysAve, color=NULL, fill=Gender)) +
+        geom_histogram(binwidth = 1, alpha=0.6) +
         xlab("Systolic Blood Pressure [mm Hg]") + ylab("") +
         ggtitle("", subtitle = sprintf("Number of People (%s total). Vertical line is median.", nrow(bloodpressure2) )) +
         facet_grid(. ~ Gender) +
-        theme(legend.position = "none") +
-        geom_vline(aes(xintercept = md, group = Gender), color="orange", size=0.7, alpha=1)
+        theme(legend.position = "none") + 
+        geom_vline(aes(xintercept = md, group = Gender, color=Gender) , size=0.7, alpha=1)
 
 ```
 
