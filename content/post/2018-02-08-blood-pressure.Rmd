@@ -38,7 +38,7 @@ options(knitr.table.format = "html")
 
 ```{r abstr, echo=FALSE}
 htmltools::HTML('<div class="alert alert-info"><b>Basic analysis of two health datasets from ~ 2010, about the general US Population.</b>
-The datasets were gathered independently. One of them is a tiny teaching dataset, the other is a larger study. Both datasets show that systolic blood pressure rises about 5-10 mm Hg per decade of a person &apos;s life. </div>')
+The datasets were gathered independently. One of them is a tiny teaching dataset, the other is a larger medical study. Both datasets show that systolic blood pressure rises about 5-10 mm Hg per decade of a person &apos;s life. </div>')
 ```
 
 Recently, conversations with friends and colleagues  had me  thinking about blood pressure.
@@ -254,6 +254,7 @@ After splitting the dataset by life decade, we get this:
 agegroup_labeller <- function(variable, value) {
   agegroup_str <- str_replace(value, pattern = ",", " - ") %>%
     str_replace_all(pattern = regex("^.|.$"), "") %>%
+    str_replace_all(pattern = regex("80"), "80+") %>%
     str_c(" years")
   agegroup_str
 }
@@ -306,7 +307,7 @@ bloodpressure2$prediction <- predict(bloodpressure2_model, data = bloodpressure2
 ```{r bpr}
 bpr <- round(coef(bloodpressure2_model)[2],3)
 
-htmltools::HTML(sprintf('<div class="alert alert-warning">So the rate is more like <b>%s mm Hg/year.</b> Half as much as for the toy dataset. For data from an equivalent group (men only, same weight) the rate is ~6 mmHg/decade, a bit higher than %s mmHg/decade. (See last figure below)</div>', bpr,  round(10*bpr,1)))
+htmltools::HTML(sprintf('<div class="alert alert-warning">So the rate is more like <b>%s mm Hg/year.</b> Half as much as for the toy dataset. For data from a group <i>similar to me</i>(men only, 45+ yrs, 70-80 kg) the rate is ~6 mmHg/decade, a bit higher than %s mmHg/decade. (See below)</div>', bpr,  round(10*bpr,1)))
 
 ```
 
@@ -414,6 +415,10 @@ dashed_line <- bloodpressure %>% arrange(age) %>% select(age, prediction) %>% he
                           arrange(age) %>% select(age, prediction) %>% tail(1)        
 ) %>% rename("Age"="age", "BPSysAve"="prediction")
 
+knbdoc <- data.frame(Age=48, BPSysAve=110) # doctor visits
+knbdev <- data.frame(BPSysAve=c(137, 134, 124,113,119,98,126, 124,132,183, 126, 135, 123,124,115, 138, 118, 120, 118, 132, 123, 104, 119, 118, 94)) # my own device
+set.seed(48)
+knbdev$Age= sample(46:48, nrow(knbdev) , replace = TRUE)
 ggplot(bloodpressure3, aes(Age, BPSysAve)) +
   geom_point() +
   geom_smooth(method="lm") +
@@ -424,17 +429,19 @@ ggplot(bloodpressure3, aes(Age, BPSysAve)) +
         scale_x_continuous(limits = c(45,75), 
                      breaks = seq(45,75,5), 
                      minor_breaks = seq(45,75,5)) +
-        geom_point(data=data.frame(Age=48, BPSysAve=110), 
+        geom_point(data=knbdoc, 
                    aes(Age, BPSysAve), color="green", size=3, fill="navy") +
         geom_line(data=dashed_line,
-                    color="blue", linetype="dashed")
+                    color="blue", linetype="dashed") +
+        geom_jitter(data=knbdev, color="darkgreen", size=0.2) +
+  geom_density2d(data=knbdev, alpha=0.4, color="darkgreen")
         
 
 ```
 
 The solid blue line shows the predictions by age alone. The slope is `r coef(bloodpressure3_model)[2]` mmHg/yr, much lower than the slope in Figure 1 which was  `r coef(bloodpressure_model)[2]`. The equivalent regression line from Figure 1 is shown as a dashed blue line.
 
-The green dot shows my personal Age/BP data, measured 2014-2017 by my doctor, as far I remember it.
+The large green dot shows my personal Age/BP data, measured 2014-2017 by my doctor, as far I remember it (always BP = 110 mmHg). Tiny dark green dots and isolines represent BP values stored on my own BP measurement device which might have been used on other family members (I don't remember).
 
 ```{r bp3summ}
 summary(bloodpressure3_model)

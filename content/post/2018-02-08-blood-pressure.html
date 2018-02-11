@@ -29,7 +29,7 @@ keywords:
 <div id="blood-pressure-as-a-function-of-age-and-body-weight" class="section level4">
 <h4>Blood Pressure as a function of age and body weight</h4>
 <div class="alert alert-info"><b>Basic analysis of two health datasets from ~ 2010, about the general US Population.</b>
-The datasets were gathered independently. One of them is a tiny teaching dataset, the other is a larger study. Both datasets show that systolic blood pressure rises about 5-10 mm Hg per decade of a person &apos;s life. </div>
+The datasets were gathered independently. One of them is a tiny teaching dataset, the other is a larger medical study. Both datasets show that systolic blood pressure rises about 5-10 mm Hg per decade of a person &apos;s life. </div>
 <p>Recently, conversations with friends and colleagues had me thinking about blood pressure. Then I’ve remembered that weekend project from late 2017. Back then I had analysed two datasets: one available <a href="http://college.cengage.com/mathematics/brase/understandable_statistics/7e/students/datasets/mlr/excel/mlr02.xls">on the internet</a>, the other available as R package <a href="https://cran.r-project.org/web/packages/NHANES/index.html">NHANES on CRAN</a>.</p>
 <p>My motivation for writing this up was (1) learning more tricks with visualization library <em>ggplot</em>, and more importantly, (2) gaining insights from a real study that interests me. It was also a helpful exercise to start with a small teaching dataset, then switch to a messier, larger dataset: a real medical study with data from 10000 people.</p>
 </div>
@@ -147,7 +147,7 @@ Figure 3: Blood Pressure by Age Group.
 <div id="linear-modeling" class="section level4">
 <h4>Linear modeling</h4>
 <p>Fit a linear regression model (Blood Pressure as a function of Age and Body Weight) to the entire <code>bloodpressure2</code> subset, just as above for the tiny dataset.</p>
-<div class="alert alert-warning">So the rate is more like <b>0.405 mm Hg/year.</b> Half as much as for the toy dataset. For data from an equivalent group (men only, same weight) the rate is ~6 mmHg/decade, a bit higher than 4.1 mmHg/decade. (See last figure below)</div>
+<div class="alert alert-warning">So the rate is more like <b>0.405 mm Hg/year.</b> Half as much as for the toy dataset. For data from a group <i>similar to me</i>(men only, 45+ yrs, 70-80 kg) the rate is ~6 mmHg/decade, a bit higher than 4.1 mmHg/decade. (See below)</div>
 <p>For the R experts:</p>
 <pre><code>## 
 ## Call:
@@ -222,7 +222,7 @@ Figure 7: Blood pressure as a function of age and body weight. NHANES data filte
 </p>
 </div>
 <p>The solid blue line shows the predictions by age alone. The slope is 0.585 mmHg/yr, much lower than the slope in Figure 1 which was 0.861. The equivalent regression line from Figure 1 is shown as a dashed blue line.</p>
-<p>The green dot shows my personal Age/BP data, measured 2014-2017 by my doctor, as far I remember it.</p>
+<p>The large green dot shows my personal Age/BP data, measured 2014-2017 by my doctor, as far I remember it (always BP = 110 mmHg). Tiny dark green dots and isolines represent BP values stored on my own BP measurement device which might have been used on other family members (I don’t remember).</p>
 <pre><code>## 
 ## Call:
 ## lm(formula = BPSysAve ~ Age + Weight, data = bloodpressure3)
