@@ -30,8 +30,8 @@ keywords:
 <h4>Blood Pressure as a function of age and body weight</h4>
 <div class="alert alert-info"><b>Basic analysis of two health datasets from ~ 2010, about the general US Population.</b>
 The datasets were gathered independently. One of them is a tiny teaching dataset, the other is a larger medical study. Both datasets show that systolic blood pressure rises about 5-10 mm Hg per decade of a person &apos;s life. </div>
-<p>Recently, conversations with friends and colleagues had me thinking about blood pressure. Then I’ve remembered that weekend project from late 2017. Back then I had analysed two datasets: one available <a href="http://college.cengage.com/mathematics/brase/understandable_statistics/7e/students/datasets/mlr/excel/mlr02.xls">on the internet</a>, the other available as R package <a href="https://cran.r-project.org/web/packages/NHANES/index.html">NHANES on CRAN</a>.</p>
-<p>My motivation for writing this up was (1) learning more tricks with visualization library <em>ggplot</em>, and more importantly, (2) gaining insights from a real study that interests me. It was also a helpful exercise to start with a small teaching dataset, then switch to a messier, larger dataset: a real medical study with data from 10000 people.</p>
+<p>Recently, conversations with friends and colleagues had me thinking about blood pressure. Then I’ve remembered that weekend project from late 2017. Back then I had briefly analysed two datasets: one available <a href="http://college.cengage.com/mathematics/brase/understandable_statistics/7e/students/datasets/mlr/excel/mlr02.xls">on the internet</a>, the other available as R package <a href="https://cran.r-project.org/web/packages/NHANES/index.html">NHANES on CRAN</a>.</p>
+<p>My motivation for writing this up was (1) learning more tricks with visualization library <em>ggplot</em>, and more importantly, (2) gaining insights from a real study that interests me. It was also a helpful strategy to start with a hypothesis derived from a small teaching-dataset, then switch to a messier, larger dataset: a real medical study with data from 10000 people.</p>
 </div>
 <div id="preprocessing" class="section level4">
 <h4>Preprocessing</h4>
@@ -41,7 +41,7 @@ library(tidyverse)
 library(NHANES) # Body Shape + related measurements from 10000 US citizens
 data(NHANES)</code></pre>
 <p>Download <strong>dataset 1</strong>: A tiny 11*4 table called <code>Systolic Blood Pressure</code>. It comes from <a href="http://college.cengage.com/mathematics/brase/understandable_statistics/7e/students/datasets/mlr/frames/frame.html">a book publisher’s website</a>. Maybe it is a teaching dataset; perhaps is is supplementary material for a college textbook.</p>
-<p>The <a href="https://github.com/knbknb/kbehrends.netlify.com/tree/master/content">markdown version of this blog post</a> contains the necessary instructions on how to download and import the data.</p>
+<p>The <a href="https://github.com/knbknb/kbehrends.netlify.com/blob/master/content/post/2018-02-08-blood-pressure.Rmd">markdown version of this blog post</a> contains the necessary instructions on how to download and import the data.</p>
 </div>
 <div id="dataset-1" class="section level4">
 <h4>Dataset 1</h4>
@@ -88,12 +88,12 @@ Figure 1:  Predicted values are shown in red, observed values in black.
 <div id="nhanes-dataset" class="section level4">
 <h4>NHANES dataset</h4>
 <p>The <em>NHANES</em> dataset is available as an R package on <a href="https://cran.r-project.org/package=NHANES">CRAN</a>. It contains data from the US National Health and Nutrition Examination Study. I have used package version 2.1.0, specifically “NHANES 2009-2012 with adjusted weighting”. This dataset contains some corrections for undersampling racial minorities. Uncorrected data is also available, in the <em>NHANESraw</em> package.</p>
-<p>The dataset is big, very big. It contains 10000 rows (People) and 76 columns (features). Listing all column definitions here would waste too much screen space. I’ll concentrate on the relevant columns:</p>
+<p>The dataset is big, very big. It contains 10000 rows (People) and 76 columns (features). Listing all column definitions here would waste too much screen space. See <a href="http://www.cdc.gov/nchs/nhanes.htm" class="uri">http://www.cdc.gov/nchs/nhanes.htm</a> for details. I’ll concentrate on the relevant columns:</p>
 <p>Column names containing “Age”:</p>
 <pre><code>## [1] &quot;Age&quot;           &quot;AgeDecade&quot;     &quot;AgeMonths&quot;     &quot;DiabetesAge&quot;  
 ## [5] &quot;Age1stBaby&quot;    &quot;SmokeAge&quot;      &quot;AgeFirstMarij&quot; &quot;AgeRegMarij&quot;  
 ## [9] &quot;SexAge&quot;</code></pre>
-<p>See <a href="http://www.cdc.gov/nchs/nhanes.htm" class="uri">http://www.cdc.gov/nchs/nhanes.htm</a> for details. Column names containing “Weight”:</p>
+<p>Column names containing “Weight”:</p>
 <pre><code>## [1] &quot;Weight&quot;</code></pre>
 <p>Column names containing the prefix “BP” (Blood Pressure):</p>
 <pre><code>## [1] &quot;BPSysAve&quot; &quot;BPDiaAve&quot; &quot;BPSys1&quot;   &quot;BPDia1&quot;   &quot;BPSys2&quot;   &quot;BPDia2&quot;  
@@ -140,7 +140,7 @@ Figure 2: Blood Pressure by Gender, NHANES Dataset.
 Figure 3: Blood Pressure by Age Group.
 </p>
 </div>
-<p>For kids below 10 years of age, Blood Pressures (BP) of boys and girls are equal. BP values are about 100 mm Hg for most both genders. Blood Pressures of teenage boys and 20-30 year-old men are already higher their female “counterparts”. (Originally I made the above plot with BMI data instead of BP. This was also very informative, especially the “young people”&quot; agegroups, but I’ll focus on BP here.)</p>
+<p>For kids below 10 years of age, Blood Pressures (BP) of boys and girls are equal. BP values are about 100 mm Hg for most both genders. Blood Pressures of teenage boys and 20-30 year-old men are already higher their female “counterparts”. (Originally I made the above plot with BMI data instead of BP. This was also very informative, especially the “young people” agegroups, but I’ll focus on BP here.)</p>
 <div class="alert alert-warning"><b></b>Middle-aged men generally have higher blood pressures than women of the same age. This remains so until late middle age, when blood pressures of women seem to catch up. The 60-70 year old women have blood pressures just as high as the men; maybe because men with cardiovascular problems have already died away?</div>
 <p>Blood Pressures generally increase over the years, but is this rate <em>really</em> 9 mm/year, as indicated above in Fig.1?</p>
 </div>
@@ -205,16 +205,19 @@ Figure 6: Blood Pressure by Age group. Orange Symbols are sample means.
                Weight &gt;=70, Weight &lt;= 80, 
                Gender == &quot;male&quot;, 
                Age &gt;= 45 ) %&gt;% 
-        select(-Gender)
+        select(-Gender, -prediction)
+
+bloodpressure3_model &lt;- lm(BPSysAve ~ Age + Weight, data = bloodpressure3) #
+bloodpressure3$Predictions &lt;- predict(bloodpressure3_model) # same data
 
 summary(bloodpressure3)        </code></pre>
-<pre><code>##     BPSysAve        Age           Weight          BMI         prediction 
-##  Min.   : 93   Min.   :45.0   Min.   :70.0   Min.   :25.1   Min.   :119  
+<pre><code>##     BPSysAve        Age           Weight          BMI        Predictions 
+##  Min.   : 93   Min.   :45.0   Min.   :70.0   Min.   :25.1   Min.   :117  
 ##  1st Qu.:115   1st Qu.:50.0   1st Qu.:73.8   1st Qu.:25.7   1st Qu.:122  
-##  Median :126   Median :58.0   Median :76.5   Median :26.5   Median :124  
+##  Median :126   Median :58.0   Median :76.5   Median :26.5   Median :125  
 ##  Mean   :126   Mean   :59.6   Mean   :76.1   Mean   :26.8   Mean   :126  
-##  3rd Qu.:134   3rd Qu.:67.0   3rd Qu.:78.3   3rd Qu.:27.9   3rd Qu.:128  
-##  Max.   :179   Max.   :80.0   Max.   :80.0   Max.   :29.8   Max.   :134</code></pre>
+##  3rd Qu.:134   3rd Qu.:67.0   3rd Qu.:78.3   3rd Qu.:27.9   3rd Qu.:130  
+##  Max.   :179   Max.   :80.0   Max.   :80.0   Max.   :29.8   Max.   :140</code></pre>
 <div class="figure"><span id="fig:bpplot"></span>
 <img src="/post/2018-02-08-blood-pressure_files/figure-html/bpplot-1.png" alt="Blood pressure as a function of age and body weight. NHANES data filtered to match age-range of Figure 1, and my own  BMI- and weight-range. Red dots are predicted values by the two-regressor model." width="864" />
 <p class="caption">
@@ -223,6 +226,7 @@ Figure 7: Blood pressure as a function of age and body weight. NHANES data filte
 </div>
 <p>The solid blue line shows the predictions by age alone. The slope is 0.585 mmHg/yr, much lower than the slope in Figure 1 which was 0.861. The equivalent regression line from Figure 1 is shown as a dashed blue line.</p>
 <p>The large green dot shows my personal Age/BP data, measured 2014-2017 by my doctor, as far I remember it (always BP = 110 mmHg). Tiny dark green dots and isolines represent BP values stored on my own BP measurement device which might have been used on other family members (I don’t remember).</p>
+<p>For the R experts:</p>
 <pre><code>## 
 ## Call:
 ## lm(formula = BPSysAve ~ Age + Weight, data = bloodpressure3)

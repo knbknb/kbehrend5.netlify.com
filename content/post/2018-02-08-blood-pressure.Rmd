@@ -42,9 +42,9 @@ The datasets were gathered independently. One of them is a tiny teaching dataset
 ```
 
 Recently, conversations with friends and colleagues  had me  thinking about blood pressure.
-Then I've remembered that weekend project from late 2017. Back then I had analysed two datasets: one available [on the internet](http://college.cengage.com/mathematics/brase/understandable_statistics/7e/students/datasets/mlr/excel/mlr02.xls), the other available as R package [NHANES on CRAN](https://cran.r-project.org/web/packages/NHANES/index.html). 
+Then I've remembered that weekend project from late 2017. Back then I had briefly analysed two datasets: one available [on the internet](http://college.cengage.com/mathematics/brase/understandable_statistics/7e/students/datasets/mlr/excel/mlr02.xls), the other available as R package [NHANES on CRAN](https://cran.r-project.org/web/packages/NHANES/index.html). 
 
-My motivation for writing this up was (1) learning more tricks with visualization library *ggplot*, and more importantly, (2) gaining insights from a real study that interests me. It was also a helpful exercise to start with a small teaching dataset, then switch to a messier, larger dataset: a real medical study with data from 10000 people.
+My motivation for writing this up was (1) learning more tricks with visualization library *ggplot*, and more importantly, (2) gaining insights from a real study that interests me. It was also a helpful strategy to start with a hypothesis derived from a small teaching-dataset, then switch to a messier, larger dataset: a real medical study with data from 10000 people.
 
 #### Preprocessing 
 
@@ -65,7 +65,7 @@ scale_colour_discrete <- function(...) scale_color_brewer(palette="Set1")
 
 Download **dataset 1**: A tiny 11*4 table called `Systolic Blood Pressure`. It comes from [a book publisher's website](http://college.cengage.com/mathematics/brase/understandable_statistics/7e/students/datasets/mlr/frames/frame.html). Maybe it is a teaching dataset; perhaps is is supplementary material for a college textbook.
 
-The [markdown version  of this blog post](https://github.com/knbknb/kbehrends.netlify.com/tree/master/content) contains the necessary instructions on how to download and import the data.
+The [markdown version  of this blog post](https://github.com/knbknb/kbehrends.netlify.com/blob/master/content/post/2018-02-08-blood-pressure.Rmd) contains the necessary instructions on how to download and import the data.
 
 ```{r IOstuff, echo=FALSE}
 xlsurl <- "http://college.cengage.com/mathematics/brase/understandable_statistics/7e/students/datasets/mlr/excel/mlr02.xls"
@@ -154,7 +154,7 @@ The *NHANES* dataset is available as an R package on [CRAN](https://cran.r-proje
 
 
 
-The dataset is big, very big. It contains `r nrow(NHANES)` rows (People) and `r ncol(NHANES)` columns (features). Listing all column definitions here would waste too much screen space. I'll concentrate on the relevant columns:
+The dataset is big, very big. It contains `r nrow(NHANES)` rows (People) and `r ncol(NHANES)` columns (features). Listing all column definitions here would waste too much screen space. See [http://www.cdc.gov/nchs/nhanes.htm](http://www.cdc.gov/nchs/nhanes.htm) for details. I'll concentrate on the relevant columns:
 
 Column names containing "Age":
 
@@ -165,7 +165,7 @@ names(NHANES)[ages]
 
 ```
 
-See [http://www.cdc.gov/nchs/nhanes.htm](http://www.cdc.gov/nchs/nhanes.htm) for details.
+
 Column names containing "Weight":
 
 ```{r nm2}
@@ -282,7 +282,7 @@ bloodpressure2 %>%
 
 ```
 
-For kids below 10 years of age, Blood Pressures (BP) of boys and girls are equal. BP values are about 100 mm Hg for most both genders. Blood Pressures of teenage boys and 20-30 year-old men are already higher their female "counterparts". (Originally I made the above plot with BMI data instead of BP. This was also very informative, especially the "young people"" agegroups, but I'll focus on BP here.)
+For kids below 10 years of age, Blood Pressures (BP) of boys and girls are equal. BP values are about 100 mm Hg for most both genders. Blood Pressures of teenage boys and 20-30 year-old men are already higher their female "counterparts". (Originally I made the above plot with BMI data instead of BP. This was also very informative, especially the "young people" agegroups, but I'll focus on BP here.)
 
 ```{r html2}
 htmltools::HTML('<div class="alert alert-warning"><b></b>Middle-aged men generally have higher blood pressures than women of the same age. This remains so until late middle age, when blood pressures of women seem to catch up. The 60-70 year old women have blood pressures just as high as the men; maybe because men with cardiovascular problems have already died away?</div>')
@@ -401,19 +401,22 @@ bloodpressure3 <- bloodpressure2 %>%
                Weight >=70, Weight <= 80, 
                Gender == "male", 
                Age >= 45 ) %>% 
-        select(-Gender)
+        select(-Gender, -prediction)
+
+bloodpressure3_model <- lm(BPSysAve ~ Age + Weight, data = bloodpressure3) #
+bloodpressure3$Predictions <- predict(bloodpressure3_model) # same data
 
 summary(bloodpressure3)        
 ```
 
 ```{r bpplot, fig.cap="Blood pressure as a function of age and body weight. NHANES data filtered to match age-range of Figure 1, and my own  BMI- and weight-range. Red dots are predicted values by the two-regressor model."}
 
-bloodpressure3_model <- lm(BPSysAve ~ Age + Weight, data = bloodpressure3)
-bloodpressure3$Predictions <- predict(bloodpressure3_model)
+
+# for dashed blue line, include data from toy dataset. here new column is called "prediction
 dashed_line <- bloodpressure %>% arrange(age) %>% select(age, prediction) %>% head(1) %>% 
         union_all(bloodpressure %>% 
                           arrange(age) %>% select(age, prediction) %>% tail(1)        
-) %>% rename("Age"="age", "BPSysAve"="prediction")
+) %>% rename("Age"="age", "BPSysAve" = "prediction")
 
 knbdoc <- data.frame(Age=48, BPSysAve=110) # doctor visits
 knbdev <- data.frame(BPSysAve=c(137, 134, 124,113,119,98,126, 124,132,183, 126, 135, 123,124,115, 138, 118, 120, 118, 132, 123, 104, 119, 118, 94)) # my own device
@@ -423,10 +426,10 @@ ggplot(bloodpressure3, aes(Age, BPSysAve)) +
   geom_point() +
   geom_smooth(method="lm") +
   geom_point(aes(Age, Predictions), color = "red", size = 1) +
-        ggtitle(sprintf("Blood pressures of %s middle-aged US men (70-80 kg)", nrow(bloodpressure3)), 
-                subtitle="Systolic Blood pressure [mm Hg]. Note age-range on x-axis.")+
+        ggtitle(sprintf("Blood pressures of %s US men (45-80+ years, 70-80 kg), and myself", nrow(bloodpressure3)), 
+                subtitle="Systolic Blood pressure [mm Hg]. Note age-range on x-axis. Large green dot is my blood pressure, during doctor visits.")+
         xlab("Age/years") + ylab("")  +
-        scale_x_continuous(limits = c(45,75), 
+        scale_x_continuous(limits = c(45,82), 
                      breaks = seq(45,75,5), 
                      minor_breaks = seq(45,75,5)) +
         geom_point(data=knbdoc, 
@@ -442,6 +445,8 @@ ggplot(bloodpressure3, aes(Age, BPSysAve)) +
 The solid blue line shows the predictions by age alone. The slope is `r coef(bloodpressure3_model)[2]` mmHg/yr, much lower than the slope in Figure 1 which was  `r coef(bloodpressure_model)[2]`. The equivalent regression line from Figure 1 is shown as a dashed blue line.
 
 The large green dot shows my personal Age/BP data, measured 2014-2017 by my doctor, as far I remember it (always BP = 110 mmHg). Tiny dark green dots and isolines represent BP values stored on my own BP measurement device which might have been used on other family members (I don't remember).
+
+For the R experts:
 
 ```{r bp3summ}
 summary(bloodpressure3_model)
