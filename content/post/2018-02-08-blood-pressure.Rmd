@@ -37,8 +37,8 @@ options(knitr.table.format = "html")
 
 
 ```{r abstr, echo=FALSE}
-htmltools::HTML('<div class="alert alert-info"><b>Basic analysis of two health datasets from ~ 2010, about the general US Population.</b>
-The datasets were gathered independently. One of them is a tiny teaching dataset, the other is a larger medical study. Both datasets show that systolic blood pressure rises about 5-10 mm Hg per decade of a person &apos;s life. </div>')
+htmltools::HTML('<div class="alert alert-info"><b>Basic analysis of two health datasets from ~ 2010, about the general US Population, and myself.</b>
+The datasets were gathered independently. One of them is a tiny teaching dataset, the other is a larger medical study. Both datasets show that systolic blood pressure rises about 5-10 mm Hg per decade of a person&apos;s life. </div>')
 ```
 
 Recently, conversations with friends and colleagues  had me  thinking about blood pressure.
