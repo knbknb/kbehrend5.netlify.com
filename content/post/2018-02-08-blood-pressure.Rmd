@@ -38,7 +38,7 @@ options(knitr.table.format = "html")
 
 ```{r abstr, echo=FALSE}
 htmltools::HTML('<div class="alert alert-info"><b>Basic analysis of two health datasets from ~ 2010, about the general US Population, and myself.</b>
-The datasets were gathered independently. One of them is a tiny teaching dataset, the other is a larger medical study. Both datasets show that systolic blood pressure rises about 5-10 mm Hg per decade of a person&apos;s life. </div>')
+The datasets were gathered independently. One of them is a tiny teaching dataset, the other is a larger medical study. Both datasets show a trend: systolic blood pressure rises about 5-10 mm Hg per decade of a person&apos;s life. The correlation is weak, though; and aging is not the cause for high blood pressure.</div>')
 ```
 
 Recently, conversations with friends and colleagues  had me  thinking about blood pressure.
@@ -63,7 +63,7 @@ theme_set(theme_economist_white())
 scale_colour_discrete <- function(...) scale_color_brewer(palette="Set1")
 ```
 
-Download **dataset 1**: A tiny 11*4 table called `Systolic Blood Pressure`. It comes from [a book publisher's website](http://college.cengage.com/mathematics/brase/understandable_statistics/7e/students/datasets/mlr/frames/frame.html). Maybe it is a teaching dataset; perhaps is is supplementary material for a college textbook.
+Download **dataset 1**: A tiny 11*4 table called `Systolic Blood Pressure`. It comes from [a book publisher's website](http://college.cengage.com/mathematics/brase/understandable_statistics/7e/students/datasets/mlr/frames/frame.html). Maybe it is a teaching dataset; perhaps it is supplementary material for a college textbook.
 
 The [markdown version  of this blog post](https://github.com/knbknb/kbehrends.netlify.com/blob/master/content/post/2018-02-08-blood-pressure.Rmd) contains the necessary instructions on how to download and import the data.
 
@@ -128,9 +128,9 @@ ggplot(bloodpressure, aes(age, blood_pressure)) +
 
 ```
 
-The linear regression model shows a strong correlation of blood pressure with age and weight. For a single-parameter model, (age as sole predictive variable), the predicted values would fall on the blue line. Inclusion of body weight as a second predicitive variable seems to improve the fitted values slightly, as the red dots show.
+The linear regression model shows a strong correlation of blood pressure with age and weight. For a single-parameter model, (age as sole predictive variable), the predicted values would fall on the blue line. Inclusion of body weight as a second predictive variable seems to improve the fitted values slightly, as the red dots show.
 
-Also, for 45-year olds the average blood pressure is already well over 120. Some doctors consider this  unhealthy.
+Also, for 45-year olds the average blood pressure is already well over 120. 
 
 
 For the R specialists, this is the summary of the regression model:
@@ -154,7 +154,7 @@ The *NHANES* dataset is available as an R package on [CRAN](https://cran.r-proje
 
 
 
-The dataset is big, very big. It contains `r nrow(NHANES)` rows (People) and `r ncol(NHANES)` columns (features). Listing all column definitions here would waste too much screen space. See [http://www.cdc.gov/nchs/nhanes.htm](http://www.cdc.gov/nchs/nhanes.htm) for details. I'll concentrate on the relevant columns:
+The dataset is big, very big. It contains `r nrow(NHANES)` rows (People, anonymized) and `r ncol(NHANES)` columns (features). Listing all column definitions here would waste too much screen space. See [http://www.cdc.gov/nchs/nhanes.htm](http://www.cdc.gov/nchs/nhanes.htm) for details. I'll concentrate on the relevant columns:
 
 Column names containing "Age":
 
@@ -282,10 +282,12 @@ bloodpressure2 %>%
 
 ```
 
-For kids below 10 years of age, Blood Pressures (BP) of boys and girls are equal. BP values are about 100 mm Hg for most both genders. Blood Pressures of teenage boys and 20-30 year-old men are already higher their female "counterparts". (Originally I made the above plot with BMI data instead of BP. This was also very informative, especially the "young people" agegroups, but I'll focus on BP here.)
+For kids below 10 years of age, Blood Pressures (BP) of boys and girls are equal. The majority of BP values are about 100 mm Hg, for both genders. Blood Pressures of teenage boys and 20-30 year-old men are already higher than their female "counterparts". 
+
+(Originally I made the above plot with BMI data instead of BP. This was also very informative, especially the multimodal density plots of "young people" agegroups, but I'll focus on BP here.)
 
 ```{r html2}
-htmltools::HTML('<div class="alert alert-warning"><b></b>Middle-aged men generally have higher blood pressures than women of the same age. This remains so until late middle age, when blood pressures of women seem to catch up. The 60-70 year old women have blood pressures just as high as the men; maybe because men with cardiovascular problems have already died away?</div>')
+htmltools::HTML('<div class="alert alert-warning"><b></b>Middle-aged men generally have higher blood pressures than women of the same age. This remains so until late middle age, when blood pressures of women seem to catch up. The 60-70 year old women have blood pressures just as high as the men; maybe the men with cardiovascular problems  (having higher blood pressures, at young age) have already died away?</div>')
 ```
 
 
