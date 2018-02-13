@@ -20,3 +20,35 @@ tags:
 summary: ""
 keywords: ["Personal-Blog", "Fun", "rstats"]
 ---
+
+```{r setup, include=FALSE}
+library(knitr)
+opts_chunk$set(cache = TRUE, warning = FALSE, message = FALSE, 
+               echo = FALSE, tidy = FALSE, width = 7, fig.width=9)
+options(digits = 3, tibble.print_min = 6)
+options(knitr.table.format = "html") 
+```
+
+#### Title
+
+
+```{r abstr, echo=FALSE}
+htmltools::HTML('<div class="alert alert-info"><b></b></div>')
+```
+
+
+#### Preprocessing 
+
+Load the necessary packages
+
+```{r pkgs, echo=TRUE, cache=FALSE}
+library(tidyverse)
+
+```
+
+```{r theme}
+library(ggthemes)
+theme_set(theme_economist_white())
+scale_colour_discrete <- function(...) scale_color_brewer(palette="Set1")
+```
+

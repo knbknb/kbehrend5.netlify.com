@@ -1,0 +1,190 @@
+---
+title: Lasso regression on Blood Pressure data
+author: Knut Behrends
+date: '2018-02-13'
+slug: bloodpressure-lasso
+categories: [health]
+tags: [health, medicine]
+draft: yes
+output:
+  html_document:
+    toc: no
+    css: styles.css
+    fig_caption: yes
+    keep_md: no
+image: /static/img/hugo-gopher.png
+banner: img/post/thumb/hugo-logo.png
+summary: ''
+keywords:
+  - Personal-Blog
+  - Fun
+  - rstats
+  - health
+---
+
+
+
+<div id="lasso-regression-on-blood-pressure-data-nhanes-dataset" class="section level4">
+<h4>Lasso Regression on Blood Pressure Data (NHANES Dataset)</h4>
+<p><div class="alert alert-info"><b>Performing Lasso Regression on anonymized data from 10000 people representing the general US Population</b>. Actually I will also try out other model selection techniques.
+</div> This is a continuation from <a href="/post/2018/02/bloodpressure-nhanes">another blog post</a> of mine. When I was nearly done with writing that post, some new open questions came to my mind.</p>
+<p>There was not really a hypothesis. I just realized that I need to try out all those fancy Machine Learning algorithms that I encountered during MOOC homework assignments. This time I’ll try these techniques out on datasets that <em>I</em> find interesting.</p>
+<p>In the preceding blogpost I noticed that there exists a link between Systolic Blood Pressure as a function of age and weight, but the trend was noisy and the correlation was weak.</p>
+<p>Can I determine some other variables (out of the 77) that are also “governing” the Blood Pressure in some way?</p>
+<p>I am not trying to postulate any causation here. Hey I’m just a blogger and playing with a dataset.</p>
+</div>
+<div id="nhanes-dataset" class="section level4">
+<h4>NHANES dataset</h4>
+<p>NHANES is the US National Health and Nutrition Examination Study. It is a carefully curated, larger medical survey aiming to get a representative sample of the general US population. The survey is carried out periodically.</p>
+<p>The <em>NHANES</em> dataset is available as an R package on <a href="https://cran.r-project.org/package=NHANES">CRAN</a>. I have used package version 2.1.0, specifically “NHANES 2009-2012 with adjusted weighting”. This dataset contains some corrections for undersampling racial minorities. Uncorrected data is also available, in the <em>NHANESraw</em> package.</p>
+</div>
+<div id="preprocessing" class="section level4">
+<h4>Preprocessing</h4>
+<p>Load the necessary packages.</p>
+<pre class="r"><code>library(tidyverse)
+library(NHANES) # Body Shape + related measurements from 10000 US citizens
+data(NHANES)</code></pre>
+<p>We will try to model Blood Pressure as a function of a whole lot of other variables. It only makes sense to deal with Nonzero Values here. So, for starters, we drop all rows where column <code>BPSysAve</code> is empty / NA.</p>
+<pre class="r"><code>NHANES &lt;- NHANES %&gt;% filter(! is.na(BPSysAve) )</code></pre>
+<p>Now there are still <code>nrow(na.omit(NHANES))</code> rows of 8551 which have nonempty values in <em>all</em> columns assigned. For our analysis, we need to drop some columns or impute missing ones.</p>
+<p>These are the column names and some other important metadata of the NHANES dataset.</p>
+<pre><code>## 
+## Data frame:NHANES    8551 observations and 76 variables    Maximum # NAs:8551
+## 
+## 
+##                  Levels Storage  NAs
+## ID                      integer    0
+## SurveyYr              2 integer    0
+## Gender                2 integer    0
+## Age                     integer    0
+## AgeDecade             8 integer  321
+## AgeMonths               integer 4433
+## Race1                 5 integer    0
+## Race3                 6 integer 4270
+## Education             5 integer 1591
+## MaritalStatus         6 integer 1583
+## HHIncome             12 integer  695
+## HHIncomeMid             integer  695
+## Poverty                  double  617
+## HomeRooms               integer   58
+## HomeOwn               3 integer   53
+## Work                  3 integer 1073
+## Weight                   double   58
+## Length                   double 8551
+## HeadCirc                 double 8551
+## Height                   double   52
+## BMI                      double   64
+## BMICatUnder20yrs      4 integer 7745
+## BMI_WHO               4 integer   95
+## Pulse                   integer    0
+## BPSysAve                integer    0
+## BPDiaAve                integer    0
+## BPSys1                  integer  314
+## BPDia1                  integer  314
+## BPSys2                  integer  198
+## BPDia2                  integer  198
+## BPSys3                  integer  186
+## BPDia3                  integer  186
+## Testosterone             double 4637
+## DirectChol               double  558
+## TotChol                  double  558
+## UrineVol1               integer   94
+## UrineFlow1               double  599
+## UrineVol2               integer 7159
+## UrineFlow2               double 7161
+## Diabetes              2 integer    5
+## DiabetesAge             integer 7935
+## HealthGen             5 integer 1150
+## DaysPhysHlthBad         integer 1156
+## DaysMentHlthBad         integer 1155
+## LittleInterest        3 integer 2008
+## Depressed             3 integer 2001
+## nPregnancies            integer 6012
+## nBabies                 integer 6192
+## Age1stBaby              integer 6718
+## SleepHrsNight           integer 1089
+## SleepTrouble          2 integer 1072
+## PhysActive            2 integer  523
+## PhysActiveDays          integer 4320
+## TVHrsDay              7 integer 4282
+## CompHrsDay            7 integer 4278
+## TVHrsDayChild           integer 8311
+## CompHrsDayChild         integer 8311
+## Alcohol12PlusYr       2 integer 2093
+## AlcoholDay              integer 3724
+## AlcoholYear             integer 2731
+## SmokeNow              2 integer 5443
+## Smoke100              2 integer 1580
+## Smoke100n             2 integer 1580
+## SmokeAge                integer 5571
+## Marijuana             2 integer 3694
+## AgeFirstMarij           integer 5709
+## RegularMarij          2 integer 3694
+## AgeRegMarij             integer 7212
+## HardDrugs             2 integer 2884
+## SexEver               2 integer 2882
+## SexAge                  integer 3109
+## SexNumPartnLife         integer 2921
+## SexNumPartYear          integer 3707
+## SameSex               2 integer 2881
+## SexOrientation        3 integer 3792
+## PregnantNow           3 integer 6949
+## 
+## +----------------+------------------------------------------------------+
+## |Variable        |Levels                                                |
+## +----------------+------------------------------------------------------+
+## |SurveyYr        |2009_10,2011_12                                       |
+## +----------------+------------------------------------------------------+
+## |Gender          |female,male                                           |
+## +----------------+------------------------------------------------------+
+## |AgeDecade       | 0-9, 10-19, 20-29, 30-39, 40-49, 50-59, 60-69, 70+   |
+## +----------------+------------------------------------------------------+
+## |Race1           |Black,Hispanic,Mexican,White,Other                    |
+## +----------------+------------------------------------------------------+
+## |Race3           |Asian,Black,Hispanic,Mexican,White,Other              |
+## +----------------+------------------------------------------------------+
+## |Education       |8th Grade,9 - 11th Grade,High School,Some College     |
+## |                |College Grad                                          |
+## +----------------+------------------------------------------------------+
+## |MaritalStatus   |Divorced,LivePartner,Married,NeverMarried,Separated   |
+## |                |Widowed                                               |
+## +----------------+------------------------------------------------------+
+## |HHIncome        | 0-4999, 5000-9999,10000-14999,15000-19999,20000-24999|
+## |                |25000-34999,35000-44999,45000-54999,55000-64999       |
+## |                |65000-74999,75000-99999,more 99999                    |
+## +----------------+------------------------------------------------------+
+## |HomeOwn         |Own,Rent,Other                                        |
+## +----------------+------------------------------------------------------+
+## |Work            |Looking,NotWorking,Working                            |
+## +----------------+------------------------------------------------------+
+## |BMICatUnder20yrs|UnderWeight,NormWeight,OverWeight,Obese               |
+## +----------------+------------------------------------------------------+
+## |BMI_WHO         |12.0_18.5,18.5_to_24.9,25.0_to_29.9,30.0_plus         |
+## +----------------+------------------------------------------------------+
+## |Diabetes        |No,Yes                                                |
+## |SleepTrouble    |                                                      |
+## |PhysActive      |                                                      |
+## |Alcohol12PlusYr |                                                      |
+## |SmokeNow        |                                                      |
+## |Smoke100        |                                                      |
+## |Marijuana       |                                                      |
+## |RegularMarij    |                                                      |
+## |HardDrugs       |                                                      |
+## |SexEver         |                                                      |
+## |SameSex         |                                                      |
+## +----------------+------------------------------------------------------+
+## |HealthGen       |Excellent,Vgood,Good,Fair,Poor                        |
+## +----------------+------------------------------------------------------+
+## |LittleInterest  |None,Several,Most                                     |
+## |Depressed       |                                                      |
+## +----------------+------------------------------------------------------+
+## |TVHrsDay        |0_hrs,0_to_1_hr,1_hr,2_hr,3_hr,4_hr,More_4_hr         |
+## |CompHrsDay      |                                                      |
+## +----------------+------------------------------------------------------+
+## |Smoke100n       |Non-Smoker,Smoker                                     |
+## +----------------+------------------------------------------------------+
+## |SexOrientation  |Bisexual,Heterosexual,Homosexual                      |
+## +----------------+------------------------------------------------------+
+## |PregnantNow     |Yes,No,Unknown                                        |
+## +----------------+------------------------------------------------------+</code></pre>
+</div>
