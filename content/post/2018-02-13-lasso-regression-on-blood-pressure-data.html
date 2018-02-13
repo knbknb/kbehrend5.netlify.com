@@ -31,12 +31,14 @@ keywords:
 <p>There was not really a hypothesis. I just realized that I need to try out all those fancy Machine Learning algorithms that I encountered during MOOC homework assignments. This time I’ll try these techniques out on datasets that <em>I</em> find interesting.</p>
 <p>In the preceding blogpost I noticed that there exists a link between Systolic Blood Pressure as a function of age and weight, but the trend was noisy and the correlation was weak.</p>
 <p>Can I determine some other variables (out of the 77) that are also “governing” the Blood Pressure in some way?</p>
-<p>I am not trying to postulate any causation here. Hey I’m just a blogger and playing with a dataset.</p>
+<p>I am not trying to postulate any causation here. Hey I’m just a blogger, playing with a dataset for personal entertainment.</p>
 </div>
 <div id="nhanes-dataset" class="section level4">
 <h4>NHANES dataset</h4>
 <p>NHANES is the US National Health and Nutrition Examination Study. It is a carefully curated, larger medical survey aiming to get a representative sample of the general US population. The survey is carried out periodically.</p>
-<p>The <em>NHANES</em> dataset is available as an R package on <a href="https://cran.r-project.org/package=NHANES">CRAN</a>. I have used package version 2.1.0, specifically “NHANES 2009-2012 with adjusted weighting”. This dataset contains some corrections for undersampling racial minorities. Uncorrected data is also available, in the <em>NHANESraw</em> package.</p>
+<p>The <a href="https://www.cdc.gov/nchs/nhanes/participant_video.htm"><em>NHANES</em> dataset</a> is available as an R package on <a href="https://cran.r-project.org/package=NHANES">CRAN</a>. I have used package version 2.1.0, specifically “NHANES 2009-2012 with adjusted weighting”. This dataset contains some corrections for undersampling racial minorities. Uncorrected data is also available, in the <em>NHANESraw</em> package.</p>
+<p>Obligatory Disclaimer (from the Page Documentation):</p>
+<p><em>Please note that the data sets provided in this package are derived from the NHANES database and have been adapted for educational purposes. As such, they are NOT suitable for use as a research database.</em></p>
 </div>
 <div id="preprocessing" class="section level4">
 <h4>Preprocessing</h4>
@@ -46,8 +48,8 @@ library(NHANES) # Body Shape + related measurements from 10000 US citizens
 data(NHANES)</code></pre>
 <p>We will try to model Blood Pressure as a function of a whole lot of other variables. It only makes sense to deal with Nonzero Values here. So, for starters, we drop all rows where column <code>BPSysAve</code> is empty / NA.</p>
 <pre class="r"><code>NHANES &lt;- NHANES %&gt;% filter(! is.na(BPSysAve) )</code></pre>
-<p>Now there are still <code>nrow(na.omit(NHANES))</code> rows of 8551 which have nonempty values in <em>all</em> columns assigned. For our analysis, we need to drop some columns or impute missing ones.</p>
-<p>These are the column names and some other important metadata of the NHANES dataset.</p>
+<p>Now there are still 0 left rows of ~10000 initially. There are still none have nonempty values in <em>all</em> columns assigned. For our analysis, we need to deal with sparsely filled columns. We can either drop these columns, or intelligently guess (impute) missing values in such columns.</p>
+<p>Just to be clear, these are the column names and some other important metadata of the NHANES dataset. These metadata are, for example, the unique distinct values of columns where it makes sense to report them (e.g. male/female for column “gender”)</p>
 <pre><code>## 
 ## Data frame:NHANES    8551 observations and 76 variables    Maximum # NAs:8551
 ## 
@@ -187,4 +189,9 @@ data(NHANES)</code></pre>
 ## +----------------+------------------------------------------------------+
 ## |PregnantNow     |Yes,No,Unknown                                        |
 ## +----------------+------------------------------------------------------+</code></pre>
+</div>
+<div id="dropping-columns" class="section level4">
+<h4>Dropping Columns</h4>
+<p>I’ll drop columns with information specific to children. According to the documentation, these are:</p>
+<p>(TBC)</p>
 </div>

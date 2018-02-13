@@ -46,13 +46,18 @@ In the preceding blogpost I noticed that there exists a link between Systolic Bl
 
 Can I determine some other variables (out of the 77) that are also "governing" the Blood Pressure in some way?
 
-I am not trying to postulate any causation here. Hey I'm just a blogger and playing with a dataset.
+I am not trying to postulate any causation here. Hey I'm just a blogger, playing with a dataset for personal entertainment.
+
 
 #### NHANES dataset
 
- NHANES is  the US National Health and Nutrition Examination Study. It is a carefully curated, larger medical survey aiming to get a representative sample of the general US population. The survey is carried out periodically.
+NHANES is  the US National Health and Nutrition Examination Study. It is a carefully curated, larger medical survey aiming to get a representative sample of the general US population. The survey is carried out periodically.
 
-The *NHANES* dataset is available as an R package on [CRAN](https://cran.r-project.org/package=NHANES). I have used package version 2.1.0, specifically "NHANES 2009-2012 with adjusted weighting". This dataset contains some corrections for undersampling racial minorities. Uncorrected data is also available, in the *NHANESraw* package.
+The [*NHANES* dataset](https://www.cdc.gov/nchs/nhanes/participant_video.htm) is available as an R package on [CRAN](https://cran.r-project.org/package=NHANES). I have used package version 2.1.0, specifically "NHANES 2009-2012 with adjusted weighting". This dataset contains some corrections for undersampling racial minorities. Uncorrected data is also available, in the *NHANESraw* package.
+
+Obligatory Disclaimer (from the Page Documentation):
+
+*Please note that the data sets provided in this package are derived from the NHANES database and have been adapted for educational purposes. As such, they are NOT suitable for use as a research database.*
 
 #### Preprocessing 
 
@@ -78,10 +83,17 @@ It only makes sense to deal with Nonzero Values here. So, for starters, we drop 
 NHANES <- NHANES %>% filter(! is.na(BPSysAve) )
 ```
 
-Now there are still  `nrow(na.omit(NHANES))` rows of `r nrow(NHANES)` which have nonempty values in *all* columns assigned. For our analysis, we need to drop some columns or impute missing ones.
+Now there are still  `r nrow(na.omit(NHANES))` left rows of ~10000 initially. There are still none have nonempty values in *all* columns assigned. For our analysis, we need to deal with sparsely filled columns. We can either drop these columns, or intelligently guess (impute) missing values in such columns. 
 
-These are  the column names and some other important metadata of the NHANES dataset. 
+Just to be clear, 
+these are  the column names and some other important metadata of the NHANES dataset. These metadata are, for example, the unique distinct values of columns where it makes sense to report them (e.g. male/female for column "gender") 
+
 ```{r}
 Hmisc::contents(NHANES)
 ```
 
+#### Dropping Columns 
+
+I'll drop columns with information specific to children. According to the documentation, these are:
+
+(TBC)
