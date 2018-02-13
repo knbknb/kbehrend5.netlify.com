@@ -52,3 +52,19 @@ theme_set(theme_economist_white())
 scale_colour_discrete <- function(...) scale_color_brewer(palette="Set1")
 ```
 
+
+
+
+
+
+
+
+
+```{r}
+htmltools::HTML('<div class="alert alert-info"><b>What I&apos; learned from doing this:</b>
+<ul>
+<li> 
+<li> 
+</ul>
+</div>')
+```
