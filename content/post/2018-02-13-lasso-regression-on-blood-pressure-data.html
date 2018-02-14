@@ -28,10 +28,10 @@ keywords:
 <h4>Lasso Regression on Blood Pressure Data (NHANES Dataset)</h4>
 <p><div class="alert alert-info"><b>Performing Lasso Regression on anonymized data from 10000 people representing the general US Population</b>. Actually I will also try out other model selection techniques.
 </div> This is a continuation from <a href="/post/2018/02/bloodpressure-nhanes">another blog post</a> of mine. When I was nearly done with writing that post, some new open questions came to my mind.</p>
-<p>There was not really a hypothesis. I just realized that I need to try out all those fancy Machine Learning algorithms that I encountered during MOOC homework assignments. This time I’ll try these techniques out on datasets that <em>I</em> find interesting.</p>
 <p>In the preceding blogpost I noticed that there exists a link between Systolic Blood Pressure as a function of age and weight, but the trend was noisy and the correlation was weak.</p>
-<p>Can I determine some other variables (out of the 77) that are also “governing” the Blood Pressure in some way?</p>
-<p>I am not trying to postulate any causation here. Hey I’m just a blogger, playing with a dataset for personal entertainment.</p>
+<p>There was not really a new hypothesis. I just realized that I need to try out all those fancy Machine Learning algorithms that I encountered during MOOC homework assignments. This time I’ll try these techniques out on datasets that <em>I</em> find interesting.</p>
+<p>Can I determine some other variables (out of the 76) that are also “governing” the Blood Pressure in some way?</p>
+<p>I am not trying to do serious research and postulate any causation here. Hey I’m just a blogger, playing with a dataset for personal entertainment.</p>
 </div>
 <div id="nhanes-dataset" class="section level4">
 <h4>NHANES dataset</h4>
@@ -43,9 +43,6 @@ keywords:
 <div id="preprocessing" class="section level4">
 <h4>Preprocessing</h4>
 <p>Load the necessary packages.</p>
-<pre class="r"><code>library(tidyverse)
-library(NHANES) # Body Shape + related measurements from 10000 US citizens
-data(NHANES)</code></pre>
 <p>We will try to model Blood Pressure as a function of a whole lot of other variables. It only makes sense to deal with Nonzero Values here. So, for starters, we drop all rows where column <code>BPSysAve</code> is empty / NA.</p>
 <pre class="r"><code>NHANES &lt;- NHANES %&gt;% filter(! is.na(BPSysAve) )</code></pre>
 <p>Now there are still 0 left rows of ~10000 initially. There are still none have nonempty values in <em>all</em> columns assigned. For our analysis, we need to deal with sparsely filled columns. We can either drop these columns, or intelligently guess (impute) missing values in such columns.</p>

@@ -30,6 +30,10 @@ opts_chunk$set(cache = TRUE, warning = FALSE, message = FALSE,
 options(digits = 3, tibble.print_min = 6)
 options(knitr.table.format = "html") 
 ```
+```{r pkgs1}
+library(NHANES) # Body Shape + related measurements from 10000 US citizens
+data(NHANES)
+```
 
 #### Lasso Regression on Blood Pressure Data (NHANES Dataset)
 
@@ -40,13 +44,14 @@ htmltools::HTML('<div class="alert alert-info"><b>Performing Lasso Regression on
 ```
 This is a continuation from [another blog post](/post/2018/02/bloodpressure-nhanes) of mine. When I was nearly done with writing that post, some new open questions came to my mind.
 
-There was  not really a hypothesis. I just realized that I need to try out all those fancy Machine Learning algorithms that I encountered during MOOC homework assignments. This time I'll try these techniques out on  datasets that *I* find interesting.
-
 In the preceding blogpost I noticed that there exists a link between Systolic Blood Pressure as a function of age and weight, but the trend was noisy and the correlation was weak. 
 
-Can I determine some other variables (out of the 77) that are also "governing" the Blood Pressure in some way?
 
-I am not trying to postulate any causation here. Hey I'm just a blogger, playing with a dataset for personal entertainment.
+There was  not really a new hypothesis. I just realized that I need to try out all those fancy Machine Learning algorithms that I encountered during MOOC homework assignments. This time I'll try these techniques out on  datasets that *I* find interesting.
+
+Can I determine some other variables (out of the `r ncol(NHANES)`) that are also "governing" the Blood Pressure in some way?
+
+I am not trying to do serious research and postulate any causation here. Hey I'm just a blogger, playing with a dataset for personal entertainment.
 
 
 #### NHANES dataset
@@ -63,10 +68,9 @@ Obligatory Disclaimer (from the Package Documentation):
 
 Load the necessary packages. 
 
-```{r pkgs, echo=TRUE, cache=FALSE}
+```{r echo=FALSE, cache=FALSE}
 library(tidyverse)
-library(NHANES) # Body Shape + related measurements from 10000 US citizens
-data(NHANES)
+
 ```
 
 ```{r theme}
