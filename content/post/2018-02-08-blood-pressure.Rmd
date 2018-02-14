@@ -310,7 +310,7 @@ bloodpressure2$prediction <- predict(bloodpressure2_model, data = bloodpressure2
 ```{r bpr}
 bpr <- round(coef(bloodpressure2_model)[2],3)
 
-htmltools::HTML(sprintf('<div class="alert alert-warning">So the rate is more like <b>%s mm Hg/year.</b> Half as much as for the toy dataset. For data from a group <i>similar to me</i>(men only, 45+ yrs, 70-80 kg) the rate is ~6 mmHg/decade, a bit higher than %s mmHg/decade. (See below)</div>', bpr,  round(10*bpr,1)))
+htmltools::HTML(sprintf('<div class="alert alert-warning">There is a trend: systolic blood pressure increases with age. The rate is about <b>%s mm Hg/year.</b> Half as much as for the toy dataset. For data from a group <i>similar to me</i> (men only, 45+ yrs, 70-80 kg) the rate is ~6 mmHg/decade, a bit higher than %s mmHg/decade. (See below)</div>', bpr,  round(10*bpr,1)))
 
 ```
 
