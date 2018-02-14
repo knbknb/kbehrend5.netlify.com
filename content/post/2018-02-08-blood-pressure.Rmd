@@ -203,7 +203,7 @@ colSums(apply(NHANES[, c(ages[1],weights, bps)], 2, is.na))
 
 ```{r filt1, echo=TRUE}
 bloodpressure2 <- NHANES %>%
-    select(BPSysAve, Age, Weight, Gender, BMI) %>%
+    select(BPSysAve, Age, AgeDecade, Weight, Gender, BMI) %>%
     filter(!is.na(BPSysAve), !is.na(Weight), !is.na(BMI))
 
 ```
@@ -224,6 +224,7 @@ The maximum value of `r max(bloodpressure2$Age)` for Age actually represents "Ad
 #### Blood Pressure by Gender:
 
 ```{r plot2, fig.cap="Blood Pressure by Gender, NHANES Dataset."}
+# only used for inline r expr
 bp2 <- bloodpressure2 %>% 
         select(BPSysAve, Gender) %>% 
         group_by(Gender) %>% 
@@ -250,7 +251,7 @@ Splitting by *age group* reveals a different picture.
 #### Blood Pressure by Age Group
 
 After splitting the dataset by life decade, we get this:
-```{r labeller}
+```{r labeller, eval=FALSE}
 agegroup_labeller <- function(variable, value) {
   agegroup_str <- str_replace(value, pattern = ",", " - ") %>%
     str_replace_all(pattern = regex("^.|.$"), "") %>%
@@ -266,11 +267,11 @@ bloodpressure2 %>%
         ggplot(aes(BPSysAve, group=Gender, color=Gender, fill=Gender)) +
         #geom_histogram(binwidth = 1) +
         geom_density(alpha=0.3) +
-        
-        facet_wrap(~cut_interval(x = Age, length = 10), ncol=1, labeller = agegroup_labeller) +
+        facet_wrap(~AgeDecade, ncol=1) +
         ggtitle("Blood Pressure by life decade", subtitle = sprintf("Largest Peaks represent ~ 100 People. Total Number of People: %s.", nrow(bloodpressure2))) +
         xlab("Systolic Blood Pressure [mm Hg]") +
-        theme(axis.text.y =  element_blank(),
+        theme(plot.background = element_rect(fill="white"),
+                #axis.text.y =  element_blank(),
               panel.grid.minor.x = element_line(color="lightgrey", size=0.1),
               panel.grid.major.x = element_line(color="grey", size=0.1),
               panel.grid.major.y = element_blank()) +

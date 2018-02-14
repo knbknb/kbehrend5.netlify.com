@@ -55,7 +55,7 @@ NHANES is  the US National Health and Nutrition Examination Study. It is a caref
 
 The [*NHANES* dataset](https://www.cdc.gov/nchs/nhanes/participant_video.htm) is available as an R package on [CRAN](https://cran.r-project.org/package=NHANES). I have used package version 2.1.0, specifically "NHANES 2009-2012 with adjusted weighting". This dataset contains some corrections for undersampling racial minorities. Uncorrected data is also available, in the *NHANESraw* package.
 
-Obligatory Disclaimer (from the Page Documentation):
+Obligatory Disclaimer (from the Package Documentation):
 
 *Please note that the data sets provided in this package are derived from the NHANES database and have been adapted for educational purposes. As such, they are NOT suitable for use as a research database.*
 
@@ -91,6 +91,7 @@ these are  the column names and some other important metadata of the NHANES data
 ```{r}
 Hmisc::contents(NHANES)
 ```
+
 
 #### Dropping Columns 
 
