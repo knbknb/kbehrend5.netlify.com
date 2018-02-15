@@ -44,11 +44,11 @@ keywords:
 <h4>Preprocessing</h4>
 <p>Load the necessary packages.</p>
 <p>We will try to model Blood Pressure as a function of a whole lot of other variables. It only makes sense to deal with Nonzero Values here. So, for starters, we drop all rows where column <code>BPSysAve</code> is empty / NA.</p>
-<pre class="r"><code>NHANES &lt;- NHANES %&gt;% filter(! is.na(BPSysAve) )</code></pre>
+<pre class="r"><code>NHANES_filt &lt;- NHANES %&gt;% filter(! is.na(BPSysAve) )</code></pre>
 <p>Now there are still 0 left rows of ~10000 initially. There are still none have nonempty values in <em>all</em> columns assigned. For our analysis, we need to deal with sparsely filled columns. We can either drop these columns, or intelligently guess (impute) missing values in such columns.</p>
 <p>Just to be clear, these are the column names and some other important metadata of the NHANES dataset. These metadata are, for example, the unique distinct values of columns where it makes sense to report them (e.g. male/female for column “gender”)</p>
 <pre><code>## 
-## Data frame:NHANES    8551 observations and 76 variables    Maximum # NAs:8551
+## Data frame:NHANES_filt   8551 observations and 76 variables    Maximum # NAs:8551
 ## 
 ## 
 ##                  Levels Storage  NAs
@@ -187,6 +187,34 @@ keywords:
 ## |PregnantNow     |Yes,No,Unknown                                        |
 ## +----------------+------------------------------------------------------+</code></pre>
 </div>
+<div id="check-influence-of-past-smoking-behaviour" class="section level3">
+<h3>Check influence of Past Smoking Behaviour</h3>
+<pre class="r"><code>bloodpressure2 &lt;- NHANES %&gt;%
+    select(BPSysAve, Age, AgeDecade, Weight, Gender, BMI, Smoke100) %&gt;%
+    filter(!is.na(BPSysAve), !is.na(Weight), !is.na(BMI), !is.na(Smoke100))</code></pre>
+<p>For the R experts:</p>
+<pre><code>## 
+## Call:
+## lm(formula = BPSysAve ~ Age * Weight + Smoke100, data = bloodpressure2)
+## 
+## Residuals:
+##    Min     1Q Median     3Q    Max 
+## -50.45  -9.26  -1.03   7.86 103.14 
+## 
+## Coefficients:
+##              Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept) 67.835474   2.138303   31.72  &lt; 2e-16 ***
+## Age          0.961190   0.043685   22.00  &lt; 2e-16 ***
+## Weight       0.410881   0.025863   15.89  &lt; 2e-16 ***
+## Smoke100Yes  1.478211   0.370885    3.99  6.8e-05 ***
+## Age:Weight  -0.006891   0.000536  -12.85  &lt; 2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 15.3 on 6914 degrees of freedom
+## Multiple R-squared:  0.205,  Adjusted R-squared:  0.205 
+## F-statistic:  446 on 4 and 6914 DF,  p-value: &lt;2e-16</code></pre>
+<p><img src="/post/2018-02-13-lasso-regression-on-blood-pressure-data_files/figure-html/figBlP-1.png" width="864" /></p>
 <div id="dropping-columns" class="section level4">
 <h4>Dropping Columns</h4>
 <p>I’ll drop columns with information specific to children. According to the documentation, these are:</p>
@@ -196,5 +224,6 @@ keywords:
 <li>Applied Model Selection techniques, a little bit more independently than before 
 <li>Played a bit with the `ggvis` package, which generates vector graphics instead of SVGs 
 </ul>
+</div>
 </div>
 </div>

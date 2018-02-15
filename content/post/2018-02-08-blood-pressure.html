@@ -65,24 +65,23 @@ Figure 1:  Predicted values are shown in red, observed values in black.
 <p>For the R specialists, this is the summary of the regression model:</p>
 <pre><code>## 
 ## Call:
-## lm(formula = blood_pressure ~ age + weight, data = bloodpressure)
+## lm(formula = blood_pressure ~ age * weight, data = bloodpressure)
 ## 
 ## Residuals:
 ##    Min     1Q Median     3Q    Max 
-## -3.464 -1.195 -0.408  1.851  2.698 
+## -3.735 -1.181 -0.137  1.955  2.463 
 ## 
 ## Coefficients:
-##             Estimate Std. Error t value Pr(&gt;|t|)   
-## (Intercept)   30.994     11.944    2.59   0.0319 * 
-## age            0.861      0.248    3.47   0.0084 **
-## weight         0.738      0.288    2.56   0.0335 * 
-## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+##             Estimate Std. Error t value Pr(&gt;|t|)
+## (Intercept)  11.3482    70.4175    0.16     0.88
+## age           1.1439     1.0303    1.11     0.30
+## weight        0.9819     0.9120    1.08     0.32
+## age:weight   -0.0035     0.0123   -0.28     0.78
 ## 
-## Residual standard error: 2.32 on 8 degrees of freedom
-## Multiple R-squared:  0.977,  Adjusted R-squared:  0.971 
-## F-statistic:  169 on 2 and 8 DF,  p-value: 2.87e-07</code></pre>
-<p><div class="alert alert-warning">The model predicts that for every year of in a middle-aged person&apos;s life, the systolic blood pressure increases  <b>0.861 mm Hg/year</b>. That&apos;s almost 9 mm Hg per life decade! Quite a lot. </div> Is this realistic? Or is this a fictitious, simplified, toy-dataset, after all? Is the trend correct, but the value is not? In other words, is the sample nonrepresentative of the population? What is the real importance of the confounding factor, body weight?</p>
+## Residual standard error: 2.46 on 7 degrees of freedom
+## Multiple R-squared:  0.977,  Adjusted R-squared:  0.967 
+## F-statistic: 99.6 on 3 and 7 DF,  p-value: 4.19e-06</code></pre>
+<p><div class="alert alert-warning">The model predicts that for every year of in a middle-aged person&apos;s life, the systolic blood pressure increases  <b>1.144 mm Hg/year</b>. That&apos;s almost 9 mm Hg per life decade! Quite a lot. </div> Is this realistic? Or is this a fictitious, simplified, toy-dataset, after all? Is the trend correct, but the value is not? In other words, is the sample nonrepresentative of the population? What is the real importance of the confounding factor, body weight?</p>
 <p>Let’s try a larger dataset!</p>
 </div>
 <div id="nhanes-dataset" class="section level4">
@@ -112,13 +111,22 @@ Figure 1:  Predicted values are shown in red, observed values in black.
 <p>We include <em>Gender</em> and <em>BMI</em> (Body Mass Index) for later.</p>
 <p>The reduced dataset contains 8487 rows (People) and 6 columns.</p>
 <p>Summary of Blood Pressure Data:</p>
-<pre><code>##     BPSysAve        Age           Weight         Gender          BMI      
-##  Min.   : 76   Min.   : 8.0   Min.   : 17.1   female:4270   Min.   :12.9  
-##  1st Qu.:106   1st Qu.:24.0   1st Qu.: 62.2   male  :4217   1st Qu.:22.8  
-##  Median :116   Median :40.0   Median : 76.1                 Median :26.6  
-##  Mean   :118   Mean   :40.9   Mean   : 77.9                 Mean   :27.6  
-##  3rd Qu.:127   3rd Qu.:56.0   3rd Qu.: 91.1                 3rd Qu.:31.4  
-##  Max.   :226   Max.   :80.0   Max.   :230.7                 Max.   :81.2</code></pre>
+<pre><code>##     BPSysAve        Age         AgeDecade        Weight         Gender    
+##  Min.   : 76   Min.   : 8.0    40-49 :1350   Min.   : 17.1   female:4270  
+##  1st Qu.:106   1st Qu.:24.0    10-19 :1311   1st Qu.: 62.2   male  :4217  
+##  Median :116   Median :40.0    20-29 :1300   Median : 76.1                
+##  Mean   :118   Mean   :40.9    30-39 :1266   Mean   : 77.9                
+##  3rd Qu.:127   3rd Qu.:56.0    50-59 :1254   3rd Qu.: 91.1                
+##  Max.   :226   Max.   :80.0   (Other):1695   Max.   :230.7                
+##                               NA&#39;s   : 311                                
+##       BMI      
+##  Min.   :12.9  
+##  1st Qu.:22.8  
+##  Median :26.6  
+##  Mean   :27.6  
+##  3rd Qu.:31.4  
+##  Max.   :81.2  
+## </code></pre>
 <p>The maximum value of 80 for Age actually represents “Adults of age 80 and older”. See plots below.</p>
 </div>
 <div id="blood-pressure-by-gender" class="section level4">
@@ -148,28 +156,30 @@ Figure 3: Blood Pressure by Age Group.
 <div id="linear-modeling" class="section level4">
 <h4>Linear modeling</h4>
 <p>Fit a linear regression model (Blood Pressure as a function of Age and Body Weight) to the entire <code>bloodpressure2</code> subset, just as above for the tiny dataset.</p>
-<div class="alert alert-warning">There is a trend: systolic blood pressure increases with age. The rate is about <b>0.405 mm Hg/year.</b> Half as much as for the toy dataset. For data from a group <i>similar to me</i> (men only, 45+ yrs, 70-80 kg) the rate is ~6 mmHg/decade, a bit higher than 4.1 mmHg/decade. (See below)</div>
+<p>I have included the interaction term <code>age:weight</code> because from experience it makes sense. The older body metabolizes slower, and at each age the human body has different rates of gaining weight.</p>
+<div class="alert alert-warning">There is a trend: systolic blood pressure increases with age. The rate is about <b>0.719 mm Hg/year.</b> Half as much as for the toy dataset. For data from a group <i>similar to me</i> (men only, 45+ yrs, 70-80 kg) the rate is ~6 mmHg/decade, a bit higher than 7.2 mmHg/decade. (See below)</div>
 <p>For the R experts:</p>
 <pre><code>## 
 ## Call:
-## lm(formula = BPSysAve ~ Age + Weight, data = bloodpressure2)
+## lm(formula = BPSysAve ~ Age * Weight, data = bloodpressure2)
 ## 
 ## Residuals:
 ##    Min     1Q Median     3Q    Max 
-## -55.80  -8.79  -0.82   7.47 103.32 
+## -50.14  -8.60  -0.92   7.41 102.36 
 ## 
 ## Coefficients:
-##             Estimate Std. Error t value Pr(&gt;|t|)    
-## (Intercept) 92.72164    0.58075   159.7   &lt;2e-16 ***
-## Age          0.40463    0.00812    49.8   &lt;2e-16 ***
-## Weight       0.11364    0.00700    16.2   &lt;2e-16 ***
+##              Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept) 81.760420   1.049953    77.9   &lt;2e-16 ***
+## Age          0.719361   0.026467    27.2   &lt;2e-16 ***
+## Weight       0.275489   0.014704    18.7   &lt;2e-16 ***
+## Age:Weight  -0.004387   0.000352   -12.5   &lt;2e-16 ***
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 ## 
-## Residual standard error: 14.5 on 8484 degrees of freedom
-## Multiple R-squared:  0.286,  Adjusted R-squared:  0.286 
-## F-statistic: 1.7e+03 on 2 and 8484 DF,  p-value: &lt;2e-16</code></pre>
-<p>The significance of Age and Body Weight is very high, but the general correlation is weak ( R² = 0.286). This can also be seen in the following plots.</p>
+## Residual standard error: 14.4 on 8483 degrees of freedom
+## Multiple R-squared:  0.299,  Adjusted R-squared:  0.299 
+## F-statistic: 1.21e+03 on 3 and 8483 DF,  p-value: &lt;2e-16</code></pre>
+<p>The significance of Age and Body Weight is very high, but the general correlation is weak ( R² = 0.299). This can also be seen in the following plots.</p>
 <div class="figure"><span id="fig:actvspred"></span>
 <img src="/post/2018-02-08-blood-pressure_files/figure-html/actvspred-1.png" alt="Predicted vs Measured Blood Pressure." width="864" />
 <p class="caption">
@@ -208,52 +218,61 @@ Figure 6: Blood Pressure by Age group. Orange Symbols are sample means.
                Age &gt;= 45 ) %&gt;% 
         select(-Gender, -prediction)
 
-bloodpressure3_model &lt;- lm(BPSysAve ~ Age + Weight, data = bloodpressure3) #
+bloodpressure3_model &lt;- lm(BPSysAve ~ Age * Weight, data = bloodpressure3) #
 bloodpressure3$Predictions &lt;- predict(bloodpressure3_model) # same data
 
 summary(bloodpressure3)        </code></pre>
-<pre><code>##     BPSysAve        Age           Weight          BMI        Predictions 
-##  Min.   : 93   Min.   :45.0   Min.   :70.0   Min.   :25.1   Min.   :117  
-##  1st Qu.:115   1st Qu.:50.0   1st Qu.:73.8   1st Qu.:25.7   1st Qu.:122  
-##  Median :126   Median :58.0   Median :76.5   Median :26.5   Median :125  
-##  Mean   :126   Mean   :59.6   Mean   :76.1   Mean   :26.8   Mean   :126  
-##  3rd Qu.:134   3rd Qu.:67.0   3rd Qu.:78.3   3rd Qu.:27.9   3rd Qu.:130  
-##  Max.   :179   Max.   :80.0   Max.   :80.0   Max.   :29.8   Max.   :140</code></pre>
+<pre><code>##     BPSysAve        Age         AgeDecade      Weight          BMI      
+##  Min.   : 93   Min.   :45.0    50-59 :73   Min.   :70.0   Min.   :25.1  
+##  1st Qu.:115   1st Qu.:50.0    60-69 :36   1st Qu.:73.8   1st Qu.:25.7  
+##  Median :126   Median :58.0    40-49 :32   Median :76.5   Median :26.5  
+##  Mean   :126   Mean   :59.6    70+   :29   Mean   :76.1   Mean   :26.8  
+##  3rd Qu.:134   3rd Qu.:67.0    0-9   : 0   3rd Qu.:78.3   3rd Qu.:27.9  
+##  Max.   :179   Max.   :80.0   (Other): 0   Max.   :80.0   Max.   :29.8  
+##                               NA&#39;s   :14                                
+##   Predictions 
+##  Min.   :114  
+##  1st Qu.:122  
+##  Median :125  
+##  Mean   :126  
+##  3rd Qu.:131  
+##  Max.   :141  
+## </code></pre>
 <div class="figure"><span id="fig:bpplot"></span>
 <img src="/post/2018-02-08-blood-pressure_files/figure-html/bpplot-1.png" alt="Blood pressure as a function of age and body weight. NHANES data filtered to match age-range of Figure 1, and my own  BMI- and weight-range. Red dots are predicted values by the two-regressor model." width="864" />
 <p class="caption">
 Figure 7: Blood pressure as a function of age and body weight. NHANES data filtered to match age-range of Figure 1, and my own BMI- and weight-range. Red dots are predicted values by the two-regressor model.
 </p>
 </div>
-<p>The solid blue line shows the predictions by age alone. The slope is 0.585 mmHg/yr, much lower than the slope in Figure 1 which was 0.861. The equivalent regression line from Figure 1 is shown as a dashed blue line.</p>
+<p>The solid blue line shows the predictions by age alone. The slope is 3.998 mmHg/yr, much lower than the slope in Figure 1 which was 1.144. The equivalent regression line from Figure 1 is shown as a dashed blue line.</p>
 <p>The large green dot shows my personal Age/BP data, measured 2014-2017 by my doctor, as far I remember it (always BP = 110 mmHg). Tiny dark green dots and isolines represent BP values stored on my own BP measurement device which might have been used on other family members (I don’t remember).</p>
 <p>For the R experts:</p>
 <pre><code>## 
 ## Call:
-## lm(formula = BPSysAve ~ Age + Weight, data = bloodpressure3)
+## lm(formula = BPSysAve ~ Age * Weight, data = bloodpressure3)
 ## 
 ## Residuals:
 ##    Min     1Q Median     3Q    Max 
-## -44.76  -9.51   0.61   7.25  42.40 
+## -42.07  -9.60   0.63   7.35  41.98 
 ## 
 ## Coefficients:
-##             Estimate Std. Error t value Pr(&gt;|t|)    
-## (Intercept)   66.029     33.752    1.96    0.052 .  
-## Age            0.585      0.111    5.27  3.8e-07 ***
-## Weight         0.337      0.439    0.77    0.444    
-## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+##              Estimate Std. Error t value Pr(&gt;|t|)
+## (Intercept) -140.1094   207.0734   -0.68     0.50
+## Age            3.9978     3.3838    1.18     0.24
+## Weight         3.0284     2.7034    1.12     0.26
+## Age:Weight    -0.0445     0.0441   -1.01     0.31
 ## 
-## Residual standard error: 16.2 on 181 degrees of freedom
-## Multiple R-squared:  0.137,  Adjusted R-squared:  0.128 
-## F-statistic: 14.4 on 2 and 181 DF,  p-value: 1.55e-06</code></pre>
+## Residual standard error: 16.2 on 180 degrees of freedom
+## Multiple R-squared:  0.142,  Adjusted R-squared:  0.128 
+## F-statistic: 9.95 on 3 and 180 DF,  p-value: 4.21e-06</code></pre>
 <div class="alert alert-info"><b>What I learned from doing this:</b>
 <ul>
-<li> Gaining insights by switching from a tiny to a bigger dataset.
+<li> Gaining insights by switching from a tiny to a bigger dataset
 <li> New tricks with ggplot2
 <li> Splitting continuous data into categories / age groups was really helpful here
 <li> Compared my own health status relative to others
-<li> Studied Health status of the US society as a whole.
+<li> Studied health status of a real population as a whole
+<li> Thought long about a two-variable multinomial linear regression model
     </ul>
 Countless other thoughts that I did not bother to write down.
 </div>

@@ -27,7 +27,7 @@ keywords:
 
 ```{r setup, include=FALSE}
 library(knitr)
-opts_chunk$set(cache = TRUE, warning = FALSE, message = FALSE, 
+opts_chunk$set(cache = FALSE, warning = FALSE, message = FALSE, 
                echo = FALSE, tidy = FALSE, width = 7, fig.width=9)
 options(digits = 3, tibble.print_min = 6)
 options(knitr.table.format = "html") 
@@ -59,7 +59,8 @@ data(NHANES)
 
 ```{r theme}
 library(ggthemes)
-theme_set(theme_economist_white())
+#theme_set(theme_economist_white()) # unreliable
+theme_set(theme_bw())
 scale_colour_discrete <- function(...) scale_color_brewer(palette="Set1")
 ```
 
@@ -106,7 +107,7 @@ summary(bloodpressure)
 We can plot it in its entirety. I also fit a simple linear regression model to the data: Blood Pressure as a function of a person's age and body weight.
 
 ```{r tiny1,  results='hide'}
-bloodpressure_model <- lm(blood_pressure ~ age + weight, data = bloodpressure)
+bloodpressure_model <- lm(blood_pressure ~ age * weight, data = bloodpressure)
 
 
 # predict blood pressure using bloodpressure_model :prediction
@@ -300,12 +301,15 @@ Fit a linear regression model  (Blood Pressure as a function of Age and Body Wei
 
 ```{r lm2}
 # Fit the model: bloodpressure_model
-bloodpressure2_model <- lm(BPSysAve ~ Age + Weight, data = bloodpressure2)
+#bloodpressure2_model <- lm(BPSysAve ~ Age + Weight, data = bloodpressure2)
+
+bloodpressure2_model <- lm(BPSysAve ~ Age * Weight, data = bloodpressure2)
 
 # predict blood pressure using bloodpressure_model :prediction
 bloodpressure2$prediction <- predict(bloodpressure2_model, data = bloodpressure2)
 
 ```
+I have included the interaction term `age:weight` because from experience it makes sense. The older body metabolizes slower, and at each age the human body has different rates of gaining weight.
 
 ```{r bpr}
 bpr <- round(coef(bloodpressure2_model)[2],3)
@@ -320,6 +324,7 @@ For the R experts:
 summary(bloodpressure2_model)
 
 ```
+
 
 The significance of Age and Body Weight is very high, but the general correlation is weak ( R² = `r  summary(bloodpressure2_model)$r.squared`). This can also be seen in the following plots. 
 
@@ -406,7 +411,7 @@ bloodpressure3 <- bloodpressure2 %>%
                Age >= 45 ) %>% 
         select(-Gender, -prediction)
 
-bloodpressure3_model <- lm(BPSysAve ~ Age + Weight, data = bloodpressure3) #
+bloodpressure3_model <- lm(BPSysAve ~ Age * Weight, data = bloodpressure3) #
 bloodpressure3$Predictions <- predict(bloodpressure3_model) # same data
 
 summary(bloodpressure3)        
@@ -459,11 +464,12 @@ summary(bloodpressure3_model)
 ```{r}
 htmltools::HTML('<div class="alert alert-info"><b>What I learned from doing this:</b>
 <ul>
-<li> Gaining insights by switching from a tiny to a bigger dataset.
+<li> Gaining insights by switching from a tiny to a bigger dataset
 <li> New tricks with ggplot2
 <li> Splitting continuous data into categories / age groups was really helpful here
 <li> Compared my own health status relative to others
-<li> Studied Health status of the US society as a whole.
+<li> Studied health status of a real population as a whole
+<li> Thought long about a two-variable multinomial linear regression model
     </ul>
 Countless other thoughts that I did not bother to write down.
 </div>')

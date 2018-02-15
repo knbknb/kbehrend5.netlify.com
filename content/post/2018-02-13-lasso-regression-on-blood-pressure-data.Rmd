@@ -75,7 +75,7 @@ library(tidyverse)
 
 ```{r theme}
 library(ggthemes)
-theme_set(theme_economist_white())
+theme_set(theme_bw())
 scale_colour_discrete <- function(...) scale_color_brewer(palette="Set1")
 ```
 
@@ -84,7 +84,7 @@ It only makes sense to deal with Nonzero Values here. So, for starters, we drop 
 
 
 ```{r filterNHANES, echo=TRUE}
-NHANES <- NHANES %>% filter(! is.na(BPSysAve) )
+NHANES_filt <- NHANES %>% filter(! is.na(BPSysAve) )
 ```
 
 Now there are still  `r nrow(na.omit(NHANES))` left rows of ~10000 initially. There are still none have nonempty values in *all* columns assigned. For our analysis, we need to deal with sparsely filled columns. We can either drop these columns, or intelligently guess (impute) missing values in such columns. 
@@ -93,9 +93,44 @@ Just to be clear,
 these are  the column names and some other important metadata of the NHANES dataset. These metadata are, for example, the unique distinct values of columns where it makes sense to report them (e.g. male/female for column "gender") 
 
 ```{r}
-Hmisc::contents(NHANES)
+Hmisc::contents(NHANES_filt)
 ```
 
+### Check influence of Past Smoking Behaviour
+
+```{r filt1, echo=TRUE}
+bloodpressure2 <- NHANES %>%
+    select(BPSysAve, Age, AgeDecade, Weight, Gender, BMI, Smoke100) %>%
+    filter(!is.na(BPSysAve), !is.na(Weight), !is.na(BMI), !is.na(Smoke100))
+
+```
+```{r lm2}
+# Fit the model: bloodpressure_model
+#bloodpressure2_model <- lm(BPSysAve ~ Age + Weight, data = bloodpressure2)
+
+bloodpressure2_model <- lm(BPSysAve ~ Age * Weight + Smoke100, data = bloodpressure2)
+
+# predict blood pressure using bloodpressure_model :prediction
+bloodpressure2$prediction <- predict(bloodpressure2_model, data = bloodpressure2)
+```
+
+For the R experts:
+
+```{r lm2summ}
+summary(bloodpressure2_model)
+
+```
+
+```{r figBlP}
+
+ggplot(bloodpressure2, aes(Age, BPSysAve, color=Smoke100)) +
+  geom_jitter(size=0.1, alpha=0.4) +
+  geom_smooth(method="lm", se=FALSE, 
+              size=2, alpha=.4) +
+  geom_point(aes(Age, prediction), color = "green", size = 0.6)+
+        ggtitle("Blood Pressure predicted by Age and Weight",
+                subtitle = sprintf("mm Hg.  NHANES dataset, %s people.", nrow(bloodpressure2)))
+```
 
 #### Dropping Columns 
 
