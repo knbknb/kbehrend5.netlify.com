@@ -27,203 +27,1146 @@ keywords:
 <div id="lasso-regression-on-blood-pressure-data-nhanes-dataset" class="section level4">
 <h4>Lasso Regression on Blood Pressure Data (NHANES Dataset)</h4>
 <p><div class="alert alert-info"><b>Performing Lasso Regression on anonymized data from 10000 people representing the general US Population</b>. Actually I will also try out other model selection techniques.
-</div> This is a continuation from <a href="/post/2018/02/bloodpressure-nhanes">another blog post</a> of mine. When I was nearly done with writing that post, some new open questions came to my mind.</p>
-<p>In the preceding blogpost I noticed that there exists a link between Systolic Blood Pressure as a function of age and weight, but the trend was noisy and the correlation was weak.</p>
-<p>There was not really a new hypothesis. I just realized that I need to try out all those fancy Machine Learning algorithms that I encountered during MOOC homework assignments. This time I’ll try these techniques out on datasets that <em>I</em> find interesting.</p>
-<p>Can I determine some other variables (out of the 76) that are also “governing” the Blood Pressure in some way?</p>
-<p>I am not trying to do serious research and postulate any causation here. Hey I’m just a blogger, playing with a dataset for personal entertainment.</p>
+</div> This is a follow-up to <a href="/post/2018/02/bloodpressure-nhanes">an exploratory data-analysis post</a> of mine. When I was nearly done with writing that post, some new questions came to my mind.</p>
+<p>In the preceding blogpost I noticed that Systolic Blood Pressure is correlated with age and weight, but the relationship is complicated: the trend was noisy and the correlation was weak, and interaction term in the linear model seems to play an important role.</p>
+<p>Here I’ll continue with exploratory analysis, so there is not really a new hypothesis. More basically, can I determine some other variables (out of the 76) that are also influencing the Blood Pressure in some way?</p>
+<p>I am not trying to do groundbreaking medical research here. Hey I’m just a blogger, playing with a dataset for personal entertainment, trying out some of those fancy Machine Learning algorithms that I encountered during MOOC homework assignments. This time I’ll try these techniques out on larger datasets that <em>I</em> find interesting.</p>
 </div>
 <div id="nhanes-dataset" class="section level4">
 <h4>NHANES dataset</h4>
 <p>NHANES is the US National Health and Nutrition Examination Study. It is a carefully curated, larger medical survey aiming to get a representative sample of the general US population. The survey is carried out periodically.</p>
-<p>The <a href="https://www.cdc.gov/nchs/nhanes/participant_video.htm"><em>NHANES</em> dataset</a> is available as an R package on <a href="https://cran.r-project.org/package=NHANES">CRAN</a>. I have used package version 2.1.0, specifically “NHANES 2009-2012 with adjusted weighting”. This dataset contains some corrections for undersampling racial minorities. Uncorrected data is also available, in the <em>NHANESraw</em> package.</p>
+<p>The <a href="https://www.cdc.gov/nchs/nhanes/participant_video.htm"><em>NHANES</em> dataset</a> is available as an R package on <a href="https://cran.r-project.org/package=NHANES">CRAN</a>. I have used package version 2.1.0, specifically “NHANES 2009-2012 with adjusted weighting”. This dataset contains data from two collection periods, 2009-2010 and 2011-2012.</p>
 <p>Obligatory Disclaimer (from the Package Documentation):</p>
 <p><em>Please note that the data sets provided in this package are derived from the NHANES database and have been adapted for educational purposes. As such, they are NOT suitable for use as a research database.</em></p>
 </div>
-<div id="preprocessing" class="section level4">
-<h4>Preprocessing</h4>
-<p>Load the necessary packages.</p>
-<p>We will try to model Blood Pressure as a function of a whole lot of other variables. It only makes sense to deal with Nonzero Values here. So, for starters, we drop all rows where column <code>BPSysAve</code> is empty / NA.</p>
-<pre class="r"><code>NHANES_filt &lt;- NHANES %&gt;% filter(! is.na(BPSysAve) )</code></pre>
-<p>Now there are still 0 left rows of ~10000 initially. There are still none have nonempty values in <em>all</em> columns assigned. For our analysis, we need to deal with sparsely filled columns. We can either drop these columns, or intelligently guess (impute) missing values in such columns.</p>
-<p>Just to be clear, these are the column names and some other important metadata of the NHANES dataset. These metadata are, for example, the unique distinct values of columns where it makes sense to report them (e.g. male/female for column “gender”)</p>
+<div id="feature-engineering" class="section level4">
+<h4>Feature Engineering</h4>
+<p>These are the column names and some other important metadata of the NHANES dataset. These metadata are, for example, the unique distinct values of columns where it makes sense to report them (e.g. male/female for column “gender”)</p>
+<table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<caption>
+<span id="tab:tabledef">Table 1: </span>Column names in NHANES data set, and columns that will be dropped
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:left;">
+Column
+</th>
+<th style="text-align:left;">
+Meaning
+</th>
+<th style="text-align:left;">
+Action
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+1
+</td>
+<td style="text-align:left;">
+SurveyYr
+</td>
+<td style="text-align:left;">
+Which survey the participant participated in.
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+2
+</td>
+<td style="text-align:left;">
+ID
+</td>
+<td style="text-align:left;">
+Participant identifier.
+</td>
+<td style="text-align:left;">
+drop
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+3
+</td>
+<td style="text-align:left;">
+Gender
+</td>
+<td style="text-align:left;">
+Gender (sex) of study participant coded as male or female
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+4
+</td>
+<td style="text-align:left;">
+Age
+</td>
+<td style="text-align:left;">
+Age in years at screening of study participant. Note: Subjects 80 years or older were recorded as 80.
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+5
+</td>
+<td style="text-align:left;">
+AgeDecade
+</td>
+<td style="text-align:left;">
+Categorical variable derived from age with levels 0-9, 10-19, … 70+
+</td>
+<td style="text-align:left;">
+drop
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+6
+</td>
+<td style="text-align:left;">
+AgeMonths
+</td>
+<td style="text-align:left;">
+Age in months at screening of study participant. Reported for participants aged 0 to 79 years for 2009 to 2010 data Reported for participants aged 0 to 2 years for 2011 to 2012 data.
+</td>
+<td style="text-align:left;">
+drop
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+7
+</td>
+<td style="text-align:left;">
+Race1
+</td>
+<td style="text-align:left;">
+Reported race of study participant: Mexican, Hispanic, White, Black, or Other.
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+8
+</td>
+<td style="text-align:left;">
+Race3
+</td>
+<td style="text-align:left;">
+Reported race of study participant, including non-Hispanic Asian category: Mexican, Hispanic, White, Black, Asian, or Other. Not availale for 2009-10.
+</td>
+<td style="text-align:left;">
+drop
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+9
+</td>
+<td style="text-align:left;">
+Education
+</td>
+<td style="text-align:left;">
+Educational level of study participant Reported for participants aged 20 years or older. One of 8thGrade, 9-11thGrade, HighSchool, SomeCollege, or CollegeGrad.
+</td>
+<td style="text-align:left;">
+drop
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+10
+</td>
+<td style="text-align:left;">
+MaritalStatus
+</td>
+<td style="text-align:left;">
+Marital status of study participant. Reported for participants aged 20 years or older. One of Married, Widowed, Divorced, Separated, NeverMarried, or LivePartner (living with partner).
+</td>
+<td style="text-align:left;">
+drop
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+11
+</td>
+<td style="text-align:left;">
+HHIncome
+</td>
+<td style="text-align:left;">
+Total annual gross income for the household in US dollars. One of 0 - 4999, 5000 - 9,999, 10000 - 14999, 15000 - 19999, 20000 - 24,999, 25000 - 34999, 35000 - 44999, 45000 - 54999, 55000 - 64999, 65000 - 74999, 75000 - 99999, or 100000 or More.
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+12
+</td>
+<td style="text-align:left;">
+HHIncomeMid
+</td>
+<td style="text-align:left;">
+Numerical version of HHIncome derived from the middle income in each category
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+13
+</td>
+<td style="text-align:left;">
+Poverty
+</td>
+<td style="text-align:left;">
+A ratio of family income to poverty guidelines. Smaller numbers indicate more poverty
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+14
+</td>
+<td style="text-align:left;">
+HomeRooms
+</td>
+<td style="text-align:left;">
+How many rooms are in home of study participant (counting kitchen but not bathroom). 13 rooms = 13 or more rooms.
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+15
+</td>
+<td style="text-align:left;">
+HomeOwn
+</td>
+<td style="text-align:left;">
+One of Home, Rent, or Other indicating whether the home of study participant or someone in their family is owned, rented or occupied by some other arrangement.
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+16
+</td>
+<td style="text-align:left;">
+Weight
+</td>
+<td style="text-align:left;">
+Weight in kg
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+17
+</td>
+<td style="text-align:left;">
+Length
+</td>
+<td style="text-align:left;">
+Recumbent length in cm. Reported for participants aged 0 - 3 years.
+</td>
+<td style="text-align:left;">
+drop
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+18
+</td>
+<td style="text-align:left;">
+HeadCirc
+</td>
+<td style="text-align:left;">
+Head circumference in cm. Reported for participants aged 0 years (0 - 6 months).
+</td>
+<td style="text-align:left;">
+drop
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+19
+</td>
+<td style="text-align:left;">
+Height
+</td>
+<td style="text-align:left;">
+Standing height in cm. Reported for participants aged 2 years or older.
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+20
+</td>
+<td style="text-align:left;">
+BMI
+</td>
+<td style="text-align:left;">
+Body mass index (weight/height2 in kg/m2). Reported for participants aged 2 years or older.
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+21
+</td>
+<td style="text-align:left;">
+BMICatUnder20yrs
+</td>
+<td style="text-align:left;">
+Body mass index category. Reported for participants aged 2 to 19 years. One of UnderWeight (BMI &lt; 5th percentile) NormWeight (BMI 5th to &lt; 85th percentile), OverWeight (BMI 85th to &lt; 95th percentile), Obese (BMI &gt;= 95th percentile).
+</td>
+<td style="text-align:left;">
+drop
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+22
+</td>
+<td style="text-align:left;">
+BMI_WHO
+</td>
+<td style="text-align:left;">
+Body mass index category. Reported for participants aged 2 years or older. One of 12.0_18.4, 18.5_24.9, 25.0_29.9, or 30.0_plus.
+</td>
+<td style="text-align:left;">
+drop
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+23
+</td>
+<td style="text-align:left;">
+Pulse
+</td>
+<td style="text-align:left;">
+60 second pulse rate
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+24
+</td>
+<td style="text-align:left;">
+BPSysAve
+</td>
+<td style="text-align:left;">
+Combined systolic blood pressure reading, following the procedure outlined for BPXSAR.
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+25
+</td>
+<td style="text-align:left;">
+BPDiaAve
+</td>
+<td style="text-align:left;">
+Combined diastolic blood pressure reading, following the procedure outlined for BPXDAR.
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+26
+</td>
+<td style="text-align:left;">
+BPSys1
+</td>
+<td style="text-align:left;">
+Systolic blood pressure in mm Hg – first reading
+</td>
+<td style="text-align:left;">
+drop
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+27
+</td>
+<td style="text-align:left;">
+BPDia1
+</td>
+<td style="text-align:left;">
+Diastolic blood pressure in mm Hg – second reading (consecutive readings)
+</td>
+<td style="text-align:left;">
+drop
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+28
+</td>
+<td style="text-align:left;">
+BPSys2
+</td>
+<td style="text-align:left;">
+Systolic blood pressure in mm Hg – second reading (consecutive readings)
+</td>
+<td style="text-align:left;">
+drop
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+29
+</td>
+<td style="text-align:left;">
+BPDia2
+</td>
+<td style="text-align:left;">
+Diastolic blood pressure in mm Hg – second reading
+</td>
+<td style="text-align:left;">
+drop
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+30
+</td>
+<td style="text-align:left;">
+BPSys3
+</td>
+<td style="text-align:left;">
+Systolic blood pressure in mm Hg third reading (consecutive readings)
+</td>
+<td style="text-align:left;">
+drop
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+31
+</td>
+<td style="text-align:left;">
+BPDia3
+</td>
+<td style="text-align:left;">
+Diastolic blood pressure in mm Hg – third reading (consecutive readings)
+</td>
+<td style="text-align:left;">
+drop
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+32
+</td>
+<td style="text-align:left;">
+Testosterone
+</td>
+<td style="text-align:left;">
+Testerone total (ng/dL). Reported for participants aged 6 years or older. Not available for 2009-2010.
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+33
+</td>
+<td style="text-align:left;">
+DirectChol
+</td>
+<td style="text-align:left;">
+Direct HDL cholesterol in mmol/L. Reported for participants aged 6 years or older.
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+34
+</td>
+<td style="text-align:left;">
+TotChol
+</td>
+<td style="text-align:left;">
+Total HDL cholesterol in mmol/L. Reported for participants aged 6 years or older.
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+35
+</td>
+<td style="text-align:left;">
+UrineVol1
+</td>
+<td style="text-align:left;">
+Urine volume in mL – first test. Reported for participants aged 6 years or older.
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+36
+</td>
+<td style="text-align:left;">
+UrineFlow1
+</td>
+<td style="text-align:left;">
+Urine flow rate (urine volume/time since last urination) in mL/min – first test. Reported for participants aged 6 years or older.
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+37
+</td>
+<td style="text-align:left;">
+UrineVol2
+</td>
+<td style="text-align:left;">
+Urine volume in mL – second test. Reported for participants aged 6 years or older.
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+38
+</td>
+<td style="text-align:left;">
+UrineFlow2
+</td>
+<td style="text-align:left;">
+Urine flow rate (urine volume/time since last urination) in mL/min – second test. Reported for participants aged 6 years or older.
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+39
+</td>
+<td style="text-align:left;">
+Diabetes
+</td>
+<td style="text-align:left;">
+Study participant told by a doctor or health professional that they have diabetes. Reported for participants aged 1 year or older as Yes or No.
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+40
+</td>
+<td style="text-align:left;">
+DiabetesAge
+</td>
+<td style="text-align:left;">
+Age of study participant when first told they had diabetes. Reported for participants aged 1 year or older.
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+41
+</td>
+<td style="text-align:left;">
+HealthGen
+</td>
+<td style="text-align:left;">
+Self-reported rating of participant’s health in general Reported for participants aged 12 years or older. One of Excellent, Vgood, Good, Fair, or Poor.
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+42
+</td>
+<td style="text-align:left;">
+DaysPhysHlthBad
+</td>
+<td style="text-align:left;">
+Self-reported number of days participant’s physical health was not good out of the past 30 days. Reported for participants aged 12 years or older.
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+43
+</td>
+<td style="text-align:left;">
+DaysMentHlthBad
+</td>
+<td style="text-align:left;">
+Self-reported number of days participant’s mental health was not good out of the past 30 days. Reported for participants aged 12 years or older.
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+44
+</td>
+<td style="text-align:left;">
+LittleInterest
+</td>
+<td style="text-align:left;">
+Self-reported number of days where participant had little interest in doing things. Reported for participants aged 18 years or older. One of None, Several, Majority (more than half the days), or AlmostAll.
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+45
+</td>
+<td style="text-align:left;">
+Depressed
+</td>
+<td style="text-align:left;">
+Self-reported number of days where participant felt down, depressed or hopeless. Reported for participants aged 18 years or older. One of None, Several, Majority (more than half the days), or AlmostAll.
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+46
+</td>
+<td style="text-align:left;">
+nPregnancies
+</td>
+<td style="text-align:left;">
+How many times participant has been pregnant. Reported for female participants aged 20 years or older.
+</td>
+<td style="text-align:left;">
+drop
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+47
+</td>
+<td style="text-align:left;">
+nBabies
+</td>
+<td style="text-align:left;">
+How many of participants deliveries resulted in live births. Reported for female participants aged 20 years or older.
+</td>
+<td style="text-align:left;">
+drop
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+48
+</td>
+<td style="text-align:left;">
+PregnantNow
+</td>
+<td style="text-align:left;">
+Pregnancy status at the time of the health examination was ascertained for females 8-59 years of age. Due to disclosure risks pregnancy status was only be released for women 20-44 years of age. The information used included urine pregnancy test results and self-reported pregnancy status. Urine pregnancy tests were performed prior to the dual energy x-ray absorptiometry (DXA) exam. Persons who reported they were pregnant at the time of exam were assumed to be pregnant. As a result, if the urine test was negative, but the subject reported they were pregnant, the status was coded as Yes“. If the urine pregnancy results were negative and the respondent stated that they were not pregnant, the respondent was coded as”No&quot; If the urine pregnancy results were negative and the respondent did not know her pregnancy status, the respondent was coded “unknown” Persons who were interviewed, but not examined also have a value of “unknown”. In addition there are missing values.
+</td>
+<td style="text-align:left;">
+drop
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+49
+</td>
+<td style="text-align:left;">
+Age1stBaby
+</td>
+<td style="text-align:left;">
+Age of participant at time of first live birth. 14 years or under = 14, 45 years or older = 45. Reported for female participants aged 20 years or older.
+</td>
+<td style="text-align:left;">
+drop
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+50
+</td>
+<td style="text-align:left;">
+SleepHrsNight
+</td>
+<td style="text-align:left;">
+Self-reported number of hours study participant usually gets at night on weekdays or workdays. Reported for participants aged 16 years and older.
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+51
+</td>
+<td style="text-align:left;">
+SleepTrouble
+</td>
+<td style="text-align:left;">
+Participant has told a doctor or other health professional that they had trouble sleeping. Reported for participants aged 16 years and older. Coded as Yes or No.
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+52
+</td>
+<td style="text-align:left;">
+PhysActive
+</td>
+<td style="text-align:left;">
+Participant does moderate or vigorous-intensity sports, fitness or recreational activities (Yes or No). Reported for participants 12 years or older.
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+53
+</td>
+<td style="text-align:left;">
+PhysActiveDays
+</td>
+<td style="text-align:left;">
+Number of days in a typical week that participant does moderate or vigorous-intensity activity. Reported for participants 12 years or older.
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+54
+</td>
+<td style="text-align:left;">
+TVHrsDay
+</td>
+<td style="text-align:left;">
+Number of hours per day on average participant watched TV over the past 30 days. Reported for participants 2 years or older. One of 0_to_1hr, 1_hr, 2_hr, 3_hr, 4_hr, More_4_hr. Not available 2009-2010.
+</td>
+<td style="text-align:left;">
+drop
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+55
+</td>
+<td style="text-align:left;">
+CompHrsDay
+</td>
+<td style="text-align:left;">
+Number of hours per day on average participant used a computer or gaming device over the past 30 days. Reported for participants 2 years or older. One of 0_hrs, 0_to_1hr, 1_hr, 2_hr, 3_hr, 4_hr, More_4_hr. Not available 2009-2010.
+</td>
+<td style="text-align:left;">
+drop
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+56
+</td>
+<td style="text-align:left;">
+TVHrsDayChild
+</td>
+<td style="text-align:left;">
+Number of hours per day on average participant watched TV over the past 30 days. Reported for participants 2 to 11 years. Not available 2011-2012.
+</td>
+<td style="text-align:left;">
+drop
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+57
+</td>
+<td style="text-align:left;">
+CompHrsDayChild
+</td>
+<td style="text-align:left;">
+Number of hours per day on average participant used a computer or gaming device over the past 30 days. Reported for participants 2 to 11 years old. Not available 2011-2012.
+</td>
+<td style="text-align:left;">
+drop
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+58
+</td>
+<td style="text-align:left;">
+Alcohol12PlusYr
+</td>
+<td style="text-align:left;">
+Participant has consumed at least 12 drinks of any type of alcoholic beverage in any one year. Reported for participants 18 years or older as Yes or No.
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+59
+</td>
+<td style="text-align:left;">
+AlcoholDay
+</td>
+<td style="text-align:left;">
+Average number of drinks consumed on days that participant drank alcoholic beverages. Reported for participants aged 18 years or older.
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+60
+</td>
+<td style="text-align:left;">
+AlcoholYear
+</td>
+<td style="text-align:left;">
+Estimated number of days over the past year that participant drank alcoholic beverages. Reported for participants aged 18 years or older.
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+61
+</td>
+<td style="text-align:left;">
+SmokeNow
+</td>
+<td style="text-align:left;">
+Study participant currently smokes cigarettes regularly. Reported for participants aged 20 years or older as Yes or No, provieded they answered Yes to having somked 100 or more cigarettes in their life time. All subjects who have not smoked 100 or more cigarettes are listed as NA here.
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+62
+</td>
+<td style="text-align:left;">
+Smoke100
+</td>
+<td style="text-align:left;">
+Study participant has smoked at least 100 cigarettes in their entire life. Reported for participants aged 20 years or older as Yes or No.
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+63
+</td>
+<td style="text-align:left;">
+SmokeAge
+</td>
+<td style="text-align:left;">
+Age study participant first started to smoke cigarettes fairly regularly. Reported for participants aged 20 years or older.
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+64
+</td>
+<td style="text-align:left;">
+Marijuana
+</td>
+<td style="text-align:left;">
+Participant has tried marijuana. Reported for participants aged 18 to 59 years as Yes or No.
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+65
+</td>
+<td style="text-align:left;">
+RegularMarij
+</td>
+<td style="text-align:left;">
+Participant has been/is a regular marijuana user (used at least once a month for a year). Reported for participants aged 18 to 59 years as Yes or No.
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+66
+</td>
+<td style="text-align:left;">
+AgeRegMarij
+</td>
+<td style="text-align:left;">
+Age of participant when first started regularly using marijuana. Reported for participants aged 18 to 59 years.
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+67
+</td>
+<td style="text-align:left;">
+HardDrugs
+</td>
+<td style="text-align:left;">
+Participant has tried cocaine, crack cocaine, heroin or methamphetamine. Reported for participants aged 18 to 69 years as Yes or No.
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+68
+</td>
+<td style="text-align:left;">
+SexEver
+</td>
+<td style="text-align:left;">
+Participant had had vaginal, anal, or oral sex. Reported for participants aged 18 to 69 years as Yes or No.
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+69
+</td>
+<td style="text-align:left;">
+SexAge
+</td>
+<td style="text-align:left;">
+Age of participant when had sex for the first time. Reported for participants aged 18 to 69 years.
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+70
+</td>
+<td style="text-align:left;">
+SexNumPartnLife
+</td>
+<td style="text-align:left;">
+Number of opposite sex partners participant has had any kind of sex with over their lifetime. Reported for participants aged 18 to 69 years.
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+71
+</td>
+<td style="text-align:left;">
+SexNumPartYear
+</td>
+<td style="text-align:left;">
+Number of opposite sex partners participant has had any kind of sex with over the past 12 months. Reported for participants aged 18 to 59 years.
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+72
+</td>
+<td style="text-align:left;">
+SameSex
+</td>
+<td style="text-align:left;">
+Participant has had any kind of sex with a same sex partner. Reported for participants aged 18 to 69 years ad Yes or No.
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+73
+</td>
+<td style="text-align:left;">
+SexOrientation
+</td>
+<td style="text-align:left;">
+participant’s sexual orientation (self-described). Reported for participants aged 18 to 59 years. One of Heterosexual, Homosexual, Bisexual.
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+74
+</td>
+<td style="text-align:left;">
+WTINT2YR, WTMEC2YR, SDMVPSU, SDMVSTRA
+</td>
+<td style="text-align:left;">
+<p>Sample weighting variables. For more details see one of the following.</p>
+<p><a href="http://www.cdc.gov/Nchs/tutorials/environmental/orientation/sample_design/index.htm" class="uri">http://www.cdc.gov/Nchs/tutorials/environmental/orientation/sample_design/index.htm</a></p>
+<p><a href="http://www.cdc.gov/nchs/nhanes/nhanes2009-2010/DEMO_F.htm#WTINT2YR" class="uri">http://www.cdc.gov/nchs/nhanes/nhanes2009-2010/DEMO_F.htm#WTINT2YR</a> and</p>
+<a href="http://www.cdc.gov/nchs/nhanes/nhanes2011-2012/DEMO_G.htm#WTINT2YR" class="uri">http://www.cdc.gov/nchs/nhanes/nhanes2011-2012/DEMO_G.htm#WTINT2YR</a>
+</td>
+<td style="text-align:left;">
+drop
+</td>
+</tr>
+</tbody>
+</table>
+<p>More Feature Engineering Measures:</p>
+<ul>
+<li>Remove people less than 20 years of age</li>
+<li>Remove columns, marked as “drop” in table 1 (measured for child/youth-only, etc).</li>
+<li>Impute missing values with “mice” method (Multiple Imputation by Chain Equation)</li>
+</ul>
+<p>NHANES Data after Feature Engineering: no more NAs in any column.</p>
 <pre><code>## 
-## Data frame:NHANES_filt   8551 observations and 76 variables    Maximum # NAs:8551
+## Data frame:imputed   7235 observations and 54 variables    Maximum # NAs:0
 ## 
 ## 
-##                  Levels Storage  NAs
-## ID                      integer    0
-## SurveyYr              2 integer    0
-## Gender                2 integer    0
-## Age                     integer    0
-## AgeDecade             8 integer  321
-## AgeMonths               integer 4433
-## Race1                 5 integer    0
-## Race3                 6 integer 4270
-## Education             5 integer 1591
-## MaritalStatus         6 integer 1583
-## HHIncome             12 integer  695
-## HHIncomeMid             integer  695
-## Poverty                  double  617
-## HomeRooms               integer   58
-## HomeOwn               3 integer   53
-## Work                  3 integer 1073
-## Weight                   double   58
-## Length                   double 8551
-## HeadCirc                 double 8551
-## Height                   double   52
-## BMI                      double   64
-## BMICatUnder20yrs      4 integer 7745
-## BMI_WHO               4 integer   95
-## Pulse                   integer    0
-## BPSysAve                integer    0
-## BPDiaAve                integer    0
-## BPSys1                  integer  314
-## BPDia1                  integer  314
-## BPSys2                  integer  198
-## BPDia2                  integer  198
-## BPSys3                  integer  186
-## BPDia3                  integer  186
-## Testosterone             double 4637
-## DirectChol               double  558
-## TotChol                  double  558
-## UrineVol1               integer   94
-## UrineFlow1               double  599
-## UrineVol2               integer 7159
-## UrineFlow2               double 7161
-## Diabetes              2 integer    5
-## DiabetesAge             integer 7935
-## HealthGen             5 integer 1150
-## DaysPhysHlthBad         integer 1156
-## DaysMentHlthBad         integer 1155
-## LittleInterest        3 integer 2008
-## Depressed             3 integer 2001
-## nPregnancies            integer 6012
-## nBabies                 integer 6192
-## Age1stBaby              integer 6718
-## SleepHrsNight           integer 1089
-## SleepTrouble          2 integer 1072
-## PhysActive            2 integer  523
-## PhysActiveDays          integer 4320
-## TVHrsDay              7 integer 4282
-## CompHrsDay            7 integer 4278
-## TVHrsDayChild           integer 8311
-## CompHrsDayChild         integer 8311
-## Alcohol12PlusYr       2 integer 2093
-## AlcoholDay              integer 3724
-## AlcoholYear             integer 2731
-## SmokeNow              2 integer 5443
-## Smoke100              2 integer 1580
-## Smoke100n             2 integer 1580
-## SmokeAge                integer 5571
-## Marijuana             2 integer 3694
-## AgeFirstMarij           integer 5709
-## RegularMarij          2 integer 3694
-## AgeRegMarij             integer 7212
-## HardDrugs             2 integer 2884
-## SexEver               2 integer 2882
-## SexAge                  integer 3109
-## SexNumPartnLife         integer 2921
-## SexNumPartYear          integer 3707
-## SameSex               2 integer 2881
-## SexOrientation        3 integer 3792
-## PregnantNow           3 integer 6949
+##                 Levels Storage
+## SurveyYr             2 integer
+## Gender               2 integer
+## Age                    integer
+## Race1                5 integer
+## HHIncome            12 integer
+## HHIncomeMid            integer
+## Poverty                 double
+## HomeRooms              integer
+## HomeOwn              3 integer
+## Work                 3 integer
+## Weight                  double
+## Height                  double
+## BMI                     double
+## Pulse                  integer
+## BPSysAve               integer
+## BPDiaAve               integer
+## Testosterone            double
+## DirectChol              double
+## TotChol                 double
+## UrineVol1              integer
+## UrineFlow1              double
+## UrineVol2              integer
+## UrineFlow2              double
+## Diabetes             2 integer
+## DiabetesAge            integer
+## HealthGen            5 integer
+## DaysPhysHlthBad        integer
+## DaysMentHlthBad        integer
+## LittleInterest       3 integer
+## Depressed            3 integer
+## SleepHrsNight          integer
+## SleepTrouble         2 integer
+## PhysActive           2 integer
+## PhysActiveDays         integer
+## TVHrsDay             7 integer
+## CompHrsDay           7 integer
+## Alcohol12PlusYr      2 integer
+## AlcoholDay             integer
+## AlcoholYear            integer
+## SmokeNow             2 integer
+## Smoke100             2 integer
+## Smoke100n            2 integer
+## SmokeAge               integer
+## Marijuana            2 integer
+## AgeFirstMarij          integer
+## RegularMarij         2 integer
+## AgeRegMarij            integer
+## HardDrugs            2 integer
+## SexEver              2 integer
+## SexAge                 integer
+## SexNumPartnLife        integer
+## SexNumPartYear         integer
+## SameSex              2 integer
+## SexOrientation       3 integer
 ## 
-## +----------------+------------------------------------------------------+
-## |Variable        |Levels                                                |
-## +----------------+------------------------------------------------------+
-## |SurveyYr        |2009_10,2011_12                                       |
-## +----------------+------------------------------------------------------+
-## |Gender          |female,male                                           |
-## +----------------+------------------------------------------------------+
-## |AgeDecade       | 0-9, 10-19, 20-29, 30-39, 40-49, 50-59, 60-69, 70+   |
-## +----------------+------------------------------------------------------+
-## |Race1           |Black,Hispanic,Mexican,White,Other                    |
-## +----------------+------------------------------------------------------+
-## |Race3           |Asian,Black,Hispanic,Mexican,White,Other              |
-## +----------------+------------------------------------------------------+
-## |Education       |8th Grade,9 - 11th Grade,High School,Some College     |
-## |                |College Grad                                          |
-## +----------------+------------------------------------------------------+
-## |MaritalStatus   |Divorced,LivePartner,Married,NeverMarried,Separated   |
-## |                |Widowed                                               |
-## +----------------+------------------------------------------------------+
-## |HHIncome        | 0-4999, 5000-9999,10000-14999,15000-19999,20000-24999|
-## |                |25000-34999,35000-44999,45000-54999,55000-64999       |
-## |                |65000-74999,75000-99999,more 99999                    |
-## +----------------+------------------------------------------------------+
-## |HomeOwn         |Own,Rent,Other                                        |
-## +----------------+------------------------------------------------------+
-## |Work            |Looking,NotWorking,Working                            |
-## +----------------+------------------------------------------------------+
-## |BMICatUnder20yrs|UnderWeight,NormWeight,OverWeight,Obese               |
-## +----------------+------------------------------------------------------+
-## |BMI_WHO         |12.0_18.5,18.5_to_24.9,25.0_to_29.9,30.0_plus         |
-## +----------------+------------------------------------------------------+
-## |Diabetes        |No,Yes                                                |
-## |SleepTrouble    |                                                      |
-## |PhysActive      |                                                      |
-## |Alcohol12PlusYr |                                                      |
-## |SmokeNow        |                                                      |
-## |Smoke100        |                                                      |
-## |Marijuana       |                                                      |
-## |RegularMarij    |                                                      |
-## |HardDrugs       |                                                      |
-## |SexEver         |                                                      |
-## |SameSex         |                                                      |
-## +----------------+------------------------------------------------------+
-## |HealthGen       |Excellent,Vgood,Good,Fair,Poor                        |
-## +----------------+------------------------------------------------------+
-## |LittleInterest  |None,Several,Most                                     |
-## |Depressed       |                                                      |
-## +----------------+------------------------------------------------------+
-## |TVHrsDay        |0_hrs,0_to_1_hr,1_hr,2_hr,3_hr,4_hr,More_4_hr         |
-## |CompHrsDay      |                                                      |
-## +----------------+------------------------------------------------------+
-## |Smoke100n       |Non-Smoker,Smoker                                     |
-## +----------------+------------------------------------------------------+
-## |SexOrientation  |Bisexual,Heterosexual,Homosexual                      |
-## +----------------+------------------------------------------------------+
-## |PregnantNow     |Yes,No,Unknown                                        |
-## +----------------+------------------------------------------------------+</code></pre>
-</div>
-<div id="check-influence-of-past-smoking-behaviour" class="section level3">
-<h3>Check influence of Past Smoking Behaviour</h3>
-<pre class="r"><code>bloodpressure2 &lt;- NHANES %&gt;%
-    select(BPSysAve, Age, AgeDecade, Weight, Gender, BMI, Smoke100) %&gt;%
-    filter(!is.na(BPSysAve), !is.na(Weight), !is.na(BMI), !is.na(Smoke100))</code></pre>
-<p>For the R experts:</p>
-<pre><code>## 
-## Call:
-## lm(formula = BPSysAve ~ Age * Weight + Smoke100, data = bloodpressure2)
-## 
-## Residuals:
-##    Min     1Q Median     3Q    Max 
-## -50.45  -9.26  -1.03   7.86 103.14 
-## 
-## Coefficients:
-##              Estimate Std. Error t value Pr(&gt;|t|)    
-## (Intercept) 67.835474   2.138303   31.72  &lt; 2e-16 ***
-## Age          0.961190   0.043685   22.00  &lt; 2e-16 ***
-## Weight       0.410881   0.025863   15.89  &lt; 2e-16 ***
-## Smoke100Yes  1.478211   0.370885    3.99  6.8e-05 ***
-## Age:Weight  -0.006891   0.000536  -12.85  &lt; 2e-16 ***
-## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
-## 
-## Residual standard error: 15.3 on 6914 degrees of freedom
-## Multiple R-squared:  0.205,  Adjusted R-squared:  0.205 
-## F-statistic:  446 on 4 and 6914 DF,  p-value: &lt;2e-16</code></pre>
-<p><img src="/post/2018-02-13-lasso-regression-on-blood-pressure-data_files/figure-html/figBlP-1.png" width="864" /></p>
-<div id="dropping-columns" class="section level4">
-<h4>Dropping Columns</h4>
-<p>I’ll drop columns with information specific to children. According to the documentation, these are:</p>
+## +---------------+------------------------------------------------------+
+## |Variable       |Levels                                                |
+## +---------------+------------------------------------------------------+
+## |SurveyYr       |2009_10,2011_12                                       |
+## +---------------+------------------------------------------------------+
+## |Gender         |female,male                                           |
+## +---------------+------------------------------------------------------+
+## |Race1          |Black,Hispanic,Mexican,White,Other                    |
+## +---------------+------------------------------------------------------+
+## |HHIncome       | 0-4999, 5000-9999,10000-14999,15000-19999,20000-24999|
+## |               |25000-34999,35000-44999,45000-54999,55000-64999       |
+## |               |65000-74999,75000-99999,more 99999                    |
+## +---------------+------------------------------------------------------+
+## |HomeOwn        |Own,Rent,Other                                        |
+## +---------------+------------------------------------------------------+
+## |Work           |Looking,NotWorking,Working                            |
+## +---------------+------------------------------------------------------+
+## |Diabetes       |No,Yes                                                |
+## |SleepTrouble   |                                                      |
+## |PhysActive     |                                                      |
+## |Alcohol12PlusYr|                                                      |
+## |SmokeNow       |                                                      |
+## |Smoke100       |                                                      |
+## |Marijuana      |                                                      |
+## |RegularMarij   |                                                      |
+## |HardDrugs      |                                                      |
+## |SexEver        |                                                      |
+## |SameSex        |                                                      |
+## +---------------+------------------------------------------------------+
+## |HealthGen      |Excellent,Vgood,Good,Fair,Poor                        |
+## +---------------+------------------------------------------------------+
+## |LittleInterest |None,Several,Most                                     |
+## |Depressed      |                                                      |
+## +---------------+------------------------------------------------------+
+## |TVHrsDay       |0_hrs,0_to_1_hr,1_hr,2_hr,3_hr,4_hr,More_4_hr         |
+## |CompHrsDay     |                                                      |
+## +---------------+------------------------------------------------------+
+## |Smoke100n      |Non-Smoker,Smoker                                     |
+## +---------------+------------------------------------------------------+
+## |SexOrientation |Bisexual,Heterosexual,Homosexual                      |
+## +---------------+------------------------------------------------------+</code></pre>
 <p>(TBC)</p>
 <div class="alert alert-info"><b>What I&apos; learned from doing this:</b>
 <ul>
 <li>Applied Model Selection techniques, a little bit more independently than before 
 <li>Played a bit with the `ggvis` package, which generates vector graphics instead of SVGs 
 </ul>
-</div>
 </div>
 </div>
