@@ -302,14 +302,14 @@ Fit a linear regression model  (Blood Pressure as a function of Age and Body Wei
 ```{r lm2}
 # Fit the model: bloodpressure_model
 #bloodpressure2_model <- lm(BPSysAve ~ Age + Weight, data = bloodpressure2)
-
-bloodpressure2_model <- lm(BPSysAve ~ Age * Weight, data = bloodpressure2)
+bloodpressure2_model <- lm(BPSysAve ~ Age + Weight, data = bloodpressure2)
+bloodpressure2_model_interact <- lm(BPSysAve ~ Age * Weight, data = bloodpressure2)
 
 # predict blood pressure using bloodpressure_model :prediction
-bloodpressure2$prediction <- predict(bloodpressure2_model, data = bloodpressure2)
-
+bloodpressure2$prediction  <- predict(bloodpressure2_model, data = bloodpressure2)
+bloodpressure2$prediction_ia <- predict(bloodpressure2_model_interact, data = bloodpressure2)
 ```
-I have included the interaction term `age:weight` because from experience it makes sense. The older body metabolizes slower, and at each age the human body has different rates of gaining weight.
+I have included the interaction term `age:weight` because from experience it makes sense: older bodies metabolize more differently, and thus at each age the human body has different rates of gaining weight.
 
 ```{r bpr}
 bpr <- round(coef(bloodpressure2_model)[2],3)
@@ -321,7 +321,7 @@ htmltools::HTML(sprintf('<div class="alert alert-warning">There is a trend: syst
 For the R experts:
 
 ```{r lm2summ}
-summary(bloodpressure2_model)
+summary(bloodpressure2_model_interact)
 
 ```
 
@@ -330,6 +330,7 @@ The significance of Age and Body Weight is very high, but the general correlatio
 
 ```{r actvspred, fig.cap="Predicted vs Measured Blood Pressure."}
 minBP <- min(bloodpressure2$prediction)
+
 ggplot(bloodpressure2, aes(prediction, BPSysAve)) +
         geom_density2d(aes(alpha=0.4)) +
   geom_jitter(size=0.1, alpha=0.4) +
@@ -350,20 +351,23 @@ The back diagonal line is the 1:1 line. Blue isolines indicate statistical densi
 
 Predicted values of the full model fall short of capturing the variability in the data. Maybe other factors have to be taken into into account (but not in this blogpost).
 
-```{r agepl, fig.cap="Blood Pressure as a function of Age and Weight.  Predicted values are shown in red, observed values in black. Blue line is BP predicted a function of Age alone."}
+```{r agepl, fig.cap="Blood Pressure as a function of Age and Weight.  Predicted values are shown in pink/red, observed values in black. Blue line is BP predicted a function of Age alone. Black line is BP modeled with weight/age interaction effect."}
 ###############################################
 
 # Age-related plots
 ggplot(bloodpressure2, aes(Age, BPSysAve)) +
   geom_jitter(size=0.1, alpha=0.4) +
   geom_abline(slope = coef(bloodpressure2_model)[2], 
-              intercept = coef(bloodpressure2_model)[1], 
-              size=2, alpha=.4, color = "dodgerblue") +
-  geom_point(aes(Age, prediction), color = "red", size = 0.6)+
-        ggtitle("Blood Pressure predicted by Age and Weight",
-                subtitle = sprintf("mm Hg.  NHANES dataset, %s people.", nrow(bloodpressure2)))
+        intercept = coef(bloodpressure2_model)[1], 
+        size=2, alpha=.4, color = "dodgerblue") +
+  geom_point(aes(Age, prediction), color = "pink", size = 0.6, shape=21)+
+  geom_point(aes(Age, prediction_ia), color = "red", size = 0.3, shape=22)+
+  geom_smooth(aes(Age, prediction), color="navy", size=0.2, method="lm", se=0) +        
+  ggtitle("Blood Pressure predicted by Age and Weight",
+        subtitle = sprintf("mm Hg.  NHANES dataset, %s people. Pink dots: weight only. Red dots: weight + weight-age interaction included", nrow(bloodpressure2)))
 
 ```
+In the plot above, *pink symbols* are predicted values from age and weight *without interaction*, whereas *red* symbols  represent predictions which *include an interaction term* between age and weight. The interaction term seems to become increasingly more relevant with higher ages, changing the sign of the effect size. Honestly, I am  [not sure what I am looking at here](https://stats.stackexchange.com/questions/5450/what-if-interaction-wipes-out-my-direct-effects-in-regression).  
 
 Maybe we need to split by age group again?
 
