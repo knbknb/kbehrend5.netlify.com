@@ -1,3 +1,27 @@
+---
+title: Lasso regression on Blood Pressure data
+author: Knut Behrends
+date: '2018-02-13'
+slug: bloodpressure-lasso
+categories: [health]
+tags: [health, medicine]
+draft: yes
+output:
+  html_document:
+    toc: no
+    css: styles.css
+    fig_caption: yes
+    keep_md: no
+image: /static/img/hugo-gopher.png
+banner: img/post/thumb/hugo-logo.png
+summary: ''
+keywords:
+  - Personal-Blog
+  - Fun
+  - rstats
+  - health
+---
+
 
 
 <div id="lasso-regression-on-blood-pressure-data-nhanes-dataset" class="section level4">
@@ -1034,41 +1058,15 @@ drop
         filter(Age &gt;= 20) %&gt;% 
         select(setdiff(colnames(NHANES), drop_cols) )
 
-NHimp &lt;- here::here(&quot;data_private/NHANES-imputed.rds&quot;)
-if (!file.exists(NHimp)){
-        imputed &lt;- readRDS(NHimp)        
+NHimp &lt;- &quot;../../data_private/NHANES-imputed.rds&quot;
+
+if (file.exists(NHimp)){
+        imputed &lt;- readRDS(NHimp)
 } else {
-        set.seed(47)
-        imputed &lt;- complete(mice(NHANES))
+        #set.seed(47)
+        imputed &lt;- mice::complete(mice(NHANES))
         saveRDS(imputed, file = NHimp)
 }</code></pre>
-<pre><code>## 
-##  iter imp variable
-##   1   1  HHIncome  HHIncomeMid  Poverty  HomeRooms  HomeOwn  Work  Weight  Height  BMI  Pulse  BPSysAve  BPDiaAve  Testosterone  DirectChol  TotChol  UrineVol1  UrineFlow1  UrineVol2  UrineFlow2  Diabetes  DiabetesAge  HealthGen  DaysPhysHlthBad  DaysMentHlthBad  LittleInterest  Depressed  SleepHrsNight  PhysActiveDays  Alcohol12PlusYr  AlcoholDay  AlcoholYear  SmokeNow  SmokeAge  Marijuana  AgeFirstMarij  RegularMarij  AgeRegMarij  HardDrugs  SexEver  SexAge  SexNumPartnLife  SexNumPartYear  SameSex  SexOrientation
-##   1   2  HHIncome  HHIncomeMid  Poverty  HomeRooms  HomeOwn  Work  Weight  Height  BMI  Pulse  BPSysAve  BPDiaAve  Testosterone  DirectChol  TotChol  UrineVol1  UrineFlow1  UrineVol2  UrineFlow2  Diabetes  DiabetesAge  HealthGen  DaysPhysHlthBad  DaysMentHlthBad  LittleInterest  Depressed  SleepHrsNight  PhysActiveDays  Alcohol12PlusYr  AlcoholDay  AlcoholYear  SmokeNow  SmokeAge  Marijuana  AgeFirstMarij  RegularMarij  AgeRegMarij  HardDrugs  SexEver  SexAge  SexNumPartnLife  SexNumPartYear  SameSex  SexOrientation
-##   1   3  HHIncome  HHIncomeMid  Poverty  HomeRooms  HomeOwn  Work  Weight  Height  BMI  Pulse  BPSysAve  BPDiaAve  Testosterone  DirectChol  TotChol  UrineVol1  UrineFlow1  UrineVol2  UrineFlow2  Diabetes  DiabetesAge  HealthGen  DaysPhysHlthBad  DaysMentHlthBad  LittleInterest  Depressed  SleepHrsNight  PhysActiveDays  Alcohol12PlusYr  AlcoholDay  AlcoholYear  SmokeNow  SmokeAge  Marijuana  AgeFirstMarij  RegularMarij  AgeRegMarij  HardDrugs  SexEver  SexAge  SexNumPartnLife  SexNumPartYear  SameSex  SexOrientation
-##   1   4  HHIncome  HHIncomeMid  Poverty  HomeRooms  HomeOwn  Work  Weight  Height  BMI  Pulse  BPSysAve  BPDiaAve  Testosterone  DirectChol  TotChol  UrineVol1  UrineFlow1  UrineVol2  UrineFlow2  Diabetes  DiabetesAge  HealthGen  DaysPhysHlthBad  DaysMentHlthBad  LittleInterest  Depressed  SleepHrsNight  PhysActiveDays  Alcohol12PlusYr  AlcoholDay  AlcoholYear  SmokeNow  SmokeAge  Marijuana  AgeFirstMarij  RegularMarij  AgeRegMarij  HardDrugs  SexEver  SexAge  SexNumPartnLife  SexNumPartYear  SameSex  SexOrientation
-##   1   5  HHIncome  HHIncomeMid  Poverty  HomeRooms  HomeOwn  Work  Weight  Height  BMI  Pulse  BPSysAve  BPDiaAve  Testosterone  DirectChol  TotChol  UrineVol1  UrineFlow1  UrineVol2  UrineFlow2  Diabetes  DiabetesAge  HealthGen  DaysPhysHlthBad  DaysMentHlthBad  LittleInterest  Depressed  SleepHrsNight  PhysActiveDays  Alcohol12PlusYr  AlcoholDay  AlcoholYear  SmokeNow  SmokeAge  Marijuana  AgeFirstMarij  RegularMarij  AgeRegMarij  HardDrugs  SexEver  SexAge  SexNumPartnLife  SexNumPartYear  SameSex  SexOrientation
-##   2   1  HHIncome  HHIncomeMid  Poverty  HomeRooms  HomeOwn  Work  Weight  Height  BMI  Pulse  BPSysAve  BPDiaAve  Testosterone  DirectChol  TotChol  UrineVol1  UrineFlow1  UrineVol2  UrineFlow2  Diabetes  DiabetesAge  HealthGen  DaysPhysHlthBad  DaysMentHlthBad  LittleInterest  Depressed  SleepHrsNight  PhysActiveDays  Alcohol12PlusYr  AlcoholDay  AlcoholYear  SmokeNow  SmokeAge  Marijuana  AgeFirstMarij  RegularMarij  AgeRegMarij  HardDrugs  SexEver  SexAge  SexNumPartnLife  SexNumPartYear  SameSex  SexOrientation
-##   2   2  HHIncome  HHIncomeMid  Poverty  HomeRooms  HomeOwn  Work  Weight  Height  BMI  Pulse  BPSysAve  BPDiaAve  Testosterone  DirectChol  TotChol  UrineVol1  UrineFlow1  UrineVol2  UrineFlow2  Diabetes  DiabetesAge  HealthGen  DaysPhysHlthBad  DaysMentHlthBad  LittleInterest  Depressed  SleepHrsNight  PhysActiveDays  Alcohol12PlusYr  AlcoholDay  AlcoholYear  SmokeNow  SmokeAge  Marijuana  AgeFirstMarij  RegularMarij  AgeRegMarij  HardDrugs  SexEver  SexAge  SexNumPartnLife  SexNumPartYear  SameSex  SexOrientation
-##   2   3  HHIncome  HHIncomeMid  Poverty  HomeRooms  HomeOwn  Work  Weight  Height  BMI  Pulse  BPSysAve  BPDiaAve  Testosterone  DirectChol  TotChol  UrineVol1  UrineFlow1  UrineVol2  UrineFlow2  Diabetes  DiabetesAge  HealthGen  DaysPhysHlthBad  DaysMentHlthBad  LittleInterest  Depressed  SleepHrsNight  PhysActiveDays  Alcohol12PlusYr  AlcoholDay  AlcoholYear  SmokeNow  SmokeAge  Marijuana  AgeFirstMarij  RegularMarij  AgeRegMarij  HardDrugs  SexEver  SexAge  SexNumPartnLife  SexNumPartYear  SameSex  SexOrientation
-##   2   4  HHIncome  HHIncomeMid  Poverty  HomeRooms  HomeOwn  Work  Weight  Height  BMI  Pulse  BPSysAve  BPDiaAve  Testosterone  DirectChol  TotChol  UrineVol1  UrineFlow1  UrineVol2  UrineFlow2  Diabetes  DiabetesAge  HealthGen  DaysPhysHlthBad  DaysMentHlthBad  LittleInterest  Depressed  SleepHrsNight  PhysActiveDays  Alcohol12PlusYr  AlcoholDay  AlcoholYear  SmokeNow  SmokeAge  Marijuana  AgeFirstMarij  RegularMarij  AgeRegMarij  HardDrugs  SexEver  SexAge  SexNumPartnLife  SexNumPartYear  SameSex  SexOrientation
-##   2   5  HHIncome  HHIncomeMid  Poverty  HomeRooms  HomeOwn  Work  Weight  Height  BMI  Pulse  BPSysAve  BPDiaAve  Testosterone  DirectChol  TotChol  UrineVol1  UrineFlow1  UrineVol2  UrineFlow2  Diabetes  DiabetesAge  HealthGen  DaysPhysHlthBad  DaysMentHlthBad  LittleInterest  Depressed  SleepHrsNight  PhysActiveDays  Alcohol12PlusYr  AlcoholDay  AlcoholYear  SmokeNow  SmokeAge  Marijuana  AgeFirstMarij  RegularMarij  AgeRegMarij  HardDrugs  SexEver  SexAge  SexNumPartnLife  SexNumPartYear  SameSex  SexOrientation
-##   3   1  HHIncome  HHIncomeMid  Poverty  HomeRooms  HomeOwn  Work  Weight  Height  BMI  Pulse  BPSysAve  BPDiaAve  Testosterone  DirectChol  TotChol  UrineVol1  UrineFlow1  UrineVol2  UrineFlow2  Diabetes  DiabetesAge  HealthGen  DaysPhysHlthBad  DaysMentHlthBad  LittleInterest  Depressed  SleepHrsNight  PhysActiveDays  Alcohol12PlusYr  AlcoholDay  AlcoholYear  SmokeNow  SmokeAge  Marijuana  AgeFirstMarij  RegularMarij  AgeRegMarij  HardDrugs  SexEver  SexAge  SexNumPartnLife  SexNumPartYear  SameSex  SexOrientation
-##   3   2  HHIncome  HHIncomeMid  Poverty  HomeRooms  HomeOwn  Work  Weight  Height  BMI  Pulse  BPSysAve  BPDiaAve  Testosterone  DirectChol  TotChol  UrineVol1  UrineFlow1  UrineVol2  UrineFlow2  Diabetes  DiabetesAge  HealthGen  DaysPhysHlthBad  DaysMentHlthBad  LittleInterest  Depressed  SleepHrsNight  PhysActiveDays  Alcohol12PlusYr  AlcoholDay  AlcoholYear  SmokeNow  SmokeAge  Marijuana  AgeFirstMarij  RegularMarij  AgeRegMarij  HardDrugs  SexEver  SexAge  SexNumPartnLife  SexNumPartYear  SameSex  SexOrientation
-##   3   3  HHIncome  HHIncomeMid  Poverty  HomeRooms  HomeOwn  Work  Weight  Height  BMI  Pulse  BPSysAve  BPDiaAve  Testosterone  DirectChol  TotChol  UrineVol1  UrineFlow1  UrineVol2  UrineFlow2  Diabetes  DiabetesAge  HealthGen  DaysPhysHlthBad  DaysMentHlthBad  LittleInterest  Depressed  SleepHrsNight  PhysActiveDays  Alcohol12PlusYr  AlcoholDay  AlcoholYear  SmokeNow  SmokeAge  Marijuana  AgeFirstMarij  RegularMarij  AgeRegMarij  HardDrugs  SexEver  SexAge  SexNumPartnLife  SexNumPartYear  SameSex  SexOrientation
-##   3   4  HHIncome  HHIncomeMid  Poverty  HomeRooms  HomeOwn  Work  Weight  Height  BMI  Pulse  BPSysAve  BPDiaAve  Testosterone  DirectChol  TotChol  UrineVol1  UrineFlow1  UrineVol2  UrineFlow2  Diabetes  DiabetesAge  HealthGen  DaysPhysHlthBad  DaysMentHlthBad  LittleInterest  Depressed  SleepHrsNight  PhysActiveDays  Alcohol12PlusYr  AlcoholDay  AlcoholYear  SmokeNow  SmokeAge  Marijuana  AgeFirstMarij  RegularMarij  AgeRegMarij  HardDrugs  SexEver  SexAge  SexNumPartnLife  SexNumPartYear  SameSex  SexOrientation
-##   3   5  HHIncome  HHIncomeMid  Poverty  HomeRooms  HomeOwn  Work  Weight  Height  BMI  Pulse  BPSysAve  BPDiaAve  Testosterone  DirectChol  TotChol  UrineVol1  UrineFlow1  UrineVol2  UrineFlow2  Diabetes  DiabetesAge  HealthGen  DaysPhysHlthBad  DaysMentHlthBad  LittleInterest  Depressed  SleepHrsNight  PhysActiveDays  Alcohol12PlusYr  AlcoholDay  AlcoholYear  SmokeNow  SmokeAge  Marijuana  AgeFirstMarij  RegularMarij  AgeRegMarij  HardDrugs  SexEver  SexAge  SexNumPartnLife  SexNumPartYear  SameSex  SexOrientation
-##   4   1  HHIncome  HHIncomeMid  Poverty  HomeRooms  HomeOwn  Work  Weight  Height  BMI  Pulse  BPSysAve  BPDiaAve  Testosterone  DirectChol  TotChol  UrineVol1  UrineFlow1  UrineVol2  UrineFlow2  Diabetes  DiabetesAge  HealthGen  DaysPhysHlthBad  DaysMentHlthBad  LittleInterest  Depressed  SleepHrsNight  PhysActiveDays  Alcohol12PlusYr  AlcoholDay  AlcoholYear  SmokeNow  SmokeAge  Marijuana  AgeFirstMarij  RegularMarij  AgeRegMarij  HardDrugs  SexEver  SexAge  SexNumPartnLife  SexNumPartYear  SameSex  SexOrientation
-##   4   2  HHIncome  HHIncomeMid  Poverty  HomeRooms  HomeOwn  Work  Weight  Height  BMI  Pulse  BPSysAve  BPDiaAve  Testosterone  DirectChol  TotChol  UrineVol1  UrineFlow1  UrineVol2  UrineFlow2  Diabetes  DiabetesAge  HealthGen  DaysPhysHlthBad  DaysMentHlthBad  LittleInterest  Depressed  SleepHrsNight  PhysActiveDays  Alcohol12PlusYr  AlcoholDay  AlcoholYear  SmokeNow  SmokeAge  Marijuana  AgeFirstMarij  RegularMarij  AgeRegMarij  HardDrugs  SexEver  SexAge  SexNumPartnLife  SexNumPartYear  SameSex  SexOrientation
-##   4   3  HHIncome  HHIncomeMid  Poverty  HomeRooms  HomeOwn  Work  Weight  Height  BMI  Pulse  BPSysAve  BPDiaAve  Testosterone  DirectChol  TotChol  UrineVol1  UrineFlow1  UrineVol2  UrineFlow2  Diabetes  DiabetesAge  HealthGen  DaysPhysHlthBad  DaysMentHlthBad  LittleInterest  Depressed  SleepHrsNight  PhysActiveDays  Alcohol12PlusYr  AlcoholDay  AlcoholYear  SmokeNow  SmokeAge  Marijuana  AgeFirstMarij  RegularMarij  AgeRegMarij  HardDrugs  SexEver  SexAge  SexNumPartnLife  SexNumPartYear  SameSex  SexOrientation
-##   4   4  HHIncome  HHIncomeMid  Poverty  HomeRooms  HomeOwn  Work  Weight  Height  BMI  Pulse  BPSysAve  BPDiaAve  Testosterone  DirectChol  TotChol  UrineVol1  UrineFlow1  UrineVol2  UrineFlow2  Diabetes  DiabetesAge  HealthGen  DaysPhysHlthBad  DaysMentHlthBad  LittleInterest  Depressed  SleepHrsNight  PhysActiveDays  Alcohol12PlusYr  AlcoholDay  AlcoholYear  SmokeNow  SmokeAge  Marijuana  AgeFirstMarij  RegularMarij  AgeRegMarij  HardDrugs  SexEver  SexAge  SexNumPartnLife  SexNumPartYear  SameSex  SexOrientation
-##   4   5  HHIncome  HHIncomeMid  Poverty  HomeRooms  HomeOwn  Work  Weight  Height  BMI  Pulse  BPSysAve  BPDiaAve  Testosterone  DirectChol  TotChol  UrineVol1  UrineFlow1  UrineVol2  UrineFlow2  Diabetes  DiabetesAge  HealthGen  DaysPhysHlthBad  DaysMentHlthBad  LittleInterest  Depressed  SleepHrsNight  PhysActiveDays  Alcohol12PlusYr  AlcoholDay  AlcoholYear  SmokeNow  SmokeAge  Marijuana  AgeFirstMarij  RegularMarij  AgeRegMarij  HardDrugs  SexEver  SexAge  SexNumPartnLife  SexNumPartYear  SameSex  SexOrientation
-##   5   1  HHIncome  HHIncomeMid  Poverty  HomeRooms  HomeOwn  Work  Weight  Height  BMI  Pulse  BPSysAve  BPDiaAve  Testosterone  DirectChol  TotChol  UrineVol1  UrineFlow1  UrineVol2  UrineFlow2  Diabetes  DiabetesAge  HealthGen  DaysPhysHlthBad  DaysMentHlthBad  LittleInterest  Depressed  SleepHrsNight  PhysActiveDays  Alcohol12PlusYr  AlcoholDay  AlcoholYear  SmokeNow  SmokeAge  Marijuana  AgeFirstMarij  RegularMarij  AgeRegMarij  HardDrugs  SexEver  SexAge  SexNumPartnLife  SexNumPartYear  SameSex  SexOrientation
-##   5   2  HHIncome  HHIncomeMid  Poverty  HomeRooms  HomeOwn  Work  Weight  Height  BMI  Pulse  BPSysAve  BPDiaAve  Testosterone  DirectChol  TotChol  UrineVol1  UrineFlow1  UrineVol2  UrineFlow2  Diabetes  DiabetesAge  HealthGen  DaysPhysHlthBad  DaysMentHlthBad  LittleInterest  Depressed  SleepHrsNight  PhysActiveDays  Alcohol12PlusYr  AlcoholDay  AlcoholYear  SmokeNow  SmokeAge  Marijuana  AgeFirstMarij  RegularMarij  AgeRegMarij  HardDrugs  SexEver  SexAge  SexNumPartnLife  SexNumPartYear  SameSex  SexOrientation
-##   5   3  HHIncome  HHIncomeMid  Poverty  HomeRooms  HomeOwn  Work  Weight  Height  BMI  Pulse  BPSysAve  BPDiaAve  Testosterone  DirectChol  TotChol  UrineVol1  UrineFlow1  UrineVol2  UrineFlow2  Diabetes  DiabetesAge  HealthGen  DaysPhysHlthBad  DaysMentHlthBad  LittleInterest  Depressed  SleepHrsNight  PhysActiveDays  Alcohol12PlusYr  AlcoholDay  AlcoholYear  SmokeNow  SmokeAge  Marijuana  AgeFirstMarij  RegularMarij  AgeRegMarij  HardDrugs  SexEver  SexAge  SexNumPartnLife  SexNumPartYear  SameSex  SexOrientation
-##   5   4  HHIncome  HHIncomeMid  Poverty  HomeRooms  HomeOwn  Work  Weight  Height  BMI  Pulse  BPSysAve  BPDiaAve  Testosterone  DirectChol  TotChol  UrineVol1  UrineFlow1  UrineVol2  UrineFlow2  Diabetes  DiabetesAge  HealthGen  DaysPhysHlthBad  DaysMentHlthBad  LittleInterest  Depressed  SleepHrsNight  PhysActiveDays  Alcohol12PlusYr  AlcoholDay  AlcoholYear  SmokeNow  SmokeAge  Marijuana  AgeFirstMarij  RegularMarij  AgeRegMarij  HardDrugs  SexEver  SexAge  SexNumPartnLife  SexNumPartYear  SameSex  SexOrientation
-##   5   5  HHIncome  HHIncomeMid  Poverty  HomeRooms  HomeOwn  Work  Weight  Height  BMI  Pulse  BPSysAve  BPDiaAve  Testosterone  DirectChol  TotChol  UrineVol1  UrineFlow1  UrineVol2  UrineFlow2  Diabetes  DiabetesAge  HealthGen  DaysPhysHlthBad  DaysMentHlthBad  LittleInterest  Depressed  SleepHrsNight  PhysActiveDays  Alcohol12PlusYr  AlcoholDay  AlcoholYear  SmokeNow  SmokeAge  Marijuana  AgeFirstMarij  RegularMarij  AgeRegMarij  HardDrugs  SexEver  SexAge  SexNumPartnLife  SexNumPartYear  SameSex  SexOrientation</code></pre>
 <p>NHANES Data after Feature Engineering: no more NAs in any column.</p>
 <pre><code>## 
 ## Data frame:imputed   7235 observations and 54 variables    Maximum # NAs:0
@@ -1171,7 +1169,311 @@ if (!file.exists(NHimp)){
 ## +---------------+------------------------------------------------------+
 ## |SexOrientation |Bisexual,Heterosexual,Homosexual                      |
 ## +---------------+------------------------------------------------------+</code></pre>
-<p>(TBC)</p>
+</div>
+<div id="model-selection-using-a-validation-set" class="section level2">
+<h2>Model Selection Using a Validation Set</h2>
+<p>Lets make a training and validation set, so that we can choose a good subset model. We will do it using a slightly different approach from what was done in the the book.</p>
+<p>Now we will make predictions on the observations not used for training. We know there are 19 models, so we set up some vectors to record the errors. We have to do a bit of work here, because there is no predict method for <code>regsubsets</code>.</p>
+<p>As we expect, the training error goes down monotonically as the model gets bigger, but not so for the validation error.</p>
+<p>This was a little tedious - not having a predict method for <code>regsubsets</code>. So we will write one!</p>
+</div>
+<div id="model-selection-by-cross-validation" class="section level2">
+<h2>Model Selection by Cross-Validation</h2>
+<p>We will do 10-fold cross-validation. Its really easy!</p>
+</div>
+<div id="ridge-regression-and-the-lasso" class="section level2">
+<h2>Ridge Regression and the Lasso</h2>
+<p>We will use the package <code>glmnet</code>, which does not use the model formula language, so we will set up a matrix <code>x</code> of predictors and a response vector <code>y</code>.</p>
+<p>First we will fit a ridge-regression model. This is achieved by calling <code>glmnet</code> with <code>alpha=0</code> (see the helpfile). There is also a <code>cv.glmnet</code> function which will do the cross-validation for us.</p>
+<ul>
+<li>0 : ridge</li>
+<li>1 : lasso</li>
+<li>0.x : elasticnet</li>
+</ul>
+<p><img src="/post/2018-02-13-lasso-regression-on-blood-pressure-data_files/figure-html/plotridge-1.png" width="864" /><img src="/post/2018-02-13-lasso-regression-on-blood-pressure-data_files/figure-html/plotridge-2.png" width="864" /></p>
+<p>Now we fit a lasso model; for this we use the default <code>alpha=1</code></p>
+<p><img src="/post/2018-02-13-lasso-regression-on-blood-pressure-data_files/figure-html/lasso-1.png" width="864" /><img src="/post/2018-02-13-lasso-regression-on-blood-pressure-data_files/figure-html/lasso-2.png" width="864" /><img src="/post/2018-02-13-lasso-regression-on-blood-pressure-data_files/figure-html/lasso-3.png" width="864" /></p>
+<pre><code>## 91 x 1 sparse Matrix of class &quot;dgCMatrix&quot;
+##                         1
+## (Intercept)      82.79628
+## SurveyYr2009_10   .      
+## SurveyYr2011_12   .      
+## Gender2           1.34927
+## Age               0.39870
+## Race12            .      
+## Race13            .      
+## Race14            .      
+## Race15           -0.29710
+## HHIncome2         .      
+## HHIncome3         0.02634
+## HHIncome4         .      
+## HHIncome5         .      
+## HHIncome6         .      
+## HHIncome7         .      
+## HHIncome8         0.15388
+## HHIncome9         .      
+## HHIncome10        0.47821
+## HHIncome11       -0.78370
+## HHIncome12        .      
+## HHIncomeMid       .      
+## Poverty          -0.53633
+## HomeRooms         .      
+## HomeOwn2         -0.04735
+## HomeOwn3          .      
+## Work2             1.34234
+## Work3            -0.17909
+## Weight            .      
+## Height           -0.02992
+## BMI               0.09505
+## Pulse             .      
+## BPDiaAve          0.46779
+## Testosterone      0.00134
+## DirectChol        .      
+## TotChol           0.24095
+## UrineVol1         .      
+## UrineFlow1        .      
+## UrineVol2         0.00121
+## UrineFlow2        0.53345
+## Diabetes2         1.49257
+## DiabetesAge       .      
+## HealthGen2       -1.87402
+## HealthGen3        0.31610
+## HealthGen4        .      
+## HealthGen5        .      
+## DaysPhysHlthBad   .      
+## DaysMentHlthBad   .      
+## LittleInterest2   .      
+## LittleInterest3  -1.45218
+## Depressed2        .      
+## Depressed3       -0.61634
+## nPregnancies     -0.41789
+## nBabies           .      
+## Age1stBaby       -0.15220
+## SleepHrsNight    -0.21171
+## SleepTrouble2    -0.45649
+## PhysActive2       .      
+## PhysActiveDays    .      
+## TVHrsDay2        -0.27634
+## TVHrsDay3         .      
+## TVHrsDay4         .      
+## TVHrsDay5         1.31549
+## TVHrsDay6         .      
+## TVHrsDay7         .      
+## CompHrsDay2       .      
+## CompHrsDay3       .      
+## CompHrsDay4      -1.67911
+## CompHrsDay5       0.33545
+## CompHrsDay6       0.68649
+## CompHrsDay7       .      
+## Alcohol12PlusYr2 -0.02349
+## AlcoholDay        0.21956
+## AlcoholYear       0.00608
+## SmokeNow2         .      
+## Smoke1002         .      
+## Smoke100nSmoker   .      
+## SmokeAge          .      
+## Marijuana2        .      
+## AgeFirstMarij     .      
+## RegularMarij2     0.50841
+## AgeRegMarij      -0.05354
+## HardDrugs2        .      
+## SexEver2         -4.70138
+## SexAge            .      
+## SexNumPartnLife   .      
+## SexNumPartYear    0.01013
+## SameSex2         -1.73899
+## SexOrientation2  -1.35979
+## SexOrientation3   4.38033
+## PregnantNow2     -0.52416
+## PregnantNow3      0.61456</code></pre>
+<p>Suppose we want to use our earlier train/validation division to select the <code>lambda</code> for the lasso. This is easy to do.</p>
+<pre><code>## 
+## Call:  glmnet(x = x[train, ], y = y[train]) 
+## 
+##       Df   %Dev  Lambda
+##  [1,]  0 0.0000 7.03000
+##  [2,]  1 0.0284 6.40000
+##  [3,]  1 0.0520 5.83000
+##  [4,]  2 0.0860 5.32000
+##  [5,]  2 0.1210 4.84000
+##  [6,]  2 0.1490 4.41000
+##  [7,]  2 0.1730 4.02000
+##  [8,]  2 0.1930 3.66000
+##  [9,]  2 0.2090 3.34000
+## [10,]  2 0.2230 3.04000
+## [11,]  2 0.2340 2.77000
+## [12,]  2 0.2440 2.53000
+## [13,]  2 0.2520 2.30000
+## [14,]  2 0.2580 2.10000
+## [15,]  2 0.2630 1.91000
+## [16,]  2 0.2680 1.74000
+## [17,]  3 0.2720 1.59000
+## [18,]  7 0.2800 1.45000
+## [19,]  8 0.2870 1.32000
+## [20,]  8 0.2940 1.20000
+## [21,] 10 0.3000 1.09000
+## [22,] 10 0.3050 0.99600
+## [23,] 11 0.3100 0.90800
+## [24,] 14 0.3140 0.82700
+## [25,] 18 0.3190 0.75400
+## [26,] 19 0.3240 0.68700
+## [27,] 21 0.3280 0.62600
+## [28,] 23 0.3320 0.57000
+## [29,] 23 0.3360 0.51900
+## [30,] 29 0.3390 0.47300
+## [31,] 32 0.3430 0.43100
+## [32,] 34 0.3460 0.39300
+## [33,] 38 0.3490 0.35800
+## [34,] 38 0.3520 0.32600
+## [35,] 44 0.3550 0.29700
+## [36,] 45 0.3570 0.27100
+## [37,] 47 0.3590 0.24700
+## [38,] 48 0.3610 0.22500
+## [39,] 53 0.3620 0.20500
+## [40,] 56 0.3640 0.18700
+## [41,] 60 0.3660 0.17000
+## [42,] 61 0.3670 0.15500
+## [43,] 65 0.3690 0.14100
+## [44,] 68 0.3700 0.12900
+## [45,] 69 0.3720 0.11700
+## [46,] 70 0.3730 0.10700
+## [47,] 72 0.3740 0.09730
+## [48,] 73 0.3750 0.08870
+## [49,] 73 0.3760 0.08080
+## [50,] 75 0.3760 0.07360
+## [51,] 75 0.3770 0.06710
+## [52,] 77 0.3770 0.06110
+## [53,] 77 0.3780 0.05570
+## [54,] 77 0.3780 0.05070
+## [55,] 77 0.3780 0.04620
+## [56,] 77 0.3790 0.04210
+## [57,] 79 0.3790 0.03840
+## [58,] 79 0.3790 0.03500
+## [59,] 81 0.3790 0.03190
+## [60,] 81 0.3790 0.02900
+## [61,] 81 0.3790 0.02650
+## [62,] 82 0.3790 0.02410
+## [63,] 82 0.3790 0.02200
+## [64,] 83 0.3800 0.02000
+## [65,] 83 0.3800 0.01820
+## [66,] 83 0.3800 0.01660
+## [67,] 84 0.3800 0.01510
+## [68,] 84 0.3800 0.01380
+## [69,] 85 0.3800 0.01260
+## [70,] 86 0.3800 0.01150
+## [71,] 86 0.3800 0.01040
+## [72,] 86 0.3800 0.00951
+## [73,] 87 0.3800 0.00866
+## [74,] 87 0.3800 0.00789
+## [75,] 88 0.3800 0.00719
+## [76,] 88 0.3800 0.00655
+## [77,] 88 0.3800 0.00597
+## [78,] 88 0.3800 0.00544
+## [79,] 88 0.3800 0.00496
+## [80,] 88 0.3800 0.00452
+## [81,] 88 0.3800 0.00412
+## [82,] 88 0.3800 0.00375
+## [83,] 88 0.3800 0.00342
+## [84,] 88 0.3800 0.00311
+## [85,] 88 0.3800 0.00284
+## [86,] 88 0.3800 0.00258
+## [87,] 88 0.3800 0.00236</code></pre>
+<pre><code>## [1] 1447   87</code></pre>
+<p><img src="/post/2018-02-13-lasso-regression-on-blood-pressure-data_files/figure-html/predlasso-1.png" width="864" /></p>
+<pre><code>## [1] 0.0507</code></pre>
+<pre><code>## 91 x 1 sparse Matrix of class &quot;dgCMatrix&quot;
+##                          1
+## (Intercept)       1.02e+02
+## SurveyYr2009_10   .       
+## SurveyYr2011_12   .       
+## Gender2           3.02e+00
+## Age               4.62e-01
+## Race12           -1.75e+00
+## Race13           -2.37e+00
+## Race14           -1.27e+00
+## Race15           -2.35e+00
+## HHIncome2        -1.66e+00
+## HHIncome3         1.97e-01
+## HHIncome4        -2.00e+00
+## HHIncome5        -7.26e-01
+## HHIncome6         .       
+## HHIncome7        -1.01e+00
+## HHIncome8         6.55e-01
+## HHIncome9         3.76e-01
+## HHIncome10        1.56e+00
+## HHIncome11       -1.58e+00
+## HHIncome12        .       
+## HHIncomeMid       1.31e-05
+## Poverty          -1.08e+00
+## HomeRooms         .       
+## HomeOwn2         -1.23e+00
+## HomeOwn3          .       
+## Work2             1.86e+00
+## Work3             .       
+## Weight            .       
+## Height           -1.37e-01
+## BMI               1.04e-01
+## Pulse             .       
+## BPDiaAve          4.85e-01
+## Testosterone      2.72e-03
+## DirectChol        3.73e-01
+## TotChol           4.46e-01
+## UrineVol1         5.56e-04
+## UrineFlow1       -4.01e-01
+## UrineVol2         2.84e-03
+## UrineFlow2        1.01e+00
+## Diabetes2         2.06e+00
+## DiabetesAge      -6.27e-02
+## HealthGen2       -1.31e+00
+## HealthGen3        1.59e+00
+## HealthGen4        1.02e+00
+## HealthGen5        1.06e+00
+## DaysPhysHlthBad   6.05e-03
+## DaysMentHlthBad  -9.21e-03
+## LittleInterest2   8.55e-01
+## LittleInterest3  -1.54e+00
+## Depressed2       -6.17e-01
+## Depressed3       -1.85e+00
+## nPregnancies     -4.44e-01
+## nBabies          -4.25e-01
+## Age1stBaby       -2.46e-01
+## SleepHrsNight    -3.69e-01
+## SleepTrouble2    -9.46e-01
+## PhysActive2       5.56e-01
+## PhysActiveDays    1.30e-01
+## TVHrsDay2        -4.13e-01
+## TVHrsDay3         4.67e-01
+## TVHrsDay4         2.51e-02
+## TVHrsDay5         1.87e+00
+## TVHrsDay6         .       
+## TVHrsDay7         8.55e-01
+## CompHrsDay2       1.05e+00
+## CompHrsDay3       1.31e+00
+## CompHrsDay4      -1.68e+00
+## CompHrsDay5       2.32e+00
+## CompHrsDay6       2.56e+00
+## CompHrsDay7       6.25e-01
+## Alcohol12PlusYr2 -5.97e-01
+## AlcoholDay        3.54e-01
+## AlcoholYear       7.49e-03
+## SmokeNow2        -4.78e-02
+## Smoke1002         .       
+## Smoke100nSmoker   .       
+## SmokeAge          2.72e-02
+## Marijuana2        .       
+## AgeFirstMarij     1.20e-01
+## RegularMarij2     1.60e+00
+## AgeRegMarij      -1.42e-01
+## HardDrugs2       -4.05e-01
+## SexEver2         -6.39e+00
+## SexAge            3.81e-02
+## SexNumPartnLife  -7.56e-04
+## SexNumPartYear    1.21e-01
+## SameSex2         -2.88e+00
+## SexOrientation2  -4.17e+00
+## SexOrientation3   2.71e+00
+## PregnantNow2     -5.53e-01
+## PregnantNow3      1.41e+00</code></pre>
 <div class="alert alert-info"><b>What I&apos; learned from doing this:</b>
 <ul>
 <li>Applied Model Selection techniques, a little bit more independently than before 
