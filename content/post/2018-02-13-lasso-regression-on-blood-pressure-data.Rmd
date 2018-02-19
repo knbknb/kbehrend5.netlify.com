@@ -32,12 +32,13 @@ options(knitr.table.format = "html")
 library(kableExtra)
 ```
 ```{r pkgs1}
+library(mice)  # imputation
+
 library(NHANES) # Body Shape + related measurements from 10000 US citizens
 data(NHANES)
 library(rvest)
 library(tidyverse)
 library(ggthemes)
-library(mice)  # imputation
 theme_set(theme_bw())
 scale_colour_discrete <- function(...) scale_color_brewer(palette="Set1")
 
@@ -97,34 +98,32 @@ action2 <- "Yes/No"
 
 nhanes_defs <- nhanes_defs %>%
         mutate(Action= case_when(
-                # (str_detect(Meaning, "Yes") == TRUE)  & 
-                #  str_detect(Meaning, "No") == TRUE ~ action2, 
-                         Column == "ID" ~ action1,
-                         Column == "AgeMonths" ~ action1,
-                         Column == "AgeDecade" ~ action1,
-                         Column == "Race3" ~ action1,
-                         Column == "Education" ~ action1,
-                         Column == "MaritalStatus" ~ action1,
-                         Column == "Length" ~ action1,
-                         Column == "HeadCirc" ~ action1,
-                         Column == "MaritalStatus" ~ action1,
-                         Column == "BMICatUnder20yrs" ~ action1,
-                         Column == "BMI_WHO" ~ action1,
-                         str_detect(Column, pattern=regex("^BP")) == TRUE &
-                         str_detect(Column, pattern=regex("Ave")) == FALSE ~ action1,
-                         Column == "nPregnancies" ~ action1,
-                         Column == "nBabies" ~ action1,
-                         Column == "PregnantNow" ~ action1,
-                         Column == "Age1stBaby" ~ action1,
-                         str_detect(Column, "WTINT2YR") == TRUE ~ action1,
-                         Column == "WTMEC2YR" ~ action1,
-                         Column == "SDMVPSU" ~ action1,
-                         Column == "SDMVSTRA" ~ action1,
-                         Column == "TVHrsDayChild" ~ action1,
-                         Column == "CompHrsDayChild" ~ action1,
-                 str_detect(Column, pattern=regex("TVHrs|CompHrs|AgeDecade")) == TRUE ~ action1,
-                        
-                         TRUE ~ ""))
+# (str_detect(Meaning, "Yes") == TRUE)  & 
+#  str_detect(Meaning, "No") == TRUE ~ action2, 
+         Column == "ID" ~ action1,
+         Column == "AgeMonths" ~ action1,
+         Column == "AgeDecade" ~ action1,
+         Column == "Race3" ~ action1,
+         Column == "Education" ~ action1,
+         Column == "MaritalStatus" ~ action1,
+         Column == "Length" ~ action1,
+         Column == "HeadCirc" ~ action1,
+         Column == "MaritalStatus" ~ action1,
+         Column == "BMICatUnder20yrs" ~ action1,
+         Column == "BMI_WHO" ~ action1,
+         str_detect(Column, pattern=regex("^BP")) == TRUE &
+         str_detect(Column, pattern=regex("Ave")) == FALSE ~ action1,
+         # Column == "nPregnancies" ~ action1,
+         # Column == "nBabies" ~ action1,
+         # Column == "PregnantNow" ~ action1,
+         # Column == "Age1stBaby" ~ action1,
+         str_detect(Column, "WTINT2YR") == TRUE ~ action1,
+         Column == "TVHrsDayChild" ~ action1,
+         Column == "CompHrsDayChild" ~ action1,
+#         str_detect(Column, pattern=regex("TVHrs|CompHrs|AgeDecade")) ==
+#                 TRUE ~ action1,
+        
+         TRUE ~ ""))
 
 ```
 
@@ -160,22 +159,21 @@ More Feature Engineering Measures:
 - Impute missing values with "mice" method (Multiple Imputation by Chain Equation)
 
 
-```{r imputed}
+```{r imputed, echo=TRUE, cache=TRUE}
 NHANES <- NHANES %>% 
         filter(Age >= 20) %>% 
         select(setdiff(colnames(NHANES), drop_cols) )
 
 NHimp <- "data_private/NHANES-imputed.rds"
-if (!file.exists(NHimp)){
-        imputed <- readRDS(here::here(NHimp))        
+
+if (file.exists(NHimp)){
+        imputed <- readRDS(NHimp)
 } else {
-        imputed <- complete(mice(NHANES))
-        saveRDS(imputed, file = here::here(NHimp))
+        #set.seed(47)
+        imputed <- mice::complete(mice(NHANES))
+        saveRDS(imputed, file = NHimp)
 }
 
-# 
-imputed <- imputed %>% 
-        select(-AgeDecade, HHIncomeMid)
 
 ```
 
@@ -188,7 +186,172 @@ Hmisc::contents(imputed)
 
 
 
-(TBC)
+Best Subset regression
+------------------------
+
+We will now use the package `leaps` to evaluate all the best-subset models.
+
+```{r}
+library(leaps)
+regfit.full=regsubsets(BPSysAve~.,data=imputed)
+summary(regfit.full)
+```
+
+It gives by default best-subsets up to size 8; lets increase that to 19, i.e. all the variables
+
+```{r}
+regfit.full=regsubsets(BPSysAve~.,data=imputed, nvmax=19)
+reg.summary=summary(regfit.full)
+names(reg.summary)
+plot(reg.summary$cp,xlab="Number of Variables",ylab="Cp")
+minimum <- which.min(reg.summary$cp)
+points(minimum,reg.summary$cp[minimum],pch=20,col="red")
+```
+There is a plot method for the `regsubsets`  object
+```{r}
+plot(regfit.full,scale="Cp")
+coef(regfit.full,minimum)
+```
+
+
+
+Forward Stepwise Selection
+--------------------------
+Here we use the `regsubsets` function but specify the `method="forward" option:
+```{r}
+regfit.fwd=regsubsets(BPSysAve~.,data=imputed,nvmax=19,method="forward")
+summary(regfit.fwd)
+plot(regfit.fwd,scale="Cp")
+```
+
+
+
+
+Model Selection Using a Validation Set
+---------------------------------------
+Lets make a training and validation set, so that we can choose a good subset model.
+We will do it using a slightly different approach from what was done in the the book.
+```{r}
+dim(imputed)
+set.seed(1)
+# take 180 indexes of observations, 
+train=sample(seq(263),180,replace=FALSE)
+train
+# use training data subset
+regfit.fwd=regsubsets(BPSysAve~.,data=imputed[train,],nvmax=19,method="forward")
+```
+Now we will make predictions on the observations not used for training. We know there are 19 models, so we set up some vectors to record the errors. We have to do a bit of work here, because there is no predict method for `regsubsets`.
+```{r}
+val.errors=rep(NA,19)
+x.test=model.matrix(BPSysAve~.,data=imputed[-train,])# notice the -index!
+for(i in 1:19){
+        #complex loop
+  coefi=coef(regfit.fwd,id=i)
+  pred=x.test[,names(coefi)]%*%coefi
+  val.errors[i]=mean((imputed$BPSysAve[-train]-pred)^2)
+}
+plot(sqrt(val.errors),ylab="Root MSE",ylim=c(300,400),pch=19,type="b")
+# remove NULL model
+points(sqrt(regfit.fwd$rss[-1]/180),col="blue",pch=19,type="b")
+legend("topright",legend=c("Training","Validation"),col=c("blue","black"),pch=19)
+```
+As we expect, the training error goes down monotonically as the model gets bigger, but not so 
+for the validation error.
+
+This was a little tedious - not having a predict method for `regsubsets`. So we will write one!
+```{r}
+## make  a generic function
+# id is the id of the model
+predict.regsubsets=function(object,newdata,id,...){
+  form=as.formula(object$call[[2]])
+  mat=model.matrix(form,newdata)
+  coefi=coef(object,id=id)
+  mat[,names(coefi)]%*%coefi
+}
+```
+
+
+
+
+Model Selection by Cross-Validation
+-----------------------------------
+We will do 10-fold cross-validation. Its really easy!
+```{r}
+set.seed(11)
+# create a vector of nrows, fill it with an equal number of each 1s, 2s, ... 10s.
+folds=sample(rep(1:10,length=nrow(imputed)))
+folds
+table(folds)
+cv.errors=matrix(NA,10,19)
+for(k in 1:10){
+        # leave the k-fold out
+  best.fit=regsubsets(BPSysAve~.,data=imputed[folds!=k,],nvmax=19,method="forward")
+  for(i in 1:19){
+          # call predict.subsets via generic call
+    pred=predict(best.fit,imputed[folds==k,],id=i)
+    cv.errors[k,i]=mean( (imputed$BPSysAve[folds==k]-pred)^2)
+  }
+}
+# take the column means
+rmse.cv=sqrt(apply(cv.errors,2,mean))
+plot(rmse.cv,pch=19,type="b")
+#a little bit smoother than the other more jumpy plots
+```
+
+
+
+Ridge Regression and the Lasso
+-------------------------------
+We will use the package `glmnet`, which does not use the model formula language, so we will set up a
+matrix `x` of predictors and a response vector `y`.
+```{r message=FALSE}
+library(glmnet)
+x = model.matrix(BPSysAve ~ . - 1, data = imputed) 
+y = imputed$BPSysAve
+```
+First we will fit a ridge-regression model. This is achieved by calling `glmnet` with `alpha=0` (see the helpfile). There is also a `cv.glmnet` function which will do the cross-validation for us.
+0 - ridge
+1 - lasso
+0.x  - elasticnet
+```{r}
+fit.ridge=glmnet(x,y,alpha=0)
+plot(fit.ridge,xvar="lambda",label=TRUE)
+cv.ridge=cv.glmnet(x,y,alpha=0)
+plot(cv.ridge)
+```
+Now we fit a lasso model; for this we use the default `alpha=1`
+```{r}
+fit.lasso=glmnet(x,y)
+plot(fit.lasso,xvar="lambda",label=TRUE)
+plot(fit.lasso,xvar="dev",label=TRUE)
+cv.lasso=cv.glmnet(x,y)
+leg1str <- sprintf("log of best Lambda = %.3f  (%.3f)",log(cv.lasso$lambda.min), cv.lasso$lambda.min)
+leg2str <- sprintf("log of best Lambda + 1 SE = %.3f (%.3f)",log(cv.lasso$lambda.1se), cv.lasso$lambda.1se)
+plot(cv.lasso)
+legend("topleft", legend=c(leg1str, leg2str), pch=1) 
+#title(main=paste(c(leg1str, leg2str))) 
+#pick/show  the coefficients vector from the best model
+coef(cv.lasso)  # lambda = 69.01 => 6 coefs
+```
+
+ Suppose we want to use our earlier train/validation division to select the `lambda` for the lasso.
+ This is easy to do.
+```{r}
+# train was defined above
+lasso.tr=glmnet(x[train,],y[train])
+lasso.tr # print until it model no longer really changes (~ 90 lines here)
+pred = predict(lasso.tr,x[-train,])
+dim(pred)
+# vector - matrix
+# this recycles the vector 89 times! 
+# (using R's implicit-wrap-around feature)
+rmse = sqrt(apply((y[-train]-pred)^2,2,mean))
+plot(log(lasso.tr$lambda),rmse,type="b",xlab="Log(lambda)")
+#extract the best lambda: sort asc, pick first
+lam.best = lasso.tr$lambda[order(rmse)[1]]
+lam.best
+coef(lasso.tr,s=lam.best)
+```
 
 
 
