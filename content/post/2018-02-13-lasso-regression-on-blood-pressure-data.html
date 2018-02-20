@@ -1178,6 +1178,7 @@ if (file.exists(NHimp)){
 ## +---------------+------------------------------------------------------+
 ## |PregnantNow    |Yes,No,Unknown                                        |
 ## +---------------+------------------------------------------------------+</code></pre>
+<p>Scale the data frame. This is necessary because the <span class="math inline">\(lambda\)</span> hyperparameter of ridge regression and lasso regression need to have comparable values.</p>
 </div>
 <div id="model-selection-by-cross-validation" class="section level2">
 <h2>Model Selection by Cross-Validation</h2>
@@ -1203,7 +1204,7 @@ if (file.exists(NHimp)){
 ## Reordering variables and trying again:
 ## Reordering variables and trying again:
 ## Reordering variables and trying again:</code></pre>
-<p><img src="/post/2018-02-13-lasso-regression-on-blood-pressure-data_files/figure-html/unnamed-chunk-3-1.png" width="864" /></p>
+<p><img src="/post/2018-02-13-lasso-regression-on-blood-pressure-data_files/figure-html/unnamed-chunk-1-1.png" width="864" /></p>
 </div>
 <div id="ridge-regression-and-the-lasso" class="section level2">
 <h2>Ridge Regression and the Lasso</h2>
@@ -1218,282 +1219,279 @@ if (file.exists(NHimp)){
 <p>Now we fit a lasso model; for this we use the default <code>alpha=1</code></p>
 <p><img src="/post/2018-02-13-lasso-regression-on-blood-pressure-data_files/figure-html/lasso-1.png" width="864" /><img src="/post/2018-02-13-lasso-regression-on-blood-pressure-data_files/figure-html/lasso-2.png" width="864" /><img src="/post/2018-02-13-lasso-regression-on-blood-pressure-data_files/figure-html/lasso-3.png" width="864" /></p>
 <pre><code>## 91 x 1 sparse Matrix of class &quot;dgCMatrix&quot;
-##                         1
-## (Intercept)      77.48385
-## SurveyYr2009_10   .      
-## SurveyYr2011_12   .      
-## Gender2           1.20632
-## Age               0.39668
-## Race12            .      
-## Race13            .      
-## Race14            .      
-## Race15            .      
-## HHIncome2         .      
-## HHIncome3         .      
-## HHIncome4         .      
-## HHIncome5         .      
-## HHIncome6         .      
-## HHIncome7         .      
-## HHIncome8         .      
-## HHIncome9         .      
-## HHIncome10        0.11467
-## HHIncome11       -0.57859
-## HHIncome12        .      
-## HHIncomeMid       .      
-## Poverty          -0.52197
-## HomeRooms         .      
-## HomeOwn2          .      
-## HomeOwn3          .      
-## Work2             1.18863
-## Work3            -0.15805
-## Weight            .      
-## Height           -0.00479
-## BMI               0.08687
-## Pulse             .      
-## BPDiaAve          0.45904
-## Testosterone      0.00112
-## DirectChol        .      
-## TotChol           0.15309
-## UrineVol1         .      
-## UrineFlow1        .      
-## UrineVol2         .      
-## UrineFlow2        0.47291
-## Diabetes2         1.21785
-## DiabetesAge       .      
-## HealthGen2       -1.80102
-## HealthGen3        0.17842
-## HealthGen4        .      
-## HealthGen5        .      
-## DaysPhysHlthBad   .      
-## DaysMentHlthBad   .      
-## LittleInterest2   .      
-## LittleInterest3  -1.17034
-## Depressed2        .      
-## Depressed3       -0.18461
-## nPregnancies     -0.33805
-## nBabies           .      
-## Age1stBaby       -0.12934
-## SleepHrsNight    -0.11900
-## SleepTrouble2    -0.20395
-## PhysActive2       .      
-## PhysActiveDays    .      
-## TVHrsDay2        -0.24472
-## TVHrsDay3         .      
-## TVHrsDay4         .      
-## TVHrsDay5         1.13636
-## TVHrsDay6         .      
-## TVHrsDay7         .      
-## CompHrsDay2       .      
-## CompHrsDay3       .      
-## CompHrsDay4      -1.42824
-## CompHrsDay5       .      
-## CompHrsDay6       0.23149
-## CompHrsDay7       .      
-## Alcohol12PlusYr2  .      
-## AlcoholDay        0.20278
-## AlcoholYear       0.00517
-## SmokeNow2         .      
-## Smoke1002         .      
-## Smoke100nSmoker   .      
-## SmokeAge          .      
-## Marijuana2        .      
-## AgeFirstMarij     .      
-## RegularMarij2     0.26407
-## AgeRegMarij      -0.03935
-## HardDrugs2        .      
-## SexEver2         -4.17574
-## SexAge            .      
-## SexNumPartnLife   .      
-## SexNumPartYear    .      
-## SameSex2         -1.17256
-## SexOrientation2  -0.67129
-## SexOrientation3   4.50450
-## PregnantNow2     -0.39591
-## PregnantNow3      0.37590</code></pre>
+##                          1
+## (Intercept)      79.360584
+## SurveyYr2009_10   .       
+## SurveyYr2011_12   .       
+## Gender2           1.261869
+## Age               0.397604
+## Race12            .       
+## Race13            .       
+## Race14            .       
+## Race15           -0.036135
+## HHIncome2         .       
+## HHIncome3         .       
+## HHIncome4         .       
+## HHIncome5         .       
+## HHIncome6         .       
+## HHIncome7         .       
+## HHIncome8         .       
+## HHIncome9         .       
+## HHIncome10        0.238182
+## HHIncome11       -0.660301
+## HHIncome12        .       
+## HHIncomeMid       .       
+## Poverty          -0.526864
+## HomeRooms         .       
+## HomeOwn2          .       
+## HomeOwn3          .       
+## Work2             1.239580
+## Work3            -0.167829
+## Weight            .       
+## Height           -0.013740
+## BMI               0.090184
+## Pulse             .       
+## BPDiaAve          0.462199
+## Testosterone      0.001214
+## DirectChol        .       
+## TotChol           0.186296
+## UrineVol1         .       
+## UrineFlow1        .       
+## UrineVol2         0.000286
+## UrineFlow2        0.500604
+## Diabetes2         1.314135
+## DiabetesAge       .       
+## HealthGen2       -1.827130
+## HealthGen3        0.227673
+## HealthGen4        .       
+## HealthGen5        .       
+## DaysPhysHlthBad   .       
+## DaysMentHlthBad   .       
+## LittleInterest2   .       
+## LittleInterest3  -1.266729
+## Depressed2        .       
+## Depressed3       -0.345980
+## nPregnancies     -0.367962
+## nBabies           .       
+## Age1stBaby       -0.137718
+## SleepHrsNight    -0.152538
+## SleepTrouble2    -0.294838
+## PhysActive2       .       
+## PhysActiveDays    .       
+## TVHrsDay2        -0.258855
+## TVHrsDay3         .       
+## TVHrsDay4         .       
+## TVHrsDay5         1.201782
+## TVHrsDay6         .       
+## TVHrsDay7         .       
+## CompHrsDay2       .       
+## CompHrsDay3       .       
+## CompHrsDay4      -1.521741
+## CompHrsDay5       0.065773
+## CompHrsDay6       0.389453
+## CompHrsDay7       .       
+## Alcohol12PlusYr2  .       
+## AlcoholDay        0.208835
+## AlcoholYear       0.005501
+## SmokeNow2         .       
+## Smoke1002         .       
+## Smoke100nSmoker   .       
+## SmokeAge          .       
+## Marijuana2        .       
+## AgeFirstMarij     .       
+## RegularMarij2     0.347537
+## AgeRegMarij      -0.044781
+## HardDrugs2        .       
+## SexEver2         -4.352872
+## SexAge            .       
+## SexNumPartnLife   .       
+## SexNumPartYear    .       
+## SameSex2         -1.378404
+## SexOrientation2  -0.914116
+## SexOrientation3   4.468127
+## PregnantNow2     -0.438153
+## PregnantNow3      0.452303</code></pre>
 <p>Suppose we want to use our earlier train/validation division to select the <code>lambda</code> for the lasso. This is easy to do.</p>
 <pre><code>## 
 ## Call:  glmnet(x = x[train, ], y = y[train]) 
 ## 
 ##       Df   %Dev  Lambda
-##  [1,]  0 0.0000 6.95000
-##  [2,]  1 0.0284 6.33000
-##  [3,]  1 0.0520 5.77000
-##  [4,]  2 0.0859 5.26000
-##  [5,]  2 0.1210 4.79000
-##  [6,]  2 0.1490 4.36000
-##  [7,]  2 0.1730 3.98000
-##  [8,]  2 0.1930 3.62000
-##  [9,]  2 0.2100 3.30000
-## [10,]  2 0.2230 3.01000
-## [11,]  2 0.2350 2.74000
-## [12,]  2 0.2440 2.50000
-## [13,]  2 0.2520 2.28000
-## [14,]  2 0.2580 2.07000
-## [15,]  2 0.2640 1.89000
-## [16,]  2 0.2680 1.72000
-## [17,]  5 0.2730 1.57000
-## [18,]  7 0.2800 1.43000
-## [19,]  9 0.2870 1.30000
-## [20,]  9 0.2940 1.19000
-## [21,] 12 0.3000 1.08000
-## [22,] 12 0.3060 0.98500
-## [23,] 12 0.3110 0.89700
-## [24,] 14 0.3150 0.81800
-## [25,] 17 0.3200 0.74500
-## [26,] 19 0.3240 0.67900
-## [27,] 20 0.3280 0.61800
-## [28,] 23 0.3330 0.56400
-## [29,] 26 0.3370 0.51300
-## [30,] 28 0.3410 0.46800
-## [31,] 32 0.3440 0.42600
-## [32,] 32 0.3470 0.38800
-## [33,] 33 0.3500 0.35400
-## [34,] 37 0.3520 0.32200
-## [35,] 40 0.3540 0.29400
-## [36,] 44 0.3560 0.26800
-## [37,] 47 0.3580 0.24400
-## [38,] 50 0.3600 0.22200
-## [39,] 54 0.3620 0.20300
-## [40,] 58 0.3630 0.18500
-## [41,] 62 0.3650 0.16800
-## [42,] 63 0.3670 0.15300
-## [43,] 65 0.3680 0.14000
-## [44,] 68 0.3700 0.12700
-## [45,] 69 0.3710 0.11600
-## [46,] 71 0.3720 0.10600
-## [47,] 73 0.3730 0.09620
-## [48,] 73 0.3740 0.08770
-## [49,] 74 0.3740 0.07990
-## [50,] 75 0.3750 0.07280
-## [51,] 77 0.3750 0.06630
-## [52,] 78 0.3760 0.06040
-## [53,] 79 0.3760 0.05510
-## [54,] 80 0.3770 0.05020
-## [55,] 80 0.3770 0.04570
-## [56,] 80 0.3770 0.04170
-## [57,] 81 0.3780 0.03800
-## [58,] 82 0.3780 0.03460
-## [59,] 83 0.3780 0.03150
-## [60,] 83 0.3780 0.02870
-## [61,] 83 0.3780 0.02620
-## [62,] 83 0.3780 0.02380
-## [63,] 82 0.3780 0.02170
-## [64,] 82 0.3780 0.01980
-## [65,] 82 0.3780 0.01800
-## [66,] 83 0.3780 0.01640
-## [67,] 85 0.3790 0.01500
-## [68,] 85 0.3790 0.01360
-## [69,] 87 0.3790 0.01240
-## [70,] 87 0.3790 0.01130
-## [71,] 87 0.3790 0.01030
-## [72,] 87 0.3790 0.00940
-## [73,] 87 0.3790 0.00857
-## [74,] 87 0.3790 0.00780
-## [75,] 87 0.3790 0.00711
-## [76,] 87 0.3790 0.00648
-## [77,] 87 0.3790 0.00590
-## [78,] 87 0.3790 0.00538
-## [79,] 87 0.3790 0.00490
-## [80,] 88 0.3790 0.00447
-## [81,] 88 0.3790 0.00407
-## [82,] 88 0.3790 0.00371
-## [83,] 88 0.3790 0.00338</code></pre>
-<pre><code>## [1] 1447   83</code></pre>
+##  [1,]  0 0.0000 7.02000
+##  [2,]  1 0.0284 6.40000
+##  [3,]  1 0.0520 5.83000
+##  [4,]  2 0.0853 5.31000
+##  [5,]  2 0.1200 4.84000
+##  [6,]  2 0.1490 4.41000
+##  [7,]  2 0.1720 4.02000
+##  [8,]  2 0.1920 3.66000
+##  [9,]  2 0.2090 3.34000
+## [10,]  2 0.2220 3.04000
+## [11,]  2 0.2330 2.77000
+## [12,]  2 0.2430 2.52000
+## [13,]  2 0.2510 2.30000
+## [14,]  2 0.2570 2.10000
+## [15,]  2 0.2620 1.91000
+## [16,]  2 0.2670 1.74000
+## [17,]  3 0.2720 1.59000
+## [18,]  7 0.2780 1.44000
+## [19,]  9 0.2860 1.32000
+## [20,] 10 0.2930 1.20000
+## [21,] 11 0.3000 1.09000
+## [22,] 12 0.3050 0.99600
+## [23,] 12 0.3110 0.90700
+## [24,] 13 0.3150 0.82700
+## [25,] 16 0.3190 0.75300
+## [26,] 18 0.3240 0.68600
+## [27,] 21 0.3290 0.62500
+## [28,] 23 0.3330 0.57000
+## [29,] 26 0.3370 0.51900
+## [30,] 28 0.3410 0.47300
+## [31,] 34 0.3440 0.43100
+## [32,] 36 0.3480 0.39300
+## [33,] 38 0.3510 0.35800
+## [34,] 42 0.3540 0.32600
+## [35,] 45 0.3570 0.29700
+## [36,] 47 0.3590 0.27100
+## [37,] 48 0.3610 0.24700
+## [38,] 51 0.3630 0.22500
+## [39,] 53 0.3650 0.20500
+## [40,] 57 0.3670 0.18700
+## [41,] 61 0.3690 0.17000
+## [42,] 61 0.3710 0.15500
+## [43,] 62 0.3720 0.14100
+## [44,] 63 0.3740 0.12900
+## [45,] 65 0.3750 0.11700
+## [46,] 70 0.3760 0.10700
+## [47,] 70 0.3770 0.09730
+## [48,] 74 0.3770 0.08860
+## [49,] 75 0.3780 0.08080
+## [50,] 75 0.3790 0.07360
+## [51,] 76 0.3790 0.06700
+## [52,] 80 0.3800 0.06110
+## [53,] 78 0.3800 0.05570
+## [54,] 78 0.3810 0.05070
+## [55,] 78 0.3810 0.04620
+## [56,] 78 0.3810 0.04210
+## [57,] 79 0.3810 0.03840
+## [58,] 79 0.3820 0.03500
+## [59,] 80 0.3820 0.03190
+## [60,] 80 0.3820 0.02900
+## [61,] 81 0.3820 0.02640
+## [62,] 82 0.3820 0.02410
+## [63,] 82 0.3820 0.02200
+## [64,] 83 0.3820 0.02000
+## [65,] 84 0.3820 0.01820
+## [66,] 84 0.3820 0.01660
+## [67,] 84 0.3820 0.01510
+## [68,] 85 0.3830 0.01380
+## [69,] 85 0.3830 0.01260
+## [70,] 85 0.3830 0.01140
+## [71,] 85 0.3830 0.01040
+## [72,] 85 0.3830 0.00950
+## [73,] 85 0.3830 0.00866
+## [74,] 86 0.3830 0.00789
+## [75,] 87 0.3830 0.00719
+## [76,] 87 0.3830 0.00655
+## [77,] 87 0.3830 0.00597
+## [78,] 87 0.3830 0.00544
+## [79,] 86 0.3830 0.00496
+## [80,] 86 0.3830 0.00452</code></pre>
+<pre><code>## [1] 1447   80</code></pre>
 <p><img src="/post/2018-02-13-lasso-regression-on-blood-pressure-data_files/figure-html/predlasso-1.png" width="864" /></p>
-<pre><code>## [1] 0.0094</code></pre>
+<pre><code>## [1] 0.067</code></pre>
 <pre><code>## 91 x 1 sparse Matrix of class &quot;dgCMatrix&quot;
 ##                          1
-## (Intercept)       1.00e+02
-## SurveyYr2009_10  -1.95e-01
-## SurveyYr2011_12   1.10e-11
-## Gender2           1.31e+00
-## Age               4.87e-01
-## Race12           -2.91e+00
-## Race13           -2.56e+00
-## Race14           -1.44e+00
-## Race15           -3.42e+00
-## HHIncome2        -1.04e+00
-## HHIncome3         1.14e+00
-## HHIncome4        -1.20e+00
-## HHIncome5         2.20e-01
-## HHIncome6         4.06e-01
-## HHIncome7         1.34e-01
-## HHIncome8         1.65e+00
-## HHIncome9         1.51e+00
-## HHIncome10        2.41e+00
-## HHIncome11       -7.65e-01
+## (Intercept)       1.01e+02
+## SurveyYr2009_10   .       
+## SurveyYr2011_12   .       
+## Gender2           2.04e+00
+## Age               4.67e-01
+## Race12           -2.24e+00
+## Race13           -1.98e+00
+## Race14           -1.20e+00
+## Race15           -2.64e+00
+## HHIncome2        -2.24e-02
+## HHIncome3         8.63e-01
+## HHIncome4        -1.44e+00
+## HHIncome5        -2.32e-01
+## HHIncome6         .       
+## HHIncome7         .       
+## HHIncome8         1.28e+00
+## HHIncome9         7.89e-01
+## HHIncome10        2.36e+00
+## HHIncome11       -9.78e-01
 ## HHIncome12        .       
-## HHIncomeMid       2.70e-05
-## Poverty          -1.35e+00
-## HomeRooms         6.85e-02
-## HomeOwn2         -6.93e-01
-## HomeOwn3         -1.23e+00
-## Work2             1.68e+00
-## Work3            -5.77e-01
-## Weight            2.76e-03
-## Height           -1.20e-01
-## BMI               7.62e-02
-## Pulse            -7.89e-03
-## BPDiaAve          4.86e-01
-## Testosterone      6.84e-03
-## DirectChol        .       
-## TotChol           5.58e-01
-## UrineVol1         2.73e-03
-## UrineFlow1       -4.11e-01
-## UrineVol2         1.64e-03
-## UrineFlow2        1.01e+00
-## Diabetes2         2.82e+00
-## DiabetesAge      -7.58e-02
-## HealthGen2       -1.57e+00
-## HealthGen3        1.45e+00
-## HealthGen4        1.01e+00
-## HealthGen5        8.02e-01
-## DaysPhysHlthBad  -2.42e-02
-## DaysMentHlthBad   1.37e-02
-## LittleInterest2   9.96e-01
-## LittleInterest3  -1.92e+00
-## Depressed2       -1.09e+00
-## Depressed3       -1.79e+00
-## nPregnancies     -2.93e-01
-## nBabies          -7.35e-01
-## Age1stBaby       -2.76e-01
-## SleepHrsNight    -6.36e-01
-## SleepTrouble2    -8.98e-01
-## PhysActive2       1.12e+00
-## PhysActiveDays    1.97e-01
-## TVHrsDay2         4.36e-01
-## TVHrsDay3         1.77e+00
-## TVHrsDay4         6.18e-01
-## TVHrsDay5         2.72e+00
-## TVHrsDay6         1.22e+00
-## TVHrsDay7         1.89e+00
-## CompHrsDay2       1.34e+00
-## CompHrsDay3       1.89e+00
-## CompHrsDay4      -1.13e+00
-## CompHrsDay5       2.52e+00
-## CompHrsDay6       3.62e+00
-## CompHrsDay7       6.82e-01
-## Alcohol12PlusYr2 -5.26e-01
-## AlcoholDay        5.01e-01
-## AlcoholYear       9.15e-03
-## SmokeNow2        -1.67e-01
-## Smoke1002        -2.54e-01
-## Smoke100nSmoker   .       
-## SmokeAge          3.28e-02
-## Marijuana2       -2.79e-01
-## AgeFirstMarij     1.32e-01
-## RegularMarij2     1.68e+00
-## AgeRegMarij      -1.77e-01
-## HardDrugs2       -9.34e-01
-## SexEver2         -6.79e+00
-## SexAge            3.58e-02
-## SexNumPartnLife   4.31e-04
-## SexNumPartYear    1.38e-01
-## SameSex2         -2.44e+00
-## SexOrientation2  -3.64e+00
-## SexOrientation3   3.08e+00
-## PregnantNow2      7.89e-02
-## PregnantNow3      1.93e+00</code></pre>
+## HHIncomeMid       1.03e-05
+## Poverty          -1.01e+00
+## HomeRooms         3.20e-02
+## HomeOwn2         -1.24e+00
+## HomeOwn3          .       
+## Work2             1.46e+00
+## Work3            -3.61e-01
+## Weight            .       
+## Height           -1.27e-01
+## BMI               1.12e-01
+## Pulse             6.53e-03
+## BPDiaAve          4.73e-01
+## Testosterone      2.71e-03
+## DirectChol        1.29e-02
+## TotChol           5.32e-01
+## UrineVol1         .       
+## UrineFlow1       -1.18e-01
+## UrineVol2         3.53e-03
+## UrineFlow2        7.01e-01
+## Diabetes2         1.94e+00
+## DiabetesAge      -6.77e-02
+## HealthGen2       -1.62e+00
+## HealthGen3        1.34e+00
+## HealthGen4        9.00e-01
+## HealthGen5        7.24e-01
+## DaysPhysHlthBad   .       
+## DaysMentHlthBad   .       
+## LittleInterest2   5.35e-01
+## LittleInterest3  -2.40e+00
+## Depressed2       -7.90e-01
+## Depressed3       -1.31e+00
+## nPregnancies     -4.14e-01
+## nBabies          -4.21e-01
+## Age1stBaby       -2.30e-01
+## SleepHrsNight    -3.64e-01
+## SleepTrouble2    -1.21e+00
+## PhysActive2       6.08e-01
+## PhysActiveDays    5.81e-02
+## TVHrsDay2        -1.67e-01
+## TVHrsDay3         1.66e-01
+## TVHrsDay4         .       
+## TVHrsDay5         1.72e+00
+## TVHrsDay6        -3.61e-02
+## TVHrsDay7         6.53e-01
+## CompHrsDay2       9.12e-01
+## CompHrsDay3       1.44e+00
+## CompHrsDay4      -1.26e+00
+## CompHrsDay5       1.89e+00
+## CompHrsDay6       2.66e+00
+## CompHrsDay7       3.09e-01
+## Alcohol12PlusYr2 -5.66e-01
+## AlcoholDay        4.17e-01
+## AlcoholYear       1.07e-02
+## SmokeNow2         .       
+## Smoke1002        -6.80e-02
+## Smoke100nSmoker  -1.01e-13
+## SmokeAge          1.24e-02
+## Marijuana2        .       
+## AgeFirstMarij     1.21e-01
+## RegularMarij2     1.43e+00
+## AgeRegMarij      -1.34e-01
+## HardDrugs2       -6.56e-01
+## SexEver2         -6.62e+00
+## SexAge            .       
+## SexNumPartnLife   8.16e-03
+## SexNumPartYear    1.14e-01
+## SameSex2         -2.35e+00
+## SexOrientation2  -3.36e+00
+## SexOrientation3   3.34e+00
+## PregnantNow2     -5.66e-01
+## PregnantNow3      1.18e+00</code></pre>
 <div class="alert alert-info"><b>What I&apos; learned from doing this:</b>
 <ul>
 <li>Applied Model Selection techniques, a little bit more independently than before 

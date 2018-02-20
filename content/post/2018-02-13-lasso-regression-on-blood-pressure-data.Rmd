@@ -25,12 +25,13 @@ keywords:
 
 ```{r setup, include=FALSE}
 library(knitr)
-opts_chunk$set(cache = FALSE, warning = FALSE, message = FALSE, 
+opts_chunk$set(cache = TRUE, warning = FALSE, message = FALSE, 
                echo = FALSE, tidy = FALSE, width = 7, fig.width=9)
 options(digits = 3, tibble.print_min = 6)
 options(knitr.table.format = "html") 
 library(kableExtra)
 ```
+
 ```{r pkgs1}
 library(mice)  # imputation
 
@@ -97,7 +98,7 @@ nhanes_defs <- data_frame(
                    )
 ```
 
-```{r}
+```{r drop}
 
 action1 <- "drop"
 action2 <- "Yes/No"
@@ -144,7 +145,7 @@ knitr::kable(nhanes_defs, row.names = 1,
 
 ```
 
-```{r}
+```{r dropcols}
 
 drop_cols <- nhanes_defs %>% 
         filter(Action == action1) %>% select(Column) %>%
@@ -168,6 +169,7 @@ Imputation is done with the [MICE method](http://stefvanbuuren.github.io/mice/):
 
 
 ```{r NHANES_imputed, echo=TRUE, cache=TRUE}
+
 NHANES <- NHANES %>% 
         filter(Age >= 20) %>% 
         select(setdiff(colnames(NHANES), drop_cols) )
@@ -181,14 +183,13 @@ if (file.exists(NHimp)){
         # NHANES_imputed <- mice::complete(mice(NHANES))
         saveRDS(NHANES_imputed, file = NHimp)
 }
-
-
 ```
 
 The method magically removes all NA values by intelligently guessing. 
 Missing categorical values are sometimes NHANES_imputed in a weird way:
 
 ```{r pregnant, eval=FALSE}
+
 table(NHANES$Gender, NHANES$PregnantNow, useNA = "always") %>% 
      #   prop.table() %>%
      #   round(digits = 2) %>%         
@@ -198,6 +199,7 @@ table(NHANES_imputed$Gender, NHANES_imputed$PregnantNow, useNA = "always") %>%
       #  prop.table() %>%
       #  round(digits = 2) %>% 
         kable(caption="After imputation")
+
 ```
 
 However, NHANES Data after Feature Engineering: no more NAs in any column.
@@ -206,12 +208,27 @@ However, NHANES Data after Feature Engineering: no more NAs in any column.
 Hmisc::contents(NHANES_imputed)
 ```
 
+Scale the data frame. This is necessary because the $lambda$ hyperparameter of ridge regression and lasso regression need to have comparable values.
+
+```{r lambda}
+
+colnames_num = map_lgl(colnames(NHANES_imputed), function(x){
+  ! is.factor(NHANES_imputed[,x])      
+})
+coln <- colnames(NHANES_imputed)[colnames_num]
+
+NHANES_imputed <- NHANES_imputed %>% 
+        mutate_at(.funs = funs(scale),
+        .vars=coln)
+
+```
 
 
 Model Selection by  Cross-Validation
 -----------------------------------
 ```{r folds}
 nfolds <- 10
+
 ```
 
 We will do Forward Selection. 
