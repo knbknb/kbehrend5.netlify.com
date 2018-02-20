@@ -1,5 +1,5 @@
 ---
-title: Lasso regression on Blood Pressure data
+title: Applying Regression Models on imputed Blood Pressure data
 author: Knut Behrends
 date: '2018-02-13'
 slug: bloodpressure-lasso
@@ -24,10 +24,11 @@ keywords:
 
 
 
-<div id="lasso-regression-on-blood-pressure-data-nhanes-dataset" class="section level4">
-<h4>Lasso Regression on Blood Pressure Data (NHANES Dataset)</h4>
-<p><div class="alert alert-info"><b>Performing Lasso Regression on anonymized data from 10000 people representing the general US Population</b>. Actually I will also try out other model selection techniques.
-</div> This is a follow-up to <a href="/post/2018/02/bloodpressure-nhanes">an exploratory data-analysis post</a> of mine. When I was nearly done with writing that post, some new questions came to my mind.</p>
+<div id="introduction" class="section level4">
+<h4>Introduction</h4>
+<div class="alert alert-info"><b>Performing model selection techniques  on anonymized data from 10000 people representing the general US Population</b>. I am assuming Blood Pressure is a dependent variable. 
+</div>
+<p>This is a follow-up to <a href="/post/2018/02/bloodpressure-nhanes">an exploratory data-analysis post</a> of mine. When I was nearly done with writing that post, some new questions came to my mind.</p>
 <p>In the preceding blogpost I noticed that Systolic Blood Pressure is correlated with age and weight, but the relationship is complicated: the trend was noisy and the correlation was weak, and interaction term in the linear model seems to play an important role.</p>
 <p>Here I’ll continue with exploratory analysis, so there is not really a new hypothesis. More basically, can I determine some other variables (out of the 76) that are also influencing the Blood Pressure in some way?</p>
 <p>I am not trying to do groundbreaking medical research here. Hey I’m just a blogger, playing with a dataset for personal entertainment, trying out some of those fancy Machine Learning algorithms that I encountered during MOOC homework assignments. This time I’ll try these techniques out on larger datasets that <em>I</em> find interesting.</p>
@@ -1054,6 +1055,7 @@ drop
 <li>Remove columns, marked as “drop” in table 1 (measured for child/youth-only, etc).</li>
 <li>Impute missing values with “mice” method (Multiple Imputation by Chain Equation)</li>
 </ul>
+<p>Imputation is done with the <a href="http://stefvanbuuren.github.io/mice/">MICE method</a>: “Multiple Imputation by Chained Equations”.</p>
 <pre class="r"><code>NHANES &lt;- NHANES %&gt;% 
         filter(Age &gt;= 20) %&gt;% 
         select(setdiff(colnames(NHANES), drop_cols) )
@@ -1061,15 +1063,16 @@ drop
 NHimp &lt;- &quot;../../data_private/NHANES-imputed.rds&quot;
 
 if (file.exists(NHimp)){
-        imputed &lt;- readRDS(NHimp)
+        NHANES_imputed &lt;- readRDS(NHimp)
 } else {
-        #set.seed(47)
-        imputed &lt;- mice::complete(mice(NHANES))
-        saveRDS(imputed, file = NHimp)
+        # set.seed(47)
+        # NHANES_imputed &lt;- mice::complete(mice(NHANES))
+        saveRDS(NHANES_imputed, file = NHimp)
 }</code></pre>
-<p>NHANES Data after Feature Engineering: no more NAs in any column.</p>
+<p>The method magically removes all NA values by intelligently guessing. Missing categorical values are sometimes NHANES_imputed in a weird way:</p>
+<p>However, NHANES Data after Feature Engineering: no more NAs in any column.</p>
 <pre><code>## 
-## Data frame:imputed   7235 observations and 54 variables    Maximum # NAs:0
+## Data frame:NHANES_imputed    7235 observations and 58 variables    Maximum # NAs:0
 ## 
 ## 
 ##                 Levels Storage
@@ -1103,6 +1106,9 @@ if (file.exists(NHimp)){
 ## DaysMentHlthBad        integer
 ## LittleInterest       3 integer
 ## Depressed            3 integer
+## nPregnancies           integer
+## nBabies                integer
+## Age1stBaby             integer
 ## SleepHrsNight          integer
 ## SleepTrouble         2 integer
 ## PhysActive           2 integer
@@ -1127,6 +1133,7 @@ if (file.exists(NHimp)){
 ## SexNumPartYear         integer
 ## SameSex              2 integer
 ## SexOrientation       3 integer
+## PregnantNow          3 integer
 ## 
 ## +---------------+------------------------------------------------------+
 ## |Variable       |Levels                                                |
@@ -1168,18 +1175,35 @@ if (file.exists(NHimp)){
 ## |Smoke100n      |Non-Smoker,Smoker                                     |
 ## +---------------+------------------------------------------------------+
 ## |SexOrientation |Bisexual,Heterosexual,Homosexual                      |
+## +---------------+------------------------------------------------------+
+## |PregnantNow    |Yes,No,Unknown                                        |
 ## +---------------+------------------------------------------------------+</code></pre>
-</div>
-<div id="model-selection-using-a-validation-set" class="section level2">
-<h2>Model Selection Using a Validation Set</h2>
-<p>Lets make a training and validation set, so that we can choose a good subset model. We will do it using a slightly different approach from what was done in the the book.</p>
-<p>Now we will make predictions on the observations not used for training. We know there are 19 models, so we set up some vectors to record the errors. We have to do a bit of work here, because there is no predict method for <code>regsubsets</code>.</p>
-<p>As we expect, the training error goes down monotonically as the model gets bigger, but not so for the validation error.</p>
-<p>This was a little tedious - not having a predict method for <code>regsubsets</code>. So we will write one!</p>
 </div>
 <div id="model-selection-by-cross-validation" class="section level2">
 <h2>Model Selection by Cross-Validation</h2>
-<p>We will do 10-fold cross-validation. Its really easy!</p>
+<p>We will do Forward Selection.</p>
+<p>For Cross-validation we will use 10 folds.</p>
+<pre><code>## Reordering variables and trying again:
+## Reordering variables and trying again:
+## Reordering variables and trying again:
+## Reordering variables and trying again:
+## Reordering variables and trying again:
+## Reordering variables and trying again:
+## Reordering variables and trying again:
+## Reordering variables and trying again:
+## Reordering variables and trying again:
+## Reordering variables and trying again:
+## Reordering variables and trying again:
+## Reordering variables and trying again:
+## Reordering variables and trying again:
+## Reordering variables and trying again:
+## Reordering variables and trying again:
+## Reordering variables and trying again:
+## Reordering variables and trying again:
+## Reordering variables and trying again:
+## Reordering variables and trying again:
+## Reordering variables and trying again:</code></pre>
+<p><img src="/post/2018-02-13-lasso-regression-on-blood-pressure-data_files/figure-html/unnamed-chunk-3-1.png" width="864" /></p>
 </div>
 <div id="ridge-regression-and-the-lasso" class="section level2">
 <h2>Ridge Regression and the Lasso</h2>
@@ -1188,292 +1212,288 @@ if (file.exists(NHimp)){
 <ul>
 <li>0 : ridge</li>
 <li>1 : lasso</li>
-<li>0.x : elasticnet</li>
+<li>0.x : elasticnet (combination of ridge and lasso)</li>
 </ul>
 <p><img src="/post/2018-02-13-lasso-regression-on-blood-pressure-data_files/figure-html/plotridge-1.png" width="864" /><img src="/post/2018-02-13-lasso-regression-on-blood-pressure-data_files/figure-html/plotridge-2.png" width="864" /></p>
 <p>Now we fit a lasso model; for this we use the default <code>alpha=1</code></p>
 <p><img src="/post/2018-02-13-lasso-regression-on-blood-pressure-data_files/figure-html/lasso-1.png" width="864" /><img src="/post/2018-02-13-lasso-regression-on-blood-pressure-data_files/figure-html/lasso-2.png" width="864" /><img src="/post/2018-02-13-lasso-regression-on-blood-pressure-data_files/figure-html/lasso-3.png" width="864" /></p>
 <pre><code>## 91 x 1 sparse Matrix of class &quot;dgCMatrix&quot;
 ##                         1
-## (Intercept)      82.79628
+## (Intercept)      77.48385
 ## SurveyYr2009_10   .      
 ## SurveyYr2011_12   .      
-## Gender2           1.34927
-## Age               0.39870
+## Gender2           1.20632
+## Age               0.39668
 ## Race12            .      
 ## Race13            .      
 ## Race14            .      
-## Race15           -0.29710
+## Race15            .      
 ## HHIncome2         .      
-## HHIncome3         0.02634
+## HHIncome3         .      
 ## HHIncome4         .      
 ## HHIncome5         .      
 ## HHIncome6         .      
 ## HHIncome7         .      
-## HHIncome8         0.15388
+## HHIncome8         .      
 ## HHIncome9         .      
-## HHIncome10        0.47821
-## HHIncome11       -0.78370
+## HHIncome10        0.11467
+## HHIncome11       -0.57859
 ## HHIncome12        .      
 ## HHIncomeMid       .      
-## Poverty          -0.53633
+## Poverty          -0.52197
 ## HomeRooms         .      
-## HomeOwn2         -0.04735
+## HomeOwn2          .      
 ## HomeOwn3          .      
-## Work2             1.34234
-## Work3            -0.17909
+## Work2             1.18863
+## Work3            -0.15805
 ## Weight            .      
-## Height           -0.02992
-## BMI               0.09505
+## Height           -0.00479
+## BMI               0.08687
 ## Pulse             .      
-## BPDiaAve          0.46779
-## Testosterone      0.00134
+## BPDiaAve          0.45904
+## Testosterone      0.00112
 ## DirectChol        .      
-## TotChol           0.24095
+## TotChol           0.15309
 ## UrineVol1         .      
 ## UrineFlow1        .      
-## UrineVol2         0.00121
-## UrineFlow2        0.53345
-## Diabetes2         1.49257
+## UrineVol2         .      
+## UrineFlow2        0.47291
+## Diabetes2         1.21785
 ## DiabetesAge       .      
-## HealthGen2       -1.87402
-## HealthGen3        0.31610
+## HealthGen2       -1.80102
+## HealthGen3        0.17842
 ## HealthGen4        .      
 ## HealthGen5        .      
 ## DaysPhysHlthBad   .      
 ## DaysMentHlthBad   .      
 ## LittleInterest2   .      
-## LittleInterest3  -1.45218
+## LittleInterest3  -1.17034
 ## Depressed2        .      
-## Depressed3       -0.61634
-## nPregnancies     -0.41789
+## Depressed3       -0.18461
+## nPregnancies     -0.33805
 ## nBabies           .      
-## Age1stBaby       -0.15220
-## SleepHrsNight    -0.21171
-## SleepTrouble2    -0.45649
+## Age1stBaby       -0.12934
+## SleepHrsNight    -0.11900
+## SleepTrouble2    -0.20395
 ## PhysActive2       .      
 ## PhysActiveDays    .      
-## TVHrsDay2        -0.27634
+## TVHrsDay2        -0.24472
 ## TVHrsDay3         .      
 ## TVHrsDay4         .      
-## TVHrsDay5         1.31549
+## TVHrsDay5         1.13636
 ## TVHrsDay6         .      
 ## TVHrsDay7         .      
 ## CompHrsDay2       .      
 ## CompHrsDay3       .      
-## CompHrsDay4      -1.67911
-## CompHrsDay5       0.33545
-## CompHrsDay6       0.68649
+## CompHrsDay4      -1.42824
+## CompHrsDay5       .      
+## CompHrsDay6       0.23149
 ## CompHrsDay7       .      
-## Alcohol12PlusYr2 -0.02349
-## AlcoholDay        0.21956
-## AlcoholYear       0.00608
+## Alcohol12PlusYr2  .      
+## AlcoholDay        0.20278
+## AlcoholYear       0.00517
 ## SmokeNow2         .      
 ## Smoke1002         .      
 ## Smoke100nSmoker   .      
 ## SmokeAge          .      
 ## Marijuana2        .      
 ## AgeFirstMarij     .      
-## RegularMarij2     0.50841
-## AgeRegMarij      -0.05354
+## RegularMarij2     0.26407
+## AgeRegMarij      -0.03935
 ## HardDrugs2        .      
-## SexEver2         -4.70138
+## SexEver2         -4.17574
 ## SexAge            .      
 ## SexNumPartnLife   .      
-## SexNumPartYear    0.01013
-## SameSex2         -1.73899
-## SexOrientation2  -1.35979
-## SexOrientation3   4.38033
-## PregnantNow2     -0.52416
-## PregnantNow3      0.61456</code></pre>
+## SexNumPartYear    .      
+## SameSex2         -1.17256
+## SexOrientation2  -0.67129
+## SexOrientation3   4.50450
+## PregnantNow2     -0.39591
+## PregnantNow3      0.37590</code></pre>
 <p>Suppose we want to use our earlier train/validation division to select the <code>lambda</code> for the lasso. This is easy to do.</p>
 <pre><code>## 
 ## Call:  glmnet(x = x[train, ], y = y[train]) 
 ## 
 ##       Df   %Dev  Lambda
-##  [1,]  0 0.0000 7.03000
-##  [2,]  1 0.0284 6.40000
-##  [3,]  1 0.0520 5.83000
-##  [4,]  2 0.0860 5.32000
-##  [5,]  2 0.1210 4.84000
-##  [6,]  2 0.1490 4.41000
-##  [7,]  2 0.1730 4.02000
-##  [8,]  2 0.1930 3.66000
-##  [9,]  2 0.2090 3.34000
-## [10,]  2 0.2230 3.04000
-## [11,]  2 0.2340 2.77000
-## [12,]  2 0.2440 2.53000
-## [13,]  2 0.2520 2.30000
-## [14,]  2 0.2580 2.10000
-## [15,]  2 0.2630 1.91000
-## [16,]  2 0.2680 1.74000
-## [17,]  3 0.2720 1.59000
-## [18,]  7 0.2800 1.45000
-## [19,]  8 0.2870 1.32000
-## [20,]  8 0.2940 1.20000
-## [21,] 10 0.3000 1.09000
-## [22,] 10 0.3050 0.99600
-## [23,] 11 0.3100 0.90800
-## [24,] 14 0.3140 0.82700
-## [25,] 18 0.3190 0.75400
-## [26,] 19 0.3240 0.68700
-## [27,] 21 0.3280 0.62600
-## [28,] 23 0.3320 0.57000
-## [29,] 23 0.3360 0.51900
-## [30,] 29 0.3390 0.47300
-## [31,] 32 0.3430 0.43100
-## [32,] 34 0.3460 0.39300
-## [33,] 38 0.3490 0.35800
-## [34,] 38 0.3520 0.32600
-## [35,] 44 0.3550 0.29700
-## [36,] 45 0.3570 0.27100
-## [37,] 47 0.3590 0.24700
-## [38,] 48 0.3610 0.22500
-## [39,] 53 0.3620 0.20500
-## [40,] 56 0.3640 0.18700
-## [41,] 60 0.3660 0.17000
-## [42,] 61 0.3670 0.15500
-## [43,] 65 0.3690 0.14100
-## [44,] 68 0.3700 0.12900
-## [45,] 69 0.3720 0.11700
-## [46,] 70 0.3730 0.10700
-## [47,] 72 0.3740 0.09730
-## [48,] 73 0.3750 0.08870
-## [49,] 73 0.3760 0.08080
-## [50,] 75 0.3760 0.07360
-## [51,] 75 0.3770 0.06710
-## [52,] 77 0.3770 0.06110
-## [53,] 77 0.3780 0.05570
-## [54,] 77 0.3780 0.05070
-## [55,] 77 0.3780 0.04620
-## [56,] 77 0.3790 0.04210
-## [57,] 79 0.3790 0.03840
-## [58,] 79 0.3790 0.03500
-## [59,] 81 0.3790 0.03190
-## [60,] 81 0.3790 0.02900
-## [61,] 81 0.3790 0.02650
-## [62,] 82 0.3790 0.02410
-## [63,] 82 0.3790 0.02200
-## [64,] 83 0.3800 0.02000
-## [65,] 83 0.3800 0.01820
-## [66,] 83 0.3800 0.01660
-## [67,] 84 0.3800 0.01510
-## [68,] 84 0.3800 0.01380
-## [69,] 85 0.3800 0.01260
-## [70,] 86 0.3800 0.01150
-## [71,] 86 0.3800 0.01040
-## [72,] 86 0.3800 0.00951
-## [73,] 87 0.3800 0.00866
-## [74,] 87 0.3800 0.00789
-## [75,] 88 0.3800 0.00719
-## [76,] 88 0.3800 0.00655
-## [77,] 88 0.3800 0.00597
-## [78,] 88 0.3800 0.00544
-## [79,] 88 0.3800 0.00496
-## [80,] 88 0.3800 0.00452
-## [81,] 88 0.3800 0.00412
-## [82,] 88 0.3800 0.00375
-## [83,] 88 0.3800 0.00342
-## [84,] 88 0.3800 0.00311
-## [85,] 88 0.3800 0.00284
-## [86,] 88 0.3800 0.00258
-## [87,] 88 0.3800 0.00236</code></pre>
-<pre><code>## [1] 1447   87</code></pre>
+##  [1,]  0 0.0000 6.95000
+##  [2,]  1 0.0284 6.33000
+##  [3,]  1 0.0520 5.77000
+##  [4,]  2 0.0859 5.26000
+##  [5,]  2 0.1210 4.79000
+##  [6,]  2 0.1490 4.36000
+##  [7,]  2 0.1730 3.98000
+##  [8,]  2 0.1930 3.62000
+##  [9,]  2 0.2100 3.30000
+## [10,]  2 0.2230 3.01000
+## [11,]  2 0.2350 2.74000
+## [12,]  2 0.2440 2.50000
+## [13,]  2 0.2520 2.28000
+## [14,]  2 0.2580 2.07000
+## [15,]  2 0.2640 1.89000
+## [16,]  2 0.2680 1.72000
+## [17,]  5 0.2730 1.57000
+## [18,]  7 0.2800 1.43000
+## [19,]  9 0.2870 1.30000
+## [20,]  9 0.2940 1.19000
+## [21,] 12 0.3000 1.08000
+## [22,] 12 0.3060 0.98500
+## [23,] 12 0.3110 0.89700
+## [24,] 14 0.3150 0.81800
+## [25,] 17 0.3200 0.74500
+## [26,] 19 0.3240 0.67900
+## [27,] 20 0.3280 0.61800
+## [28,] 23 0.3330 0.56400
+## [29,] 26 0.3370 0.51300
+## [30,] 28 0.3410 0.46800
+## [31,] 32 0.3440 0.42600
+## [32,] 32 0.3470 0.38800
+## [33,] 33 0.3500 0.35400
+## [34,] 37 0.3520 0.32200
+## [35,] 40 0.3540 0.29400
+## [36,] 44 0.3560 0.26800
+## [37,] 47 0.3580 0.24400
+## [38,] 50 0.3600 0.22200
+## [39,] 54 0.3620 0.20300
+## [40,] 58 0.3630 0.18500
+## [41,] 62 0.3650 0.16800
+## [42,] 63 0.3670 0.15300
+## [43,] 65 0.3680 0.14000
+## [44,] 68 0.3700 0.12700
+## [45,] 69 0.3710 0.11600
+## [46,] 71 0.3720 0.10600
+## [47,] 73 0.3730 0.09620
+## [48,] 73 0.3740 0.08770
+## [49,] 74 0.3740 0.07990
+## [50,] 75 0.3750 0.07280
+## [51,] 77 0.3750 0.06630
+## [52,] 78 0.3760 0.06040
+## [53,] 79 0.3760 0.05510
+## [54,] 80 0.3770 0.05020
+## [55,] 80 0.3770 0.04570
+## [56,] 80 0.3770 0.04170
+## [57,] 81 0.3780 0.03800
+## [58,] 82 0.3780 0.03460
+## [59,] 83 0.3780 0.03150
+## [60,] 83 0.3780 0.02870
+## [61,] 83 0.3780 0.02620
+## [62,] 83 0.3780 0.02380
+## [63,] 82 0.3780 0.02170
+## [64,] 82 0.3780 0.01980
+## [65,] 82 0.3780 0.01800
+## [66,] 83 0.3780 0.01640
+## [67,] 85 0.3790 0.01500
+## [68,] 85 0.3790 0.01360
+## [69,] 87 0.3790 0.01240
+## [70,] 87 0.3790 0.01130
+## [71,] 87 0.3790 0.01030
+## [72,] 87 0.3790 0.00940
+## [73,] 87 0.3790 0.00857
+## [74,] 87 0.3790 0.00780
+## [75,] 87 0.3790 0.00711
+## [76,] 87 0.3790 0.00648
+## [77,] 87 0.3790 0.00590
+## [78,] 87 0.3790 0.00538
+## [79,] 87 0.3790 0.00490
+## [80,] 88 0.3790 0.00447
+## [81,] 88 0.3790 0.00407
+## [82,] 88 0.3790 0.00371
+## [83,] 88 0.3790 0.00338</code></pre>
+<pre><code>## [1] 1447   83</code></pre>
 <p><img src="/post/2018-02-13-lasso-regression-on-blood-pressure-data_files/figure-html/predlasso-1.png" width="864" /></p>
-<pre><code>## [1] 0.0507</code></pre>
+<pre><code>## [1] 0.0094</code></pre>
 <pre><code>## 91 x 1 sparse Matrix of class &quot;dgCMatrix&quot;
 ##                          1
-## (Intercept)       1.02e+02
-## SurveyYr2009_10   .       
-## SurveyYr2011_12   .       
-## Gender2           3.02e+00
-## Age               4.62e-01
-## Race12           -1.75e+00
-## Race13           -2.37e+00
-## Race14           -1.27e+00
-## Race15           -2.35e+00
-## HHIncome2        -1.66e+00
-## HHIncome3         1.97e-01
-## HHIncome4        -2.00e+00
-## HHIncome5        -7.26e-01
-## HHIncome6         .       
-## HHIncome7        -1.01e+00
-## HHIncome8         6.55e-01
-## HHIncome9         3.76e-01
-## HHIncome10        1.56e+00
-## HHIncome11       -1.58e+00
+## (Intercept)       1.00e+02
+## SurveyYr2009_10  -1.95e-01
+## SurveyYr2011_12   1.10e-11
+## Gender2           1.31e+00
+## Age               4.87e-01
+## Race12           -2.91e+00
+## Race13           -2.56e+00
+## Race14           -1.44e+00
+## Race15           -3.42e+00
+## HHIncome2        -1.04e+00
+## HHIncome3         1.14e+00
+## HHIncome4        -1.20e+00
+## HHIncome5         2.20e-01
+## HHIncome6         4.06e-01
+## HHIncome7         1.34e-01
+## HHIncome8         1.65e+00
+## HHIncome9         1.51e+00
+## HHIncome10        2.41e+00
+## HHIncome11       -7.65e-01
 ## HHIncome12        .       
-## HHIncomeMid       1.31e-05
-## Poverty          -1.08e+00
-## HomeRooms         .       
-## HomeOwn2         -1.23e+00
-## HomeOwn3          .       
-## Work2             1.86e+00
-## Work3             .       
-## Weight            .       
-## Height           -1.37e-01
-## BMI               1.04e-01
-## Pulse             .       
-## BPDiaAve          4.85e-01
-## Testosterone      2.72e-03
-## DirectChol        3.73e-01
-## TotChol           4.46e-01
-## UrineVol1         5.56e-04
-## UrineFlow1       -4.01e-01
-## UrineVol2         2.84e-03
+## HHIncomeMid       2.70e-05
+## Poverty          -1.35e+00
+## HomeRooms         6.85e-02
+## HomeOwn2         -6.93e-01
+## HomeOwn3         -1.23e+00
+## Work2             1.68e+00
+## Work3            -5.77e-01
+## Weight            2.76e-03
+## Height           -1.20e-01
+## BMI               7.62e-02
+## Pulse            -7.89e-03
+## BPDiaAve          4.86e-01
+## Testosterone      6.84e-03
+## DirectChol        .       
+## TotChol           5.58e-01
+## UrineVol1         2.73e-03
+## UrineFlow1       -4.11e-01
+## UrineVol2         1.64e-03
 ## UrineFlow2        1.01e+00
-## Diabetes2         2.06e+00
-## DiabetesAge      -6.27e-02
-## HealthGen2       -1.31e+00
-## HealthGen3        1.59e+00
-## HealthGen4        1.02e+00
-## HealthGen5        1.06e+00
-## DaysPhysHlthBad   6.05e-03
-## DaysMentHlthBad  -9.21e-03
-## LittleInterest2   8.55e-01
-## LittleInterest3  -1.54e+00
-## Depressed2       -6.17e-01
-## Depressed3       -1.85e+00
-## nPregnancies     -4.44e-01
-## nBabies          -4.25e-01
-## Age1stBaby       -2.46e-01
-## SleepHrsNight    -3.69e-01
-## SleepTrouble2    -9.46e-01
-## PhysActive2       5.56e-01
-## PhysActiveDays    1.30e-01
-## TVHrsDay2        -4.13e-01
-## TVHrsDay3         4.67e-01
-## TVHrsDay4         2.51e-02
-## TVHrsDay5         1.87e+00
-## TVHrsDay6         .       
-## TVHrsDay7         8.55e-01
-## CompHrsDay2       1.05e+00
-## CompHrsDay3       1.31e+00
-## CompHrsDay4      -1.68e+00
-## CompHrsDay5       2.32e+00
-## CompHrsDay6       2.56e+00
-## CompHrsDay7       6.25e-01
-## Alcohol12PlusYr2 -5.97e-01
-## AlcoholDay        3.54e-01
-## AlcoholYear       7.49e-03
-## SmokeNow2        -4.78e-02
-## Smoke1002         .       
+## Diabetes2         2.82e+00
+## DiabetesAge      -7.58e-02
+## HealthGen2       -1.57e+00
+## HealthGen3        1.45e+00
+## HealthGen4        1.01e+00
+## HealthGen5        8.02e-01
+## DaysPhysHlthBad  -2.42e-02
+## DaysMentHlthBad   1.37e-02
+## LittleInterest2   9.96e-01
+## LittleInterest3  -1.92e+00
+## Depressed2       -1.09e+00
+## Depressed3       -1.79e+00
+## nPregnancies     -2.93e-01
+## nBabies          -7.35e-01
+## Age1stBaby       -2.76e-01
+## SleepHrsNight    -6.36e-01
+## SleepTrouble2    -8.98e-01
+## PhysActive2       1.12e+00
+## PhysActiveDays    1.97e-01
+## TVHrsDay2         4.36e-01
+## TVHrsDay3         1.77e+00
+## TVHrsDay4         6.18e-01
+## TVHrsDay5         2.72e+00
+## TVHrsDay6         1.22e+00
+## TVHrsDay7         1.89e+00
+## CompHrsDay2       1.34e+00
+## CompHrsDay3       1.89e+00
+## CompHrsDay4      -1.13e+00
+## CompHrsDay5       2.52e+00
+## CompHrsDay6       3.62e+00
+## CompHrsDay7       6.82e-01
+## Alcohol12PlusYr2 -5.26e-01
+## AlcoholDay        5.01e-01
+## AlcoholYear       9.15e-03
+## SmokeNow2        -1.67e-01
+## Smoke1002        -2.54e-01
 ## Smoke100nSmoker   .       
-## SmokeAge          2.72e-02
-## Marijuana2        .       
-## AgeFirstMarij     1.20e-01
-## RegularMarij2     1.60e+00
-## AgeRegMarij      -1.42e-01
-## HardDrugs2       -4.05e-01
-## SexEver2         -6.39e+00
-## SexAge            3.81e-02
-## SexNumPartnLife  -7.56e-04
-## SexNumPartYear    1.21e-01
-## SameSex2         -2.88e+00
-## SexOrientation2  -4.17e+00
-## SexOrientation3   2.71e+00
-## PregnantNow2     -5.53e-01
-## PregnantNow3      1.41e+00</code></pre>
+## SmokeAge          3.28e-02
+## Marijuana2       -2.79e-01
+## AgeFirstMarij     1.32e-01
+## RegularMarij2     1.68e+00
+## AgeRegMarij      -1.77e-01
+## HardDrugs2       -9.34e-01
+## SexEver2         -6.79e+00
+## SexAge            3.58e-02
+## SexNumPartnLife   4.31e-04
+## SexNumPartYear    1.38e-01
+## SameSex2         -2.44e+00
+## SexOrientation2  -3.64e+00
+## SexOrientation3   3.08e+00
+## PregnantNow2      7.89e-02
+## PregnantNow3      1.93e+00</code></pre>
 <div class="alert alert-info"><b>What I&apos; learned from doing this:</b>
 <ul>
 <li>Applied Model Selection techniques, a little bit more independently than before 

@@ -1,5 +1,5 @@
 ---
-title: Lasso regression on Blood Pressure data
+title: Applying Regression Models on imputed Blood Pressure data
 author: Knut Behrends
 date: '2018-02-13'
 slug: bloodpressure-lasso
@@ -25,7 +25,7 @@ keywords:
 
 ```{r setup, include=FALSE}
 library(knitr)
-opts_chunk$set(cache = TRUE, warning = FALSE, message = FALSE, 
+opts_chunk$set(cache = FALSE, warning = FALSE, message = FALSE, 
                echo = FALSE, tidy = FALSE, width = 7, fig.width=9)
 options(digits = 3, tibble.print_min = 6)
 options(knitr.table.format = "html") 
@@ -37,20 +37,26 @@ library(mice)  # imputation
 library(NHANES) # Body Shape + related measurements from 10000 US citizens
 data(NHANES)
 library(rvest)
+library(gridExtra)
 library(tidyverse)
 library(ggthemes)
+#library(caTools) #sample.split()
+library(leaps) # forward selection
 theme_set(theme_bw())
 scale_colour_discrete <- function(...) scale_color_brewer(palette="Set1")
 
 ```
 
-#### Lasso Regression on Blood Pressure Data (NHANES Dataset)
+####  Introduction 
 
 
 ```{r abstr, echo=FALSE}
-htmltools::HTML('<div class="alert alert-info"><b>Performing Lasso Regression on anonymized data from 10000 people representing the general US Population</b>. Actually I will also try out other model selection techniques.
+
+htmltools::HTML('<div class="alert alert-info"><b>Performing model selection techniques  on anonymized data from 10000 people representing the general US Population</b>. I am assuming Blood Pressure is a dependent variable. 
 </div>')
+
 ```
+
 This is a follow-up to [an exploratory data-analysis post](/post/2018/02/bloodpressure-nhanes) of mine. When I was nearly done with writing that post, some new questions came to my mind.
 
 In the preceding blogpost I noticed that Systolic Blood Pressure is correlated with age and weight, but the relationship is complicated: the trend was noisy and the correlation was weak, and interaction term in the linear model seems to play an important role. 
@@ -158,8 +164,10 @@ More Feature Engineering Measures:
 - Remove columns, marked as "drop" in table 1 (measured for child/youth-only, etc).
 - Impute missing values with "mice" method (Multiple Imputation by Chain Equation)
 
+Imputation is done with the [MICE method](http://stefvanbuuren.github.io/mice/): "Multiple Imputation by Chained Equations".
 
-```{r imputed, echo=TRUE, cache=TRUE}
+
+```{r NHANES_imputed, echo=TRUE, cache=TRUE}
 NHANES <- NHANES %>% 
         filter(Age >= 20) %>% 
         select(setdiff(colnames(NHANES), drop_cols) )
@@ -167,131 +175,126 @@ NHANES <- NHANES %>%
 NHimp <- "../../data_private/NHANES-imputed.rds"
 
 if (file.exists(NHimp)){
-        imputed <- readRDS(NHimp)
+        NHANES_imputed <- readRDS(NHimp)
 } else {
-        #set.seed(47)
-        imputed <- mice::complete(mice(NHANES))
-        saveRDS(imputed, file = NHimp)
+        # set.seed(47)
+        # NHANES_imputed <- mice::complete(mice(NHANES))
+        saveRDS(NHANES_imputed, file = NHimp)
 }
 
 
 ```
 
-NHANES Data after Feature Engineering: no more NAs in any column.
+The method magically removes all NA values by intelligently guessing. 
+Missing categorical values are sometimes NHANES_imputed in a weird way:
 
+```{r pregnant, eval=FALSE}
+table(NHANES$Gender, NHANES$PregnantNow, useNA = "always") %>% 
+     #   prop.table() %>%
+     #   round(digits = 2) %>%         
+        kable(caption= "Before Imputation")
+
+table(NHANES_imputed$Gender, NHANES_imputed$PregnantNow, useNA = "always") %>%
+      #  prop.table() %>%
+      #  round(digits = 2) %>% 
+        kable(caption="After imputation")
+```
+
+However, NHANES Data after Feature Engineering: no more NAs in any column.
 
 ```{r contents}
-Hmisc::contents(imputed)
+Hmisc::contents(NHANES_imputed)
 ```
 
 
 
-
-Model Selection Using a Validation Set
----------------------------------------
-Lets make a training and validation set, so that we can choose a good subset model.
-We will do it using a slightly different approach from what was done in the the book.
-
-```{r trainset, eval=TRUE}
-#dim(imputed)
-
-set.seed(1)
-# take 80% of observations,
-ntrain <- as.integer(nrow(imputed) * 0.8)
-train  <- sample(seq(nrow(imputed)), ntrain, replace = FALSE)
-
+Model Selection by  Cross-Validation
+-----------------------------------
+```{r folds}
+nfolds <- 10
 ```
 
-```{r usetrainset, eval=FALSE}
-# use training data subset
-regfit.fwd <- regsubsets(BPSysAve~., data = imputed[train, ], 
-                         nvmax = 19, method = "forward")
-```
+We will do Forward Selection. 
 
-Now we will make predictions on the observations not used for training. We know there are 19 models, so we set up some vectors to record the errors. We have to do a bit of work here, because there is no predict method for `regsubsets`.
+For Cross-validation we will use `r nfolds` folds.
 
-```{r plotregsubsets, eval=FALSE}
-val.errors <- rep(NA, 19)
-x.test <- model.matrix(BPSysAve~., data = imputed[-train, ]) # notice the -index!
-for (i in 1:19) {
-  # complex loop
-  coefi <- coef(regfit.fwd, id = i)
-  pred <- x.test[, names(coefi)] %*% coefi
-  val.errors[i] <- mean((imputed$BPSysAve[-train] - pred) ^ 2)
-}
-# ylim=c(300,400),
-plot(sqrt(val.errors), ylab = "Root MSE", pch = 19, type = "b")
-# remove NULL model
-points(sqrt(regfit.fwd$rss[-1] / ntrain), col = "blue", pch = 19, type = "b")
-legend("topright", legend = c("Training", "Validation"), col = c("blue", "black"), pch = 19)
-```
-As we expect, the training error goes down monotonically as the model gets bigger, but not so 
-for the validation error.
+```{r eval=TRUE}
 
-This was a little tedious - not having a predict method for `regsubsets`. So we will write one!
-```{r eval=FALSE}
-## make  a generic function
+set.seed(11)
+
+nvars <- ncol(NHANES_imputed)
+# create a vector of nrows, fill it with an equal number of each 1s, 2s, ... 10s.
+folds <- sample(rep(seq_len(nfolds), length = nrow(NHANES_imputed)))
+cv.errors <- matrix(NA, nfolds, nvars)
+
+## make  a generic function 
 # id is the id of the model
 predict.regsubsets <- function(object, newdata, id, ...) {
-  form  <- as.formula(object$call[[2]])
-  mat   <- model.matrix(form, newdata)
+  form <- as.formula(object$call[[2]])
+  mat <- model.matrix(form, newdata)
   coefi <- coef(object, id = id)
   mat[, names(coefi)] %*% coefi
 }
-```
-
-
-
-
-Model Selection by Cross-Validation
------------------------------------
-We will do 10-fold cross-validation. Its really easy!
-```{r eval=FALSE}
-set.seed(11)
-# create a vector of nrows, fill it with an equal number of each 1s, 2s, ... 10s.
-folds <- sample(rep(1:10, length = nrow(imputed)))
-# folds
-table(folds)
-cv.errors <- matrix(NA, 10, 19)
-for (k in 1:10) {
-  # leave the k-fold out
-  best.fit <- regsubsets(BPSysAve~., 
-                         data = imputed[folds != k, ], 
-                         nvmax = 19, method = "forward")
-  for (i in 1:19) {
-    # call predict.subsets via generic call
-    pred <- predict(best.fit, imputed[folds == k, ], id = i)
-    cv.errors[k, i] <- mean((imputed$BPSysAve[folds == k] - pred) ^ 2)
+ml <- c("forward", "backward")
+method_list = list(NULL, NULL)
+names(method_list) <- ml
+for (m in ml){
+  for (k in seq_len(nfolds)) {
+    # leave the k th fold out
+    best.fit <- regsubsets(BPSysAve ~ ., 
+                         data = NHANES_imputed[folds != k, ], 
+                         nvmax = nvars, method = m)
+    for (i in seq_len(nvars)) {
+      # call predict.subsets via generic call
+      pred <- predict(best.fit, NHANES_imputed[folds == k, ], id = i)
+      cv.errors[k, i] <- mean((NHANES_imputed$BPSysAve[folds == k] - pred) ^ 2)
+    }
   }
+  method_list[[m]] <- cv.errors
 }
-# take the column means
-rmse.cv <- sqrt(apply(cv.errors, 2, mean))
-plot(rmse.cv, pch = 19, type = "b")
-#a little bit smoother than the other more jumpy plots
+
+
+
+plots_list <- map2(method_list, ml, function(cv.errors, nm, nvars){
+        # averaging the column means 
+        rmse.cv <- sqrt(apply(cv.errors, 2, mean))
+        data.frame(param_no = seq_len(nvars), rmse_cv = rmse.cv) %>% 
+                ggplot(aes(param_no, rmse_cv)) +
+                geom_line() + ylab("RMSE of cv") + xlab("Parameter Number") +
+                ggtitle(sprintf("%s Model Selection", str_to_title( nm)), 
+                    subtitle=sprintf("%s folds, Cross Validation Results",  
+                    nfolds))  
+}, nvars)
+marrangeGrob(plots_list, nrow=1, ncol=2, top = "")
+
 ```
 
 
 
 Ridge Regression and the Lasso
 -------------------------------
-We will use the package `glmnet`, which does not use the model formula language, so we will set up a
-matrix `x` of predictors and a response vector `y`.
+
+We will use the package `glmnet`, which does not use the model formula language, so we will set up a matrix `x` of predictors and a response vector `y`.
+
 ```{r glmnet}
 library(glmnet)
-x = model.matrix(BPSysAve ~ . - 1, data = imputed) 
-y = imputed$BPSysAve
+x = model.matrix(BPSysAve ~ . - 1, data = NHANES_imputed) 
+y = NHANES_imputed$BPSysAve
 ```
+
 First we will fit a ridge-regression model. This is achieved by calling `glmnet` with `alpha=0` (see the helpfile). There is also a `cv.glmnet` function which will do the cross-validation for us.
 
 - 0 : ridge
 - 1 : lasso
-- 0.x  : elasticnet
+- 0.x  : elasticnet (combination of ridge and lasso)
 
 ```{r plotridge}
 fit.ridge <- glmnet(x, y, alpha = 0)
 plot(fit.ridge, xvar = "lambda", label = TRUE)
+title("Ridge Regression")
 cv.ridge <- cv.glmnet(x, y, alpha = 0)
 plot(cv.ridge)
+title("Ridge Regression")
 ```
 
 Now we fit a lasso model; for this we use the default `alpha=1`
@@ -300,6 +303,7 @@ Now we fit a lasso model; for this we use the default `alpha=1`
 fit.lasso <- glmnet(x, y)
 plot(fit.lasso, xvar = "lambda", label = TRUE)
 plot(fit.lasso, xvar = "dev", label = TRUE)
+title("Lasso Regression")
 
 cv.lasso <- cv.glmnet(x, y)
 leg1str <- sprintf("log of best Lambda = %.3f  (%.3f)", 
@@ -317,7 +321,10 @@ coef(cv.lasso) # lambda = 69.01 => 6 coefs
  Suppose we want to use our earlier train/validation division to select the `lambda` for the lasso.
  This is easy to do.
 ```{r predlasso}
-# train was defined above
+
+# take 80% of observations,
+ntrain <- as.integer(nrow(NHANES_imputed) * 0.8)
+train  <- sample(seq(nrow(NHANES_imputed)), ntrain, replace = FALSE)
 lasso.tr <- glmnet(x[train, ], y[train])
 lasso.tr # print until it model no longer really changes (~ 90 lines here)
 pred <- predict(lasso.tr, x[-train, ])
