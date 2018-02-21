@@ -37,6 +37,7 @@ library(mice)  # imputation
 
 library(NHANES) # Body Shape + related measurements from 10000 US citizens
 data(NHANES)
+
 library(rvest)
 library(gridExtra)
 library(tidyverse)
@@ -51,9 +52,10 @@ scale_colour_discrete <- function(...) scale_color_brewer(palette="Set1")
 ####  Introduction 
 
 
-```{r abstr, echo=FALSE}
+```{r abstr}
 
-htmltools::HTML('<div class="alert alert-info"><b>Performing model selection techniques  on anonymized data from 10000 people representing the general US Population</b>. I am assuming Blood Pressure is a dependent variable. 
+htmltools::HTML('<div class="alert alert-info"><b>Performing model selection techniques  on anonymized data from 10000 people representing the general US Population</b>. I am assuming Blood Pressure is a response variable. There are ~ 70 predictor variables.<br>
+This is not a tutorial, but more a personal learning experience, and work in progress.
 </div>')
 
 ```
@@ -227,7 +229,7 @@ NHANES_imputed <- NHANES_imputed %>%
 ```
 
 
-Model Selection by  Cross-Validation
+Model Selection - what are the best predictor variables?
 -----------------------------------
 ```{r folds}
 nfolds <- 10
@@ -250,12 +252,12 @@ cv.errors <- matrix(NA, nfolds, nvars)
 ## make  a generic function 
 # id is the id of the model
 predict.regsubsets <- function(object, newdata, id, ...) {
-  form <- as.formula(object$call[[2]])
-  mat <- model.matrix(form, newdata)
+  form  <- as.formula(object$call[[2]])
+  mat   <- model.matrix(form, newdata)
   coefi <- coef(object, id = id)
   mat[, names(coefi)] %*% coefi
 }
-ml <- c("forward", "backward")
+ml      <- c("forward", "backward")
 method_list = list(NULL, NULL)
 names(method_list) <- ml
 for (m in ml){
@@ -309,57 +311,108 @@ A ridge-regression model is created by calling `glmnet` with `alpha=0`, and a la
 There is also a `cv.glmnet` function which will do the cross-validation.
 
 ```{r plotridge}
+library(ggfortify)
 fit.ridge <- glmnet(x, y, alpha = 0)
-plot(fit.ridge, xvar = "lambda", label = TRUE)
-title("Ridge Regression")
+
+autoplot(fit.ridge) + 
+        xlab("log lambda") + ylab("Value of regularization coefficient") +
+        ggtitle("Ridge Regression", "(Legend is under construction)") +
+        theme(legend.position="none")
+
+
 cv.ridge <- cv.glmnet(x, y, alpha = 0)
-plot(cv.ridge)
-title("Ridge Regression")
+leg1str <- sprintf("log of best Lambda = %.3f  (%.3f)", 
+                   log(cv.ridge$lambda.min), cv.ridge$lambda.min)
+leg2str <- sprintf("log of best Lambda + 1 SE = %.3f (%.3f)", 
+                   log(cv.ridge$lambda.1se), cv.ridge$lambda.1se)
+autoplot(cv.ridge) + xlab("log lambda") + 
+        xlab("log lambda") + ylab("CV Error") +
+        ggtitle("Ridge Regression: Cross Validation Error", sprintf("%s\n%s", leg1str, leg2str)) +
+        theme(legend.position="none")
+
+
 ```
 
-Now we fit a lasso model; for this we use the default `alpha=1`
+Now we fit a lasso model; for this we use the default `alpha=1`.
 
 ```{r lasso}
 fit.lasso <- glmnet(x, y)
-plot(fit.lasso, xvar = "lambda", label = TRUE)
-plot(fit.lasso, xvar = "dev", label = TRUE)
-title("Lasso Regression")
+autoplot(fit.lasso) + 
+        xlab("log lambda") + ylab("Value of regularization coefficient") +
+        ggtitle("Lasso Regression", "(Legend is under construction)") +
+        theme(legend.position="none")
+
+#plot(fit.lasso, xvar = "dev", label = TRUE)
+#title("Lasso Regression")
 
 cv.lasso <- cv.glmnet(x, y)
 leg1str <- sprintf("log of best Lambda = %.3f  (%.3f)", 
                    log(cv.lasso$lambda.min), cv.lasso$lambda.min)
 leg2str <- sprintf("log of best Lambda + 1 SE = %.3f (%.3f)", 
                    log(cv.lasso$lambda.1se), cv.lasso$lambda.1se)
-plot(cv.lasso)
-legend("topleft", legend = str_c(leg1str, leg2str, sep="; "), pch = 1)
-title(main = paste(c(leg1str, leg2str)))
-# pick/show  the coefficients vector from the best model
-coef(cv.lasso) # lambda = 69.01 => 6 coefs
 
+autoplot(cv.lasso) + 
+        xlab("log lambda") + ylab("Value of regularization coefficient") +
+        ggtitle("Lasso Regression", sprintf("%s\n%s", leg1str, leg2str)) +
+        theme(legend.position="none")
+
+# plot(cv.lasso)
+# legend("topleft", legend = str_c(leg1str, leg2str, sep="; "), pch = 1)
+# title(main = paste(c(leg1str, leg2str)))
+
+ # lambda = 69.01 => 6 coefs
 ```
 
- Suppose we want to use our earlier train/validation division to select the `lambda` for the lasso.
- This is easy to do.
-```{r predlasso}
+Form cross-validation, the coefficients vector from the best model is:
 
-# take 80% of observations,
-ntrain <- as.integer(nrow(NHANES_imputed) * 0.8)
-train  <- sample(seq(nrow(NHANES_imputed)), ntrain, replace = FALSE)
+```{r coeflasso}
+coef(cv.lasso)
+```
+
+
+Perform a train/validation split at 80% of observations, 
+and find the best `lambda` for the lasso.
+
+```{r predlasso, echo=TRUE}
+
+ntrain   <- as.integer(nrow(NHANES_imputed) * 0.8)
+train    <- sample(seq(nrow(NHANES_imputed)), ntrain, replace = FALSE)
 lasso.tr <- glmnet(x[train, ], y[train])
-lasso.tr # print until it model no longer really changes (~ 90 lines here)
-pred <- predict(lasso.tr, x[-train, ])
-dim(pred)
-# vector - matrix
-# this recycles the vector 89 times!
-# (using R's implicit-wrap-around feature)
-rmse <- sqrt(apply((y[-train] - pred) ^ 2, 2, mean))
-plot(log(lasso.tr$lambda), rmse, type = "b", xlab = "Log(lambda)")
+#
+pred_test     <- predict(lasso.tr, x[-train, ])
+
+# this recycles the vector many times! (R's implicit-wrap-around feature):
+rmse     <- sqrt(apply((y[-train] - pred_test) ^ 2, 2, mean))
+#plot(log(lasso.tr$lambda), rmse, type = "b", xlab = "Log(lambda)")
+lassos_df <- data.frame(log_lass=log(lasso.tr$lambda), rmse=rmse)
 # extract the best lambda: sort asc, pick first
 lam.best <- lasso.tr$lambda[order(rmse)[1]]
-lam.best
-coef(lasso.tr, s = lam.best)
+
+ggplot(lassos_df, aes(log_lass, rmse)) + 
+        geom_point() +
+        xlab("Log(lambda)") +
+        ggtitle("Lasso Regression", 
+                sprintf("%s\nBest lambda: %s", 
+                        "RMSE of training set", lam.best)) +
+        theme(legend.position="none")
+
+
+
 ```
 
+#### Most important parameters 
+
+So which of the imputed parameters *are* most important?
+
+
+```{r coef_best_lambdas}
+coefs <- coef(lasso.tr, s = lam.best) 
+coefs %>%  as.matrix() %>% as.data.frame() %>% 
+        rename("coef" = `1`) %>%
+        rownames_to_column() %>% 
+        filter(abs(coef) > 0.05) %>% 
+        arrange(desc(coef))
+```
 
 
 ```{r htmltools}
