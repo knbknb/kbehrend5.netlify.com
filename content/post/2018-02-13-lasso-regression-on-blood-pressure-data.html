@@ -1069,7 +1069,8 @@ if (file.exists(NHimp)){
         # NHANES_imputed &lt;- mice::complete(mice(NHANES))
         saveRDS(NHANES_imputed, file = NHimp)
 }</code></pre>
-<p>The method magically removes all NA values by intelligently guessing. Missing categorical values are sometimes NHANES_imputed in a weird way:</p>
+<p>The method magically removes all NA values by intelligently guessing. It can create nonsensical values though, e.g. pregnant fathers.</p>
+<p>Missing categorical values are sometimes NHANES_imputed in a weird way:</p>
 <p>However, NHANES Data after Feature Engineering: no more NAs in any column.</p>
 <pre><code>## 
 ## Data frame:NHANES_imputed    7235 observations and 58 variables    Maximum # NAs:0
@@ -1208,13 +1209,8 @@ if (file.exists(NHimp)){
 </div>
 <div id="ridge-regression-and-the-lasso" class="section level2">
 <h2>Ridge Regression and the Lasso</h2>
-<p>We will use the package <code>glmnet</code>, which does not use the model formula language, so we will set up a matrix <code>x</code> of predictors and a response vector <code>y</code>.</p>
-<p>First we will fit a ridge-regression model. This is achieved by calling <code>glmnet</code> with <code>alpha=0</code> (see the helpfile). There is also a <code>cv.glmnet</code> function which will do the cross-validation for us.</p>
-<ul>
-<li>0 : ridge</li>
-<li>1 : lasso</li>
-<li>0.x : elasticnet (combination of ridge and lasso)</li>
-</ul>
+<p>The package <code>glmnet</code> does not use the model formula language. So we will set up a model-matrix <code>x</code> of predictors and a response vector <code>y</code>.</p>
+<p>A ridge-regression model is created by calling <code>glmnet</code> with <code>alpha=0</code>, and a lasso regression with alpha=1. There is also a <code>cv.glmnet</code> function which will do the cross-validation.</p>
 <p><img src="/post/2018-02-13-lasso-regression-on-blood-pressure-data_files/figure-html/plotridge-1.png" width="864" /><img src="/post/2018-02-13-lasso-regression-on-blood-pressure-data_files/figure-html/plotridge-2.png" width="864" /></p>
 <p>Now we fit a lasso model; for this we use the default <code>alpha=1</code></p>
 <p><img src="/post/2018-02-13-lasso-regression-on-blood-pressure-data_files/figure-html/lasso-1.png" width="864" /><img src="/post/2018-02-13-lasso-regression-on-blood-pressure-data_files/figure-html/lasso-2.png" width="864" /><img src="/post/2018-02-13-lasso-regression-on-blood-pressure-data_files/figure-html/lasso-3.png" width="864" /></p>

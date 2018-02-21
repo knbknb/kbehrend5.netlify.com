@@ -186,6 +186,8 @@ if (file.exists(NHimp)){
 ```
 
 The method magically removes all NA values by intelligently guessing. 
+It can create nonsensical values though, e.g. pregnant fathers.
+
 Missing categorical values are sometimes NHANES_imputed in a weird way:
 
 ```{r pregnant, eval=FALSE}
@@ -215,6 +217,7 @@ Scale the data frame. This is necessary because the $lambda$ hyperparameter of r
 colnames_num = map_lgl(colnames(NHANES_imputed), function(x){
   ! is.factor(NHANES_imputed[,x])      
 })
+
 coln <- colnames(NHANES_imputed)[colnames_num]
 
 NHANES_imputed <- NHANES_imputed %>% 
@@ -291,19 +294,19 @@ marrangeGrob(plots_list, nrow=1, ncol=2, top = "")
 Ridge Regression and the Lasso
 -------------------------------
 
-We will use the package `glmnet`, which does not use the model formula language, so we will set up a matrix `x` of predictors and a response vector `y`.
+The package `glmnet` does not use the model formula language. 
+So we will set up a model-matrix `x` of predictors and a response vector `y`.
 
 ```{r glmnet}
+
 library(glmnet)
 x = model.matrix(BPSysAve ~ . - 1, data = NHANES_imputed) 
 y = NHANES_imputed$BPSysAve
+
 ```
 
-First we will fit a ridge-regression model. This is achieved by calling `glmnet` with `alpha=0` (see the helpfile). There is also a `cv.glmnet` function which will do the cross-validation for us.
-
-- 0 : ridge
-- 1 : lasso
-- 0.x  : elasticnet (combination of ridge and lasso)
+A ridge-regression model is created by calling `glmnet` with `alpha=0`, and a lasso regression with alpha=1. 
+There is also a `cv.glmnet` function which will do the cross-validation.
 
 ```{r plotridge}
 fit.ridge <- glmnet(x, y, alpha = 0)
