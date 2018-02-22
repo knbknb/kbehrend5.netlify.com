@@ -1,0 +1,20 @@
+---
+title: Applying Regression Models on imputed Blood Pressure Data
+author: Knut Behrends
+date: '2018-02-23'
+slug: bloodpressure-lasso
+categories: [health]
+tags: [health]
+draft: no
+showonlyimage: no
+css: custom.css
+output: html_document
+image: img/post/thumb/lasso-1-350.png
+url: /post/2018/02/bloodpressure-lasso/
+summary: none
+keywords:
+  - Personal-Blog
+usePhotoswipe: no
+---
+
+Working with anonymous patient data.

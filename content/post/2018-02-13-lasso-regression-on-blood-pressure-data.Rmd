@@ -5,15 +5,15 @@ date: 2018-02-13
 slug: bloodpressure-lasso
 categories: [health]
 tags: [health, medicine]
-draft: yes
+draft: no
 output:
   html_document:
     toc: no
     css: styles.css
     fig_caption: yes
     keep_md: no
-image: /static/img/hugo-gopher.png
-banner: img/post/thumb/hugo-logo.png
+image: /static/img/post/thumb/lasso-1-350.png
+banner: img/post/thumb/lasso-1-150.png
 summary: ''
 keywords:
   - Personal-Blog
@@ -42,12 +42,11 @@ library(rvest)
 library(gridExtra)
 library(tidyverse)
 library(ggthemes)
-#library(caTools) #sample.split()
-library(leaps) # forward/backward selection
+library(leaps)     # forward/backward selection
 theme_set(theme_bw())
 scale_colour_discrete <- function(...) scale_color_brewer(palette="Set1")
 library(ggfortify) # convert glmnet plots to ggplot2-style 
-library(glmnet) # ridge regrssion and lasso
+library(glmnet)    # ridge regrssion and lasso
 ```
 
 ####  Introduction 
