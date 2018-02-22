@@ -38,11 +38,10 @@ This is not a tutorial, but more a personal learning experience, and work in pro
 <h4>NHANES dataset</h4>
 <p>NHANES is the US National Health and Nutrition Examination Study. It is a carefully curated, larger medical survey aiming to get a representative sample of the general US population. The survey is carried out periodically.</p>
 <p>The <a href="https://www.cdc.gov/nchs/nhanes/participant_video.htm"><em>NHANES</em> dataset</a> is available as an R package on <a href="https://cran.r-project.org/package=NHANES">CRAN</a>. I have used package version 2.1.0, specifically “NHANES 2009-2012 with adjusted weighting”. This dataset contains data from two collection periods, 2009-2010 and 2011-2012.</p>
-<p>These metadata are, for example, the unique distinct values of columns where it makes sense to report them (e.g. male/female for column “gender”)</p>
 </div>
 <div id="feature-engineering" class="section level4">
 <h4>Feature Engineering</h4>
-<p>Table 1 shows the column names and (further below) some other important metadata of the NHANES dataset.</p>
+<p>Table 1 shows the column names and (further below, table 4) some other important metadata of the NHANES dataset.</p>
 <table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption>
 <span id="tab:tabledef">Table 1: </span>Column names in NHANES data set, and columns that will be dropped
@@ -182,7 +181,6 @@ Education
 Educational level of study participant Reported for participants aged 20 years or older. One of 8thGrade, 9-11thGrade, HighSchool, SomeCollege, or CollegeGrad.
 </td>
 <td style="text-align:left;">
-drop
 </td>
 </tr>
 <tr>
@@ -1061,7 +1059,7 @@ drop
 <p>The method magically removes all NA values by guessing intelligently. It can create nonsensical values though, e.g. pregnant fathers.</p>
 <table>
 <caption>
-<span id="tab:pregnant">Table 2: </span>Before Imputation
+<span id="tab:pregnant">Table 2: </span>Column ‘PregnantNow’, Before Imputation:
 </caption>
 <thead>
 <tr>
@@ -1213,6 +1211,7 @@ NA
 </table>
 <p>For now, I’ll leave these new values inside the imputed dataset though.</p>
 <p>However, NHANES Data after imputation: no more NAs in any column.</p>
+<p>Table 4: NHANES Column definitions and some values. These metadata show, for example, the unique distinct values of columns where it makes sense to report them (e.g. male/female for column “gender”).</p>
 <pre><code>## 
 ## Data frame:NHANES_imputed    7235 observations and 57 variables    Maximum # NAs:0
 ## 
@@ -1345,10 +1344,10 @@ NA
 ## Reordering variables and trying again:
 ## Reordering variables and trying again:</code></pre>
 <p><img src="/post/2018-02-13-lasso-regression-on-blood-pressure-data_files/figure-html/regsubsets-1.png" width="864" /></p>
-<p>This section follows the respective chapter from “<a href="http://www-bcf.usc.edu/~gareth/ISL/">Introduction to Statistical Learning</a>”.</p>
 </div>
 <div id="ridge-regression-and-the-lasso" class="section level2">
 <h2>Ridge Regression and the Lasso</h2>
+<p>This section follows the respective chapter from “<a href="http://www-bcf.usc.edu/~gareth/ISL/">Introduction to Statistical Learning</a>”.</p>
 <p>The package <code>glmnet</code> does not use the model formula language. So we will set up a model-matrix <code>x</code> of predictors and a response vector <code>y</code>.</p>
 <p>A ridge-regression model is created by calling <code>glmnet</code> with <code>alpha = 0</code>, and a lasso regression with <code>alpha = 1</code>. There is also a <code>cv.glmnet</code> function which will do the cross-validation.</p>
 <p><img src="/post/2018-02-13-lasso-regression-on-blood-pressure-data_files/figure-html/plotridge-1.png" width="864" /><img src="/post/2018-02-13-lasso-regression-on-blood-pressure-data_files/figure-html/plotridge-2.png" width="864" /></p>

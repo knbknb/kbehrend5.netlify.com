@@ -75,11 +75,11 @@ NHANES is  the US National Health and Nutrition Examination Study. It is a caref
 
 The [*NHANES* dataset](https://www.cdc.gov/nchs/nhanes/participant_video.htm) is available as an R package on [CRAN](https://cran.r-project.org/package=NHANES). I have used package version 2.1.0, specifically "NHANES 2009-2012 with adjusted weighting". This dataset contains data from two collection periods, 2009-2010 and 2011-2012.
 
-These metadata are, for example, the unique distinct values of columns where it makes sense to report them (e.g. male/female for column "gender") 
+
 
 
 #### Feature Engineering
-Table 1 shows  the column names and (further below) some other important metadata of the NHANES dataset. 
+Table 1 shows  the column names and (further below, table 4) some other important metadata of the NHANES dataset. 
 
 
 ```{r names_defs}
@@ -112,10 +112,11 @@ nhanes_defs <- nhanes_defs %>%
          Column == "AgeMonths" ~ action1,
          Column == "AgeDecade" ~ action1,
          Column == "Race3" ~ action1,
-         Column == "Education" ~ action1,
-         Column == "MaritalStatus" ~ action1,
+         #Column == "Education" ~ action1,
+         #Column == "MaritalStatus" ~ action1,
          Column == "Length" ~ action1,
          Column == "HeadCirc" ~ action1,
+         Column == "HIncome" ~ action1,
          Column == "MaritalStatus" ~ action1,
          Column == "BMICatUnder20yrs" ~ action1,
          Column == "BMI_WHO" ~ action1,
@@ -196,7 +197,7 @@ It can create nonsensical values though, e.g. pregnant fathers.
 table(NHANES$Gender, NHANES$PregnantNow, useNA = "always") %>% 
      #   prop.table() %>%
      #   round(digits = 2) %>%         
-        kable(caption= "Before Imputation")
+        kable(caption= "Column 'PregnantNow', Before Imputation:")
 ```
 ```{r pregnant2}
 table(NHANES_imputed$Gender, NHANES_imputed$PregnantNow, useNA = "always") %>%
@@ -208,6 +209,8 @@ table(NHANES_imputed$Gender, NHANES_imputed$PregnantNow, useNA = "always") %>%
 For now, I'll leave these new values inside the imputed dataset though.
 
 However, NHANES Data after imputation: no more NAs in any column.
+
+Table 4: NHANES Column definitions and some values. These metadata show, for example, the unique distinct values of columns where it makes sense to report them (e.g. male/female for column "gender").
 
 ```{r contents}
 Hmisc::contents(NHANES_imputed)
@@ -292,10 +295,12 @@ marrangeGrob(plots_list, nrow=1, ncol=2, top = "")
 
 ```
 
-This section follows the respective chapter from "[Introduction to Statistical Learning](http://www-bcf.usc.edu/~gareth/ISL/)".
-
 Ridge Regression and the Lasso
 -------------------------------
+
+This section follows the respective chapter from "[Introduction to Statistical Learning](http://www-bcf.usc.edu/~gareth/ISL/)".
+
+
 
 The package `glmnet` does not use the model formula language. 
 So we will set up a model-matrix `x` of predictors and a response vector `y`.
@@ -315,7 +320,7 @@ There is also a `cv.glmnet` function which will do the cross-validation.
 fit.ridge <- glmnet(x, y, alpha = 0)
 
 autoplot(fit.ridge) + 
-        xlab("log lambda") + ylab("Value of regularization coefficient") +
+        xlab("lambda") + ylab("Value of regularization coefficient") +
         ggtitle("Ridge Regression", "(Legend is under construction)") +
         theme(legend.position="none")
 
@@ -326,7 +331,7 @@ leg1str <- sprintf("log of best Lambda = %.3f  (%.3f)",
 leg2str <- sprintf("log of best Lambda + 1 SE = %.3f (%.3f)", 
                    log(cv.ridge$lambda.1se), cv.ridge$lambda.1se)
 autoplot(cv.ridge)  + 
-        xlab("lambda") + ylab("CV Error") +
+        xlab("log lambda") + ylab("CV Error") +
         ggtitle("Ridge Regression: Cross Validation Error", sprintf("%s\n%s", leg1str, leg2str)) +
         theme(legend.position="none")
 
