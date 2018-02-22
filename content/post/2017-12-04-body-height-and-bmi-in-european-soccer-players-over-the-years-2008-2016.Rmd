@@ -13,7 +13,7 @@ output:
   html_document:
   fig_caption: yes
 keep_md: yes
-summary: How did 
+summary: 
 keywords: ["Personal-Blog", "Fun", "rstats", "Sports-Data", "Soccer", "Kaggle.com"]
 ---
 

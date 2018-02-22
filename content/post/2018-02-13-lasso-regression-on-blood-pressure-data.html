@@ -1,7 +1,7 @@
 ---
-title: Applying Regression Models on imputed Blood Pressure data
+title: Applying Regression Models on imputed Blood Pressure Data
 author: Knut Behrends
-date: '2018-02-13'
+date: 2018-02-13
 slug: bloodpressure-lasso
 categories: [health]
 tags: [health, medicine]
@@ -30,20 +30,19 @@ keywords:
 This is not a tutorial, but more a personal learning experience, and work in progress.
 </div>
 <p>This is a follow-up to <a href="/post/2018/02/bloodpressure-nhanes">an exploratory data-analysis post</a> of mine. When I was nearly done with writing that post, some new questions came to my mind.</p>
-<p>In the preceding blogpost I noticed that Systolic Blood Pressure is correlated with age and weight, but the relationship is complicated: the trend was noisy and the correlation was weak, and interaction term in the linear model seems to play an important role.</p>
-<p>Here I’ll continue with exploratory analysis, so there is not really a new hypothesis. More basically, can I determine some other variables (out of the 76) that are also influencing the Blood Pressure in some way?</p>
+<p>In the preceding blogpost I noticed that Systolic Blood Pressure is correlated with age and weight, but the relationship is complicated: the trend was noisy and the correlation was weak, and the interaction term in the linear model seems to play an important role.</p>
+<p>Here I’ll continue with exploratory analysis. More basically, can I determine some other variables (out of the 76) that are also influencing the Blood Pressure in some way?</p>
 <p>I am not trying to do groundbreaking medical research here. Hey I’m just a blogger, playing with a dataset for personal entertainment, trying out some of those fancy Machine Learning algorithms that I encountered during MOOC homework assignments. This time I’ll try these techniques out on larger datasets that <em>I</em> find interesting.</p>
 </div>
 <div id="nhanes-dataset" class="section level4">
 <h4>NHANES dataset</h4>
 <p>NHANES is the US National Health and Nutrition Examination Study. It is a carefully curated, larger medical survey aiming to get a representative sample of the general US population. The survey is carried out periodically.</p>
 <p>The <a href="https://www.cdc.gov/nchs/nhanes/participant_video.htm"><em>NHANES</em> dataset</a> is available as an R package on <a href="https://cran.r-project.org/package=NHANES">CRAN</a>. I have used package version 2.1.0, specifically “NHANES 2009-2012 with adjusted weighting”. This dataset contains data from two collection periods, 2009-2010 and 2011-2012.</p>
-<p>Obligatory Disclaimer (from the Package Documentation):</p>
-<p><em>Please note that the data sets provided in this package are derived from the NHANES database and have been adapted for educational purposes. As such, they are NOT suitable for use as a research database.</em></p>
+<p>These metadata are, for example, the unique distinct values of columns where it makes sense to report them (e.g. male/female for column “gender”)</p>
 </div>
 <div id="feature-engineering" class="section level4">
 <h4>Feature Engineering</h4>
-<p>These are the column names and some other important metadata of the NHANES dataset. These metadata are, for example, the unique distinct values of columns where it makes sense to report them (e.g. male/female for column “gender”)</p>
+<p>Table 1 shows the column names and (further below) some other important metadata of the NHANES dataset.</p>
 <table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption>
 <span id="tab:tabledef">Table 1: </span>Column names in NHANES data set, and columns that will be dropped
@@ -780,6 +779,7 @@ TVHrsDay
 Number of hours per day on average participant watched TV over the past 30 days. Reported for participants 2 years or older. One of 0_to_1hr, 1_hr, 2_hr, 3_hr, 4_hr, More_4_hr. Not available 2009-2010.
 </td>
 <td style="text-align:left;">
+drop
 </td>
 </tr>
 <tr>
@@ -793,6 +793,7 @@ CompHrsDay
 Number of hours per day on average participant used a computer or gaming device over the past 30 days. Reported for participants 2 years or older. One of 0_hrs, 0_to_1hr, 1_hr, 2_hr, 3_hr, 4_hr, More_4_hr. Not available 2009-2010.
 </td>
 <td style="text-align:left;">
+drop
 </td>
 </tr>
 <tr>
@@ -1053,28 +1054,167 @@ drop
 <p>More Feature Engineering Measures:</p>
 <ul>
 <li>Remove people less than 20 years of age</li>
-<li>Remove columns, marked as “drop” in table 1 (measured for child/youth-only, etc).</li>
-<li>Impute missing values with “mice” method (Multiple Imputation by Chain Equation)</li>
+<li>Remove columns, marked by me as “drop” in table 1 (measured for children/youth-only, etc).</li>
+<li>Impute missing values with “mice” method (Multiple Imputation by Chained Equations)</li>
 </ul>
 <p>Imputation is done with the <a href="http://stefvanbuuren.github.io/mice/">MICE method</a>: “Multiple Imputation by Chained Equations”.</p>
-<pre class="r"><code>NHANES &lt;- NHANES %&gt;% 
-        filter(Age &gt;= 20) %&gt;% 
-        select(setdiff(colnames(NHANES), drop_cols) )
-
-NHimp &lt;- &quot;../../data_private/NHANES-imputed.rds&quot;
-
-if (file.exists(NHimp)){
-        NHANES_imputed &lt;- readRDS(NHimp)
-} else {
-        # set.seed(47)
-        # NHANES_imputed &lt;- mice::complete(mice(NHANES))
-        saveRDS(NHANES_imputed, file = NHimp)
-}</code></pre>
-<p>The method magically removes all NA values by intelligently guessing. It can create nonsensical values though, e.g. pregnant fathers.</p>
-<p>Missing categorical values are sometimes NHANES_imputed in a weird way:</p>
-<p>However, NHANES Data after Feature Engineering: no more NAs in any column.</p>
+<p>The method magically removes all NA values by guessing intelligently. It can create nonsensical values though, e.g. pregnant fathers.</p>
+<table>
+<caption>
+<span id="tab:pregnant">Table 2: </span>Before Imputation
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:right;">
+Yes
+</th>
+<th style="text-align:right;">
+No
+</th>
+<th style="text-align:right;">
+Unknown
+</th>
+<th style="text-align:right;">
+NA
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+female
+</td>
+<td style="text-align:right;">
+72
+</td>
+<td style="text-align:right;">
+1573
+</td>
+<td style="text-align:right;">
+51
+</td>
+<td style="text-align:right;">
+1987
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+male
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+3552
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+</tbody>
+</table>
+<table>
+<caption>
+<span id="tab:pregnant2">Table 3: </span>After imputation
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:right;">
+Yes
+</th>
+<th style="text-align:right;">
+No
+</th>
+<th style="text-align:right;">
+Unknown
+</th>
+<th style="text-align:right;">
+NA
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+female
+</td>
+<td style="text-align:right;">
+135
+</td>
+<td style="text-align:right;">
+3347
+</td>
+<td style="text-align:right;">
+201
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+male
+</td>
+<td style="text-align:right;">
+2513
+</td>
+<td style="text-align:right;">
+388
+</td>
+<td style="text-align:right;">
+651
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+</tbody>
+</table>
+<p>For now, I’ll leave these new values inside the imputed dataset though.</p>
+<p>However, NHANES Data after imputation: no more NAs in any column.</p>
 <pre><code>## 
-## Data frame:NHANES_imputed    7235 observations and 58 variables    Maximum # NAs:0
+## Data frame:NHANES_imputed    7235 observations and 57 variables    Maximum # NAs:0
 ## 
 ## 
 ##                 Levels Storage
@@ -1116,7 +1256,6 @@ if (file.exists(NHimp)){
 ## PhysActive           2 integer
 ## PhysActiveDays         integer
 ## TVHrsDay             7 integer
-## CompHrsDay           7 integer
 ## Alcohol12PlusYr      2 integer
 ## AlcoholDay             integer
 ## AlcoholYear            integer
@@ -1172,7 +1311,6 @@ if (file.exists(NHimp)){
 ## |Depressed      |                                                      |
 ## +---------------+------------------------------------------------------+
 ## |TVHrsDay       |0_hrs,0_to_1_hr,1_hr,2_hr,3_hr,4_hr,More_4_hr         |
-## |CompHrsDay     |                                                      |
 ## +---------------+------------------------------------------------------+
 ## |Smoke100n      |Non-Smoker,Smoker                                     |
 ## +---------------+------------------------------------------------------+
@@ -1180,7 +1318,7 @@ if (file.exists(NHimp)){
 ## +---------------+------------------------------------------------------+
 ## |PregnantNow    |Yes,No,Unknown                                        |
 ## +---------------+------------------------------------------------------+</code></pre>
-<p>Scale the data frame. This is necessary because the <span class="math inline">\(lambda\)</span> hyperparameter of ridge regression and lasso regression need to have comparable values.</p>
+<p>Scale the data frame. This is necessary because the <span class="math inline">\(\lambda\)</span> hyperparameter of ridge regression and lasso regression works best when features have comparable values.</p>
 </div>
 <div id="model-selection---what-are-the-best-predictor-variables" class="section level2">
 <h2>Model Selection - what are the best predictor variables?</h2>
@@ -1206,19 +1344,106 @@ if (file.exists(NHimp)){
 ## Reordering variables and trying again:
 ## Reordering variables and trying again:
 ## Reordering variables and trying again:</code></pre>
-<p><img src="/post/2018-02-13-lasso-regression-on-blood-pressure-data_files/figure-html/unnamed-chunk-1-1.png" width="864" /></p>
+<p><img src="/post/2018-02-13-lasso-regression-on-blood-pressure-data_files/figure-html/regsubsets-1.png" width="864" /></p>
+<p>This section follows the respective chapter from “<a href="http://www-bcf.usc.edu/~gareth/ISL/">Introduction to Statistical Learning</a>”.</p>
 </div>
 <div id="ridge-regression-and-the-lasso" class="section level2">
 <h2>Ridge Regression and the Lasso</h2>
 <p>The package <code>glmnet</code> does not use the model formula language. So we will set up a model-matrix <code>x</code> of predictors and a response vector <code>y</code>.</p>
-<p>A ridge-regression model is created by calling <code>glmnet</code> with <code>alpha=0</code>, and a lasso regression with alpha=1. There is also a <code>cv.glmnet</code> function which will do the cross-validation.</p>
+<p>A ridge-regression model is created by calling <code>glmnet</code> with <code>alpha = 0</code>, and a lasso regression with <code>alpha = 1</code>. There is also a <code>cv.glmnet</code> function which will do the cross-validation.</p>
 <p><img src="/post/2018-02-13-lasso-regression-on-blood-pressure-data_files/figure-html/plotridge-1.png" width="864" /><img src="/post/2018-02-13-lasso-regression-on-blood-pressure-data_files/figure-html/plotridge-2.png" width="864" /></p>
-<p>Now we fit a lasso model; for this we use the default <code>alpha=1</code>.</p>
+<p>Fit a lasso model with <code>alpha=1</code>.</p>
 <p><img src="/post/2018-02-13-lasso-regression-on-blood-pressure-data_files/figure-html/lasso-1.png" width="864" /><img src="/post/2018-02-13-lasso-regression-on-blood-pressure-data_files/figure-html/lasso-2.png" width="864" /></p>
-<p>The coefficients vector from the best model is 0.248, 0, 0, 0.071, 0.393, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.007, -0.034, 0, 0, -0.051, 0, 0, 0, 0.07, -0.009, 0, -0.003, 0.034, 0, 0.335, 0.015, 0, 0.009, 0, 0, 0, 0.03, 0.071, 0, -0.105, 0.01, 0, 0, 0, 0, 0, -0.068, 0, -0.011, -0.036, 0, -0.04, -0.009, -0.012, 0, 0, -0.014, 0, 0, 0.066, 0, 0, 0, 0, -0.084, 0, 0.014, 0, 0, 0.032, 0.03, 0, 0, 0, 0, 0, 0, 0.015, -0.015, 0, -0.244, 0, 0, 0, -0.069, -0.039, 0.264, -0.023, 0.022. At this lambda, there are ? coefficients &gt; 0.</p>
-<p>Perform a train/validation split, and find the best <code>lambda</code> for the lasso.</p>
-<pre class="r"><code># take 80% of observations,
-ntrain   &lt;- as.integer(nrow(NHANES_imputed) * 0.8)
+<p>Form cross-validation, the coefficients vector from the best model is:</p>
+<pre><code>## 85 x 1 sparse Matrix of class &quot;dgCMatrix&quot;
+##                         1
+## (Intercept)       0.17284
+## SurveyYr2009_10   .      
+## SurveyYr2011_12   .      
+## Gender2           0.06408
+## Age               0.39194
+## Race12            .      
+## Race13            .      
+## Race14            .      
+## Race15            .      
+## HHIncome2         .      
+## HHIncome3         .      
+## HHIncome4         .      
+## HHIncome5         .      
+## HHIncome6         .      
+## HHIncome7         .      
+## HHIncome8         .      
+## HHIncome9         .      
+## HHIncome10        .      
+## HHIncome11       -0.04049
+## HHIncome12        .      
+## HHIncomeMid       .      
+## Poverty          -0.04719
+## HomeRooms         .      
+## HomeOwn2          .      
+## HomeOwn3          .      
+## Work2             0.05349
+## Work3            -0.02041
+## Weight            .      
+## Height           -0.00221
+## BMI               0.02945
+## Pulse             .      
+## BPDiaAve          0.33105
+## Testosterone      .      
+## DirectChol        .      
+## TotChol           0.00562
+## UrineVol1         .      
+## UrineFlow1        .      
+## UrineVol2         .      
+## UrineFlow2        0.02427
+## Diabetes2         0.07958
+## DiabetesAge       .      
+## HealthGen2       -0.07619
+## HealthGen3        0.01738
+## HealthGen4        .      
+## HealthGen5        .      
+## DaysPhysHlthBad   .      
+## DaysMentHlthBad   .      
+## LittleInterest2   .      
+## LittleInterest3  -0.07872
+## Depressed2        .      
+## Depressed3        .      
+## nPregnancies     -0.02629
+## nBabies           .      
+## Age1stBaby       -0.03883
+## SleepHrsNight     .      
+## SleepTrouble2    -0.01713
+## PhysActive2       .      
+## PhysActiveDays   -0.00310
+## TVHrsDay2        -0.04903
+## TVHrsDay3         .      
+## TVHrsDay4         .      
+## TVHrsDay5         .      
+## TVHrsDay6         .      
+## TVHrsDay7         .      
+## Alcohol12PlusYr2  .      
+## AlcoholDay        0.02284
+## AlcoholYear       0.03115
+## SmokeNow2         .      
+## Smoke1002         .      
+## Smoke100nSmoker   .      
+## SmokeAge          0.00342
+## Marijuana2        .      
+## AgeFirstMarij     .      
+## RegularMarij2     0.05773
+## AgeRegMarij       .      
+## HardDrugs2        .      
+## SexEver2         -0.09923
+## SexAge            .      
+## SexNumPartnLife   .      
+## SexNumPartYear    .      
+## SameSex2         -0.08834
+## SexOrientation2  -0.08692
+## SexOrientation3   0.14886
+## PregnantNow2     -0.03912
+## PregnantNow3      .</code></pre>
+<p>Perform a train/validation split at 80% of observations, and find the best <code>lambda</code> for the lasso.</p>
+<pre class="r"><code>ntrain   &lt;- as.integer(nrow(NHANES_imputed) * 0.8)
 train    &lt;- sample(seq(nrow(NHANES_imputed)), ntrain, replace = FALSE)
 lasso.tr &lt;- glmnet(x[train, ], y[train])
 #
@@ -1243,64 +1468,57 @@ ggplot(lassos_df, aes(log_lass, rmse)) +
 <h4>Most important parameters</h4>
 <p>So which of the imputed parameters <em>are</em> most important?</p>
 <pre><code>##            rowname    coef
-## 1              Age  0.4832
-## 2      (Intercept)  0.4524
-## 3         BPDiaAve  0.3543
-## 4      CompHrsDay6  0.2116
-## 5  SexOrientation3  0.1799
-## 6        Diabetes2  0.1649
-## 7        TVHrsDay5  0.1591
-## 8      CompHrsDay5  0.1475
-## 9       HHIncome10  0.1413
-## 10    PregnantNow3  0.1131
-## 11       TVHrsDay7  0.1109
-## 12     CompHrsDay3  0.1107
-## 13       TVHrsDay3  0.1035
-## 14           Work2  0.0983
-## 15   RegularMarij2  0.0982
-## 16       HHIncome8  0.0967
-## 17    Testosterone  0.0913
-## 18       HHIncome9  0.0883
-## 19      HealthGen3  0.0850
-## 20      AlcoholDay  0.0787
-## 21     CompHrsDay2  0.0784
-## 22         Gender2  0.0768
-## 23       TVHrsDay6  0.0717
-## 24       HHIncome3  0.0668
-## 25     PhysActive2  0.0653
-## 26      UrineFlow2  0.0638
-## 27      HealthGen4  0.0591
-## 28 LittleInterest2  0.0583
-## 29     AlcoholYear  0.0535
-## 30     HHIncomeMid  0.0519
-## 31   SleepTrouble2 -0.0525
-## 32      HardDrugs2 -0.0546
-## 33       HHIncome2 -0.0606
-## 34      Depressed2 -0.0638
-## 35     CompHrsDay4 -0.0659
-## 36         nBabies -0.0665
-## 37     AgeRegMarij -0.0685
-## 38       HHIncome4 -0.0704
-## 39          Height -0.0705
-## 40        HomeOwn3 -0.0721
-## 41     DiabetesAge -0.0789
-## 42          Race14 -0.0840
-## 43      Age1stBaby -0.0862
-## 44      HealthGen2 -0.0917
-## 45      Depressed3 -0.1048
-## 46 LittleInterest3 -0.1123
-## 47         Poverty -0.1317
-## 48        SameSex2 -0.1430
-## 49          Race13 -0.1498
-## 50          Race12 -0.1703
-## 51          Race15 -0.2003
-## 52 SexOrientation2 -0.2129
-## 53        SexEver2 -0.3971</code></pre>
+## 1      (Intercept)  0.6136
+## 2              Age  0.4290
+## 3         BPDiaAve  0.3498
+## 4  SexOrientation3  0.2058
+## 5        Diabetes2  0.2007
+## 6    RegularMarij2  0.1394
+## 7          Gender2  0.1387
+## 8       HHIncome10  0.1163
+## 9       HealthGen3  0.0792
+## 10      HealthGen5  0.0777
+## 11           Work2  0.0701
+## 12      AlcoholDay  0.0618
+## 13       HHIncome9  0.0616
+## 14      UrineFlow2  0.0611
+## 15       HHIncome3  0.0563
+## 16     AlcoholYear  0.0538
+## 17        HomeOwn2 -0.0505
+## 18   SleepHrsNight -0.0514
+## 19     DiabetesAge -0.0517
+## 20    nPregnancies -0.0535
+## 21    PregnantNow2 -0.0543
+## 22          Height -0.0591
+## 23           Work3 -0.0666
+## 24      HHIncome11 -0.0720
+## 25      HealthGen2 -0.0758
+## 26        HomeOwn3 -0.0793
+## 27      Age1stBaby -0.0868
+## 28      HardDrugs2 -0.0893
+## 29         Poverty -0.1141
+## 30          Race14 -0.1180
+## 31       TVHrsDay2 -0.1231
+## 32 LittleInterest3 -0.1506
+## 33          Race13 -0.1671
+## 34          Race12 -0.1777
+## 35        SameSex2 -0.2011
+## 36          Race15 -0.2137
+## 37 SexOrientation2 -0.2181
+## 38        SexEver2 -0.2713</code></pre>
+</div>
+<div id="conclusions" class="section level4">
+<h4>Conclusions</h4>
+<p>Ther are no conclusions. The imputation procedure has created too much misleading information. (TBC)</p>
 <div class="alert alert-info"><b>What I&apos; learned from doing this:</b>
 <ul>
+<li>Practiced imputation of a dataset with many NA values present.
 <li>Applied Model Selection techniques, a little bit more independently than before 
-<li>Played a bit with the `ggvis` package, which generates vector graphics instead of SVGs 
+<li>Learned when best-subset-selection is infeasible (code not shown) 
+  
 </ul>
 </div>
+<p>Obligatory Disclaimer (from the NHANES Package Documentation):</p>
+<p><em>Please note that the data sets provided in this package are derived from the NHANES database and have been adapted for educational purposes. As such, they are NOT suitable for use as a research database.</em></p>
 </div>
 </div>

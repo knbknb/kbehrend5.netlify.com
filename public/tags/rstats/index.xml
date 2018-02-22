@@ -21,53 +21,12 @@
     </item>
     
     <item>
-      <title>UK NHS Medical Staff, 2009-2017</title>
-      <link>/post/2018/01/uk-nhs-nurses/</link>
-      <pubDate>Tue, 23 Jan 2018 00:00:00 +0000</pubDate>
-      
-      <guid>/post/2018/01/uk-nhs-nurses/</guid>
-      <description>#NHSCrisis? A quick fact check about the National Healthcare Service, NHS. Is the number of nurses in the UK really strongly decreasing, as some media outlets suggest? Or is the opposite true, as some people on Twitter have argued? In this post I am taking a quick look at the number of employees in British healthcare system, from 2009 to 2017.  Since 2014, the number of nurses indeed has decreased for most subtypes.</description>
-    </item>
-    
-    <item>
-      <title>Graphs (in the sense of networks)</title>
-      <link>/post/2018/01/drawing-a-figshare-network-with-ggraph-and-tidygraph/</link>
-      <pubDate>Tue, 16 Jan 2018 00:00:00 +0000</pubDate>
-      
-      <guid>/post/2018/01/drawing-a-figshare-network-with-ggraph-and-tidygraph/</guid>
-      <description>NOTE This blogpost is inspired by this one: Drawing a network with &#34;ggraph&#34; and &#34;tidygraph&#34; by Ken Butler. 
- Example: the Figshare categories Data provider Figshare models their contents with and elaborate hierarchy of disciplines.
-I’m trying to learn the differences between using the igraph library directly and the new packages ggraph and tidygraph. Both new packages were authored by Thomas Lin Pedersen. created two R packages: tidygraph for storing and handling graphs, and ggraph for drawing them, ggplot-style.</description>
-    </item>
-    
-    <item>
-      <title>Comparing 33C3 and 34C3 tweets</title>
-      <link>/post/2018/01/tweets-33c3-vs-33c4/</link>
-      <pubDate>Sun, 07 Jan 2018 00:00:00 +0000</pubDate>
-      
-      <guid>/post/2018/01/tweets-33c3-vs-33c4/</guid>
-      <description>Why this analysis? There are two reasons:
- learn to process Twitter data at scale (~100MB-1GB/file - that’s large enough for me) get more info from/about the inspiring tweets from the CCC community  (This blogpost ist still a DRAFT - I want to publish quickly, even when an analysis is incomplete, or the text is a bit rough in places)
- Background Occasionally, over the last two years, I have gathered data from the Twitter Streaming API.</description>
-    </item>
-    
-    <item>
       <title></title>
       <link>/post/2018/01/constructing-a-tiny-social-network-visualization-from-the-rstats-hashtag/</link>
       <pubDate>Mon, 01 Jan 2018 00:00:00 +0000</pubDate>
       
       <guid>/post/2018/01/constructing-a-tiny-social-network-visualization-from-the-rstats-hashtag/</guid>
       <description>Analysis of ~1000 tweets about the R language. Visualing the interactions of the active Twitter users as a directed graph. (Draft)</description>
-    </item>
-    
-    <item>
-      <title>Constructing a tiny social-network visualization from the #Rstats hashtag</title>
-      <link>/post/2018/01/constructing-a-tiny-social-network-visualization-from-the-rstats-hashtag/</link>
-      <pubDate>Mon, 01 Jan 2018 00:00:00 +0000</pubDate>
-      
-      <guid>/post/2018/01/constructing-a-tiny-social-network-visualization-from-the-rstats-hashtag/</guid>
-      <description>(Under Construction) In 2016, I was harvesting tweets from the Twitter streaming API. I’ve used the #rstats hashtag as the search filter. This hashtag is commonly used by the R community on Twitter. Tag #rstats is more descriptive than the too short, unusable, #R hashtag which may not even be a valid filter expression.
-Here I do some exploratory analysis of these ~ 1000 tweets, and I visualize the interactions (the “mentions”) of the active Twitter users as a directed graph.</description>
     </item>
     
   </channel>

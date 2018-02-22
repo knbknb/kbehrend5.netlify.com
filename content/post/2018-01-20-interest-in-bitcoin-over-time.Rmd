@@ -169,7 +169,7 @@ Result - raw data
 How often did the word 'Bitcoin' appear in articles of the New York Times over the years?
 
 ```{r nytplot, echo=FALSE}
-nyt_data <- read_csv(here::here("data/bitcoin-nyt.csv")) #%>% 
+nyt_data <- read_csv(here::here("data_private/bitcoin-nyt.csv")) #%>% 
         #filter(date > as.Date("2016-01-01"))
 ggplot(nyt_data) + 
 geom_freqpoly(aes(as.Date(date), color=type), binwidth=7) + 
@@ -188,7 +188,7 @@ There is yet another, alternative data source: Google Trends API, here accessed 
 The API provides aggregated and rescaled data on how many people have performed Google searches for any term.
 
 ```{r goog, echo=FALSE}
-btcgoog <- here::here("data/bitcoin_googletrends.RDS")
+btcgoog <- here::here("data_private/bitcoin_googletrends.RDS")
 if(file.exists(btcgoog)){
         bitcoin_trends <- readRDS(file = btcgoog)
 } else{

@@ -41,7 +41,7 @@ library(tidyverse)  #
 library(igraph)     # network
 library(jsonlite)   # JSON
 library(kableExtra) # styled output
-datadir <- "data/twitter"
+datadir <- "data_private/twitter"
 # (extracts from the full tweets data, explained below)
 infile0 <- here::here(datadir, "rstats_tweettimes.txt")
 infile1 <- here::here(datadir, "rstats_network.txt")

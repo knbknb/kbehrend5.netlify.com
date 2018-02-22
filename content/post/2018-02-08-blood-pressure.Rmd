@@ -27,7 +27,7 @@ keywords:
 
 ```{r setup, include=FALSE}
 library(knitr)
-opts_chunk$set(cache = FALSE, warning = FALSE, message = FALSE, 
+opts_chunk$set(cache = TRUE, warning = FALSE, message = FALSE, 
                echo = FALSE, tidy = FALSE, width = 7, fig.width=9)
 options(digits = 3, tibble.print_min = 6)
 options(knitr.table.format = "html") 
@@ -306,7 +306,7 @@ bloodpressure2_model <- lm(BPSysAve ~ Age + Weight, data = bloodpressure2)
 bloodpressure2_model_interact <- lm(BPSysAve ~ Age * Weight, data = bloodpressure2)
 
 # predict blood pressure using bloodpressure_model :prediction
-bloodpressure2$prediction  <- predict(bloodpressure2_model, data = bloodpressure2)
+bloodpressure2$prediction    <- predict(bloodpressure2_model, data = bloodpressure2)
 bloodpressure2$prediction_ia <- predict(bloodpressure2_model_interact, data = bloodpressure2)
 ```
 I have included the interaction term `age:weight` because from experience it makes sense: older bodies metabolize more differently, and thus at each age the human body has different rates of gaining weight.
@@ -318,7 +318,7 @@ htmltools::HTML(sprintf('<div class="alert alert-warning">There is a trend: syst
 
 ```
 
-For the R experts:
+For the R experts, the model summary:
 
 ```{r lm2summ}
 summary(bloodpressure2_model_interact)
@@ -356,18 +356,23 @@ Predicted values of the full model fall short of capturing the variability in th
 
 # Age-related plots
 ggplot(bloodpressure2, aes(Age, BPSysAve)) +
-  geom_jitter(size=0.1, alpha=0.4) +
-  geom_abline(slope = coef(bloodpressure2_model)[2], 
-        intercept = coef(bloodpressure2_model)[1], 
-        size=2, alpha=.4, color = "dodgerblue") +
-  geom_point(aes(Age, prediction), color = "pink", size = 0.6, shape=21)+
-  geom_point(aes(Age, prediction_ia), color = "red", size = 0.3, shape=22)+
-  geom_smooth(aes(Age, prediction), color="navy", size=0.2, method="lm", se=0) +        
-  ggtitle("Blood Pressure predicted by Age and Weight",
-        subtitle = sprintf("mm Hg.  NHANES dataset, %s people. Pink dots: weight only. Red dots: weight + weight-age interaction included", nrow(bloodpressure2)))
+  geom_jitter(size = 0.1, alpha = 0.4) +
+  geom_abline(
+    slope = coef(bloodpressure2_model)[2],
+    intercept = coef(bloodpressure2_model)[1],
+    size = 2, alpha = .4, color = "dodgerblue"
+  ) +
+  geom_point(aes(Age, prediction), color = "pink", size = 0.6, shape = 21) +
+  geom_point(aes(Age, prediction_ia), color = "red", size = 0.3, shape = 22) +
+  geom_smooth(aes(Age, prediction), color = "navy", size = 0.2, method = "lm", se = 0) +
+  ggtitle(
+    "Blood Pressure predicted by Age and Weight",
+    subtitle = sprintf("mm Hg.  NHANES dataset, %s people. Pink dots: weight only. Red dots: weight + weight-age interaction included", nrow(bloodpressure2))
+  )
 
 ```
-In the plot above, *pink symbols* are predicted values from age and weight *without interaction*, whereas *red* symbols  represent predictions which *include an interaction term* between age and weight. The interaction term seems to become increasingly more relevant with higher ages, changing the sign of the effect size. Honestly, I am  [not sure what I am looking at here](https://stats.stackexchange.com/questions/5450/what-if-interaction-wipes-out-my-direct-effects-in-regression).  
+
+In the plot above, *pink symbols* are predicted values from age and weight *without interaction*, whereas *red* symbols  represent predictions which *include an interaction term* between age and weight. The interaction term seems to become increasingly more relevant with higher ages, changing the sign of the effect size. Honestly, I am  [not sure what I am looking at here](https://stats.stackexchange.com/questions/5450/what-if-interaction-wipes-out-my-direct-effects-in-regression).  (TODO)
 
 Maybe we need to split by age group again?
 
@@ -375,24 +380,31 @@ Maybe we need to split by age group again?
 
 ```{r Boxplots, fig.cap="Blood Pressure by Age group. Orange Symbols are sample means."}
 ggplot(bloodpressure2, aes(cut_interval(x = Age, length = 10), BPSysAve)) +
-  #geom_boxplot(varwidth = TRUE,  outlier.shape = NA) +
-  geom_violin(alpha = 0.1, aes(color = Gender, fill=Gender, alpha=0.3), size=0.5) +
+  # geom_boxplot(varwidth = TRUE,  outlier.shape = NA) +
+  geom_violin(alpha = 0.1, aes(color = Gender, fill = Gender, alpha = 0.3), size = 0.5) +
   theme(legend.position = "none") +
-  stat_summary(fun.data = "mean_cl_normal", 
-               geom = "crossbar",
-               width = 0.2,
-               col = "orange") +
-  scale_y_continuous(limits = c(75, 225), 
-                     breaks = seq(80, 220, 20), 
-                     minor_breaks = seq(80, 220, 10)) +
-  theme(axis.text.x = element_text(angle=60, vjust=0.5, hjust=0.5),
-        panel.grid.major.y = element_line(color="lightgrey", size=0.2),
-        panel.grid.minor.y = element_line(color="lightgrey", linetype = "dotted")) +
+  stat_summary(
+    fun.data = "mean_cl_normal",
+    geom = "crossbar",
+    width = 0.2,
+    col = "orange"
+  ) +
+  scale_y_continuous(
+    limits = c(75, 225),
+    breaks = seq(80, 220, 20),
+    minor_breaks = seq(80, 220, 10)
+  ) +
+  theme(
+    axis.text.x = element_text(angle = 60, vjust = 0.5, hjust = 0.5),
+    panel.grid.major.y = element_line(color = "lightgrey", size = 0.2),
+    panel.grid.minor.y = element_line(color = "lightgrey", linetype = "dotted")
+  ) +
   xlab("Age group [years]") +
   ylab("Blood Pressure [mmHg]") +
-  ggtitle("", subtitle = sprintf("Systolic Blood Pressure [mmHg]. NHANES Dataset, 2009-2012. n= %s people.", nrow(bloodpressure2) )) +
-  facet_grid(. ~ Gender )
-
+  ggtitle("", 
+    subtitle = sprintf("Systolic Blood Pressure [mmHg]. NHANES Dataset, 2009-2012. n= %s people.",
+                       nrow(bloodpressure2))) +
+  facet_grid(. ~ Gender)
 
 ```
 
@@ -409,11 +421,10 @@ We'll use our subset `bloodpressure2` from the NHANES data, by filtering with th
 
 ```{r bp3, echo=TRUE}
 bloodpressure3 <- bloodpressure2 %>% 
-        filter(BMI >= 25 , BMI <=30,
-               Weight >=70, Weight <= 80, 
-               Gender == "male", 
-               Age >= 45 ) %>% 
-        select(-Gender, -prediction)
+         filter(BMI >= 25 , BMI <= 30,
+               Weight >=70, Weight <= 80) %>% 
+        filter( Gender == "male", Age >= 45 ) %>% 
+         select(-Gender, -prediction)
 
 bloodpressure3_model <- lm(BPSysAve ~ Age * Weight, data = bloodpressure3) #
 bloodpressure3$Predictions <- predict(bloodpressure3_model) # same data

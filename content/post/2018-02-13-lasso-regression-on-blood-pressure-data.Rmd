@@ -1,7 +1,7 @@
 ---
-title: Applying Regression Models on imputed Blood Pressure data
+title: Applying Regression Models on imputed Blood Pressure Data
 author: Knut Behrends
-date: '2018-02-13'
+date: 2018-02-13
 slug: bloodpressure-lasso
 categories: [health]
 tags: [health, medicine]
@@ -25,7 +25,7 @@ keywords:
 
 ```{r setup, include=FALSE}
 library(knitr)
-opts_chunk$set(cache = TRUE, warning = FALSE, message = FALSE, 
+opts_chunk$set(cache = FALSE, warning = FALSE, message = FALSE, 
                echo = FALSE, tidy = FALSE, width = 7, fig.width=9)
 options(digits = 3, tibble.print_min = 6)
 options(knitr.table.format = "html") 
@@ -43,10 +43,11 @@ library(gridExtra)
 library(tidyverse)
 library(ggthemes)
 #library(caTools) #sample.split()
-library(leaps) # forward selection
+library(leaps) # forward/backward selection
 theme_set(theme_bw())
 scale_colour_discrete <- function(...) scale_color_brewer(palette="Set1")
-
+library(ggfortify) # convert glmnet plots to ggplot2-style 
+library(glmnet) # ridge regrssion and lasso
 ```
 
 ####  Introduction 
@@ -62,9 +63,9 @@ This is not a tutorial, but more a personal learning experience, and work in pro
 
 This is a follow-up to [an exploratory data-analysis post](/post/2018/02/bloodpressure-nhanes) of mine. When I was nearly done with writing that post, some new questions came to my mind.
 
-In the preceding blogpost I noticed that Systolic Blood Pressure is correlated with age and weight, but the relationship is complicated: the trend was noisy and the correlation was weak, and interaction term in the linear model seems to play an important role. 
+In the preceding blogpost I noticed that Systolic Blood Pressure is correlated with age and weight, but the relationship is complicated: the trend was noisy and the correlation was weak, and the  interaction term in the linear model seems to play an important role. 
 
-Here I'll continue with exploratory analysis, so there is not really a new hypothesis. More basically, can I determine some other variables (out of the `r ncol(NHANES)`) that are also influencing the Blood Pressure in some way?
+Here I'll continue with exploratory analysis. More basically, can I determine some other variables (out of the `r ncol(NHANES)`) that are also influencing the Blood Pressure in some way?
 
 I am not trying to do groundbreaking medical research here. Hey I'm just a blogger, playing with a dataset for personal entertainment, trying out some of those fancy Machine Learning algorithms that I encountered during MOOC homework assignments. This time I'll try these techniques out on larger datasets that *I* find interesting.
 
@@ -75,12 +76,11 @@ NHANES is  the US National Health and Nutrition Examination Study. It is a caref
 
 The [*NHANES* dataset](https://www.cdc.gov/nchs/nhanes/participant_video.htm) is available as an R package on [CRAN](https://cran.r-project.org/package=NHANES). I have used package version 2.1.0, specifically "NHANES 2009-2012 with adjusted weighting". This dataset contains data from two collection periods, 2009-2010 and 2011-2012.
 
-Obligatory Disclaimer (from the Package Documentation):
+These metadata are, for example, the unique distinct values of columns where it makes sense to report them (e.g. male/female for column "gender") 
 
-*Please note that the data sets provided in this package are derived from the NHANES database and have been adapted for educational purposes. As such, they are NOT suitable for use as a research database.*
 
 #### Feature Engineering
-These are  the column names and some other important metadata of the NHANES dataset. These metadata are, for example, the unique distinct values of columns where it makes sense to report them (e.g. male/female for column "gender") 
+Table 1 shows  the column names and (further below) some other important metadata of the NHANES dataset. 
 
 
 ```{r names_defs}
@@ -121,14 +121,16 @@ nhanes_defs <- nhanes_defs %>%
          Column == "BMICatUnder20yrs" ~ action1,
          Column == "BMI_WHO" ~ action1,
          str_detect(Column, pattern=regex("^BP")) == TRUE &
-         str_detect(Column, pattern=regex("Ave")) == FALSE ~ action1,
+            str_detect(Column, pattern=regex("Ave")) == FALSE ~ action1,
+         str_detect(Column, pattern=regex("^TVHrs")) == TRUE ~ action1,
+         str_detect(Column, pattern=regex("^CompHrs")) == TRUE ~ action1,
          # Column == "nPregnancies" ~ action1,
          # Column == "nBabies" ~ action1,
          # Column == "PregnantNow" ~ action1,
          # Column == "Age1stBaby" ~ action1,
          str_detect(Column, "WTINT2YR") == TRUE ~ action1,
-         Column == "TVHrsDayChild" ~ action1,
-         Column == "CompHrsDayChild" ~ action1,
+         #Column == "TVHrsDayChild" ~ action1,
+         #Column == "CompHrsDayChild" ~ action1,
 #         str_detect(Column, pattern=regex("TVHrs|CompHrs|AgeDecade")) ==
 #                 TRUE ~ action1,
         
@@ -164,13 +166,13 @@ drop_cols <- nhanes_defs %>%
 More Feature Engineering Measures:
 
 - Remove people less than 20 years of age
-- Remove columns, marked as "drop" in table 1 (measured for child/youth-only, etc).
-- Impute missing values with "mice" method (Multiple Imputation by Chain Equation)
+- Remove columns, marked by me as "drop" in table 1 (measured for children/youth-only, etc).
+- Impute missing values with "mice" method (Multiple Imputation by Chained Equations)
 
 Imputation is done with the [MICE method](http://stefvanbuuren.github.io/mice/): "Multiple Imputation by Chained Equations".
 
 
-```{r NHANES_imputed, echo=TRUE, cache=TRUE}
+```{r NHANES_imputed, echo=FALSE, error=TRUE}
 
 NHANES <- NHANES %>% 
         filter(Age >= 20) %>% 
@@ -182,37 +184,37 @@ if (file.exists(NHimp)){
         NHANES_imputed <- readRDS(NHimp)
 } else {
         # set.seed(47)
-        # NHANES_imputed <- mice::complete(mice(NHANES))
+        #NHANES_imputed <- mice::complete(mice(NHANES))
         saveRDS(NHANES_imputed, file = NHimp)
 }
 ```
 
-The method magically removes all NA values by intelligently guessing. 
+The method magically removes all NA values by  guessing intelligently. 
 It can create nonsensical values though, e.g. pregnant fathers.
 
-Missing categorical values are sometimes NHANES_imputed in a weird way:
-
-```{r pregnant, eval=FALSE}
+```{r pregnant, eval=TRUE}
 
 table(NHANES$Gender, NHANES$PregnantNow, useNA = "always") %>% 
      #   prop.table() %>%
      #   round(digits = 2) %>%         
         kable(caption= "Before Imputation")
-
+```
+```{r pregnant2}
 table(NHANES_imputed$Gender, NHANES_imputed$PregnantNow, useNA = "always") %>%
       #  prop.table() %>%
       #  round(digits = 2) %>% 
         kable(caption="After imputation")
-
 ```
 
-However, NHANES Data after Feature Engineering: no more NAs in any column.
+For now, I'll leave these new values inside the imputed dataset though.
+
+However, NHANES Data after imputation: no more NAs in any column.
 
 ```{r contents}
 Hmisc::contents(NHANES_imputed)
 ```
 
-Scale the data frame. This is necessary because the $lambda$ hyperparameter of ridge regression and lasso regression need to have comparable values.
+Scale the data frame. This is necessary because the $\lambda$ hyperparameter of ridge regression and lasso regression works best when features have comparable values.
 
 ```{r lambda}
 
@@ -240,7 +242,7 @@ We will do Forward Selection.
 
 For Cross-validation we will use `r nfolds` folds.
 
-```{r eval=TRUE}
+```{r regsubsets, eval=TRUE}
 
 set.seed(11)
 
@@ -291,7 +293,7 @@ marrangeGrob(plots_list, nrow=1, ncol=2, top = "")
 
 ```
 
-
+This section follows the respective chapter from "[Introduction to Statistical Learning](http://www-bcf.usc.edu/~gareth/ISL/)".
 
 Ridge Regression and the Lasso
 -------------------------------
@@ -301,17 +303,16 @@ So we will set up a model-matrix `x` of predictors and a response vector `y`.
 
 ```{r glmnet}
 
-library(glmnet)
+
 x = model.matrix(BPSysAve ~ . - 1, data = NHANES_imputed) 
 y = NHANES_imputed$BPSysAve
 
 ```
 
-A ridge-regression model is created by calling `glmnet` with `alpha=0`, and a lasso regression with alpha=1. 
+A ridge-regression model is created by calling `glmnet` with `alpha = 0`, and a lasso regression with `alpha = 1`. 
 There is also a `cv.glmnet` function which will do the cross-validation.
 
 ```{r plotridge}
-library(ggfortify)
 fit.ridge <- glmnet(x, y, alpha = 0)
 
 autoplot(fit.ridge) + 
@@ -325,20 +326,20 @@ leg1str <- sprintf("log of best Lambda = %.3f  (%.3f)",
                    log(cv.ridge$lambda.min), cv.ridge$lambda.min)
 leg2str <- sprintf("log of best Lambda + 1 SE = %.3f (%.3f)", 
                    log(cv.ridge$lambda.1se), cv.ridge$lambda.1se)
-autoplot(cv.ridge) + xlab("log lambda") + 
-        xlab("log lambda") + ylab("CV Error") +
+autoplot(cv.ridge)  + 
+        xlab("lambda") + ylab("CV Error") +
         ggtitle("Ridge Regression: Cross Validation Error", sprintf("%s\n%s", leg1str, leg2str)) +
         theme(legend.position="none")
 
 
 ```
 
-Now we fit a lasso model; for this we use the default `alpha=1`.
+Fit a lasso model with `alpha=1`.
 
 ```{r lasso}
 fit.lasso <- glmnet(x, y)
 autoplot(fit.lasso) + 
-        xlab("log lambda") + ylab("Value of regularization coefficient") +
+        xlab("lambda") + ylab("Value of coefficient after regularization") +
         ggtitle("Lasso Regression", "(Legend is under construction)") +
         theme(legend.position="none")
 
@@ -410,17 +411,27 @@ coefs <- coef(lasso.tr, s = lam.best)
 coefs %>%  as.matrix() %>% as.data.frame() %>% 
         rename("coef" = `1`) %>%
         rownames_to_column() %>% 
-        filter(abs(coef) > 0.05) %>% 
+        filter(abs(coef) > 0.05, rowname != "(Intercept") %>% 
         arrange(desc(coef))
 ```
 
+#### Conclusions
+
+Ther are no conclusions. The imputation procedure has created too much misleading information.
+(TBC)
 
 ```{r htmltools}
 htmltools::HTML('<div class="alert alert-info"><b>What I&apos; learned from doing this:</b>
 <ul>
+<li>Practiced imputation of a dataset with many NA values present.
 <li>Applied Model Selection techniques, a little bit more independently than before 
-<li>Played a bit with the `ggvis` package, which generates vector graphics instead of SVGs 
+<li>Learned when best-subset-selection is infeasible (code not shown) 
+  
 </ul>
 </div>')
 
 ```
+
+Obligatory Disclaimer (from the NHANES Package Documentation):
+
+*Please note that the data sets provided in this package are derived from the NHANES database and have been adapted for educational purposes. As such, they are NOT suitable for use as a research database.*

@@ -18,6 +18,11 @@
   </url>
   
   <url>
+    <loc>/post/2018/02/bloodpressure-nhanes/</loc>
+    <lastmod>2018-02-10T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>/gallery/3d/</loc>
     <lastmod>2018-01-28T00:00:00+00:00</lastmod>
   </url>
@@ -28,28 +33,8 @@
   </url>
   
   <url>
-    <loc>/post/2018/01/uk-nhs-nurses/</loc>
-    <lastmod>2018-01-23T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
     <loc>/post/2018/01/bitcoin-interest/</loc>
     <lastmod>2018-01-21T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/about/2018-01-20--rmarkdown-with-eternal-js/</loc>
-    <lastmod>2018-01-21T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/post/2018/01/bitcoin-interest/</loc>
-    <lastmod>2018-01-20T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/post/2018/01/drawing-a-figshare-network-with-ggraph-and-tidygraph/</loc>
-    <lastmod>2018-01-16T00:00:00+00:00</lastmod>
   </url>
   
   <url>
@@ -58,16 +43,6 @@
   </url>
   
   <url>
-    <loc>/gallery/gallery_abstract/</loc>
-    <lastmod>2018-01-11T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/post/2018/01/tweets-33c3-vs-33c4/</loc>
-    <lastmod>2018-01-07T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
     <loc>/post/2018/01/tweets-33c3-vs-33c4/</loc>
     <lastmod>2018-01-07T00:00:00+00:00</lastmod>
   </url>
@@ -75,16 +50,6 @@
   <url>
     <loc>/post/2018/01/some-gists/</loc>
     <lastmod>2018-01-06T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/post/2018/01/some-gists/</loc>
-    <lastmod>2018-01-06T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/post/2018/01/constructing-a-tiny-social-network-visualization-from-the-rstats-hashtag/</loc>
-    <lastmod>2018-01-01T00:00:00+00:00</lastmod>
   </url>
   
   <url>
@@ -98,11 +63,6 @@
   </url>
   
   <url>
-    <loc>/post/2017/12/database/</loc>
-    <lastmod>2017-12-17T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
     <loc>/post/2017/12/soccerdb-schema-diagrams/</loc>
     <lastmod>2017-12-17T00:00:00+00:00</lastmod>
   </url>
@@ -118,21 +78,6 @@
   </url>
   
   <url>
-    <loc>/post/2017/12/learning-jq/</loc>
-    <lastmod>2017-12-16T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/post/2017/12/soccer-world-cup-bets-part-ii/</loc>
-    <lastmod>2017-12-09T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/post/2017/12/soccer-world-cup-bets-part-i/</loc>
-    <lastmod>2017-12-09T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
     <loc>/post/2017/12/soccer-world-cup-bets-part-ii/</loc>
     <lastmod>2017-12-09T00:00:00+00:00</lastmod>
   </url>
@@ -140,16 +85,6 @@
   <url>
     <loc>/post/2017/12/body-height-and-bmi-in-european-soccer-players-over-the-years-2008-2016/</loc>
     <lastmod>2017-12-04T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/post/2017/12/body-height-and-bmi-in-european-soccer-players-over-the-years-2008-2016/</loc>
-    <lastmod>2017-12-04T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/post/2017/12/the-oldest-active-european-soccer-player-in-season-2008/</loc>
-    <lastmod>2017-12-03T00:00:00+00:00</lastmod>
   </url>
   
   <url>
@@ -206,18 +141,6 @@
   </url>
   
   <url>
-    <loc>/categories/code-samples/</loc>
-    <lastmod>2017-12-16T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>/tags/commandline/</loc>
-    <lastmod>2017-12-16T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
     <loc>/tags/creative/</loc>
     <lastmod>2018-01-28T00:00:00+00:00</lastmod>
     <priority>0</priority>
@@ -248,18 +171,6 @@
   </url>
   
   <url>
-    <loc>/categories/gallery/</loc>
-    <lastmod>2018-01-11T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>/tags/github/</loc>
-    <lastmod>2018-01-06T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
     <loc>/</loc>
     <lastmod>2017-11-26T00:00:00+00:00</lastmod>
     <priority>0</priority>
@@ -284,38 +195,14 @@
   </url>
   
   <url>
-    <loc>/categories/networks/</loc>
-    <lastmod>2018-01-16T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
     <loc>/tags/note/</loc>
     <lastmod>2017-12-16T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>/tags/notes/</loc>
-    <lastmod>2018-01-06T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
     <loc>/categories/personal-blog/</loc>
     <lastmod>2018-01-21T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>/categories/personal-reference/</loc>
-    <lastmod>2017-12-16T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>/tags/photography/</loc>
-    <lastmod>2018-01-11T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -327,25 +214,13 @@
   
   <url>
     <loc>/post/</loc>
-    <lastmod>2018-01-23T00:00:00+00:00</lastmod>
+    <lastmod>2017-12-17T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>/tags/r/</loc>
     <lastmod>2017-12-18T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>/categories/r/</loc>
-    <lastmod>2018-01-16T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>/tags/reference/</loc>
-    <lastmod>2017-12-16T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -380,32 +255,14 @@
   </url>
   
   <url>
-    <loc>/categories/society/</loc>
-    <lastmod>2018-01-23T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
     <loc>/tags/</loc>
     <lastmod>2018-01-28T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>/tags/tidyverse/</loc>
-    <lastmod>2018-01-23T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
     <loc>/tags/time-series/</loc>
     <lastmod>2018-01-21T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>/tags/twitter/</loc>
-    <lastmod>2018-01-07T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   

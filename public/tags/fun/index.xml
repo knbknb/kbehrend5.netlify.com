@@ -22,17 +22,6 @@ In the future I want to include more complex renderings.</description>
     </item>
     
     <item>
-      <title>Comparing 33C3 and 34C3 tweets</title>
-      <link>/post/2018/01/tweets-33c3-vs-33c4/</link>
-      <pubDate>Sun, 07 Jan 2018 00:00:00 +0000</pubDate>
-      
-      <guid>/post/2018/01/tweets-33c3-vs-33c4/</guid>
-      <description>Why this analysis? There are two reasons:
- learn to process Twitter data at scale (~100MB-1GB/file - that’s large enough for me) get more info from/about the inspiring tweets from the CCC community  (This blogpost ist still a DRAFT - I want to publish quickly, even when an analysis is incomplete, or the text is a bit rough in places)
- Background Occasionally, over the last two years, I have gathered data from the Twitter Streaming API.</description>
-    </item>
-    
-    <item>
       <title></title>
       <link>/post/2018/01/constructing-a-tiny-social-network-visualization-from-the-rstats-hashtag/</link>
       <pubDate>Mon, 01 Jan 2018 00:00:00 +0000</pubDate>
@@ -42,32 +31,12 @@ In the future I want to include more complex renderings.</description>
     </item>
     
     <item>
-      <title>Constructing a tiny social-network visualization from the #Rstats hashtag</title>
-      <link>/post/2018/01/constructing-a-tiny-social-network-visualization-from-the-rstats-hashtag/</link>
-      <pubDate>Mon, 01 Jan 2018 00:00:00 +0000</pubDate>
-      
-      <guid>/post/2018/01/constructing-a-tiny-social-network-visualization-from-the-rstats-hashtag/</guid>
-      <description>(Under Construction) In 2016, I was harvesting tweets from the Twitter streaming API. I’ve used the #rstats hashtag as the search filter. This hashtag is commonly used by the R community on Twitter. Tag #rstats is more descriptive than the too short, unusable, #R hashtag which may not even be a valid filter expression.
-Here I do some exploratory analysis of these ~ 1000 tweets, and I visualize the interactions (the “mentions”) of the active Twitter users as a directed graph.</description>
-    </item>
-    
-    <item>
       <title>Soccer-Database: Extracting goal data from XML fragments</title>
       <link>/post/2017/12/database/</link>
       <pubDate>Mon, 18 Dec 2017 00:00:00 +0000</pubDate>
       
       <guid>/post/2017/12/database/</guid>
       <description>Using R to process XML fragments stored in a relational database.</description>
-    </item>
-    
-    <item>
-      <title>Soccer-Database: Extracting goal data from XML fragments</title>
-      <link>/post/2017/12/database/</link>
-      <pubDate>Sun, 17 Dec 2017 00:00:00 +0000</pubDate>
-      
-      <guid>/post/2017/12/database/</guid>
-      <description>This is part 2 of a 3-part series about Statistical Analysis of Soccer data.
- Part 1 shows the database diagram of the Sqlite database mentioned below. Part 2 (this page) describes how to preprocess some text data that was stored in an cryptic format inside the database Part 3 (not written yet) describes some statistical analysis of some aspect of this dataset.  Dataset The dataset used here is the “European Soccer Database” - 25k+ matches, players &amp;amp; teams attributes for European Professional Football from Kaggle.</description>
     </item>
     
     <item>
@@ -92,26 +61,6 @@ Dataset The dataset used here is the &amp;ldquo;European Soccer Database&amp;rdq
     </item>
     
     <item>
-      <title>Soccer Euro 2016 - Betting At My Workplace - Part 2</title>
-      <link>/post/2017/12/soccer-world-cup-bets-part-ii/</link>
-      <pubDate>Sat, 09 Dec 2017 00:00:00 +0000</pubDate>
-      
-      <guid>/post/2017/12/soccer-world-cup-bets-part-ii/</guid>
-      <description>Soccer championship Euro 2016 - A weekend project, from July 2016 Continued from a previous blog post, that explained the data preprocessing steps.
- I wrote this in July 2016 to make myself familiar with the R package ggplot2, and other tidyverse packages. This post contains exploratory analysis of an Euro 2016 Betting Game. Predictions were made, just for fun and a small amount of prize money, by a group of players at my workplace.</description>
-    </item>
-    
-    <item>
-      <title>Soccer Euro 2016 - Betting At My Workplace - Part I</title>
-      <link>/post/2017/12/soccer-world-cup-bets-part-i/</link>
-      <pubDate>Sat, 09 Dec 2017 00:00:00 +0000</pubDate>
-      
-      <guid>/post/2017/12/soccer-world-cup-bets-part-i/</guid>
-      <description>Soccer championship Euro 2016 - A weekend project, from July 2016 This is the data-preprocessing part of a blog post that has most of its visual content in a second part.
-Part 1: preprocessing the data  I wrote this in July 2016, to make myself familiar with the R packages ggplot2 and other tidyverse packages. Exploratory Analysis of an Euro 2016 Betting Game. Predictions were made, just for fun (and a small amount of prize money), by a group of players (colleagues, their friends and family members) from my workplace in Germany.</description>
-    </item>
-    
-    <item>
       <title>Soccer World Cup 2016 - Betting At My Workplace - Part I&#43;II</title>
       <link>/post/2017/12/soccer-world-cup-bets-part-ii/</link>
       <pubDate>Sat, 09 Dec 2017 00:00:00 +0000</pubDate>
@@ -130,32 +79,12 @@ Part 1: preprocessing the data  I wrote this in July 2016, to make myself famili
     </item>
     
     <item>
-      <title>Body Height and BMI in European Soccer Players over the years 2008-2016</title>
-      <link>/post/2017/12/body-height-and-bmi-in-european-soccer-players-over-the-years-2008-2016/</link>
-      <pubDate>Mon, 04 Dec 2017 00:00:00 +0000</pubDate>
-      
-      <guid>/post/2017/12/body-height-and-bmi-in-european-soccer-players-over-the-years-2008-2016/</guid>
-      <description>Change of body parameters in soccer players  How did body mass index and body size of professional football players change over the years? Body size, not so much. It has stayed rather constant between 2008 and 2016. Average height might have even fallen a little bit. Body weight and, correspondingly, Body Mass Index on the other hand, have fallen even more. This means the top clubs want thinner players. It also means, in soccer, possibilities to increase the athleticism of players is limited.</description>
-    </item>
-    
-    <item>
       <title>The oldest European Soccer Players in the late 2000s</title>
       <link>/post/2017/12/the-oldest-active-european-soccer-player-in-season-2008/</link>
       <pubDate>Sun, 03 Dec 2017 00:00:00 +0000</pubDate>
       
       <guid>/post/2017/12/the-oldest-active-european-soccer-player-in-season-2008/</guid>
       <description>While doing some quality-checks in Kaggle Dataset “European Soccer Database”, I found that in the late 2000s most of the oldest professional players active in top clubs were goalkeepers. Another veteran midfielder was Tugay Kerimoğlu, from Turkey. Born in 1970, he played the English Premier League until… when, exactly?</description>
-    </item>
-    
-    <item>
-      <title>The oldest active European Soccer Player in season 2008</title>
-      <link>/post/2017/12/the-oldest-active-european-soccer-player-in-season-2008/</link>
-      <pubDate>Sun, 03 Dec 2017 00:00:00 +0000</pubDate>
-      
-      <guid>/post/2017/12/the-oldest-active-european-soccer-player-in-season-2008/</guid>
-      <description>Still playing with a Soccer Database from Kaggle.com  As an exercise, I wanted to find the oldest players participating in any match. During my analysis I also learned something about the data quality of this Kaggle dataset.
- As mentioned in a previous blogpost, I’ve downloaded a zipfile (36 MB) with Football data from data science community Kaggle.com. The archive contained an SQLite Database.
-library(DBI) con &amp;lt;- dbConnect(odbc::odbc(), &amp;quot;well-sqlite-footballdb&amp;quot;) For the sake of brevity, to see the R packages I’ve included to process the data, see the previous blogpost.</description>
     </item>
     
     <item>

@@ -20,46 +20,5 @@
       <description>Visualizing (1) Wikipedia Pageviews, (2) NYT Article Mentions, (3) Google Searches and (4) Exchange Rates from 2012 to early 2018.</description>
     </item>
     
-    <item>
-      <title>Global interest in Bitcoin over Time</title>
-      <link>/post/2018/01/bitcoin-interest/</link>
-      <pubDate>Sat, 20 Jan 2018 00:00:00 +0000</pubDate>
-      
-      <guid>/post/2018/01/bitcoin-interest/</guid>
-      <description>Bitcoin: Visualizing (1) Wikipedia Pageviews, (2) Mentions in the New York Times, (3) Google Searches and (4) Exchange Rates from 2015 to early 2018. Simple timeseries plots (created from Web-API data) show that these four are strongly correlated, except when they aren&amp;apos;t.  In this post I’ll display global interest in Bitcoin and Ethereum over time, according to accesses to their Wikipedia articles, mentions in the New York Times, and as Google Searches.</description>
-    </item>
-    
-    <item>
-      <title>Comparing 33C3 and 34C3 tweets</title>
-      <link>/post/2018/01/tweets-33c3-vs-33c4/</link>
-      <pubDate>Sun, 07 Jan 2018 00:00:00 +0000</pubDate>
-      
-      <guid>/post/2018/01/tweets-33c3-vs-33c4/</guid>
-      <description>Why this analysis? There are two reasons:
- learn to process Twitter data at scale (~100MB-1GB/file - that’s large enough for me) get more info from/about the inspiring tweets from the CCC community  (This blogpost ist still a DRAFT - I want to publish quickly, even when an analysis is incomplete, or the text is a bit rough in places)
- Background Occasionally, over the last two years, I have gathered data from the Twitter Streaming API.</description>
-    </item>
-    
-    <item>
-      <title>Some Gists</title>
-      <link>/post/2018/01/some-gists/</link>
-      <pubDate>Sat, 06 Jan 2018 00:00:00 +0000</pubDate>
-      
-      <guid>/post/2018/01/some-gists/</guid>
-      <description>Link Collection for my own personal use Github ‘Gists’ are code samples that are too short for, or not worth creating a new standalone repository.
-For example
- One-off scripts unfinished/half-working scripts forked github gists from other people copies of codesamples from other people, slightly edited or customized  This webpage is just for my own personal use, a reminder for myself.
-For now, I list only the links to the gists.</description>
-    </item>
-    
-    <item>
-      <title>Learning jq</title>
-      <link>/post/2017/12/learning-jq/</link>
-      <pubDate>Sat, 16 Dec 2017 00:00:00 +0000</pubDate>
-      
-      <guid>/post/2017/12/learning-jq/</guid>
-      <description>A grabbag of commands  Some notes about learning jq, the lightweight and flexible command-line JSON processor. I&amp;apos;ll extend and improve this blog post in the next months, in Q1/2018. This page is a notepad for my own use, it has not the purpose to teach anyone. I need to be fluent with the JSON parsing tool jq. Very often I have to interact with JSON data: When I interact with APIs, when parsing scraped Twitter data, when doing SPARQL queries…</description>
-    </item>
-    
   </channel>
 </rss>

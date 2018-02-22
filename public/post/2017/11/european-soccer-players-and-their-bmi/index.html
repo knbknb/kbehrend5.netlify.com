@@ -293,12 +293,7 @@ gridExtra::marrangeGrob(list(playerhist, usmalehist), nrow=1, ncol=2, top = &quo
 <p>Processing the column names is a bit messy, so this will not be shown here.</p>
 <p>End result, see Table 1:</p>
 <table>
-<colgroup>
-<col width="35%" />
-<col width="2%" />
-<col width="9%" />
-<col width="52%" />
-</colgroup>
+<caption><span id="tab:table1">Table 1: </span>Table 1: Soccer players over 190 size ranked by Body Mass Index, BMI. (source: Kaggle Dataset, Wikipedia via Google Knowledge Graph API)</caption>
 <thead>
 <tr class="header">
 <th align="left">Player Name</th>
@@ -342,18 +337,20 @@ gridExtra::marrangeGrob(list(playerhist, usmalehist), nrow=1, ncol=2, top = &quo
 <td align="left"><a href="https://en.wikipedia.org/wiki/Connor_Ripley">Connor Ripley</a></td>
 <td align="right">26.64</td>
 <td align="left">English soccer player</td>
-<td align="left">Connor James Ripley is an English professional footballer who plays for Burton Albion, on loan from Middlesbrough, as a goalkeeper.</td>
+<td align="left">Connor James Ripley is an English professional footballer who plays for Bury, on loan from Middlesbrough, as a goalkeeper.</td>
 </tr>
 </tbody>
 </table>
-<p>Surprisingly, German goalie <a href="https://en.wikipedia.org/wiki/Tim_Wiese">Tim Wiese</a> has the highest BMI. His career in the Bundesliga has ended, but he made some headlines in 2014-2016 because he did bodybuilding, an tried -temporarily- to pursue a career in Wrestling. See German Wikipedia.</p>
+<p>Surprisingly, German goalie <a href="https://en.wikipedia.org/wiki/Tim_Wiese">Tim Wiese</a> has the highest BMI. His career in the Bundesliga has ended, but he made some headlines in 2014-2016 because he did bodybuilding, and tried -temporarily- to pursue a career in Wrestling. See <a href="https://de.wikipedia.org/wiki/Tim_Wiese">German Wikipedia</a>.</p>
 <p>His BMI is 29.6 m/kg². How large an outlier is this? Let’s plot some histograms:</p>
 <pre class="r"><code>vlines &lt;- map(players_large_top_detail[, &quot;BMI&quot;], c) %&gt;%  unlist()
+
 Player %&gt;%
-  ggplot(aes(bmi, fill=size)) +
+  ggplot() +
   geom_vline(xintercept = vlines, linetype=&quot;dotted&quot;) +
-  geom_histogram(aes(y = ..density..), alpha=0.5, bins = diff_bmi *3) +
-  decorate(np)</code></pre>
+  geom_histogram(aes(bmi, y = ..density.., fill=size), alpha=0.5, bins = diff_bmi *3) +
+  decorate(np) +
+  geom_text(aes(x = BMI, y = -0.022, label = name), data = players_large_top_detail[1:4,], hjust = 1, vjust = 1, angle = 270) </code></pre>
 <p><img src="/post/2017-11-19-european-soccer-players--bmi_files/figure-html/histogram_all-1.png" width="480" /></p>
 <p>In the plot above, the BMIs of the players of table 1 are shown as dotted lines.</p>
 <p>(Here the age classes have been stacked on top of each other, in contrast to the previous histogram with the US men)</p>
@@ -364,8 +361,8 @@ Player %&gt;%
   geom_density(alpha = 0.5) +
   stat_function(
     fun = function(x) dnorm(x, 
-                            dnorm_fit$estimate[&quot;mean&quot;], 
-                            dnorm_fit$estimate[&quot;sd&quot;]),
+                dnorm_fit$estimate[&quot;mean&quot;], 
+                dnorm_fit$estimate[&quot;sd&quot;]),
     color = &quot;red&quot;,
     size = 0.5
   ) +
@@ -387,7 +384,7 @@ Player %&gt;%
 </div>
 <div id="appendix" class="section level3">
 <h3>Appendix</h3>
-<p>This post is also available - maybe in a better, more readable version at [my Github Repo for this site](<a href="https://github.com/knbknb/kbehrends.netlify.com/blob/master/content/post/" class="uri">https://github.com/knbknb/kbehrends.netlify.com/blob/master/content/post/</a>.</p>
+<p>This post is also available - maybe in a better, more readable version at <a href="https://github.com/knbknb/kbehrends.netlify.com/blob/master/content/post/">my Github Repo for this site</a>.</p>
 <p>My blog: <a href="https://kbehrends.netlify.com">https://kbehrends.netlify.com</a>.</p>
 </div>
 

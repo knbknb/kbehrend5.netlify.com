@@ -50,7 +50,7 @@ library(kableExtra) # styled output
 
 theme_set(theme_bw())
 
-datadir <- "data/twitter"
+datadir <- "data_private/twitter"
 # (extracts from the full tweets data, only id, creation_date, tweet_text)
 infile0 <- here::here(datadir, "33c3.created_at.json")
 infile1 <- here::here(datadir, "34c3.created_at.json")

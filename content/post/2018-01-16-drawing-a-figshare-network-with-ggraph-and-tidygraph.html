@@ -785,7 +785,7 @@ p2 &lt;-  ggplot(categories, aes(parent_id)) +
 <p><code>tidygraph</code> has a function for turning a data frame structured like this, with edges as rows, into an actual tidy graph:</p>
 <pre><code>## # A tbl_graph: 1401 nodes and 1380 edges
 ## #
-## # A directed acyclic simple graph with 21 components
+## # A rooted forest with 21 trees
 ## #
 ## # Node Data: 1,401 x 1 (active)
 ##   name 
@@ -814,20 +814,9 @@ p2 &lt;-  ggplot(categories, aes(parent_id)) +
 <p>Which edges have the parent_id 48?</p>
 <pre class="r"><code>igraph::E(categories_g)[[inc(&#39;48&#39;)]]  %&gt;%
         head(10)</code></pre>
-<pre><code>## + 10/1380 edges from cfcbf72 (vertex names):
+<pre><code>## + 10/1380 edges from 83eef57 (vertex names):
 ##  [1] 1 -&gt;48 7 -&gt;48 8 -&gt;48 10-&gt;48 11-&gt;48 12-&gt;48 13-&gt;48 14-&gt;48 15-&gt;48 16-&gt;48</code></pre>
-<pre class="r"><code># similar call
-# incident(categories_g, &#39;48&#39;, mode = c(&quot;in&quot;))</code></pre>
 <p>There are 114 such edges.</p>
-<pre class="r"><code>categories_g &lt;- set_edge_attr(categories_g,
-                              &quot;subject&quot;,
-                              value=categories$title)
-categories_g &lt;- set_edge_attr(categories_g,
-                              &quot;id&quot;,
-                              value=categories$id)
-categories_g &lt;- set_edge_attr(categories_g,
-                              &quot;parent_id&quot;,
-                              value=categories$parent_id)</code></pre>
 <p>Now, how to assign names to the category ids.</p>
 <p>The nodes and edges are shown separately, with the nodes numbered (those numbers are used in the edges).</p>
 </div>

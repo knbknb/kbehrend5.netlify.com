@@ -13,4 +13,3 @@ stringr
 forcats
 tidygraph
 ggraph
-bindrcpp

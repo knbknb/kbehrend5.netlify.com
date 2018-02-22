@@ -74,11 +74,11 @@ library(assertthat) # is.writeable</code></pre>
 <li>true end results of the games played (51 matches)</li>
 <li>prize money winners (36 people)</li>
 </ul>
-<pre class="r"><code>datadir &lt;- &quot;data/gfzock&quot;
+<pre class="r"><code>datadir &lt;- &quot;data_private/gfzock&quot;
 see_if(is.readable(datadir))</code></pre>
 <pre><code>## [1] FALSE
 ## attr(,&quot;msg&quot;)
-## [1] &quot;Path &#39;data/gfzock&#39; does not exist&quot;</code></pre>
+## [1] &quot;Path &#39;data_private/gfzock&#39; does not exist&quot;</code></pre>
 <pre class="r"><code>infile1 &lt;- here::here(datadir, &quot;EM2016_compiled_final.csv&quot;)
 infile2 &lt;- here::here(datadir, &quot;real_games_scores_full.txt&quot;)
 infile3 &lt;- here::here(datadir, &quot;gfzock_prize-money-winners.csv&quot;)

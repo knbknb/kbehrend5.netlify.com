@@ -158,7 +158,7 @@ Figure 3: Blood Pressure by Age Group.
 <p>Fit a linear regression model (Blood Pressure as a function of Age and Body Weight) to the entire <code>bloodpressure2</code> subset, just as above for the tiny dataset.</p>
 <p>I have included the interaction term <code>age:weight</code> because from experience it makes sense: older bodies metabolize more differently, and thus at each age the human body has different rates of gaining weight.</p>
 <div class="alert alert-warning">There is a trend: systolic blood pressure increases with age. The rate is about <b>0.405 mm Hg/year.</b> Half as much as for the toy dataset. For data from a group <i>similar to me</i> (men only, 45+ yrs, 70-80 kg) the rate is ~6 mmHg/decade, a bit higher than 4.1 mmHg/decade. (See below)</div>
-<p>For the R experts:</p>
+<p>For the R experts, the model summary:</p>
 <pre><code>## 
 ## Call:
 ## lm(formula = BPSysAve ~ Age * Weight, data = bloodpressure2)
@@ -194,7 +194,7 @@ Figure 4: Predicted vs Measured Blood Pressure.
 Figure 5: Blood Pressure as a function of Age and Weight. Predicted values are shown in pink/red, observed values in black. Blue line is BP predicted a function of Age alone. Black line is BP modeled with weight/age interaction effect.
 </p>
 </div>
-<p>In the plot above, <em>pink symbols</em> are predicted values from age and weight <em>without interaction</em>, whereas <em>red</em> symbols represent predictions which <em>include an interaction term</em> between age and weight. The interaction term seems to become increasingly more relevant with higher ages, changing the sign of the effect size. Honestly, I am <a href="https://stats.stackexchange.com/questions/5450/what-if-interaction-wipes-out-my-direct-effects-in-regression">not sure what I am looking at here</a>.</p>
+<p>In the plot above, <em>pink symbols</em> are predicted values from age and weight <em>without interaction</em>, whereas <em>red</em> symbols represent predictions which <em>include an interaction term</em> between age and weight. The interaction term seems to become increasingly more relevant with higher ages, changing the sign of the effect size. Honestly, I am <a href="https://stats.stackexchange.com/questions/5450/what-if-interaction-wipes-out-my-direct-effects-in-regression">not sure what I am looking at here</a>. (TODO)</p>
 <p>Maybe we need to split by age group again?</p>
 </div>
 <div id="boxplots-of-blood-pressures-of-10-year-age-groups" class="section level4">
@@ -213,11 +213,10 @@ Figure 6: Blood Pressure by Age group. Orange Symbols are sample means.
 <p>In the last years my weight was between 70 and 80 Kilos, and I was always slightly to moderately overweight, so let’s say my <a href="https://en.wikipedia.org/wiki/File:BMI_chart.svg">Body Mass Index</a> varied between 25 to 30.</p>
 <p>Let’s build a new dataset <code>bloodpressure3</code> similar to the toy dataset from Figure 1, but with data from real people. We’ll use our subset <code>bloodpressure2</code> from the NHANES data, by filtering with these citeria:</p>
 <pre class="r"><code>bloodpressure3 &lt;- bloodpressure2 %&gt;% 
-        filter(BMI &gt;= 25 , BMI &lt;=30,
-               Weight &gt;=70, Weight &lt;= 80, 
-               Gender == &quot;male&quot;, 
-               Age &gt;= 45 ) %&gt;% 
-        select(-Gender, -prediction)
+         filter(BMI &gt;= 25 , BMI &lt;= 30,
+               Weight &gt;=70, Weight &lt;= 80) %&gt;% 
+        filter( Gender == &quot;male&quot;, Age &gt;= 45 ) %&gt;% 
+         select(-Gender, -prediction)
 
 bloodpressure3_model &lt;- lm(BPSysAve ~ Age * Weight, data = bloodpressure3) #
 bloodpressure3$Predictions &lt;- predict(bloodpressure3_model) # same data

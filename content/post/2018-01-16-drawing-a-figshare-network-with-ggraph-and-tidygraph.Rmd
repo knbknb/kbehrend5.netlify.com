@@ -65,7 +65,7 @@ The input file (part) is a JSON File.
 
 ```{r infile, echo=FALSE}
 
-categories_file <- here::here("data/network/figshare-categories.RDS")
+categories_file <- here::here("data_private/network/figshare-categories.RDS")
 
  if(! file.exists(categories_file)) {
         categories <- httr::GET("http://api.figshare.com/v2/categories") %>%
@@ -128,9 +128,9 @@ data.frame(pos = 1:length(unused_ids),
         ggplot(aes(pos, id)) +
         geom_point(size=0.2) + ylim(c(0,250)) +
         scale_x_continuous(limits=c(0,50)) +
-        theme(theme_bw()) +
         ggtitle("Unused Category IDs", 
                 subtitle = "Roughly every 3rd number is not assigned to any category ID")
+
 ```
 
 
