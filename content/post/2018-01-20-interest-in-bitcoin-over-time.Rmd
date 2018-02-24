@@ -39,7 +39,7 @@ Preprocessing entails:
 - Fetching the data
 
 At this time, no user registration process is required to get to the data. 
-No API keys and authentication steps are necessary to call the Web-APIs mentioned below. 
+Except for the New York Times Data, no API keys and authentication steps are necessary to call the Web-APIs mentioned below. 
 
 #### Load  R packages
 
@@ -248,7 +248,7 @@ htmltools::HTML('<div class="alert alert-success"><b>Conclusion</b></br>
 What I learned from doing this:
 <ul>
 <li> Collecting API data
-<li> <a href="/post/2017/12/learning-jq/">jq</a> usage
+<li> <a href="/post/2017/12/learning-jq/">jq</a> usage, during preprocessing (code not shown))
 <li> Many small R tricks (primarily ggplot2 and RMarkdown stuff)
 </ul>
 </div>')
