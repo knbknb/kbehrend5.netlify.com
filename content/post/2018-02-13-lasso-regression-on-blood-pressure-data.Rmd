@@ -56,6 +56,8 @@ library(glmnet)    # ridge regrssion and lasso
 
 htmltools::HTML('<div class="alert alert-info"><b>Performing model selection techniques  on anonymized data from 10000 people representing the general US Population</b>. I am assuming Blood Pressure is a response variable. There are ~ 70 predictor variables.<br>
 This is not a tutorial, but more a personal learning experience, and work in progress.
+<div>This blog post deals actually with two subjects, variable imputation and model selection. Maybe I&apos;ll split it up into two posts later</div>
+
 </div>')
 
 ```
@@ -66,7 +68,7 @@ In the preceding blogpost I noticed that Systolic Blood Pressure is correlated w
 
 Here I'll continue with exploratory analysis. More basically, can I determine some other variables (out of the `r ncol(NHANES)`) that are also influencing the Blood Pressure in some way?
 
-I am not trying to do groundbreaking medical research here. Hey I'm just a blogger, playing with a dataset for personal entertainment, trying out some of those fancy Machine Learning algorithms that I encountered during MOOC homework assignments. This time I'll try these techniques out on larger datasets that *I* find interesting.
+I am not trying to do groundbreaking medical research here. Hey I'm just a blogger, playing with a dataset for personal entertainment, trying out some of those fancy Machine Learning algorithms that I encountered during MOOC homework assignments. This time I'll try these techniques out on a larger dataset that *I* find interesting.
 
 
 #### NHANES dataset
@@ -79,6 +81,7 @@ The [*NHANES* dataset](https://www.cdc.gov/nchs/nhanes/participant_video.htm) is
 
 
 #### Feature Engineering
+
 Table 1 shows  the column names and (further below, table 4) some other important metadata of the NHANES dataset. 
 
 
@@ -108,6 +111,9 @@ nhanes_defs <- nhanes_defs %>%
         mutate(Action= case_when(
 # (str_detect(Meaning, "Yes") == TRUE)  & 
 #  str_detect(Meaning, "No") == TRUE ~ action2, 
+               
+         Column == "ID" ~ action1,
+         Column == "SurveyYr" ~ action1,        
          Column == "ID" ~ action1,
          Column == "AgeMonths" ~ action1,
          Column == "AgeDecade" ~ action1,
@@ -116,7 +122,7 @@ nhanes_defs <- nhanes_defs %>%
          #Column == "MaritalStatus" ~ action1,
          Column == "Length" ~ action1,
          Column == "HeadCirc" ~ action1,
-         Column == "HIncome" ~ action1,
+         Column == "HHIncome" ~ action1,
          Column == "MaritalStatus" ~ action1,
          Column == "BMICatUnder20yrs" ~ action1,
          Column == "BMI_WHO" ~ action1,

@@ -28,11 +28,13 @@ keywords:
 <h4>Introduction</h4>
 <div class="alert alert-info"><b>Performing model selection techniques  on anonymized data from 10000 people representing the general US Population</b>. I am assuming Blood Pressure is a response variable. There are ~ 70 predictor variables.<br>
 This is not a tutorial, but more a personal learning experience, and work in progress.
+<div>This blog post deals actually with two subjects, variable imputation and model selection. Maybe I&apos;ll split it up into two posts later</div>
+
 </div>
 <p>This is a follow-up to <a href="/post/2018/02/bloodpressure-nhanes">an exploratory data-analysis post</a> of mine. When I was nearly done with writing that post, some new questions came to my mind.</p>
 <p>In the preceding blogpost I noticed that Systolic Blood Pressure is correlated with age and weight, but the relationship is complicated: the trend was noisy and the correlation was weak, and the interaction term in the linear model seems to play an important role.</p>
 <p>Here I’ll continue with exploratory analysis. More basically, can I determine some other variables (out of the 76) that are also influencing the Blood Pressure in some way?</p>
-<p>I am not trying to do groundbreaking medical research here. Hey I’m just a blogger, playing with a dataset for personal entertainment, trying out some of those fancy Machine Learning algorithms that I encountered during MOOC homework assignments. This time I’ll try these techniques out on larger datasets that <em>I</em> find interesting.</p>
+<p>I am not trying to do groundbreaking medical research here. Hey I’m just a blogger, playing with a dataset for personal entertainment, trying out some of those fancy Machine Learning algorithms that I encountered during MOOC homework assignments. This time I’ll try these techniques out on a larger dataset that <em>I</em> find interesting.</p>
 </div>
 <div id="nhanes-dataset" class="section level4">
 <h4>NHANES dataset</h4>
@@ -73,6 +75,7 @@ SurveyYr
 Which survey the participant participated in.
 </td>
 <td style="text-align:left;">
+drop
 </td>
 </tr>
 <tr>
@@ -208,6 +211,7 @@ HHIncome
 Total annual gross income for the household in US dollars. One of 0 - 4999, 5000 - 9,999, 10000 - 14999, 15000 - 19999, 20000 - 24,999, 25000 - 34999, 35000 - 44999, 45000 - 54999, 55000 - 64999, 65000 - 74999, 75000 - 99999, or 100000 or More.
 </td>
 <td style="text-align:left;">
+drop
 </td>
 </tr>
 <tr>

@@ -4,7 +4,7 @@ author: Knut Behrends
 date: '2018-02-23'
 slug: bloodpressure-lasso
 categories: [health]
-tags: [health]
+tags: [health, Personal-Blog, variable-imputation, model-selection]
 draft: no
 showonlyimage: no
 css: custom.css
@@ -14,7 +14,10 @@ url: /post/2018/02/bloodpressure-lasso/
 summary: none
 keywords:
   - Personal-Blog
+  - Variable Imputation
+  - Model Selection
 usePhotoswipe: no
 ---
 
-Working with anonymous patient data.
+Working with anonymous patient data. 
+Variable Imputation, regression model selection.
