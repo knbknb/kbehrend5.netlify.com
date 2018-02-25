@@ -56,7 +56,9 @@ library(glmnet)    # ridge regrssion and lasso
 
 htmltools::HTML('<div class="alert alert-info"><b>Performing model selection techniques  on anonymized data from 10000 people representing the general US Population</b>. I am assuming Blood Pressure is a response variable. There are ~ 70 predictor variables.<br>
 This is not a tutorial, but more a personal learning experience, and work in progress.
-<div>This blog post deals actually with two subjects, variable imputation and model selection. Maybe I&apos;ll split it up into two posts later</div>
+<div>This blog post deals actually with two subjects: variable imputation and model selection. <br>
+Imputation is done incorrectly here, I know that.
+Maybe I&apos;ll split it up into two posts later - this post is too long already, anyway.</div>
 
 </div>')
 
@@ -175,7 +177,7 @@ More Feature Engineering Measures:
 - Remove columns, marked by me as "drop" in table 1 (measured for children/youth-only, etc).
 - Impute missing values with "mice" method (Multiple Imputation by Chained Equations)
 
-Imputation is done with the [MICE method](http://stefvanbuuren.github.io/mice/): "Multiple Imputation by Chained Equations".
+
 
 
 ```{r NHANES_imputed, echo=FALSE, error=TRUE}
@@ -195,6 +197,8 @@ if (file.exists(NHimp)){
 }
 ```
 
+Imputation is done with the [MICE method](http://stefvanbuuren.github.io/mice/): "Multiple Imputation by Chained Equations".
+
 The method magically removes all NA values by  guessing intelligently. 
 It can create nonsensical values though, e.g. pregnant fathers.
 
@@ -213,6 +217,13 @@ table(NHANES_imputed$Gender, NHANES_imputed$PregnantNow, useNA = "always") %>%
 ```
 
 For now, I'll leave these new values inside the imputed dataset though.
+```{r}
+htmltools::HTML('<div class="alert alert-danger"><b>NOTE</b>
+                The imputation process with default values onl did not really produce  meaningful values. Moreover, using ~50 columns for imputation is a bit too much.
+However  my goal was to try out model selection algorithms, 
+and imputing correctly was less a concern.  
+                </div>')
+```
 
 However, NHANES Data after imputation: no more NAs in any column.
 

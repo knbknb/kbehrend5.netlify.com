@@ -28,7 +28,9 @@ keywords:
 <h4>Introduction</h4>
 <div class="alert alert-info"><b>Performing model selection techniques  on anonymized data from 10000 people representing the general US Population</b>. I am assuming Blood Pressure is a response variable. There are ~ 70 predictor variables.<br>
 This is not a tutorial, but more a personal learning experience, and work in progress.
-<div>This blog post deals actually with two subjects, variable imputation and model selection. Maybe I&apos;ll split it up into two posts later</div>
+<div>This blog post deals actually with two subjects: variable imputation and model selection. <br>
+Imputation is done incorrectly here, I know that.
+Maybe I&apos;ll split it up into two posts later - this post is too long already, anyway.</div>
 
 </div>
 <p>This is a follow-up to <a href="/post/2018/02/bloodpressure-nhanes">an exploratory data-analysis post</a> of mine. When I was nearly done with writing that post, some new questions came to my mind.</p>
@@ -1213,7 +1215,11 @@ NA
 </tr>
 </tbody>
 </table>
-<p>For now, I’ll leave these new values inside the imputed dataset though.</p>
+<p>For now, I’ll leave these new values inside the imputed dataset though. <div class="alert alert-danger"><b>NOTE</b>
+                The imputation process with default values onl did not really produce  meaningful values. Moreover, using ~50 columns for imputation is a bit too much.
+However  my goal was to try out model selection algorithms, 
+and imputing correctly was less a concern.  
+                </div></p>
 <p>However, NHANES Data after imputation: no more NAs in any column.</p>
 <p>Table 4: NHANES Column definitions and some values. These metadata show, for example, the unique distinct values of columns where it makes sense to report them (e.g. male/female for column “gender”).</p>
 <pre><code>## 

@@ -139,3 +139,6 @@ dateFormat = "2006-01-02"
     title = "From my blog"
     subtitle = ""
 
+[taxonomies]
+    tag = "tags"
+    category ="categories"
