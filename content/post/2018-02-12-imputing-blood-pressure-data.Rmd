@@ -1,0 +1,272 @@
+---
+title: Imputed Blood Pressure Data
+author: Knut Behrends
+date: 2018-02-12
+slug: bloodpressure-imputing
+categories: [health]
+tags: [health, medicine, variable-imputation]
+draft: yes
+output:
+  html_document:
+    toc: no
+    css: styles.css
+    fig_caption: yes
+    keep_md: no
+image: /static/img/post/thumb/lasso-1-350.png
+banner: img/post/thumb/lasso-1-150.png
+summary: ''
+keywords:
+  - Personal-Blog
+  - rstats
+  - health
+---
+
+
+
+```{r setup, include=FALSE}
+library(knitr)
+opts_chunk$set(cache = FALSE, warning = FALSE, message = FALSE, 
+               echo = FALSE, tidy = FALSE, width = 7, fig.width=9)
+options(digits = 3, tibble.print_min = 6)
+options(knitr.table.format = "html") 
+library(kableExtra)
+```
+
+```{r pkgs1}
+library(mice)   # imputation
+
+library(NHANES) # Body Shape + related measurements from 10000 US citizens
+data(NHANES)
+
+library(rvest)
+library(tidyverse)
+library(leaps)     # forward/backward selection
+theme_set(theme_bw())
+scale_colour_discrete <- function(...) scale_color_brewer(palette="Set1")
+library(htmltools) # when markdown is not enough
+```
+
+####  Variable imputation 
+
+
+```{r abstr}
+
+htmltools::HTML('<div class="alert alert-info"><b>Performing variable imputation on anonymized data from 10000 people representing the general US Population</b>. 
+This is not a tutorial, but more a personal learning experience, and work in progress.
+<div><br>
+Imputation is done incorrectly here, I know that.
+This blogpost contains preprocessing steps for another following blogpost about lasso-regression.</div>
+
+</div>')
+
+```
+
+This is a follow-up to [an exploratory data-analysis post](/post/2018/02/bloodpressure-nhanes) of mine. When I was nearly done with writing that post, some new questions came to my mind.
+
+Here I'll continue with preprocessing. More basically, can I determine some other variables (out of the `r ncol(NHANES)`) that are also influencing the Blood Pressure in some way?
+
+I am not trying to do groundbreaking medical research here. Hey I'm just a blogger, playing with a dataset for personal entertainment, trying out some of those fancy Machine Learning algorithms that I encountered during MOOC homework assignments. This time I'll try these techniques out on a larger dataset that *I* find interesting.
+
+
+#### NHANES dataset
+
+NHANES is  the US National Health and Nutrition Examination Study. It is a carefully curated, larger medical survey aiming to get a representative sample of the general US population. The survey is carried out periodically.
+
+The [*NHANES* dataset](https://www.cdc.gov/nchs/nhanes/participant_video.htm) is available as an R package on [CRAN](https://cran.r-project.org/package=NHANES). I have used package version 2.1.0, specifically "NHANES 2009-2012 with adjusted weighting". This dataset contains data from two collection periods, 2009-2010 and 2011-2012.
+
+
+#### Feature Engineering
+
+Table 1 shows  the column names and (further below, table 4) some other important metadata of the NHANES dataset. 
+
+
+```{r names_defs}
+x <- read_html(x = here::here("data_private/nhanes_datadict_raw.html"))
+dls <- html_nodes(x, xpath="//dl") 
+nhanes_defs = data.frame()
+dl <- dls[[1]]
+dts <- html_nodes(dl, xpath="//dt")  
+dds <- html_nodes(dl, xpath="//dd")
+nhanes_defs <- data_frame(
+                  "Column" = dts %>% 
+                           html_nodes(xpath='//dt')%>% html_text(),
+                   "Meaning" = dds %>% html_nodes(xpath='//dd')%>% 
+                           html_text() %>% str_trim() %>% 
+                           str_replace_all("\t", " ") %>%  
+                           str_replace("\"","")
+                   )
+```
+
+```{r drop}
+
+action1 <- "drop"
+action2 <- "Yes/No"
+
+nhanes_defs <- nhanes_defs %>%
+        mutate(Action= case_when(
+# (str_detect(Meaning, "Yes") == TRUE)  & 
+#  str_detect(Meaning, "No") == TRUE ~ action2, 
+               
+         Column == "ID" ~ action1,
+         Column == "SurveyYr" ~ action1,        
+         Column == "ID" ~ action1,
+         Column == "AgeMonths" ~ action1,
+         Column == "AgeDecade" ~ action1,
+         Column == "Race3" ~ action1,
+         #Column == "Education" ~ action1,
+         #Column == "MaritalStatus" ~ action1,
+         Column == "Length" ~ action1,
+         Column == "HeadCirc" ~ action1,
+         Column == "HHIncome" ~ action1,
+         Column == "MaritalStatus" ~ action1,
+         Column == "BMICatUnder20yrs" ~ action1,
+         Column == "BMI_WHO" ~ action1,
+         str_detect(Column, pattern=regex("^BP")) == TRUE &
+            str_detect(Column, pattern=regex("Ave")) == FALSE ~ action1,
+         str_detect(Column, pattern=regex("^TVHrs")) == TRUE ~ action1,
+         str_detect(Column, pattern=regex("^CompHrs")) == TRUE ~ action1,
+         # Column == "nPregnancies" ~ action1,
+         # Column == "nBabies" ~ action1,
+         # Column == "PregnantNow" ~ action1,
+         # Column == "Age1stBaby" ~ action1,
+         str_detect(Column, "WTINT2YR") == TRUE ~ action1,
+         #Column == "TVHrsDayChild" ~ action1,
+         #Column == "CompHrsDayChild" ~ action1,
+#         str_detect(Column, pattern=regex("TVHrs|CompHrs|AgeDecade")) ==
+#                 TRUE ~ action1,
+        
+         TRUE ~ ""))
+
+```
+
+```{r tabledef, cache=FALSE}
+
+knitr::kable(nhanes_defs, row.names = 1, 
+              caption = "Column names in NHANES data set,\
+              and columns that will be dropped") %>% 
+        kable_styling(bootstrap_options = 
+                c("striped", "hover"))
+
+```
+
+```{r dropcols}
+
+drop_cols <- nhanes_defs %>% 
+        filter(Action == action1) %>% select(Column) %>%
+        as_vector()
+
+# factor_cols <- nhanes_defs %>% 
+#         filter(Action == action2) %>% select(Column) %>% 
+#         as_vector()
+#dfr <- NHANES %>% select(Age, AgeDecade) %>% filter(is.na(AgeDecade))
+
+
+```
+
+More Feature Engineering Measures:
+
+- Remove people less than 20 years of age
+- Remove columns, marked by me as "drop" in table 1 (measured for children/youth-only, etc).
+- Impute missing values with "mice" method (Multiple Imputation by Chained Equations)
+
+
+
+
+```{r NHANES_imputed, echo=FALSE, error=TRUE}
+
+NHANES <- NHANES %>% 
+        filter(Age >= 20) %>% 
+        select(setdiff(colnames(NHANES), drop_cols) )
+wd <- "content/post"
+if(! str_detect(getwd(), wd)) {
+        setwd(wd) 
+}
+
+NHimp <- "../../data_private/NHANES-imputed.rds"
+
+if (file.exists(NHimp)){
+        NHANES_mice <- readRDS(NHimp)
+        NHANES_imputed <- mice::complete(NHANES_mice)
+} else {
+        cols_few_NAs <- colSums(apply(NHANES, 2, is.na)) 
+        # if more than 1000 NAs per column, drop column
+        cols_few_NAs <- data_frame(col=names(cols_few_NAs), 
+                              val=cols_few_NAs) %>% 
+                filter(val <= 1000) 
+        NHANES <- NHANES[ , cols_few_NAs$col]
+        NHANES_mice <- mice(NHANES, seed=47)
+        NHANES_imputed <- mice::complete(mice(NHANES))
+        saveRDS(NHANES_mice, file = NHimp)
+        #stripplot(NHANES_mice, pch=20, cex=1.2)
+        
+}
+```
+
+Imputation is done with the [MICE method](http://stefvanbuuren.github.io/mice/): "Multiple Imputation by Chained Equations".
+
+The method magically removes all NA values by  guessing intelligently. 
+It can create nonsensical values though, e.g. pregnant fathers.
+```{r cols_nas}
+cols_nas <- md.pattern(NHANES) %>% 
+        tail(1) %>% # find total NAS in all colnames
+        t() %>%  # convert to data frame
+        as.data.frame() %>% rownames_to_column() %>%
+        rename("Colname"="rowname", "Num_NAs"="V1")
+
+length(md.pairs(NHANES))
+
+#library(VIM)
+#marginplot(NHANES[, c("BMI", "UrineVol1")])
+print(NHANES_mice)
+#NHANES <-
+# impute only to columns with lesss than 1000 NAs, drop all others
+# cols_nas[1:nrow(cols_nas)-1,] %>% ggplot(aes(Colname, Num_NAs)) +
+#         geom_col() + theme(axis.text.x = element_text(angle=90))
+
+
+```
+
+```{r pregnant, eval=TRUE}
+
+
+table(NHANES$Gender, NHANES$PregnantNow, useNA = "always") %>% 
+     #   prop.table() %>%
+     #   round(digits = 2) %>%         
+        kable(caption= "Column 'PregnantNow', Before Imputation:")
+```
+
+```{r class}
+class(NHANES_imputed)
+```
+
+
+```{r pregnant2, eval=FALSE}
+table(NHANES_imputed$Gender, NHANES_imputed$PregnantNow, useNA = "always") %>%
+      #  prop.table() %>%
+      #  round(digits = 2) %>% 
+        kable(caption="After imputation")
+```
+
+For now, I'll leave these new values inside the imputed dataset though.
+```{r}
+htmltools::HTML('<div class="alert alert-danger"><b>NOTE</b>
+                The imputation process with default values onl did not really produce  meaningful values. Moreover, using ~50 columns for imputation is a bit too much.
+However  my goal was to try out model selection algorithms, 
+and imputing correctly was less a concern.  
+                </div>')
+```
+
+However, NHANES Data after imputation: no more NAs in any column.
+
+Table 4: NHANES Column definitions and some values. These metadata show, for example, the unique distinct values of columns where it makes sense to report them (e.g. male/female for column "gender").
+
+```{r contents}
+Hmisc::contents(NHANES_imputed)
+```
+
+
+
+
+Obligatory Disclaimer (from the NHANES Package Documentation):
+
+*Please note that the data sets provided in this package are derived from the NHANES database and have been adapted for educational purposes. As such, they are NOT suitable for use as a research database.*
