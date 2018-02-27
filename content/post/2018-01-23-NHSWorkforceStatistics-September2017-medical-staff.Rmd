@@ -16,7 +16,7 @@ tags:
 
 ```{r setup, include=FALSE}
 library(knitr)
-opts_chunk$set(cache = TRUE, warning = FALSE, message = FALSE, 
+opts_chunk$set(cache = FALSE, warning = FALSE, message = FALSE, 
                echo = TRUE, tidy = FALSE, height = 3, width = 5,
                fig.width = 9)
 options(digits = 3, tibble.print_min = 6)

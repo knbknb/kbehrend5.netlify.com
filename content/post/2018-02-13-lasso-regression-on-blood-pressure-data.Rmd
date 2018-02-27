@@ -65,9 +65,10 @@ Maybe I&apos;ll split it up into two posts later - this post is too long already
 
 ```
 
-This is a follow-up to [an exploratory data-analysis post](/post/2018/02/bloodpressure-nhanes) of mine. When I was nearly done with writing that post, some new questions came to my mind.
+This is a follow-up to an [exploratory data-analysis post](/post/2018/02/bloodpressure-nhanes) of mine. When I was nearly done with writing that post, some new questions came to my mind.
 
-In the preceding blogpost I noticed that Systolic Blood Pressure is correlated with age and weight, but the relationship is complicated: the trend was noisy and the correlation was weak, and the  interaction term in the linear model seems to play an important role. 
+
+In the preceding blogpost I have noticed that Systolic Blood Pressure is correlated with age and weight, but the relationship is complicated: the trend was noisy and the correlation was weak, and the  interaction term in the linear model seems to play an important role. 
 
 Here I'll continue with exploratory analysis. More basically, can I determine some other variables (out of the `r ncol(NHANES)`) that are also influencing the Blood Pressure in some way?
 

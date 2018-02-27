@@ -15,10 +15,8 @@ output:
 ### A grabbag of ![](/img/portfolio/jq-med.png) commands 
 
 ```{r abstract, echo=FALSE}
-htmltools::HTML('<div class="alert alert-info"><b></b> Some notes about learning jq, the  lightweight and flexible command-line JSON processor. I&apos;ll extend and improve this blog post in the next months, in Q1/2018. This page is a notepad for my own use, it has not the purpose to teach anyone.</div>')
+htmltools::HTML('<div class="alert alert-info"><b></b> Some notes about learning jq, the  lightweight and flexible command-line JSON processor. I&apos;ll extend and improve this blog post in the next months, in Q1/2018. This page is a cheatsheet for my own use, it has not the purpose to teach anyone.</div>')
 ```
-
-
 
 
 
