@@ -21,6 +21,15 @@
     </item>
     
     <item>
+      <title>Code Samples</title>
+      <link>/categories/code-samples/</link>
+      <pubDate>Sat, 16 Dec 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/categories/code-samples/</guid>
+      <description></description>
+    </item>
+    
+    <item>
       <title>External</title>
       <link>/categories/external/</link>
       <pubDate>Sun, 26 Nov 2017 00:00:00 +0000</pubDate>
@@ -35,6 +44,15 @@
       <pubDate>Sun, 28 Jan 2018 00:00:00 +0000</pubDate>
       
       <guid>/categories/fun/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Health</title>
+      <link>/categories/health/</link>
+      <pubDate>Fri, 23 Feb 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/categories/health/</guid>
       <description></description>
     </item>
     
@@ -57,6 +75,15 @@
     </item>
     
     <item>
+      <title>Personal Reference</title>
+      <link>/categories/personal-reference/</link>
+      <pubDate>Sat, 16 Dec 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/categories/personal-reference/</guid>
+      <description></description>
+    </item>
+    
+    <item>
       <title>Reference</title>
       <link>/categories/reference/</link>
       <pubDate>Sun, 26 Nov 2017 00:00:00 +0000</pubDate>
@@ -68,9 +95,18 @@
     <item>
       <title>Rstats</title>
       <link>/categories/rstats/</link>
-      <pubDate>Wed, 24 Jan 2018 00:00:00 +0000</pubDate>
+      <pubDate>Thu, 08 Feb 2018 00:00:00 +0000</pubDate>
       
       <guid>/categories/rstats/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Society</title>
+      <link>/categories/society/</link>
+      <pubDate>Tue, 23 Jan 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/categories/society/</guid>
       <description></description>
     </item>
     
