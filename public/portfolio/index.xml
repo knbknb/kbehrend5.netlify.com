@@ -31,6 +31,15 @@ Still experimenting with the ‘serverless’ way of website management, and try
     </item>
     
     <item>
+      <title>Applying Regression Models on imputed Blood Pressure Data</title>
+      <link>/post/2018/02/bloodpressure-lasso/</link>
+      <pubDate>Fri, 23 Feb 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2018/02/bloodpressure-lasso/</guid>
+      <description>Working with anonymous patient data. Variable Imputation, regression model selection.</description>
+    </item>
+    
+    <item>
       <title>Blood Pressure in the US population</title>
       <link>/post/2018/02/bloodpressure-nhanes/</link>
       <pubDate>Sat, 10 Feb 2018 00:00:00 +0000</pubDate>
