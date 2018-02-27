@@ -6,21 +6,128 @@
     <description>Recent content in Posts on Knut Behrends Personal Blog, v3</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 17 Dec 2017 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 08 Feb 2018 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/post/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
-      <title>Soccer-Database: Generating schema diagrams</title>
-      <link>/post/2017/12/soccerdb-schema-diagrams/</link>
+      <title>Blood Pressure in the US population, and me</title>
+      <link>/post/2018/02/bloodpressure-nhanes/</link>
+      <pubDate>Thu, 08 Feb 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2018/02/bloodpressure-nhanes/</guid>
+      <description>Blood Pressure as a function of age and body weight Basic analysis of two health datasets from ~ 2010, about the general US Population, and myself. The datasets were gathered independently. One of them is a tiny teaching dataset, the other is a larger medical study. Both datasets show a trend: systolic blood pressure rises about 5-10 mm Hg per decade of a person&amp;apos;s life. The correlation is weak, though; and aging is not the cause for high blood pressure.</description>
+    </item>
+    
+    <item>
+      <title>UK NHS Medical Staff, 2009-2017</title>
+      <link>/post/2018/01/uk-nhs-nurses/</link>
+      <pubDate>Tue, 23 Jan 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2018/01/uk-nhs-nurses/</guid>
+      <description>#NHSCrisis? A quick fact check about the National Healthcare Service, NHS. Is the number of nurses in the UK really strongly decreasing, as some media outlets suggest? Or is the opposite true, as some people on Twitter have argued? In this post I am taking a quick look at the number of employees in British healthcare system, from 2009 to 2017.  Since 2014, the number of nurses indeed has decreased for most subtypes.</description>
+    </item>
+    
+    <item>
+      <title>Global interest in Bitcoin over Time</title>
+      <link>/post/2018/01/bitcoin-interest/</link>
+      <pubDate>Sat, 20 Jan 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2018/01/bitcoin-interest/</guid>
+      <description>Bitcoin: Visualizing (1) Wikipedia Pageviews, (2) Mentions in the New York Times, (3) Google Searches and (4) Exchange Rates from 2015 to early 2018. Simple timeseries plots (created from Web-API data) show that these four are strongly correlated, except when they aren&amp;apos;t.  In this post I’ll display global interest in Bitcoin and Ethereum over time, according to accesses to their Wikipedia articles, mentions in the New York Times, and as Google Searches.</description>
+    </item>
+    
+    <item>
+      <title>Comparing 33C3 and 34C3 tweets</title>
+      <link>/post/2018/01/tweets-33c3-vs-33c4/</link>
+      <pubDate>Sun, 07 Jan 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2018/01/tweets-33c3-vs-33c4/</guid>
+      <description>Why this analysis? There are two reasons:
+ learn to process Twitter data at scale (~100MB-1GB/file - that’s large enough for me) get more info from/about the inspiring tweets from the CCC community  (This blogpost ist still a DRAFT - I want to publish quickly, even when an analysis is incomplete, or the text is a bit rough in places)
+ Background Occasionally, over the last two years, I have gathered data from the Twitter Streaming API.</description>
+    </item>
+    
+    <item>
+      <title>Some Gists</title>
+      <link>/post/2018/01/some-gists/</link>
+      <pubDate>Sat, 06 Jan 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2018/01/some-gists/</guid>
+      <description>Link Collection for my own personal use Github ‘Gists’ are code samples that are too short for, or not worth creating a new standalone repository.
+For example
+ One-off scripts unfinished/half-working scripts forked github gists from other people copies of codesamples from other people, slightly edited or customized  This webpage is just for my own personal use, a reminder for myself.
+For now, I list only the links to the gists.</description>
+    </item>
+    
+    <item>
+      <title>Constructing a tiny social-network visualization from the #Rstats hashtag</title>
+      <link>/post/2018/01/constructing-a-tiny-social-network-visualization-from-the-rstats-hashtag/</link>
+      <pubDate>Mon, 01 Jan 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2018/01/constructing-a-tiny-social-network-visualization-from-the-rstats-hashtag/</guid>
+      <description>(Under Construction) In 2016, I was harvesting tweets from the Twitter streaming API. I’ve used the #rstats hashtag as the search filter. This hashtag is commonly used by the R community on Twitter. Tag #rstats is more descriptive than the too short, unusable, #R hashtag which may not even be a valid filter expression.
+Here I do some exploratory analysis of these ~ 1000 tweets, and I visualize the interactions (the “mentions”) of the active Twitter users as a directed graph.</description>
+    </item>
+    
+    <item>
+      <title>Soccer-Database: Extracting goal data from XML fragments</title>
+      <link>/post/2017/12/database/</link>
       <pubDate>Sun, 17 Dec 2017 00:00:00 +0000</pubDate>
       
-      <guid>/post/2017/12/soccerdb-schema-diagrams/</guid>
-      <description>This is part 1 of a 3-part series of small blog posts about my first attempts at Bayesian Analysis of Soccer data.
-In order to get started I had to invest much more effort than expected into cleaning the data and getting familiar with it.
-tl;dr: This blog post shows 3 times the same database diagram, at varying levels of detail.
-Dataset The dataset used here is the &amp;ldquo;European Soccer Database&amp;rdquo; - 25k+ matches, players &amp;amp; teams attributes for European Professional Football from Kaggle.</description>
+      <guid>/post/2017/12/database/</guid>
+      <description>This is part 2 of a 3-part series about Statistical Analysis of Soccer data.
+ Part 1 shows the database diagram of the Sqlite database mentioned below. Part 2 (this page) describes how to preprocess some text data that was stored in an cryptic format inside the database Part 3 describes some statistical analysis of some aspect of this dataset.  Dataset The dataset used here is the “European Soccer Database” - 25k+ matches, players &amp;amp; teams attributes for European Professional Football from Kaggle.</description>
+    </item>
+    
+    <item>
+      <title>Learning jq</title>
+      <link>/post/2017/12/learning-jq/</link>
+      <pubDate>Sat, 16 Dec 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2017/12/learning-jq/</guid>
+      <description>A grabbag of commands  Some notes about learning jq, the lightweight and flexible command-line JSON processor. I&amp;apos;ll extend and improve this blog post in the next months, in Q1/2018. This page is a cheatsheet for my own use, it has not the purpose to teach anyone. I need to be fluent with the JSON parsing tool jq. Very often I have to interact with JSON data: When I interact with APIs, when parsing scraped Twitter data, when doing SPARQL queries…</description>
+    </item>
+    
+    <item>
+      <title>Soccer Euro 2016 - Betting At My Workplace - Part 2</title>
+      <link>/post/2017/12/soccer-world-cup-bets-part-ii/</link>
+      <pubDate>Sat, 09 Dec 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2017/12/soccer-world-cup-bets-part-ii/</guid>
+      <description>Soccer championship Euro 2016 - A weekend project, from July 2016 Continued from a previous blog post, that explained the data preprocessing steps.
+ I wrote this in July 2016 to make myself familiar with the R package ggplot2, and other tidyverse packages. This post contains exploratory analysis of an Euro 2016 Betting Game. Predictions were made, just for fun and a small amount of prize money, by a group of players at my workplace.</description>
+    </item>
+    
+    <item>
+      <title>Soccer Euro 2016 - Betting At My Workplace - Part I</title>
+      <link>/post/2017/12/soccer-world-cup-bets-part-i/</link>
+      <pubDate>Sat, 09 Dec 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2017/12/soccer-world-cup-bets-part-i/</guid>
+      <description>Soccer championship Euro 2016 - A weekend project, from July 2016 This is the data-preprocessing part of a blog post that has most of its visual content in a second part.
+Part 1: preprocessing the data  I wrote this in July 2016, to make myself familiar with the R packages ggplot2 and other tidyverse packages. Exploratory Analysis of an Euro 2016 Betting Game. Predictions were made, just for fun (and a small amount of prize money), by a group of players (colleagues, their friends and family members) from my workplace in Germany.</description>
+    </item>
+    
+    <item>
+      <title>Body Height and BMI in European Soccer Players over the years 2008-2016</title>
+      <link>/post/2017/12/body-height-and-bmi-in-european-soccer-players-over-the-years-2008-2016/</link>
+      <pubDate>Mon, 04 Dec 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2017/12/body-height-and-bmi-in-european-soccer-players-over-the-years-2008-2016/</guid>
+      <description>Change of body parameters in soccer players  How did body mass index and body size of professional football players change over the years? Body size, not so much. It has stayed rather constant between 2008 and 2016. Average height might have even fallen a little bit. Body weight and, correspondingly, Body Mass Index on the other hand, have fallen even more. This means the top clubs want thinner players. It also means, in soccer, possibilities to increase the athleticism of players is limited.</description>
+    </item>
+    
+    <item>
+      <title>The oldest active European Soccer Player in season 2008</title>
+      <link>/post/2017/12/the-oldest-active-european-soccer-player-in-season-2008/</link>
+      <pubDate>Sun, 03 Dec 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2017/12/the-oldest-active-european-soccer-player-in-season-2008/</guid>
+      <description>Still playing with a Soccer Database from Kaggle.com  As an exercise, I wanted to find the oldest players participating in any match. During my analysis I also learned something about the data quality of this Kaggle dataset.
+ As mentioned in a previous blogpost, I’ve downloaded a zipfile (36 MB) with Football data from data science community Kaggle.com. The archive contained an SQLite Database.
+library(DBI) con &amp;lt;- dbConnect(odbc::odbc(), &amp;quot;well-sqlite-footballdb&amp;quot;) For the sake of brevity, to see the R packages I’ve included to process the data, see the previous blogpost.</description>
     </item>
     
     <item>

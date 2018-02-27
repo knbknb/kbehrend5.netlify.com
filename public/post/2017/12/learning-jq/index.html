@@ -1,2 +1,347 @@
-<!-- themes/.../_default/single.html //-->
+<!-- post/single.html //-->
+<!DOCTYPE html>
+<html lang="en-us">
+        <!-- post/header.html //-->
+  <head>
+    <meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>Learning jq</title>
+<meta name="description" content="Knut Behrends&#39; personal blog. A website built through Hugo and blogdown.">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="all,follow">
+<meta name="googlebot" content="index,follow,snippet,archive">
 
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:400,300,700,400italic">
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+<link rel="stylesheet" href="/css/owl.carousel.css">
+<link rel="stylesheet" href="/css/owl.theme.css">
+
+
+  <link href="/css/style.green.css" rel="stylesheet" id="theme-stylesheet">
+
+ 
+
+  
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+        <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  
+
+
+<link href="/css/custom.css" rel="stylesheet">
+<link rel="shortcut icon" href="/img/favicon/favicon.png">
+
+
+<script>
+window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+ga('create', 'UA-38728498-3', 'auto');
+ga('send', 'pageview');
+</script>
+<script async src='//www.google-analytics.com/analytics.js'></script>
+
+
+    
+<link rel="apple-touch-icon" sizes="57x57" href="/img/favicon/apple-icon-57x57.png">
+<link rel="apple-touch-icon" sizes="60x60" href="/img/favicon/apple-icon-60x60.png">
+<link rel="apple-touch-icon" sizes="72x72" href="/img/favicon/apple-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="76x76" href="/img/favicon/apple-icon-76x76.png">
+<link rel="apple-touch-icon" sizes="114x114" href="/img/favicon/apple-icon-114x114.png">
+<link rel="apple-touch-icon" sizes="120x120" href="/img/favicon/apple-icon-120x120.png">
+<link rel="apple-touch-icon" sizes="144x144" href="/img/favicon/apple-icon-144x144.png">
+<link rel="apple-touch-icon" sizes="152x152" href="/img/favicon/apple-icon-152x152.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/img/favicon/apple-icon-180x180.png">
+<link rel="icon" type="image/png" sizes="192x192"  href="/img/favicon/android-icon-192x192.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/img/favicon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/img/favicon/favicon-96x96.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/img/favicon/favicon-16x16.png">
+<link rel="manifest" href="/img/favicon/manifest.json">
+<meta name="msapplication-TileColor" content="#ffffff">
+<meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
+<meta name="theme-color" content="#ffffff">
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+              
+<nav class="nav">
+
+  <a href="/" class="nav-logo">
+    
+    <span class="nav-logo-medium"><img src="/img/logo-knutbehrends-square-circle.72x72.png" alt="brain-activity-logo" /></span>
+    
+    </a>
+  <span class="sidebar-heading">
+          <a href="/">Knut Behrends Personal Blog, v3</a>
+  </span>
+  <ul class="nav-links">
+    
+    <li><a href="/">Home</a></li>
+    
+    <li><a href="/post/">Blog</a></li>
+    
+    <li><a href="/gallery/">Gallery</a></li>
+    
+    <li><a href="/about/">About</a></li>
+    
+    <li><a href="/contact/">Get in touch</a></li>
+    
+  </ul>
+  <span id="motto" class="motto"></span>
+</nav>
+
+      </header>
+
+
+<link rel="apple-touch-icon" sizes="57x57" href="/img/favicon/apple-icon-57x57.png">
+<link rel="apple-touch-icon" sizes="60x60" href="/img/favicon/apple-icon-60x60.png">
+<link rel="apple-touch-icon" sizes="72x72" href="/img/favicon/apple-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="76x76" href="/img/favicon/apple-icon-76x76.png">
+<link rel="apple-touch-icon" sizes="114x114" href="/img/favicon/apple-icon-114x114.png">
+<link rel="apple-touch-icon" sizes="120x120" href="/img/favicon/apple-icon-120x120.png">
+<link rel="apple-touch-icon" sizes="144x144" href="/img/favicon/apple-icon-144x144.png">
+<link rel="apple-touch-icon" sizes="152x152" href="/img/favicon/apple-icon-152x152.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/img/favicon/apple-icon-180x180.png">
+<link rel="icon" type="image/png" sizes="192x192"  href="/img/favicon/android-icon-192x192.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/img/favicon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/img/favicon/favicon-96x96.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/img/favicon/favicon-16x16.png">
+<link rel="manifest" href="/img/favicon/manifest.json">
+<meta name="msapplication-TileColor" content="#ffffff">
+<meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
+<meta name="theme-color" content="#ffffff">
+
+
+
+
+
+<link href='//cdn.bootcss.com/highlight.js/9.11.0/styles/github.min.css' rel='stylesheet' type='text/css' />
+
+
+
+
+<main class="content" role="main">
+
+  <article class="article">
+    
+    <span class="article-duration">6 min read</span>
+    
+
+    <h1 class="article-title">Learning jq</h1>
+
+    
+    <span class="article-date">2017/12/16</span>
+    
+
+    <div class="article-content">
+      <div id="a-grabbag-of-commands" class="section level3">
+<h3>A grabbag of <img src="/img/portfolio/jq-med.png" /> commands</h3>
+<div class="alert alert-info"><b></b> Some notes about learning jq, the  lightweight and flexible command-line JSON processor. I&apos;ll extend and improve this blog post in the next months, in Q1/2018. This page is a cheatsheet for my own use, it has not the purpose to teach anyone.</div>
+<p>I need to be fluent with the JSON parsing tool <a href="https://stedolan.github.io/jq/">jq</a>. Very often I have to interact with JSON data: When I interact with APIs, when parsing scraped Twitter data, when doing SPARQL queries…</p>
+<p>Here I’ve saved some of my own mini-scripts and shortcuts that I have developed for my own needs. Most of it is already available in similar form, on the internet, but it is not available in a form that I found useful. By writing it down, extending and re-writing it I can better commit this code to my own long-term memory. So I hope.</p>
+</div>
+<div id="snippets-represented-as-gist" class="section level3">
+<h3>Snippets represented as Gist</h3>
+<p>I am not sure yet what will be the best textual format or representation for saving my codesnippets. I have created a <a href="/post/2018/01/some-gists">gist</a> on github.com where I’ve saved some <code>jq</code> commands:</p>
+<script src="//gist.github.com/knbknb/45d119effc573be775e87a35a859a264.js?file=jq_snippets_for_cmdline.sh"></script>
+<div class="alert alert-warning"><b>Note to self: </b>
+                <i>Maybe there is a better way to store codesnippets? Also better convert the snippets below to a gist? (But you do not really put script output into a gist...)</i></div>
+</div>
+<div id="snippets-not-yet-stored-as-gist" class="section level3">
+<h3>Snippets not yet stored as gist</h3>
+<p>The following text snippets are a bit longer. They emerged by entering commands on the Unix command line. This was a trial and error process. Some script output is also given. .</p>
+<p>The format of the snippets below is a pipe of shell commands.</p>
+<p><code>&lt;infile.json jq-cmd1 | jq-cmd2 | shell-cmd1 | shell-cmd2 ...</code></p>
+<p>The <code>infile.json</code> contains Twitter data that I’ve saved beforehand using a <a href="https://gist.github.com/knbknb/f5d393802d44a3f978694468dcff70e6">small python script</a>.</p>
+<p>The infile contains one Tweet per line. The file as a whole is not a valid JSON file. For this reason I need the first <code>jq</code> command, <code>jq-cmd1</code>. It converts the collection of JSON fragments into an array of JSON objects and applies a transformation, or does some filtering. This creates another sequence of JSON fragments.</p>
+<p>The second <code>jq</code> command converts the transformed JSON into a csv file. This jq-cmd is so complex that I’ve factored it out into a small file in the same directory, called <code>to_csv.jq</code> (see at end of this post).</p>
+<div class="alert alert-warning">
+<b>NOTE/TODO</b> If the python programs in the <a title="csvkit docs" href="https://csvkit.readthedocs.io">csvkit</a> are installed, you can also use: <pre> < simplefile.json in2csv > csv.out </pre> 
+<a title="csvkit code" href="https://github.com/wireservice/csvkit">csvkit (code)</a> is a collection of commandline tools that contains <pre>
+csv2arff   csvcut     csvgrep    csvjson    csvpy      
+csvsql     csvstat    csvclean   csvformat  csvjoin    
+csvlook    csvsort    csvstack   in2csv    sql2csv
+</pre></div>
+<p><strong>Note to self:</strong> Get this list with these bash commands</p>
+<pre><code>sudo apt install apt-file
+apt-file update
+apt-file list python3-csvkit
+</code></pre>
+<p><a href="https://stedolan.github.io/jq/manual/#Modules">jq Module</a> <code>to_csv.jq</code> looks like this:</p>
+<pre class="r"><code>### (insert Gist or scriptcode here)</code></pre>
+<p>Instead of the complex to_csv … TODO: (explain difference of <code>to_csv.jq</code> and jq’s built-in <code>@csv</code>)</p>
+<div class="alert alert-warning">
+<b>NOTE</b> end TODO</div>
+<div id="example-1---extract-tweet-text" class="section level4">
+<h4>Example 1 - extract tweet text</h4>
+<p>This snippet extracts the text from a file that I created by saving data from the Twitter streaming API. I’ve filtered for the “<code>#rstats</code>” hashtag which includes tweets about the R language:</p>
+<pre class="bash"><code>&lt; raw_tweets/stream__AGU17.json jq -s &#39;[.[] | {text: .text}] &#39; \
+   | jq  -f -r to_csv.jq  | grep -i &quot;rstats&quot; | sort -u</code></pre>
+</div>
+<div id="example-2---extract-more-than-1-field-from-tweets" class="section level4">
+<h4>Example 2 - extract more than 1 field from Tweets</h4>
+<p>This is a variant of Example 1. Extract 5 fields from different levels of the tweet into a csv file with brief column names.</p>
+<pre><code>&lt;raw_tweets/stream_rstats.json jq  -s  -S  &#39;[.[] | \
+   {name:  .user.name, sn: .user.screen_name, loc: .user.location, \
+   url:.user.url, desc:.user.description, _fol: .user.followers_count }]&#39;   | \
+   jq  -f -r to_csv.jq
+</code></pre>
+</div>
+<div id="helper-function-to_csv" class="section level4">
+<h4>Helper function <code>to_csv()</code></h4>
+<p>This is from a <a href="https://stackoverflow.com/a/44012345/202553">Stackoverflow Answer</a> to the question <em>How to convert arbirtrary simple JSON to CSV using jq?</em></p>
+<pre class="bash"><code>
+def tocsv($x):
+    $x
+    |(map(keys)
+        |add
+        |unique
+        |sort
+    ) as $cols
+    |map(. as $row
+        |$cols
+        |map($row[.]|tostring)
+    ) as $rows
+    |$cols,$rows[]
+    | @csv;
+
+tocsv(.)
+
+# call: 
+# &lt;tweets.json jq  -s  -S  &#39;[.[] | {name:  .user.name, sn: .user.screen_name, loc: .user.location, url:.user.url, desc:.user.description, _fol: .user.followers_count }]&#39;  | jq  -f -r to_csv.jq
+</code></pre>
+<p>The <a href="https://stackoverflow.com/a/44012345/">other answers</a> are worth a look, too.</p>
+</div>
+<div id="further-processing" class="section level4">
+<h4>Further processing</h4>
+<p>Further processing on the command line can be done with the <em><a href="http://csvkit.readthedocs.io/en/1.0.2/tricks.html#installation">csvkit</a></em> suite of tools.</p>
+<p>This is an example. (<em>csvsort</em>, <em>csvcut</em>, <em>csvlook</em> correspond to <code>shell-cmd1</code> mentioned above) :</p>
+<pre class="bash"><code>&lt;raw_tweets/stream_rstats.json jq  -s  -S \
+&#39;[.[] | {name:  .user.name, sn: .user.screen_name, \
+loc: .user.location, \
+url:.user.url, \
+desc:.user.description, \
+_fol: .user.followers_count }]&#39;   | \
+jq  -f -r to_csv.jq    | \
+ csvsort -H -c 1    | csvcut -c 5,2 -l | csvlook --max-column-width 30 --max-rows 10
+</code></pre>
+<p>It produces this output:</p>
+<p>(This table is not very informative, but that’s intentional. The content of the tweets is irrelevant here).</p>
+<pre><code>| line_number | f                              | c              |
+| ----------- | ------------------------------ | -------------- |
+|           1 |                                | 日本 東京      |
+|           2 |                                | Milan          |
+|           3 |                                | Grand Ledge    |
+|           4 |                                | Iowa City, IA  |
+|           5 |                                | Pennsylvania   |
+|           6 |                                | Columbus, OH   |
+|           7 |                                | Columbus, OH   |
+|           8 | http://es.linkedin.com/in/j... | Madrid - Spain |
+|           9 |                                |                |
+|          10 | http://personal.tcu.edu/kyl... | Fort Worth, TX |
+|         ... | ...                            | ...            |</code></pre>
+</div>
+<div id="example-3---extract-follower-count-username-description-location" class="section level4">
+<h4>Example 3 - Extract follower-count, username, description, location</h4>
+<p>Extract <code>.user.name, .user.screen_name, .user.location, url:.user.url, .user.description,  .user.followers_count</code>, but display only <code>follower-count, name, description, location</code> sorted by followercount descending</p>
+<pre class="bash"><code>&lt;raw_tweets/stream_rstats.json jq  -s  -S  &#39;[.[] | {name:  .user.name, sn: .user.screen_name, loc: .user.location, url:.user.url, desc:.user.description, _fol: .user.followers_count }]&#39;   | jq  -f -r to_csv.jq     | csvcut -c 1,4,2,3 | csvsort -c 1 -r  | uniq | more </code></pre>
+<p>Output:</p>
+<pre><code>_fol,name,desc,loc
+387997,&quot;Craig Brown, Ph.D.&quot;,&quot;Technology &amp; #Business #Consultant (#techpreneur), Dad, #Entrepreneur, #STEM, #Philanthropist, #CancerSurvivor + #BigData SME http://www.craigbrownphd.com&quot;,&quot;Houston, TX&quot;
+83310,Kirk Borne,&quot;The Principal Data Scientist at @BoozAllen, PhD Astrophysicist, ♡ Data Science, Top Big Data Influencer. Ex-Professor http://rocketdatascience.org/&quot;,Booz Allen Hamilton
+83296,Kirk Borne,&quot;The Principal Data Scientist at @BoozAllen, PhD Astrophysicist, ♡ Data Science, Top Big Data Influencer. Ex-Professor http://rocketdatascience.org/&quot;,Booz Allen Hamilton
+33681,R-bloggers,Twitting blog posts from the R blogosphere,
+33671,R-bloggers,Twitting blog posts from the R blogosphere,
+30097,Hadley Wickham,&quot;R, data, visualisation.&quot;,&quot;Houston, TX&quot;
+30096,Hadley Wickham,&quot;R, data, visualisation.&quot;,&quot;Houston, TX&quot;
+30094,Hadley Wickham,&quot;R, data, visualisation.&quot;,&quot;Houston, TX&quot;
+30074,Hadley Wickham,&quot;R, data, visualisation.&quot;,&quot;Houston, TX&quot;
+30072,Hadley Wickham,&quot;R, data, visualisation.&quot;,&quot;Houston, TX&quot;
+20738,BIconnections,Networking | connecting | people | technology | #process | #Business #Intelligence | #Information #Management | #data | learning discussions | #Community,Belgium
+20731,BIconnections,Networking | connecting | people | technology | #process | #Business #Intelligence | #Information #Management | #data | learning discussions | #Community,Belgium
+20254,Bill Nigh,Citizen/US Army Vet/Con</code></pre>
+<p>These are the people with the most followers. Their follower count has increased while I was scraping the data from the Twitter Streaming API.</p>
+</div>
+<div id="example-4---extract-users-and-those-they-retweeted-or-mentioned-in-text" class="section level4">
+<h4>Example 4 - Extract Users and those they retweeted or mentioned in text</h4>
+<p>This example was a preprocessing step for this blogpost: <a href="http://127.0.0.1:4321/post/2018/01/constructing-a-tiny-social-network-visualization-from-the-rstats-hashtag/">Constructing a tiny social-network visualization from the #Rstats hashtag</a>.</p>
+<p>This command gives a tabular output to the question <em>“Who mentions whom?”</em>. The data can be used to create a social-network visualisation.</p>
+<pre class="bash"><code>&lt;raw_tweets/stream_rstats.json jq  -s    &#39;[.[] | { _name:  .user.name, _screen_name: .user.screen_name, _id:.user.id, mentions_id: .entities.user_mentions[].id, mentions_name: .entities.user_mentions[].name, mentions_screen_name: .entities.user_mentions[].screen_name}]&#39; | jq -f -r to_csv.jq |  grep -P  &#39;^&quot;&#39; | head</code></pre>
+<pre><code>## bash: raw_tweets/stream_rstats.json: No such file or directory
+## jq: Could not open to_csv.jq: No such file or directory</code></pre>
+<p>Output:</p>
+<p>(Only ten rows are shown)</p>
+<pre><code>&quot;_id&quot;,&quot;_name&quot;,&quot;_screen_name&quot;,&quot;mentions_id&quot;,&quot;mentions_name&quot;,&quot;mentions_screen_name&quot;
+&quot;622262193&quot;,&quot;ReactJS News&quot;,&quot;ReactJS_News&quot;,&quot;245217900&quot;,&quot;timelyportfolio&quot;,&quot;timelyportfolio&quot;
+&quot;151588786&quot;,&quot;Alex Bertram&quot;,&quot;bedatadriven&quot;,&quot;552767357&quot;,&quot;Maarten-Jan Kallen&quot;,&quot;mj_kallen&quot;
+&quot;1553414406&quot;,&quot;Lovedeep Gondara&quot;,&quot;LovedeepSG&quot;,&quot;144592995&quot;,&quot;R-bloggers&quot;,&quot;Rbloggers&quot;
+&quot;4277617239&quot;,&quot;Javascript Bot&quot;,&quot;JavascriptBot_&quot;,&quot;622262193&quot;,&quot;ReactJS News&quot;,&quot;ReactJS_News&quot;
+&quot;4277617239&quot;,&quot;Javascript Bot&quot;,&quot;JavascriptBot_&quot;,&quot;622262193&quot;,&quot;ReactJS News&quot;,&quot;timelyportfolio&quot;
+&quot;4277617239&quot;,&quot;Javascript Bot&quot;,&quot;JavascriptBot_&quot;,&quot;622262193&quot;,&quot;timelyportfolio&quot;,&quot;ReactJS_News&quot;
+&quot;4277617239&quot;,&quot;Javascript Bot&quot;,&quot;JavascriptBot_&quot;,&quot;622262193&quot;,&quot;timelyportfolio&quot;,&quot;timelyportfolio&quot;
+&quot;4277617239&quot;,&quot;Javascript Bot&quot;,&quot;JavascriptBot_&quot;,&quot;245217900&quot;,&quot;ReactJS News&quot;,&quot;ReactJS_News&quot;
+&quot;4277617239&quot;,&quot;Javascript Bot&quot;,&quot;JavascriptBot_&quot;,&quot;245217900&quot;,&quot;ReactJS News&quot;,&quot;timelyportfolio&quot;
+</code></pre>
+</div>
+</div>
+
+    </div>
+  </article>
+
+
+</main>
+
+
+<!-- layouts/partials/footer.html //-->
+      <footer class="footer">
+        <ul class="footer-links">
+          <li>
+            <a href="/index.xml" type="application/rss+xml" target="_blank">RSS feed</a>
+          </li>
+        </ul>
+        
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-38728498-3"></script>
+
+
+      </footer>
+
+  
+  
+
+
+
+
+<script src="//cdn.bootcss.com/highlight.js/9.11.0/highlight.min.js"></script>
+
+
+
+<script src="//cdn.bootcss.com/highlight.js/9.11.0/languages/r.min.js"></script>
+<script src="//cdn.bootcss.com/highlight.js/9.11.0/languages/yaml.min.js"></script>
+<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+
+
+
+  
+<script src="/js/math-code.js"></script>
+<script async src="//cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+
+  
+
+<script src="/js/jquery.min.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/jquery.cookie.js"> </script>
+<script src="/js/ekko-lightbox.js"></script>
+<script src="/js/jquery.scrollTo.min.js"></script>
+<script src="/js/masonry.pkgd.min.js"></script>
+<script src="/js/imagesloaded.pkgd.min.js"></script>
+<script src="/js/owl.carousel.min.js"></script>
+<script src="/js/front.js"></script>
+<script src="/js/motto-fragments.js"></script>
+<script src="/js/math-code.js"></script>
+<script src="/js/modify-css.js"></script>
+
+</body>
+</html>
