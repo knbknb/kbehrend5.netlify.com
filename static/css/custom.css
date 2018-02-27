@@ -3817,7 +3817,7 @@ a.list-group-item.active > .badge,
   margin-left: 2px;
 }
 
-.img-width-medium > img {
+.img-width-medium > div > img {
         max-width: 900px;
 }
 
