@@ -11,8 +11,9 @@ data/
 data2/
 hugo-universal-theme/
 hugo-easy-gallery/
-blogdown
+blogdown/
 public/about/2018-01-27-testing-stuff_files/
 static/about/2018-01-27-testing-stuff_files/
 content/post/2018-02-04-soccer-players-best-scorers.html
 data_private/
+blogdown/post/2018-01-16-drawing-a-figshare-network-with-ggraph-and-tidygraph_cache
