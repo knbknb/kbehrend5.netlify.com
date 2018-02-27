@@ -17,4 +17,4 @@ usePhotoswipe: no
 ---
 
 
-Small Link collection for my own personal use.
+Codesnippets and cheatsheets for my own personal use.

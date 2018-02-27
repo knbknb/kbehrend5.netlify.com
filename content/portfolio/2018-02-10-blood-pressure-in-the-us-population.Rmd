@@ -17,4 +17,4 @@ keywords:
 usePhotoswipe: no
 ---
 
-Moving from a small dataset to a bigger dataset. Gaining insight into health data.
+Gaining insight into health data. First time for me to work with such a dataset.

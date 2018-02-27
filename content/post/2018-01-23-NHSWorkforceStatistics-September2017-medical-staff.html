@@ -17,16 +17,15 @@ tags:
 
 
 <div class="alert alert-info"><b>#NHSCrisis?  A quick fact check about the National Healthcare Service, NHS.</b><br/> 
-Is the number of nurses in the UK really strongly decreasing, as some media outlets suggest?  Or is the opposite true, as some people on Twitter have argued? In this post I am taking a quick look at the number of employees in British healthcare system, from 2009 to 2017. <br/>
-Since 2014, the number of nurses indeed has decreased for most subtypes. Most notably "outgoing" groups of nurses show marked decline. The number of "adult nurses" has stayed rather constant. 
-This loss in specialty nurses is compensated by an increase in &apos;allied health professions&apos;. See plots at bottom of page. 
+In this post I am taking a quick look at the number of employees in British healthcare system, from 2009 to 2017. Is the number of nurses in the UK really strongly decreasing, as some media outlets suggest?  Or is the opposite true, as some people on Twitter have argued? <br/>
+There are many specialties of nurses. Since 2016, the number of people employed in most specialties has decreased. The picture is mixed and deserves further study. 
 </div>
 <div id="a-short-story-about-reproducibility" class="section level4">
 <h4>A short story about reproducibility</h4>
 <p>This blogpost was inspired by a <a href="https://twitter.com/Jeremy_Hunt/status/953688801825755136">lengthy twitter thread</a> on the ‘NHSCrisis’, the understaffed healthcare sector in the UK. Someone posted an infographics on a timeline with <a href="https://digital.nhs.uk/article/4304/Workforce">official statistical data</a> from the British healthcare authorities. <a href="https://twitter.com/maxwellflitton">He has argued</a> that there was a lot of secular (= cyclical but noisy) variation in the employee data, and that general the trend was pointing upwards, not downwards. Is this true?</p>
 <p>Are there <em>really</em> more and more nurses employed in the UK? Is it oversimplified to call this an ‘#NHSCrisis’ on social media? I’ve decided to check this.</p>
-<p>The infographics the user posted was from a media company. (I cannot really include it here because it is probably copyrighted, and since late January, 2017 the user has protected his Twitter account, so I cannot link to the infographics in context). What struck my eye was that the graph ended early, in mid-2017. However it is now January 2018, and a full half year of data was missing.</p>
-<p>What would the graph look like when <em>I</em> tried to reproduce it from data?</p>
+<p>The infographics the Twitter user posted was created by a media company. (I cannot really include it here because it is probably copyrighted, and since late January, 2017 the user has protected his Twitter account, so I cannot link to the infographics in context). What struck my eye was that the graph ended early, in mid-2017. However it is now January 2018, and a full half year of data was missing.</p>
+<p>What would the graph look like if <em>I</em> tried to reproduce it from data?</p>
 <p>A lot of underlying data are online at the above-mentioned NHS data portal. Also the very newest data from the <a href="https://digital.nhs.uk/catalogue/PUB30189">second half of 2017 is online</a> since this week, late January 2018.</p>
 <p>The time series we’re interested in can be calculated from the timeseries data <strong>‘NHS Workforce Statistics - staff excluding medical:’</strong>. What we need is an aggregated number:</p>
 <ul>
@@ -82,12 +81,12 @@ nhs_summ1 &lt;- nhs_raw %&gt;%
 nhs_summ1 %&gt;% 
         kable(align=&quot;lrr&quot;, row.names = 1, 
               caption = &quot;Employee numbers at aggregation level 1,\
-              at begin and end of the timeline&quot;) %&gt;% 
+              at begin and end of the timeline. (For % year-on-year change, see table 3.)&quot;) %&gt;% 
         kableExtra::kable_styling(bootstrap_options = 
                                           c(&quot;striped&quot;, &quot;hover&quot;))</code></pre>
 <table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption>
-<span id="tab:count1">Table 1: </span>Employee numbers at aggregation level 1, at begin and end of the timeline
+<span id="tab:count1">Table 1: </span>Employee numbers at aggregation level 1, at begin and end of the timeline. (For % year-on-year change, see table 3.)
 </caption>
 <thead>
 <tr>
@@ -746,8 +745,8 @@ Staff Group
 <div id="further-ideas" class="section level3">
 <h3>Further Ideas</h3>
 <ul>
-<li>add more observations from the plots</li>
-<li>add data from/for Germany for comparison (where to git?)</li>
-<li>Add link / reference to MicroTrends book ( I want to reproduce more analyses as in the book.)</li>
+<li>add more interpretations of observations from the plots</li>
+<li>add data from/for Germany for comparison (where to get? destatis.de?)</li>
+<li>determine cyclical component of the trend embodied in the employment figures. Is it a beginning of a larger downturn?</li>
 </ul>
 </div>

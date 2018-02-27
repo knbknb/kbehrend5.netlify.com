@@ -25,9 +25,8 @@ options(knitr.table.format = "html")
 
 ```{r intro,echo=FALSE}
 htmltools::HTML('<div class="alert alert-info"><b>#NHSCrisis?  A quick fact check about the National Healthcare Service, NHS.</b><br/> 
-Is the number of nurses in the UK really strongly decreasing, as some media outlets suggest?  Or is the opposite true, as some people on Twitter have argued? In this post I am taking a quick look at the number of employees in British healthcare system, from 2009 to 2017. <br/>
-Since 2014, the number of nurses indeed has decreased for most subtypes. Most notably "outgoing" groups of nurses show marked decline. The number of "adult nurses" has stayed rather constant. 
-This loss in specialty nurses is compensated by an increase in &apos;allied health professions&apos;. See plots at bottom of page. 
+In this post I am taking a quick look at the number of employees in British healthcare system, from 2009 to 2017. Is the number of nurses in the UK really strongly decreasing, as some media outlets suggest?  Or is the opposite true, as some people on Twitter have argued? <br/>
+There are many specialties of nurses. Since 2016, the number of people employed in most specialties has decreased. The picture is mixed and deserves further study. 
 </div>')
 ```
 
@@ -37,9 +36,9 @@ This loss in specialty nurses is compensated by an increase in &apos;allied heal
  
  Are there *really* more and more nurses employed in the UK? Is it oversimplified to call this an '#NHSCrisis' on social media? I've decided to check this. 
  
-The infographics the user posted was from a media company. (I cannot really include it here because it is probably copyrighted, and since late January, 2017 the user has protected his Twitter account, so I cannot link to the infographics in context). What struck my eye was that the graph ended early, in mid-2017. However it is now January 2018, and a full half year of data was missing. 
+The infographics the Twitter user posted was created by a media company. (I cannot really include it here because it is probably copyrighted, and since late January, 2017 the user has protected his Twitter account, so I cannot link to the infographics in context). What struck my eye was that the graph ended early, in mid-2017. However it is now January 2018, and a full half year of data was missing. 
 
-What would the graph look like when *I* tried to reproduce it from data?
+What would the graph look like if *I* tried to reproduce it from data?
 
 A lot of underlying data are online at the above-mentioned NHS data portal. Also the very newest data from the [second half of 2017 is online](https://digital.nhs.uk/catalogue/PUB30189) since this week, late January 2018. 
 
@@ -112,7 +111,7 @@ nhs_summ1 <- nhs_raw %>%
 nhs_summ1 %>% 
         kable(align="lrr", row.names = 1, 
               caption = "Employee numbers at aggregation level 1,\
-              at begin and end of the timeline") %>% 
+              at begin and end of the timeline. (For % year-on-year change, see table 3.)") %>% 
         kableExtra::kable_styling(bootstrap_options = 
                                           c("striped", "hover"))
 
@@ -180,7 +179,7 @@ ggplot(aes(Date, cnt, color=`Staff Group 2`)) +
 ```{r fig.height=30, echo=FALSE, fig.cap="Temporal evolution of 'non-medical UK nursing staff'"}
 
 pl <- list(plot1, plot2)
-ml <- marrangeGrob(pl, nrow=1, ncol=2, top = "Temporal evolution of ‘non-medical UK nursing staff’")
+ml <- marrangeGrob(pl, nrow=1, ncol=2, top = "Temporal evolution of ‘non-medical UK nursing staff’, 2009-2017")
 ## non-interactive use, multipage pdf
 #ggsave("multipage.pdf", ml, height = 30, units = "cm")
 ml
@@ -254,6 +253,6 @@ The  increasing number of "ambulance drivers" is compensated by the  decreasing 
 
 ### Further Ideas
 
-- add more observations from the plots
-- add data from/for Germany for comparison (where to git?)
-- Add link / reference to MicroTrends book ( I want to reproduce more analyses as in the book.)
+- add more interpretations of observations from the plots
+- add data from/for Germany for comparison (where to get? destatis.de?)
+- determine cyclical component of the trend embodied in the employment figures. Is it a beginning of a larger downturn?

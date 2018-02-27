@@ -6,21 +6,24 @@ slug: some-gists
 categories: ['personal-blog']
 tags: ['github', 'code', 'notes']
 banner: img/post/thumb/github-logo-gist-knb-txt.png
-
+output: 
+  html_document:
+    keep_md: no
 ---
 
-### Link Collection for my own personal use
+### Link Collections, Codesnippets and Cheatsheets for my own personal use
 
 Github 'Gists' are code samples that are too short for, or not worth creating a new standalone repository.
 
 For example
 
-- One-off scripts
+- Small snippets
+- One-off scripts 
 - unfinished/half-working scripts
 - forked github gists from other people
 - copies of codesamples from other people, slightly edited or customized
 
-This webpage is just for my own personal use, a reminder for myself.
+This webpage is just for my own personal use, a collection of cheatsheets.
 
 For now, I list only the links to the gists. Maybe I'll include the full gists when appropriate.
 
