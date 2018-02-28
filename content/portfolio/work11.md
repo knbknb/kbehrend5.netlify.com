@@ -4,7 +4,6 @@ draft: false
 image: img/hugo-logo.png
 showonlyimage: false
 title: More about the Hugo Software
-weight: 10
 url: about/more-about-the-hugo-software
 ---
 

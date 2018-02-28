@@ -177,6 +177,7 @@ More Feature Engineering Measures:
 NHANES <- NHANES %>% 
         filter(Age >= 20) %>% 
         select(setdiff(colnames(NHANES), drop_cols) )
+
 wd <- "content/post"
 if(! str_detect(getwd(), wd)) {
         setwd(wd) 
@@ -198,14 +199,15 @@ if (file.exists(NHimp)){
         NHANES_imputed <- mice::complete(mice(NHANES))
         saveRDS(NHANES_mice, file = NHimp)
         #stripplot(NHANES_mice, pch=20, cex=1.2)
-        
 }
+
 ```
 
 Imputation is done with the [MICE method](http://stefvanbuuren.github.io/mice/): "Multiple Imputation by Chained Equations".
 
 The method magically removes all NA values by  guessing intelligently. 
 It can create nonsensical values though, e.g. pregnant fathers.
+
 ```{r cols_nas}
 cols_nas <- md.pattern(NHANES) %>% 
         tail(1) %>% # find total NAS in all colnames
@@ -215,9 +217,14 @@ cols_nas <- md.pattern(NHANES) %>%
 
 length(md.pairs(NHANES))
 
+md.pattern(NHANES_mice)
+
+object.size(NHANES_mice)
+object.size(NHANES_imputed)
+object.size(NHANES)
 #library(VIM)
 #marginplot(NHANES[, c("BMI", "UrineVol1")])
-print(NHANES_mice)
+print( NHANES_mice )
 #NHANES <-
 # impute only to columns with lesss than 1000 NAs, drop all others
 # cols_nas[1:nrow(cols_nas)-1,] %>% ggplot(aes(Colname, Num_NAs)) +
@@ -233,6 +240,7 @@ table(NHANES$Gender, NHANES$PregnantNow, useNA = "always") %>%
      #   prop.table() %>%
      #   round(digits = 2) %>%         
         kable(caption= "Column 'PregnantNow', Before Imputation:")
+
 ```
 
 ```{r class}
@@ -248,6 +256,7 @@ table(NHANES_imputed$Gender, NHANES_imputed$PregnantNow, useNA = "always") %>%
 ```
 
 For now, I'll leave these new values inside the imputed dataset though.
+
 ```{r}
 htmltools::HTML('<div class="alert alert-danger"><b>NOTE</b>
                 The imputation process with default values onl did not really produce  meaningful values. Moreover, using ~50 columns for imputation is a bit too much.

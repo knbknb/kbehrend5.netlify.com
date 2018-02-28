@@ -3,8 +3,8 @@ title: Comparing 33C3 and 34C3 tweets
 author: Knut Behrends
 date: '2018-01-07'
 slug: tweets-33C3-vs-33C4
-categories: []
-tags: []
+categories: ['fun', 'twitter']
+tags: ['twitter', '34C3', 'time-series', 'rstats']
 showonlyimage: no
 css: custom.css
 output: html_document
@@ -16,4 +16,4 @@ keywords:
 usePhotoswipe: no
 ---
 
-Analysing the inspiring tweets from the CCC community (Draft)
+Analysing the inspiring tweet stream created during the 34C3 conference 
