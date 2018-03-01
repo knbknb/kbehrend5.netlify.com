@@ -26,7 +26,11 @@ h5,
 h6 {
   color: #222;
 }
-
+h4,
+.h4 {
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
 a {
   outline: none;
 }
@@ -3535,6 +3539,8 @@ h3,
   margin-top: 20px;
   margin-bottom: 20px;
 }
+
+
 p {
   margin: 0 0 10px;
 }
