@@ -217,7 +217,7 @@ cols_nas <- md.pattern(NHANES) %>%
 
 length(md.pairs(NHANES))
 
-md.pattern(NHANES_mice)
+#md.pattern(NHANES)
 
 object.size(NHANES_mice)
 object.size(NHANES_imputed)

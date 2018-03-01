@@ -8,7 +8,7 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-![My Logo - besides being colorful, it signifies brain activity](/img/logo-knutbehrends-square-circle.72x72.png)
+![](/img/logo-knutbehrends-square-circle.72x72.png)
 
 #### Why this blog?
 
@@ -45,4 +45,4 @@ Further strategy:
 - Towards my long term goal of establishing a reproducible-research workflow for myself, having a personal blog is a nice warm-up exercise, or routine.
 
 
-*The logo is from a medical paper I don't remember the authors of. Original colorization subtly modified by me.*
+*The logo is from a medical paper/blogpost I don't remember the authors of. Original colorization subtly modified by me. Indicates brain activity in left half*

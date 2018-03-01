@@ -35,3 +35,9 @@ Click on the link to go to the Hugo Documentation, (predefined variables).
 - [Webapps with Go](https://app.pluralsight.com/library/courses/creating-web-applications-go-update) 
 - [Go Docs](https://golang.org/doc/)
 
+#### Themes
+
+- [Creative Portfolio Theme](http://themes.gohugo.io/hugo-creative-portfolio-theme/), complex
+- [Universal Theme](https://themes.gohugo.io/theme/hugo-universal-theme/), complex
+- [Lithium Theme](https://github.com/yihui/hugo-lithium-theme), minimalist [preview](https://themes.gohugo.io/theme/hugo-lithium-theme/)
+

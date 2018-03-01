@@ -92,20 +92,20 @@ dateFormat = "2006-01-02"
 ## from universal theme , example site
 
 
-# Enable and disable widgets for the right sidebar
+# Enable and disable widgets for the sidebar
 [params.widgets]
-    categories = true
-    tags = true
-    search = true
+    categories = false
+    tags = false
+    search = false
 
 [params.carousel]
-    enable = true
+    enable = false
     # All carousel items are defined in their own files. You can find example items
     # at 'exampleSite/data/carousel'.
     # For more informtion take a look at the README.
 
 [params.features]
-    enable = true
+    enable = false
     # All features are defined in their own files. You can find example items
     # at 'exampleSite/data/features'.
     # For more informtion take a look at the README.
@@ -139,9 +139,9 @@ dateFormat = "2006-01-02"
     title = "From my blog"
     subtitle = ""
 
-[taxonomies]
-    tag = "tags"
-    category ="categories"
+#[taxonomies]
+#    tag = "tags"
+#    category ="categories"
 
 
 [imaging]

@@ -1062,6 +1062,9 @@ drop
 <p>Imputation is done with the <a href="http://stefvanbuuren.github.io/mice/">MICE method</a>: “Multiple Imputation by Chained Equations”.</p>
 <p>The method magically removes all NA values by guessing intelligently. It can create nonsensical values though, e.g. pregnant fathers.</p>
 <pre><code>## [1] 4</code></pre>
+<pre><code>## 5510432 bytes</code></pre>
+<pre><code>## 1123040 bytes</code></pre>
+<pre><code>## 1870464 bytes</code></pre>
 <pre><code>## Multiply imputed data set
 ## Call:
 ## mice(data = NHANES)
@@ -1384,11 +1387,12 @@ NA
 </tbody>
 </table>
 <pre><code>## [1] &quot;data.frame&quot;</code></pre>
-<p>For now, I’ll leave these new values inside the imputed dataset though. <div class="alert alert-danger"><b>NOTE</b>
+<p>For now, I’ll leave these new values inside the imputed dataset though.</p>
+<div class="alert alert-danger"><b>NOTE</b>
                 The imputation process with default values onl did not really produce  meaningful values. Moreover, using ~50 columns for imputation is a bit too much.
 However  my goal was to try out model selection algorithms, 
 and imputing correctly was less a concern.  
-                </div></p>
+                </div>
 <p>However, NHANES Data after imputation: no more NAs in any column.</p>
 <p>Table 4: NHANES Column definitions and some values. These metadata show, for example, the unique distinct values of columns where it makes sense to report them (e.g. male/female for column “gender”).</p>
 <pre><code>## 
