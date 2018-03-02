@@ -27,7 +27,7 @@ keywords:
 
 ```{r setup, include=FALSE}
 library(knitr)
-opts_chunk$set(cache = TRUE, warning = FALSE, message = FALSE, 
+opts_chunk$set(cache = FALSE, warning = FALSE, message = FALSE, 
                echo = FALSE, tidy = FALSE, width = 7, fig.width=9)
 options(digits = 3, tibble.print_min = 6)
 options(knitr.table.format = "html") 
@@ -59,8 +59,10 @@ data(NHANES)
 
 ```{r theme}
 library(ggthemes)
+#theme_set(theme_bw())
 #theme_set(theme_economist_white()) # unreliable
-theme_set(theme_bw())
+source("https://github.com/traffordDataLab/assets/raw/master/theme/ggplot2/theme_lab.R")
+theme_set(theme_lab())
 scale_colour_discrete <- function(...) scale_color_brewer(palette="Set1")
 ```
 
