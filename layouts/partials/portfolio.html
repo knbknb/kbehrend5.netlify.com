@@ -14,6 +14,15 @@
                             <img src="{{ .Params.image }}" alt="" class="img-responsive">
                         </a>
                       {{ end }}
+                      {{ if eq .Params.showvaluebox true }}
+                        <div id="linked-value-box" >
+                                <div class="inner">
+
+                                <p class="caption"></p></div>
+                                <div class="icon  center-block margin-top-x"><i class="{{ .Params.valuebox_icon }}"></i>
+                                <p class="value">{{ .Params.valuebox_text }}</p></div>
+                        </div>
+                      {{ end }}
                       {{ if eq .Params.showonlyimage true }}
                       <div class="box-masonry-hover-text-header">
                       {{ else }}
