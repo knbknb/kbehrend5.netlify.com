@@ -1,5 +1,5 @@
 ---
-title: Imputed Blood Pressure Data
+title: Imputing Blood Pressure Data
 author: Knut Behrends
 date: 2018-02-12
 slug: bloodpressure-imputing
@@ -25,7 +25,7 @@ keywords:
 
 ```{r setup, include=FALSE}
 library(knitr)
-opts_chunk$set(cache = FALSE, warning = FALSE, message = FALSE, 
+opts_chunk$set(cache = TRUE, warning = FALSE, message = FALSE, 
                echo = FALSE, tidy = FALSE, width = 7, fig.width=9)
 options(digits = 3, tibble.print_min = 6)
 options(knitr.table.format = "html") 
@@ -46,18 +46,18 @@ scale_colour_discrete <- function(...) scale_color_brewer(palette="Set1")
 library(htmltools) # when markdown is not enough
 ```
 
-####  Variable imputation 
+####  Feature engineering and variable imputation 
 
 
 ```{r abstr}
 
-htmltools::HTML('<div class="alert alert-info"><b>Performing variable imputation on anonymized data from 10000 people representing the general US Population</b>. 
+htmltools::HTML('<div class="alert alert-info"><b>Playing with multi-variable imputation on anonymized data from 10000 people representing the general US Population</b>. 
 This is not a tutorial, but more a personal learning experience, and work in progress.
-<div><br>
-Imputation is done incorrectly here, I know that.
-This blogpost contains preprocessing steps for another following blogpost about lasso-regression.</div>
-
-</div>')
+<div>
+This blogpost contains preprocessing steps for another following blogpost about lasso-regression.
+<br>
+At this time, imputation is done incorrectly here, I know that.
+</div></div>')
 
 ```
 
@@ -68,16 +68,23 @@ Here I'll continue with preprocessing. More basically, can I determine some othe
 I am not trying to do groundbreaking medical research here. Hey I'm just a blogger, playing with a dataset for personal entertainment, trying out some of those fancy Machine Learning algorithms that I encountered during MOOC homework assignments. This time I'll try these techniques out on a larger dataset that *I* find interesting.
 
 
-#### NHANES dataset
+#### The NHANES dataset
 
 NHANES is  the US National Health and Nutrition Examination Study. It is a carefully curated, larger medical survey aiming to get a representative sample of the general US population. The survey is carried out periodically.
 
-The [*NHANES* dataset](https://www.cdc.gov/nchs/nhanes/participant_video.htm) is available as an R package on [CRAN](https://cran.r-project.org/package=NHANES). I have used package version 2.1.0, specifically "NHANES 2009-2012 with adjusted weighting". This dataset contains data from two collection periods, 2009-2010 and 2011-2012.
+The [*NHANES* dataset](https://www.cdc.gov/nchs/nhanes/participant_video.htm) is available as an R package on [CRAN](https://cran.r-project.org/package=NHANES). I have used package version 2.1.0, specifically "NHANES 2009-2012 with adjusted weighting".
+
+Table 1 shows  the column names and (further below, table 4) some other important metadata of the NHANES dataset. 
+
+This dataset contains data from two collection periods, 2009-2010 and 2011-2012. Some attributes wer collected during period 1, but not in period 2, or they were collected in different ways. Therefore the dataset contains many NULL values just because of this. Moreover many attributes, such as "head circumference", were only collected for babies and children.  
 
 
 #### Feature Engineering
 
-Table 1 shows  the column names and (further below, table 4) some other important metadata of the NHANES dataset. 
+These are the feature selection steps I will apply.
+Some attributes are redundant, for exaample age-in-years, age-in-months and age-decade. Many blood-pressure values are redundant; keep only the average value. 
+First, remove attributes that were collected for babies, children and generally people less than 20 years of age.
+This leads to the selection of columns, marked by me as "drop" in Table 1 below.
 
 
 ```{r names_defs}
@@ -134,7 +141,6 @@ nhanes_defs <- nhanes_defs %>%
          #Column == "CompHrsDayChild" ~ action1,
 #         str_detect(Column, pattern=regex("TVHrs|CompHrs|AgeDecade")) ==
 #                 TRUE ~ action1,
-        
          TRUE ~ ""))
 
 ```
@@ -158,16 +164,11 @@ drop_cols <- nhanes_defs %>%
 # factor_cols <- nhanes_defs %>% 
 #         filter(Action == action2) %>% select(Column) %>% 
 #         as_vector()
-#dfr <- NHANES %>% select(Age, AgeDecade) %>% filter(is.na(AgeDecade))
+# dfr <- NHANES %>% select(Age, AgeDecade) %>% filter(is.na(AgeDecade))
 
 
 ```
 
-More Feature Engineering Measures:
-
-- Remove people less than 20 years of age
-- Remove columns, marked by me as "drop" in table 1 (measured for children/youth-only, etc).
-- Impute missing values with "mice" method (Multiple Imputation by Chained Equations)
 
 
 
@@ -183,10 +184,10 @@ if(! str_detect(getwd(), wd)) {
         setwd(wd) 
 }
 
-NHimp <- "../../data_private/NHANES-imputed.rds"
+NHimp_file<- "../../data_private/NHANES-imputed.rds"
 
-if (file.exists(NHimp)){
-        NHANES_mice <- readRDS(NHimp)
+if (file.exists(NHimp_file)){
+        NHANES_mice <- readRDS(NHimp_file)
         NHANES_imputed <- mice::complete(NHANES_mice)
 } else {
         cols_few_NAs <- colSums(apply(NHANES, 2, is.na)) 
@@ -197,34 +198,49 @@ if (file.exists(NHimp)){
         NHANES <- NHANES[ , cols_few_NAs$col]
         NHANES_mice <- mice(NHANES, seed=47)
         NHANES_imputed <- mice::complete(mice(NHANES))
-        saveRDS(NHANES_mice, file = NHimp)
+        saveRDS(NHANES_mice, file = NHimp_file)
         #stripplot(NHANES_mice, pch=20, cex=1.2)
 }
 
 ```
 
+These are the remaining columns in the NHANES dataset and the number of NA values in each column, respectively:
+
+
+```{r nmissing}
+data_frame(`Column Name` = names(NHANES_mice$nmis),
+           `Number of NAs` = NHANES_mice$nmis) %>% 
+        kable(row.names = 1, 
+              caption = "Column names in NHANES data set,\
+              after removal of redundant and inapplicable columns") %>% 
+        kable_styling(bootstrap_options = 
+                c("striped", "hover"))
+```
+
+#### Variable imputation
+
 Imputation is done with the [MICE method](http://stefvanbuuren.github.io/mice/): "Multiple Imputation by Chained Equations".
 
-The method magically removes all NA values by  guessing intelligently. 
-It can create nonsensical values though, e.g. pregnant fathers.
+The MICE method  removes all NA values by  guessing intelligently. 
+Here I have called the `mice()` function with default parameters.
+This is why it created nonsensical values in places, e.g. pregnant fathers., see below.
 
 ```{r cols_nas}
+
 cols_nas <- md.pattern(NHANES) %>% 
         tail(1) %>% # find total NAS in all colnames
         t() %>%  # convert to data frame
-        as.data.frame() %>% rownames_to_column() %>%
+        as.data.frame() %>%  rownames_to_column() %>%
         rename("Colname"="rowname", "Num_NAs"="V1")
 
-length(md.pairs(NHANES))
-
+#length(md.pairs(NHANES))
 #md.pattern(NHANES)
 
-object.size(NHANES_mice)
-object.size(NHANES_imputed)
-object.size(NHANES)
+# object.size(NHANES_mice)
+# object.size(NHANES_imputed)
+# object.size(NHANES)
 #library(VIM)
 #marginplot(NHANES[, c("BMI", "UrineVol1")])
-print( NHANES_mice )
 #NHANES <-
 # impute only to columns with lesss than 1000 NAs, drop all others
 # cols_nas[1:nrow(cols_nas)-1,] %>% ggplot(aes(Colname, Num_NAs)) +
@@ -235,7 +251,6 @@ print( NHANES_mice )
 
 ```{r pregnant, eval=TRUE}
 
-
 table(NHANES$Gender, NHANES$PregnantNow, useNA = "always") %>% 
      #   prop.table() %>%
      #   round(digits = 2) %>%         
@@ -243,16 +258,13 @@ table(NHANES$Gender, NHANES$PregnantNow, useNA = "always") %>%
 
 ```
 
-```{r class}
-class(NHANES_imputed)
-```
 
 
 ```{r pregnant2, eval=FALSE}
 table(NHANES_imputed$Gender, NHANES_imputed$PregnantNow, useNA = "always") %>%
       #  prop.table() %>%
       #  round(digits = 2) %>% 
-        kable(caption="After imputation")
+        kable(caption= "Column 'PregnantNow', After Imputation:")
 ```
 
 For now, I'll leave these new values inside the imputed dataset though.
@@ -265,15 +277,14 @@ and imputing correctly was less a concern.
                 </div>')
 ```
 
-However, NHANES Data after imputation: no more NAs in any column.
-
-Table 4: NHANES Column definitions and some values. These metadata show, for example, the unique distinct values of columns where it makes sense to report them (e.g. male/female for column "gender").
 
 ```{r contents}
+# However, NHANES Data after imputation: no more NAs in any column.
+# 
+# Table 4: NHANES Column definitions and some values. These metadata show, for example, the unique distinct values of columns where it makes sense to report them (e.g. male/female for column "gender").
+
 Hmisc::contents(NHANES_imputed)
 ```
-
-
 
 
 Obligatory Disclaimer (from the NHANES Package Documentation):

@@ -23,6 +23,7 @@ keywords: ["Personal-Blog", "Fun", "rstats", "Sports-Data", "Soccer", "XML"]
 
 ```{r setup, include=FALSE}
 library(knitr)
+
 opts_chunk$set(cache = TRUE, warning = FALSE, message = FALSE, 
                echo = TRUE, tidy = FALSE, width = 7)
 options(digits = 3, tibble.print_min = 6)

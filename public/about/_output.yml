@@ -1,5 +1,0 @@
-blogdown::html_page:
-  keep_md: yes
-  toc: false
-  fig_width: 9
-  dev: "png"

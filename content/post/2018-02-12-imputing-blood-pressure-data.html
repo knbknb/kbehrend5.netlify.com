@@ -1,5 +1,5 @@
 ---
-title: Imputed Blood Pressure Data
+title: Imputing Blood Pressure Data
 author: Knut Behrends
 date: 2018-02-12
 slug: bloodpressure-imputing
@@ -23,27 +23,29 @@ keywords:
 
 
 
-<div id="variable-imputation" class="section level4">
-<h4>Variable imputation</h4>
-<div class="alert alert-info"><b>Performing variable imputation on anonymized data from 10000 people representing the general US Population</b>. 
+<div id="feature-engineering-and-variable-imputation" class="section level4">
+<h4>Feature engineering and variable imputation</h4>
+<div class="alert alert-info"><b>Playing with multi-variable imputation on anonymized data from 10000 people representing the general US Population</b>. 
 This is not a tutorial, but more a personal learning experience, and work in progress.
-<div><br>
-Imputation is done incorrectly here, I know that.
-This blogpost contains preprocessing steps for another following blogpost about lasso-regression.</div>
-
-</div>
+<div>
+This blogpost contains preprocessing steps for another following blogpost about lasso-regression.
+<br>
+At this time, imputation is done incorrectly here, I know that.
+</div></div>
 <p>This is a follow-up to <a href="/post/2018/02/bloodpressure-nhanes">an exploratory data-analysis post</a> of mine. When I was nearly done with writing that post, some new questions came to my mind.</p>
 <p>Here I’ll continue with preprocessing. More basically, can I determine some other variables (out of the 76) that are also influencing the Blood Pressure in some way?</p>
 <p>I am not trying to do groundbreaking medical research here. Hey I’m just a blogger, playing with a dataset for personal entertainment, trying out some of those fancy Machine Learning algorithms that I encountered during MOOC homework assignments. This time I’ll try these techniques out on a larger dataset that <em>I</em> find interesting.</p>
 </div>
-<div id="nhanes-dataset" class="section level4">
-<h4>NHANES dataset</h4>
+<div id="the-nhanes-dataset" class="section level4">
+<h4>The NHANES dataset</h4>
 <p>NHANES is the US National Health and Nutrition Examination Study. It is a carefully curated, larger medical survey aiming to get a representative sample of the general US population. The survey is carried out periodically.</p>
-<p>The <a href="https://www.cdc.gov/nchs/nhanes/participant_video.htm"><em>NHANES</em> dataset</a> is available as an R package on <a href="https://cran.r-project.org/package=NHANES">CRAN</a>. I have used package version 2.1.0, specifically “NHANES 2009-2012 with adjusted weighting”. This dataset contains data from two collection periods, 2009-2010 and 2011-2012.</p>
+<p>The <a href="https://www.cdc.gov/nchs/nhanes/participant_video.htm"><em>NHANES</em> dataset</a> is available as an R package on <a href="https://cran.r-project.org/package=NHANES">CRAN</a>. I have used package version 2.1.0, specifically “NHANES 2009-2012 with adjusted weighting”.</p>
+<p>Table 1 shows the column names and (further below, table 4) some other important metadata of the NHANES dataset.</p>
+<p>This dataset contains data from two collection periods, 2009-2010 and 2011-2012. Some attributes wer collected during period 1, but not in period 2, or they were collected in different ways. Therefore the dataset contains many NULL values just because of this. Moreover many attributes, such as “head circumference”, were only collected for babies and children.</p>
 </div>
 <div id="feature-engineering" class="section level4">
 <h4>Feature Engineering</h4>
-<p>Table 1 shows the column names and (further below, table 4) some other important metadata of the NHANES dataset.</p>
+<p>These are the feature selection steps I will apply. Some attributes are redundant, for exaample age-in-years, age-in-months and age-decade. Many blood-pressure values are redundant; keep only the average value. First, remove attributes that were collected for babies, children and generally people less than 20 years of age. This leads to the selection of columns, marked by me as “drop” in Table 1 below.</p>
 <table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption>
 <span id="tab:tabledef">Table 1: </span>Column names in NHANES data set, and columns that will be dropped
@@ -1053,266 +1055,375 @@ drop
 </tr>
 </tbody>
 </table>
-<p>More Feature Engineering Measures:</p>
-<ul>
-<li>Remove people less than 20 years of age</li>
-<li>Remove columns, marked by me as “drop” in table 1 (measured for children/youth-only, etc).</li>
-<li>Impute missing values with “mice” method (Multiple Imputation by Chained Equations)</li>
-</ul>
+<p>These are the remaining columns in the NHANES dataset and the number of NA values in each column, respectively:</p>
+<table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<caption>
+<span id="tab:nmissing">Table 2: </span>Column names in NHANES data set, after removal of redundant and inapplicable columns
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:left;">
+Column Name
+</th>
+<th style="text-align:right;">
+Number of NAs
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+1
+</td>
+<td style="text-align:left;">
+Gender
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+2
+</td>
+<td style="text-align:left;">
+Age
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+3
+</td>
+<td style="text-align:left;">
+Race1
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+4
+</td>
+<td style="text-align:left;">
+Education
+</td>
+<td style="text-align:right;">
+14
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+5
+</td>
+<td style="text-align:left;">
+HHIncomeMid
+</td>
+<td style="text-align:right;">
+603
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+6
+</td>
+<td style="text-align:left;">
+Poverty
+</td>
+<td style="text-align:right;">
+537
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+7
+</td>
+<td style="text-align:left;">
+HomeRooms
+</td>
+<td style="text-align:right;">
+55
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+8
+</td>
+<td style="text-align:left;">
+HomeOwn
+</td>
+<td style="text-align:right;">
+49
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+9
+</td>
+<td style="text-align:left;">
+Work
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+10
+</td>
+<td style="text-align:left;">
+Weight
+</td>
+<td style="text-align:right;">
+57
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+11
+</td>
+<td style="text-align:left;">
+Height
+</td>
+<td style="text-align:right;">
+53
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+12
+</td>
+<td style="text-align:left;">
+BMI
+</td>
+<td style="text-align:right;">
+63
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+13
+</td>
+<td style="text-align:left;">
+Pulse
+</td>
+<td style="text-align:right;">
+254
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+14
+</td>
+<td style="text-align:left;">
+BPSysAve
+</td>
+<td style="text-align:right;">
+264
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+15
+</td>
+<td style="text-align:left;">
+BPDiaAve
+</td>
+<td style="text-align:right;">
+264
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+16
+</td>
+<td style="text-align:left;">
+DirectChol
+</td>
+<td style="text-align:right;">
+390
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+17
+</td>
+<td style="text-align:left;">
+TotChol
+</td>
+<td style="text-align:right;">
+390
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+18
+</td>
+<td style="text-align:left;">
+UrineVol1
+</td>
+<td style="text-align:right;">
+97
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+19
+</td>
+<td style="text-align:left;">
+UrineFlow1
+</td>
+<td style="text-align:right;">
+489
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+20
+</td>
+<td style="text-align:left;">
+Diabetes
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+21
+</td>
+<td style="text-align:left;">
+HealthGen
+</td>
+<td style="text-align:right;">
+757
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+22
+</td>
+<td style="text-align:left;">
+DaysPhysHlthBad
+</td>
+<td style="text-align:right;">
+764
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+23
+</td>
+<td style="text-align:left;">
+DaysMentHlthBad
+</td>
+<td style="text-align:right;">
+762
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+24
+</td>
+<td style="text-align:left;">
+LittleInterest
+</td>
+<td style="text-align:right;">
+798
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+25
+</td>
+<td style="text-align:left;">
+Depressed
+</td>
+<td style="text-align:right;">
+794
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+26
+</td>
+<td style="text-align:left;">
+SleepHrsNight
+</td>
+<td style="text-align:right;">
+17
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+27
+</td>
+<td style="text-align:left;">
+SleepTrouble
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+28
+</td>
+<td style="text-align:left;">
+PhysActive
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+29
+</td>
+<td style="text-align:left;">
+Alcohol12PlusYr
+</td>
+<td style="text-align:right;">
+772
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+30
+</td>
+<td style="text-align:left;">
+Smoke100
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+31
+</td>
+<td style="text-align:left;">
+Smoke100n
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="variable-imputation" class="section level4">
+<h4>Variable imputation</h4>
 <p>Imputation is done with the <a href="http://stefvanbuuren.github.io/mice/">MICE method</a>: “Multiple Imputation by Chained Equations”.</p>
-<p>The method magically removes all NA values by guessing intelligently. It can create nonsensical values though, e.g. pregnant fathers.</p>
-<pre><code>## [1] 4</code></pre>
-<pre><code>## 5510432 bytes</code></pre>
-<pre><code>## 1123040 bytes</code></pre>
-<pre><code>## 1870464 bytes</code></pre>
-<pre><code>## Multiply imputed data set
-## Call:
-## mice(data = NHANES)
-## Number of multiple imputations:  5
-## Missing cells per column:
-##          Gender             Age           Race1       Education 
-##               0               0               0              14 
-##     HHIncomeMid         Poverty       HomeRooms         HomeOwn 
-##             603             537              55              49 
-##            Work          Weight          Height             BMI 
-##               1              57              53              63 
-##           Pulse        BPSysAve        BPDiaAve      DirectChol 
-##             254             264             264             390 
-##         TotChol       UrineVol1      UrineFlow1        Diabetes 
-##             390              97             489               2 
-##       HealthGen DaysPhysHlthBad DaysMentHlthBad  LittleInterest 
-##             757             764             762             798 
-##       Depressed   SleepHrsNight    SleepTrouble      PhysActive 
-##             794              17               0               0 
-## Alcohol12PlusYr        Smoke100       Smoke100n 
-##             772               0               0 
-## Imputation methods:
-##          Gender             Age           Race1       Education 
-##              &quot;&quot;              &quot;&quot;              &quot;&quot;       &quot;polyreg&quot; 
-##     HHIncomeMid         Poverty       HomeRooms         HomeOwn 
-##           &quot;pmm&quot;           &quot;pmm&quot;           &quot;pmm&quot;       &quot;polyreg&quot; 
-##            Work          Weight          Height             BMI 
-##       &quot;polyreg&quot;           &quot;pmm&quot;           &quot;pmm&quot;           &quot;pmm&quot; 
-##           Pulse        BPSysAve        BPDiaAve      DirectChol 
-##           &quot;pmm&quot;           &quot;pmm&quot;           &quot;pmm&quot;           &quot;pmm&quot; 
-##         TotChol       UrineVol1      UrineFlow1        Diabetes 
-##           &quot;pmm&quot;           &quot;pmm&quot;           &quot;pmm&quot;        &quot;logreg&quot; 
-##       HealthGen DaysPhysHlthBad DaysMentHlthBad  LittleInterest 
-##       &quot;polyreg&quot;           &quot;pmm&quot;           &quot;pmm&quot;       &quot;polyreg&quot; 
-##       Depressed   SleepHrsNight    SleepTrouble      PhysActive 
-##       &quot;polyreg&quot;           &quot;pmm&quot;              &quot;&quot;              &quot;&quot; 
-## Alcohol12PlusYr        Smoke100       Smoke100n 
-##        &quot;logreg&quot;              &quot;&quot;              &quot;&quot; 
-## VisitSequence:
-##       Education     HHIncomeMid         Poverty       HomeRooms 
-##               4               5               6               7 
-##         HomeOwn            Work          Weight          Height 
-##               8               9              10              11 
-##             BMI           Pulse        BPSysAve        BPDiaAve 
-##              12              13              14              15 
-##      DirectChol         TotChol       UrineVol1      UrineFlow1 
-##              16              17              18              19 
-##        Diabetes       HealthGen DaysPhysHlthBad DaysMentHlthBad 
-##              20              21              22              23 
-##  LittleInterest       Depressed   SleepHrsNight Alcohol12PlusYr 
-##              24              25              26              29 
-## PredictorMatrix:
-##                 Gender Age Race1 Education HHIncomeMid Poverty HomeRooms
-## Gender               0   0     0         0           0       0         0
-## Age                  0   0     0         0           0       0         0
-## Race1                0   0     0         0           0       0         0
-## Education            1   1     1         0           1       1         1
-## HHIncomeMid          1   1     1         1           0       1         1
-## Poverty              1   1     1         1           1       0         1
-## HomeRooms            1   1     1         1           1       1         0
-## HomeOwn              1   1     1         1           1       1         1
-## Work                 1   1     1         1           1       1         1
-## Weight               1   1     1         1           1       1         1
-## Height               1   1     1         1           1       1         1
-## BMI                  1   1     1         1           1       1         1
-## Pulse                1   1     1         1           1       1         1
-## BPSysAve             1   1     1         1           1       1         1
-## BPDiaAve             1   1     1         1           1       1         1
-## DirectChol           1   1     1         1           1       1         1
-## TotChol              1   1     1         1           1       1         1
-## UrineVol1            1   1     1         1           1       1         1
-## UrineFlow1           1   1     1         1           1       1         1
-## Diabetes             1   1     1         1           1       1         1
-## HealthGen            1   1     1         1           1       1         1
-## DaysPhysHlthBad      1   1     1         1           1       1         1
-## DaysMentHlthBad      1   1     1         1           1       1         1
-## LittleInterest       1   1     1         1           1       1         1
-## Depressed            1   1     1         1           1       1         1
-## SleepHrsNight        1   1     1         1           1       1         1
-## SleepTrouble         0   0     0         0           0       0         0
-## PhysActive           0   0     0         0           0       0         0
-## Alcohol12PlusYr      1   1     1         1           1       1         1
-## Smoke100             0   0     0         0           0       0         0
-## Smoke100n            0   0     0         0           0       0         0
-##                 HomeOwn Work Weight Height BMI Pulse BPSysAve BPDiaAve
-## Gender                0    0      0      0   0     0        0        0
-## Age                   0    0      0      0   0     0        0        0
-## Race1                 0    0      0      0   0     0        0        0
-## Education             1    1      1      1   1     1        1        1
-## HHIncomeMid           1    1      1      1   1     1        1        1
-## Poverty               1    1      1      1   1     1        1        1
-## HomeRooms             1    1      1      1   1     1        1        1
-## HomeOwn               0    1      1      1   1     1        1        1
-## Work                  1    0      1      1   1     1        1        1
-## Weight                1    1      0      1   1     1        1        1
-## Height                1    1      1      0   1     1        1        1
-## BMI                   1    1      1      1   0     1        1        1
-## Pulse                 1    1      1      1   1     0        1        1
-## BPSysAve              1    1      1      1   1     1        0        1
-## BPDiaAve              1    1      1      1   1     1        1        0
-## DirectChol            1    1      1      1   1     1        1        1
-## TotChol               1    1      1      1   1     1        1        1
-## UrineVol1             1    1      1      1   1     1        1        1
-## UrineFlow1            1    1      1      1   1     1        1        1
-## Diabetes              1    1      1      1   1     1        1        1
-## HealthGen             1    1      1      1   1     1        1        1
-## DaysPhysHlthBad       1    1      1      1   1     1        1        1
-## DaysMentHlthBad       1    1      1      1   1     1        1        1
-## LittleInterest        1    1      1      1   1     1        1        1
-## Depressed             1    1      1      1   1     1        1        1
-## SleepHrsNight         1    1      1      1   1     1        1        1
-## SleepTrouble          0    0      0      0   0     0        0        0
-## PhysActive            0    0      0      0   0     0        0        0
-## Alcohol12PlusYr       1    1      1      1   1     1        1        1
-## Smoke100              0    0      0      0   0     0        0        0
-## Smoke100n             0    0      0      0   0     0        0        0
-##                 DirectChol TotChol UrineVol1 UrineFlow1 Diabetes HealthGen
-## Gender                   0       0         0          0        0         0
-## Age                      0       0         0          0        0         0
-## Race1                    0       0         0          0        0         0
-## Education                1       1         1          1        1         1
-## HHIncomeMid              1       1         1          1        1         1
-## Poverty                  1       1         1          1        1         1
-## HomeRooms                1       1         1          1        1         1
-## HomeOwn                  1       1         1          1        1         1
-## Work                     1       1         1          1        1         1
-## Weight                   1       1         1          1        1         1
-## Height                   1       1         1          1        1         1
-## BMI                      1       1         1          1        1         1
-## Pulse                    1       1         1          1        1         1
-## BPSysAve                 1       1         1          1        1         1
-## BPDiaAve                 1       1         1          1        1         1
-## DirectChol               0       1         1          1        1         1
-## TotChol                  1       0         1          1        1         1
-## UrineVol1                1       1         0          1        1         1
-## UrineFlow1               1       1         1          0        1         1
-## Diabetes                 1       1         1          1        0         1
-## HealthGen                1       1         1          1        1         0
-## DaysPhysHlthBad          1       1         1          1        1         1
-## DaysMentHlthBad          1       1         1          1        1         1
-## LittleInterest           1       1         1          1        1         1
-## Depressed                1       1         1          1        1         1
-## SleepHrsNight            1       1         1          1        1         1
-## SleepTrouble             0       0         0          0        0         0
-## PhysActive               0       0         0          0        0         0
-## Alcohol12PlusYr          1       1         1          1        1         1
-## Smoke100                 0       0         0          0        0         0
-## Smoke100n                0       0         0          0        0         0
-##                 DaysPhysHlthBad DaysMentHlthBad LittleInterest Depressed
-## Gender                        0               0              0         0
-## Age                           0               0              0         0
-## Race1                         0               0              0         0
-## Education                     1               1              1         1
-## HHIncomeMid                   1               1              1         1
-## Poverty                       1               1              1         1
-## HomeRooms                     1               1              1         1
-## HomeOwn                       1               1              1         1
-## Work                          1               1              1         1
-## Weight                        1               1              1         1
-## Height                        1               1              1         1
-## BMI                           1               1              1         1
-## Pulse                         1               1              1         1
-## BPSysAve                      1               1              1         1
-## BPDiaAve                      1               1              1         1
-## DirectChol                    1               1              1         1
-## TotChol                       1               1              1         1
-## UrineVol1                     1               1              1         1
-## UrineFlow1                    1               1              1         1
-## Diabetes                      1               1              1         1
-## HealthGen                     1               1              1         1
-## DaysPhysHlthBad               0               1              1         1
-## DaysMentHlthBad               1               0              1         1
-## LittleInterest                1               1              0         1
-## Depressed                     1               1              1         0
-## SleepHrsNight                 1               1              1         1
-## SleepTrouble                  0               0              0         0
-## PhysActive                    0               0              0         0
-## Alcohol12PlusYr               1               1              1         1
-## Smoke100                      0               0              0         0
-## Smoke100n                     0               0              0         0
-##                 SleepHrsNight SleepTrouble PhysActive Alcohol12PlusYr
-## Gender                      0            0          0               0
-## Age                         0            0          0               0
-## Race1                       0            0          0               0
-## Education                   1            1          1               1
-## HHIncomeMid                 1            1          1               1
-## Poverty                     1            1          1               1
-## HomeRooms                   1            1          1               1
-## HomeOwn                     1            1          1               1
-## Work                        1            1          1               1
-## Weight                      1            1          1               1
-## Height                      1            1          1               1
-## BMI                         1            1          1               1
-## Pulse                       1            1          1               1
-## BPSysAve                    1            1          1               1
-## BPDiaAve                    1            1          1               1
-## DirectChol                  1            1          1               1
-## TotChol                     1            1          1               1
-## UrineVol1                   1            1          1               1
-## UrineFlow1                  1            1          1               1
-## Diabetes                    1            1          1               1
-## HealthGen                   1            1          1               1
-## DaysPhysHlthBad             1            1          1               1
-## DaysMentHlthBad             1            1          1               1
-## LittleInterest              1            1          1               1
-## Depressed                   1            1          1               1
-## SleepHrsNight               0            1          1               1
-## SleepTrouble                0            0          0               0
-## PhysActive                  0            0          0               0
-## Alcohol12PlusYr             1            1          1               0
-## Smoke100                    0            0          0               0
-## Smoke100n                   0            0          0               0
-##                 Smoke100 Smoke100n
-## Gender                 0         0
-## Age                    0         0
-## Race1                  0         0
-## Education              1         0
-## HHIncomeMid            1         0
-## Poverty                1         0
-## HomeRooms              1         0
-## HomeOwn                1         0
-## Work                   1         0
-## Weight                 1         0
-## Height                 1         0
-## BMI                    1         0
-## Pulse                  1         0
-## BPSysAve               1         0
-## BPDiaAve               1         0
-## DirectChol             1         0
-## TotChol                1         0
-## UrineVol1              1         0
-## UrineFlow1             1         0
-## Diabetes               1         0
-## HealthGen              1         0
-## DaysPhysHlthBad        1         0
-## DaysMentHlthBad        1         0
-## LittleInterest         1         0
-## Depressed              1         0
-## SleepHrsNight          1         0
-## SleepTrouble           0         0
-## PhysActive             0         0
-## Alcohol12PlusYr        1         0
-## Smoke100               0         0
-## Smoke100n              0         0
-## Random generator seed value:  NA</code></pre>
+<p>The MICE method removes all NA values by guessing intelligently. Here I have called the <code>mice()</code> function with default parameters. This is why it created nonsensical values in places, e.g. pregnant fathers., see below.</p>
 <table>
 <caption>
-<span id="tab:pregnant">Table 2: </span>Column ‘PregnantNow’, Before Imputation:
+<span id="tab:pregnant">Table 3: </span>Column ‘PregnantNow’, Before Imputation:
 </caption>
 <thead>
 <tr>
@@ -1386,15 +1497,12 @@ NA
 </tr>
 </tbody>
 </table>
-<pre><code>## [1] &quot;data.frame&quot;</code></pre>
 <p>For now, I’ll leave these new values inside the imputed dataset though.</p>
 <div class="alert alert-danger"><b>NOTE</b>
                 The imputation process with default values onl did not really produce  meaningful values. Moreover, using ~50 columns for imputation is a bit too much.
 However  my goal was to try out model selection algorithms, 
 and imputing correctly was less a concern.  
                 </div>
-<p>However, NHANES Data after imputation: no more NAs in any column.</p>
-<p>Table 4: NHANES Column definitions and some values. These metadata show, for example, the unique distinct values of columns where it makes sense to report them (e.g. male/female for column “gender”).</p>
 <pre><code>## 
 ## Data frame:NHANES_imputed    7235 observations and 31 variables    Maximum # NAs:0
 ## 

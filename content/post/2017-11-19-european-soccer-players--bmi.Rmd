@@ -226,6 +226,7 @@ Of course the BMI range is much, much wider for the US men.
 #### Who are the largest players with the highest BMI?
 
 ```{r}
+
 players_large <- Player %>%
   filter(size == "large") %>%
   arrange(desc(bmi))
