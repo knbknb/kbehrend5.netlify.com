@@ -40,8 +40,8 @@ At this time, imputation is done incorrectly here, I know that.
 <h4>The NHANES dataset</h4>
 <p>NHANES is the US National Health and Nutrition Examination Study. It is a carefully curated, larger medical survey aiming to get a representative sample of the general US population. The survey is carried out periodically.</p>
 <p>The <a href="https://www.cdc.gov/nchs/nhanes/participant_video.htm"><em>NHANES</em> dataset</a> is available as an R package on <a href="https://cran.r-project.org/package=NHANES">CRAN</a>. I have used package version 2.1.0, specifically “NHANES 2009-2012 with adjusted weighting”.</p>
-<p>Table 1 shows the column names and (further below, table 4) some other important metadata of the NHANES dataset.</p>
-<p>This dataset contains data from two collection periods, 2009-2010 and 2011-2012. Some attributes wer collected during period 1, but not in period 2, or they were collected in different ways. Therefore the dataset contains many NULL values just because of this. Moreover many attributes, such as “head circumference”, were only collected for babies and children.</p>
+<p>Table 1 shows the column names and further below, and in table 5, are some other important metadata of the NHANES dataset.</p>
+<p>This dataset contains data from two collection periods, 2009-2010 and 2011-2012. Some attributes weres collected during period 1, but not in period 2, or they were collected in different ways. Therefore the dataset contains many NULL values just because of this. Moreover many attributes, such as “head circumference”, were only collected for babies and children.</p>
 </div>
 <div id="feature-engineering" class="section level4">
 <h4>Feature Engineering</h4>
@@ -1058,7 +1058,7 @@ drop
 <p>These are the remaining columns in the NHANES dataset and the number of NA values in each column, respectively:</p>
 <table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption>
-<span id="tab:nmissing">Table 2: </span>Column names in NHANES data set, after removal of redundant and inapplicable columns
+<span id="tab:nmissing">Table 2: </span>Column names in NHANES data set, after removal of redundant and inapplicable columns, and number of NAs. (PregnantNow is the most extreme example, and is kept on purpose.
 </caption>
 <thead>
 <tr>
@@ -1414,6 +1414,17 @@ Smoke100n
 0
 </td>
 </tr>
+<tr>
+<td style="text-align:left;">
+32
+</td>
+<td style="text-align:left;">
+PregnantNow
+</td>
+<td style="text-align:right;">
+5539
+</td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -1497,76 +1508,514 @@ NA
 </tr>
 </tbody>
 </table>
+<table>
+<caption>
+<span id="tab:pregnant2">Table 4: </span>Column ‘PregnantNow’, After Imputation:
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:right;">
+Yes
+</th>
+<th style="text-align:right;">
+No
+</th>
+<th style="text-align:right;">
+Unknown
+</th>
+<th style="text-align:right;">
+NA
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+female
+</td>
+<td style="text-align:right;">
+362
+</td>
+<td style="text-align:right;">
+2930
+</td>
+<td style="text-align:right;">
+391
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+male
+</td>
+<td style="text-align:right;">
+197
+</td>
+<td style="text-align:right;">
+2910
+</td>
+<td style="text-align:right;">
+445
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+</tbody>
+</table>
+<p><code>PregnantNow</code> is the most extreme example- more than 50% NA values were undefined for this column.</p>
 <p>For now, I’ll leave these new values inside the imputed dataset though.</p>
+<p>(TBC - imputation done better - the <code>mice</code> package is a lot more flexible and has more to offer to achieve better imputations)</p>
 <div class="alert alert-danger"><b>NOTE</b>
                 The imputation process with default values onl did not really produce  meaningful values. Moreover, using ~50 columns for imputation is a bit too much.
 However  my goal was to try out model selection algorithms, 
 and imputing correctly was less a concern.  
                 </div>
-<pre><code>## 
-## Data frame:NHANES_imputed    7235 observations and 31 variables    Maximum # NAs:0
+<p>However, after imputation there are no more NAs in any column of the NHANES Dataset.</p>
+</div>
+<div id="supplementary-materials" class="section level4">
+<h4>Supplementary Materials</h4>
+<p>These metadata show, for example, the unique distinct values of columns where it makes sense to report them (e.g. male/female for column “gender”).</p>
+<table>
+<caption>
+<span id="tab:contents">Table 5: </span>NHANES Column data types, and some values of categorical variables.
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:right;">
+Levels
+</th>
+<th style="text-align:left;">
+Storage
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Gender
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:left;">
+integer
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Age
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:left;">
+integer
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Race1
+</td>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:left;">
+integer
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Education
+</td>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:left;">
+integer
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+HHIncomeMid
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:left;">
+integer
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Poverty
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:left;">
+double
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+HomeRooms
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:left;">
+integer
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+HomeOwn
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:left;">
+integer
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Work
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:left;">
+integer
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Weight
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:left;">
+double
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Height
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:left;">
+double
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+BMI
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:left;">
+double
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Pulse
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:left;">
+integer
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+BPSysAve
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:left;">
+integer
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+BPDiaAve
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:left;">
+integer
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+DirectChol
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:left;">
+double
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+TotChol
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:left;">
+double
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+UrineVol1
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:left;">
+integer
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+UrineFlow1
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:left;">
+double
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Diabetes
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:left;">
+integer
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+HealthGen
+</td>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:left;">
+integer
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+DaysPhysHlthBad
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:left;">
+integer
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+DaysMentHlthBad
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:left;">
+integer
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+LittleInterest
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:left;">
+integer
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Depressed
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:left;">
+integer
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+SleepHrsNight
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:left;">
+integer
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+SleepTrouble
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:left;">
+integer
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+PhysActive
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:left;">
+integer
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Alcohol12PlusYr
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:left;">
+integer
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Smoke100
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:left;">
+integer
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Smoke100n
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:left;">
+integer
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+PregnantNow
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:left;">
+integer
+</td>
+</tr>
+</tbody>
+</table>
+<pre><code>## $Gender
+## [1] &quot;female&quot; &quot;male&quot;  
 ## 
+## $Race1
+## [1] &quot;Black&quot;    &quot;Hispanic&quot; &quot;Mexican&quot;  &quot;White&quot;    &quot;Other&quot;   
 ## 
-##                 Levels Storage
-## Gender               2 integer
-## Age                    integer
-## Race1                5 integer
-## Education            5 integer
-## HHIncomeMid            integer
-## Poverty                 double
-## HomeRooms              integer
-## HomeOwn              3 integer
-## Work                 3 integer
-## Weight                  double
-## Height                  double
-## BMI                     double
-## Pulse                  integer
-## BPSysAve               integer
-## BPDiaAve               integer
-## DirectChol              double
-## TotChol                 double
-## UrineVol1              integer
-## UrineFlow1              double
-## Diabetes             2 integer
-## HealthGen            5 integer
-## DaysPhysHlthBad        integer
-## DaysMentHlthBad        integer
-## LittleInterest       3 integer
-## Depressed            3 integer
-## SleepHrsNight          integer
-## SleepTrouble         2 integer
-## PhysActive           2 integer
-## Alcohol12PlusYr      2 integer
-## Smoke100             2 integer
-## Smoke100n            2 integer
+## $Education
+## [1] &quot;8th Grade&quot;      &quot;9 - 11th Grade&quot; &quot;High School&quot;    &quot;Some College&quot;  
+## [5] &quot;College Grad&quot;  
 ## 
-## +---------------+-------------------------------------------------+
-## |Variable       |Levels                                           |
-## +---------------+-------------------------------------------------+
-## |Gender         |female,male                                      |
-## +---------------+-------------------------------------------------+
-## |Race1          |Black,Hispanic,Mexican,White,Other               |
-## +---------------+-------------------------------------------------+
-## |Education      |8th Grade,9 - 11th Grade,High School,Some College|
-## |               |College Grad                                     |
-## +---------------+-------------------------------------------------+
-## |HomeOwn        |Own,Rent,Other                                   |
-## +---------------+-------------------------------------------------+
-## |Work           |Looking,NotWorking,Working                       |
-## +---------------+-------------------------------------------------+
-## |Diabetes       |No,Yes                                           |
-## |SleepTrouble   |                                                 |
-## |PhysActive     |                                                 |
-## |Alcohol12PlusYr|                                                 |
-## |Smoke100       |                                                 |
-## +---------------+-------------------------------------------------+
-## |HealthGen      |Excellent,Vgood,Good,Fair,Poor                   |
-## +---------------+-------------------------------------------------+
-## |LittleInterest |None,Several,Most                                |
-## |Depressed      |                                                 |
-## +---------------+-------------------------------------------------+
-## |Smoke100n      |Non-Smoker,Smoker                                |
-## +---------------+-------------------------------------------------+</code></pre>
-<p>Obligatory Disclaimer (from the NHANES Package Documentation):</p>
+## $HomeOwn
+## [1] &quot;Own&quot;   &quot;Rent&quot;  &quot;Other&quot;
+## 
+## $Work
+## [1] &quot;Looking&quot;    &quot;NotWorking&quot; &quot;Working&quot;   
+## 
+## $Diabetes
+## [1] &quot;No&quot;  &quot;Yes&quot;
+## 
+## $HealthGen
+## [1] &quot;Excellent&quot; &quot;Vgood&quot;     &quot;Good&quot;      &quot;Fair&quot;      &quot;Poor&quot;     
+## 
+## $LittleInterest
+## [1] &quot;None&quot;    &quot;Several&quot; &quot;Most&quot;   
+## 
+## $Depressed
+## LittleInterest
+## 
+## $SleepTrouble
+## Diabetes
+## 
+## $PhysActive
+## Diabetes
+## 
+## $Alcohol12PlusYr
+## Diabetes
+## 
+## $Smoke100
+## Diabetes
+## 
+## $Smoke100n
+## [1] &quot;Non-Smoker&quot; &quot;Smoker&quot;    
+## 
+## $PregnantNow
+## [1] &quot;Yes&quot;     &quot;No&quot;      &quot;Unknown&quot;</code></pre>
+</div>
+<div id="obligatory-disclaimer" class="section level4">
+<h4>Obligatory Disclaimer</h4>
+<p><strong>(from the NHANES Package Documentation):</strong></p>
 <p><em>Please note that the data sets provided in this package are derived from the NHANES database and have been adapted for educational purposes. As such, they are NOT suitable for use as a research database.</em></p>
 </div>

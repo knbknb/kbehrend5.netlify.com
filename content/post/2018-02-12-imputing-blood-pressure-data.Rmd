@@ -24,26 +24,26 @@ keywords:
 
 
 ```{r setup, include=FALSE}
+# formatting the output
 library(knitr)
 opts_chunk$set(cache = TRUE, warning = FALSE, message = FALSE, 
                echo = FALSE, tidy = FALSE, width = 7, fig.width=9)
 options(digits = 3, tibble.print_min = 6)
 options(knitr.table.format = "html") 
 library(kableExtra)
+library(htmltools) # when markdown is not enough
+
 ```
 
 ```{r pkgs1}
 library(mice)   # imputation
-
 library(NHANES) # Body Shape + related measurements from 10000 US citizens
 data(NHANES)
 
 library(rvest)
 library(tidyverse)
-library(leaps)     # forward/backward selection
 theme_set(theme_bw())
 scale_colour_discrete <- function(...) scale_color_brewer(palette="Set1")
-library(htmltools) # when markdown is not enough
 ```
 
 ####  Feature engineering and variable imputation 
@@ -74,9 +74,9 @@ NHANES is  the US National Health and Nutrition Examination Study. It is a caref
 
 The [*NHANES* dataset](https://www.cdc.gov/nchs/nhanes/participant_video.htm) is available as an R package on [CRAN](https://cran.r-project.org/package=NHANES). I have used package version 2.1.0, specifically "NHANES 2009-2012 with adjusted weighting".
 
-Table 1 shows  the column names and (further below, table 4) some other important metadata of the NHANES dataset. 
+Table 1 shows  the column names and further below, and in table 5, are some other important metadata of the NHANES dataset. 
 
-This dataset contains data from two collection periods, 2009-2010 and 2011-2012. Some attributes wer collected during period 1, but not in period 2, or they were collected in different ways. Therefore the dataset contains many NULL values just because of this. Moreover many attributes, such as "head circumference", were only collected for babies and children.  
+This dataset contains data from two collection periods, 2009-2010 and 2011-2012. Some attributes weres collected during period 1, but not in period 2, or they were collected in different ways. Therefore the dataset contains many NULL values just because of this. Moreover many attributes, such as "head circumference", were only collected for babies and children.  
 
 
 #### Feature Engineering
@@ -134,7 +134,7 @@ nhanes_defs <- nhanes_defs %>%
          str_detect(Column, pattern=regex("^CompHrs")) == TRUE ~ action1,
          # Column == "nPregnancies" ~ action1,
          # Column == "nBabies" ~ action1,
-         # Column == "PregnantNow" ~ action1,
+         # Column == "PregnantNow" ~ action1, # drop later
          # Column == "Age1stBaby" ~ action1,
          str_detect(Column, "WTINT2YR") == TRUE ~ action1,
          #Column == "TVHrsDayChild" ~ action1,
@@ -194,9 +194,9 @@ if (file.exists(NHimp_file)){
         # if more than 1000 NAs per column, drop column
         cols_few_NAs <- data_frame(col=names(cols_few_NAs), 
                               val=cols_few_NAs) %>% 
-                filter(val <= 1000) 
+                filter(val <= 1000 | col == "PregnantNow") 
         NHANES <- NHANES[ , cols_few_NAs$col]
-        NHANES_mice <- mice(NHANES, seed=47)
+                NHANES_mice <- mice(NHANES, seed=47)
         NHANES_imputed <- mice::complete(mice(NHANES))
         saveRDS(NHANES_mice, file = NHimp_file)
         #stripplot(NHANES_mice, pch=20, cex=1.2)
@@ -212,7 +212,7 @@ data_frame(`Column Name` = names(NHANES_mice$nmis),
            `Number of NAs` = NHANES_mice$nmis) %>% 
         kable(row.names = 1, 
               caption = "Column names in NHANES data set,\
-              after removal of redundant and inapplicable columns") %>% 
+              after removal of redundant and inapplicable columns, and number of NAs. (PregnantNow is the most extreme example, and is kept on purpose.") %>% 
         kable_styling(bootstrap_options = 
                 c("striped", "hover"))
 ```
@@ -260,14 +260,17 @@ table(NHANES$Gender, NHANES$PregnantNow, useNA = "always") %>%
 
 
 
-```{r pregnant2, eval=FALSE}
+```{r pregnant2, eval=TRUE}
 table(NHANES_imputed$Gender, NHANES_imputed$PregnantNow, useNA = "always") %>%
       #  prop.table() %>%
       #  round(digits = 2) %>% 
         kable(caption= "Column 'PregnantNow', After Imputation:")
 ```
+`PregnantNow` is the most extreme example- more than 50% NA values were undefined for this column. 
 
 For now, I'll leave these new values inside the imputed dataset though.
+
+(TBC -  imputation done better - the `mice` package is a lot more flexible and has more to offer to achieve better imputations)
 
 ```{r}
 htmltools::HTML('<div class="alert alert-danger"><b>NOTE</b>
@@ -277,16 +280,24 @@ and imputing correctly was less a concern.
                 </div>')
 ```
 
+However, after imputation  there are no more NAs in any column of the NHANES Dataset.
+
+#### Supplementary Materials 
+
+These metadata show, for example, the unique distinct values of columns where it makes sense to report them (e.g. male/female for column "gender").
 
 ```{r contents}
-# However, NHANES Data after imputation: no more NAs in any column.
-# 
-# Table 4: NHANES Column definitions and some values. These metadata show, for example, the unique distinct values of columns where it makes sense to report them (e.g. male/female for column "gender").
 
-Hmisc::contents(NHANES_imputed)
+
+Hmisc::contents(NHANES_imputed)[["contents"]] %>%
+        kable(caption= "NHANES Column data types, and some values of categorical variables. ")
+
+Hmisc::contents(NHANES_imputed)[["Levels"]] 
 ```
 
 
-Obligatory Disclaimer (from the NHANES Package Documentation):
+#### Obligatory Disclaimer 
+
+**(from the NHANES Package Documentation):**
 
 *Please note that the data sets provided in this package are derived from the NHANES database and have been adapted for educational purposes. As such, they are NOT suitable for use as a research database.*
