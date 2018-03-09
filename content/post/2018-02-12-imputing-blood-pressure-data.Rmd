@@ -67,6 +67,7 @@ Here I'll continue with preprocessing. More basically, can I determine some othe
 
 I am not trying to do groundbreaking medical research here. Hey I'm just a blogger, playing with a dataset for personal entertainment, trying out some of those fancy Machine Learning algorithms that I encountered during MOOC homework assignments. This time I'll try these techniques out on a larger dataset that *I* find interesting.
 
+Attribute selection and variable imputation are a topic worth studying, especially on a more complex dataset as the NHANES data.
 
 #### The NHANES dataset
 
@@ -301,3 +302,9 @@ Hmisc::contents(NHANES_imputed)[["Levels"]]
 **(from the NHANES Package Documentation):**
 
 *Please note that the data sets provided in this package are derived from the NHANES database and have been adapted for educational purposes. As such, they are NOT suitable for use as a research database.*
+
+```{r arff, eval=FALSE}
+library(foreign)
+write.arff(NHANES_imputed, "NHANES_imputed.arff")
+```
+
