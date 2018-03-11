@@ -16,7 +16,7 @@ image: /static/img/post/thumb/lasso-1-350.png
 banner: img/post/thumb/lasso-1-150.png
 summary: ''
 keywords:
-  - Personal-Blog
+  - personal-Blog
   - rstats
   - health
 ---
@@ -1586,8 +1586,22 @@ NA
 </tbody>
 </table>
 <p><code>PregnantNow</code> is the most extreme example- more than 50% NA values were undefined for this column.</p>
-<p>For now, I’ll leave these new values inside the imputed dataset though.</p>
+<p>This demonstrates that the default choices that the <code>mice()</code> function makes are not always suitable for this dataset. For now, I’ll leave these new values inside the imputed dataset though.</p>
+<p><a href="https://www.jstatsoft.org/index.php/jss/article/view/v045i03">According to the authors of the mice package</a> these decisions need to be made:</p>
+<ol style="list-style-type: decimal">
+<li>Assumption: Missing at random satisfied?</li>
+<li>Target Model / intended Use of the data</li>
+<li>Set of variables</li>
+<li>Include dependent variables</li>
+<li>Order of imputation</li>
+<li>intiializations and number of iterations</li>
+<li>number of imputations (how many <em>multiple</em> imputations)</li>
+</ol>
 <p>(TBC - imputation done better - the <code>mice</code> package is a lot more flexible and has more to offer to achieve better imputations)</p>
+<pre class="r"><code>#NHANES_imp_qik &lt;- quickpred(NHANES)
+NHANES_imp_qik &lt;- mice (NHANES, pred = quickpred(NHANES, minpuc = 0.25), include = &quot;Age&quot;, maxit= 1)
+NHANES_imp_qik_complete &lt;- mice::complete(NHANES_imp_qik)
+#table(NHANES_imp_qik_complete$PregnantNow, NHANES_imp_qik_complete$Gender)</code></pre>
 <div class="alert alert-danger"><b>NOTE</b>
                 The imputation process with default values onl did not really produce  meaningful values. Moreover, using ~50 columns for imputation is a bit too much.
 However  my goal was to try out model selection algorithms, 

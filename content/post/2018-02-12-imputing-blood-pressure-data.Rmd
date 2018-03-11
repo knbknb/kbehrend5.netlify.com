@@ -16,7 +16,7 @@ image: /static/img/post/thumb/lasso-1-350.png
 banner: img/post/thumb/lasso-1-150.png
 summary: ''
 keywords:
-  - Personal-Blog
+  - personal-Blog
   - rstats
   - health
 ---
@@ -269,9 +269,28 @@ table(NHANES_imputed$Gender, NHANES_imputed$PregnantNow, useNA = "always") %>%
 ```
 `PregnantNow` is the most extreme example- more than 50% NA values were undefined for this column. 
 
-For now, I'll leave these new values inside the imputed dataset though.
+This demonstrates that the default  choices that the `mice()` function makes are not always suitable for this dataset. For now, I'll leave these new values inside the imputed dataset though.
+
+[According to the authors of the mice package](https://www.jstatsoft.org/index.php/jss/article/view/v045i03) these decisions need to be made:
+
+1. Assumption: Missing at random satisfied?
+1. Target Model / intended Use of the data
+1. Set of variables
+4. Include dependent variables
+1. Order of imputation
+1. intiializations and number of iterations
+1. number of imputations (how many *multiple* imputations)
+
+
 
 (TBC -  imputation done better - the `mice` package is a lot more flexible and has more to offer to achieve better imputations)
+
+```{r eval=FALSE, echo=TRUE}
+#NHANES_imp_qik <- quickpred(NHANES)
+NHANES_imp_qik <- mice (NHANES, pred = quickpred(NHANES, minpuc = 0.25), include = "Age", maxit= 1)
+NHANES_imp_qik_complete <- mice::complete(NHANES_imp_qik)
+#table(NHANES_imp_qik_complete$PregnantNow, NHANES_imp_qik_complete$Gender)
+```
 
 ```{r}
 htmltools::HTML('<div class="alert alert-danger"><b>NOTE</b>
