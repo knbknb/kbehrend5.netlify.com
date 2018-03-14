@@ -49,4 +49,4 @@ Further plans:
 - Towards my long term goal of establishing a reproducible-research workflow for myself, having a personal blog is a nice warm-up exercise, or routine.
 - Write more concisely
 
-*The logo is from a medical paper/blogpost I don't remember the authors of. Original colorization subtly modified by me. Indicates brain activity in left half*
+*The logo is from a medical paper/blogpost I don't remember the authors of. Original colorization subtly modified by me. Indicates brain activity of a patient reading out loud, so the left half of the brain is more active.*

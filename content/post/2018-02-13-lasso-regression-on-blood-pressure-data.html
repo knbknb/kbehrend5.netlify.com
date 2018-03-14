@@ -43,13 +43,32 @@ Maybe I&apos;ll split it up into two posts later - this post is too long already
 <p>NHANES is the US National Health and Nutrition Examination Study. It is a carefully curated, larger medical survey aiming to get a representative sample of the general US population. The survey is carried out periodically.</p>
 <p>The <a href="https://www.cdc.gov/nchs/nhanes/participant_video.htm"><em>NHANES</em> dataset</a> is available as an R package on <a href="https://cran.r-project.org/package=NHANES">CRAN</a>. I have used package version 2.1.0, specifically “NHANES 2009-2012 with adjusted weighting”. This dataset contains data from two collection periods, 2009-2010 and 2011-2012.</p>
 <p>Load the preprocessed dataset:</p>
-<pre><code>## Error in as.vector(y): object &#39;drop_cols&#39; not found</code></pre>
 <p>Scale the data frame. This is necessary because the <span class="math inline">\(\lambda\)</span> hyperparameter of ridge regression and lasso regression works best when features have comparable values.</p>
 </div>
 <div id="model-selection---what-are-the-best-predictor-variables" class="section level2">
 <h2>Model Selection - what are the best predictor variables?</h2>
 <p>We will do Forward Selection.</p>
 <p>For Cross-validation we will use 10 folds.</p>
+<pre><code>## Reordering variables and trying again:
+## Reordering variables and trying again:
+## Reordering variables and trying again:
+## Reordering variables and trying again:
+## Reordering variables and trying again:
+## Reordering variables and trying again:
+## Reordering variables and trying again:
+## Reordering variables and trying again:
+## Reordering variables and trying again:
+## Reordering variables and trying again:
+## Reordering variables and trying again:
+## Reordering variables and trying again:
+## Reordering variables and trying again:
+## Reordering variables and trying again:
+## Reordering variables and trying again:
+## Reordering variables and trying again:
+## Reordering variables and trying again:
+## Reordering variables and trying again:
+## Reordering variables and trying again:
+## Reordering variables and trying again:</code></pre>
 <p><img src="/post/2018-02-13-lasso-regression-on-blood-pressure-data_files/figure-html/regsubsets-1.png" width="864" /></p>
 </div>
 <div id="ridge-regression-and-the-lasso" class="section level2">
@@ -61,53 +80,55 @@ Maybe I&apos;ll split it up into two posts later - this post is too long already
 <p>Fit a lasso model with <code>alpha=1</code>.</p>
 <p><img src="/post/2018-02-13-lasso-regression-on-blood-pressure-data_files/figure-html/lasso-1.png" width="864" /><img src="/post/2018-02-13-lasso-regression-on-blood-pressure-data_files/figure-html/lasso-2.png" width="864" /></p>
 <p>Form cross-validation, the coefficients vector from the best model is:</p>
-<pre><code>## 45 x 1 sparse Matrix of class &quot;dgCMatrix&quot;
-##                         1
-## (Intercept)       0.08489
-## Genderfemale     -0.09836
-## Gendermale        .      
-## Age               0.38751
-## Race12            .      
-## Race13            .      
-## Race14            .      
-## Race15            .      
-## Education2        .      
-## Education3        .      
-## Education4        .      
-## Education5       -0.09546
-## HHIncomeMid       .      
-## Poverty          -0.03983
-## HomeRooms         .      
-## HomeOwn2          .      
-## HomeOwn3          .      
-## Work2             0.04705
-## Work3            -0.00785
-## Weight            .      
-## Height            .      
-## BMI               0.02051
-## Pulse             .      
-## BPDiaAve          0.31632
-## DirectChol        .      
-## TotChol           .      
-## UrineVol1         .      
-## UrineFlow1        .      
-## Diabetes2         0.01903
-## HealthGen2       -0.06513
-## HealthGen3        .      
-## HealthGen4        .      
-## HealthGen5        .      
-## DaysPhysHlthBad   .      
-## DaysMentHlthBad   .      
-## LittleInterest2   .      
-## LittleInterest3   .      
-## Depressed2        .      
-## Depressed3        .      
-## SleepHrsNight     .      
-## SleepTrouble2     .      
-## PhysActive2       .      
-## Alcohol12PlusYr2  .      
-## Smoke1002         .      
-## Smoke100nSmoker   .</code></pre>
+<pre><code>## 47 x 1 sparse Matrix of class &quot;dgCMatrix&quot;
+##                        1
+## (Intercept)       0.0699
+## Genderfemale     -0.0927
+## Gendermale        .     
+## Age               0.3812
+## Race12            .     
+## Race13            .     
+## Race14            .     
+## Race15            .     
+## Education2        .     
+## Education3        .     
+## Education4        .     
+## Education5       -0.0972
+## HHIncomeMid       .     
+## Poverty          -0.0249
+## HomeRooms         .     
+## HomeOwn2          .     
+## HomeOwn3          .     
+## Work2             0.0554
+## Work3             .     
+## Weight            .     
+## Height            .     
+## BMI               0.0196
+## Pulse             .     
+## BPDiaAve          0.3114
+## DirectChol        .     
+## TotChol           .     
+## UrineVol1         .     
+## UrineFlow1        .     
+## Diabetes2         0.0334
+## HealthGen2       -0.0547
+## HealthGen3        .     
+## HealthGen4        .     
+## HealthGen5        .     
+## DaysPhysHlthBad   .     
+## DaysMentHlthBad   .     
+## LittleInterest2   .     
+## LittleInterest3   .     
+## Depressed2        .     
+## Depressed3        .     
+## SleepHrsNight     .     
+## SleepTrouble2     .     
+## PhysActive2       .     
+## Alcohol12PlusYr2  .     
+## Smoke1002         .     
+## Smoke100nSmoker   .     
+## PregnantNow2      .     
+## PregnantNow3      .</code></pre>
 <p>Perform a train/validation split at 80% of observations, and find the best <code>lambda</code> for the lasso.</p>
 <pre class="r"><code>ntrain   &lt;- as.integer(nrow(NHANES_imputed) * 0.8)
 train    &lt;- sample(seq(nrow(NHANES_imputed)), ntrain, replace = FALSE)
@@ -126,7 +147,7 @@ ggplot(lassos_df, aes(log_lass, rmse)) +
         geom_point() +
         xlab(&quot;Log(lambda)&quot;) +
         ggtitle(&quot;Lasso Regression&quot;, 
-                sprintf(&quot;%s\nBest lambda: %s&quot;, 
+                sprintf(&quot;%s\nBest lambda: %0.8f&quot;, 
                         &quot;RMSE of training set&quot;, lam.best)) +
         theme(legend.position=&quot;none&quot;)</code></pre>
 <p><img src="/post/2018-02-13-lasso-regression-on-blood-pressure-data_files/figure-html/predlasso-1.png" width="864" /></p>
@@ -134,25 +155,26 @@ ggplot(lassos_df, aes(log_lass, rmse)) +
 <h4>Most important parameters</h4>
 <p>So which of the imputed parameters <em>are</em> most important?</p>
 <pre><code>##            rowname    coef
-## 1              Age  0.3985
-## 2         BPDiaAve  0.3488
-## 3      (Intercept)  0.3041
-## 4        Diabetes2  0.1371
-## 5            Work2  0.0954
-## 6      PhysActive2  0.0695
-## 7            Work3 -0.0560
-## 8    SleepTrouble2 -0.0564
-## 9           Height -0.0566
-## 10      Education2 -0.0688
-## 11         Poverty -0.0910
-## 12          Race14 -0.0996
-## 13      HealthGen2 -0.1039
-## 14 LittleInterest3 -0.1040
-## 15      Education5 -0.1622
-## 16          Race13 -0.1715
-## 17          Race15 -0.1834
-## 18          Race12 -0.1870
-## 19    Genderfemale -0.2486</code></pre>
+## 1              Age  0.3903
+## 2         BPDiaAve  0.3463
+## 3      (Intercept)  0.2631
+## 4        Diabetes2  0.1572
+## 5            Work2  0.1190
+## 6      PhysActive2  0.0590
+## 7       HealthGen3  0.0525
+## 8           Height -0.0582
+## 9    SleepTrouble2 -0.0604
+## 10      Education2 -0.0619
+## 11      Depressed3 -0.0655
+## 12      HealthGen2 -0.0837
+## 13         Poverty -0.0868
+## 14          Race14 -0.0914
+## 15 LittleInterest3 -0.1053
+## 16      Education5 -0.1654
+## 17          Race13 -0.1658
+## 18          Race12 -0.1798
+## 19          Race15 -0.1883
+## 20    Genderfemale -0.2424</code></pre>
 </div>
 <div id="conclusions" class="section level4">
 <h4>Conclusions</h4>

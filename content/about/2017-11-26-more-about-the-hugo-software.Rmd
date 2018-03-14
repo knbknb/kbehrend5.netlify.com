@@ -17,6 +17,7 @@ output:
 #### Links important to me
 
 #### Hugo ![hugo logo](/img/hugo-logo.png)
+
 - [Hugo Documentation:: predefined variables](https://gohugo.io/variables/page/) 
 Click on the link to go to the Hugo Documentation, (predefined variables).
 - [Hugo Documentation: Content Management](https://gohugo.io/content-management/) 

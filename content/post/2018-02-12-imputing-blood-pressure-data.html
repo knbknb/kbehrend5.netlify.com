@@ -28,25 +28,25 @@ keywords:
 <div class="alert alert-info"><b>Playing with multi-variable imputation on anonymized data from 10000 people representing the general US Population</b>. 
 This is not a tutorial, but more a personal learning experience, and work in progress.
 <div>
-This blogpost contains preprocessing steps for another following blogpost about lasso-regression.
+This blogpost contains preprocessing steps for another blogpost  about lasso-regression, also still unfinished.
 <br>
 At this time, imputation is done incorrectly here, I know that.
 </div></div>
 <p>This is a follow-up to <a href="/post/2018/02/bloodpressure-nhanes">an exploratory data-analysis post</a> of mine. When I was nearly done with writing that post, some new questions came to my mind.</p>
-<p>Here I’ll continue with preprocessing. More basically, can I determine some other variables (out of the 76) that are also influencing the Blood Pressure in some way?</p>
+<p>Here I’ll continue with preprocessing. More basically, can I determine some other variables (out of the 76) that are -apparently- influencing the Blood Pressure in some way?</p>
 <p>I am not trying to do groundbreaking medical research here. Hey I’m just a blogger, playing with a dataset for personal entertainment, trying out some of those fancy Machine Learning algorithms that I encountered during MOOC homework assignments. This time I’ll try these techniques out on a larger dataset that <em>I</em> find interesting.</p>
-<p>Attribute selection and variable imputation are a topic worth studying, especially on a more complex dataset as the NHANES data.</p>
+<p>Attribute selection and variable imputation are a topic worth studying, especially on a more complex dataset such as the NHANES data.</p>
 </div>
 <div id="the-nhanes-dataset" class="section level4">
 <h4>The NHANES dataset</h4>
 <p>NHANES is the US National Health and Nutrition Examination Study. It is a carefully curated, larger medical survey aiming to get a representative sample of the general US population. The survey is carried out periodically.</p>
-<p>The <a href="https://www.cdc.gov/nchs/nhanes/participant_video.htm"><em>NHANES</em> dataset</a> is available as an R package on <a href="https://cran.r-project.org/package=NHANES">CRAN</a>. I have used package version 2.1.0, specifically “NHANES 2009-2012 with adjusted weighting”.</p>
-<p>Table 1 shows the column names and further below, and in table 5, are some other important metadata of the NHANES dataset.</p>
-<p>This dataset contains data from two collection periods, 2009-2010 and 2011-2012. Some attributes weres collected during period 1, but not in period 2, or they were collected in different ways. Therefore the dataset contains many NULL values just because of this. Moreover many attributes, such as “head circumference”, were only collected for babies and children.</p>
+<p>The <a href="https://www.cdc.gov/nchs/nhanes/participant_video.htm"><em>NHANES</em> dataset</a> is available as an R package on <a href="https://cran.r-project.org/package=NHANES">CRAN</a>. I have used package version 2.1.0, specifically “NHANES 2009-2012 with adjusted weighting”. <a name="top"></a></p>
+<p>Table 1 shows the column names and further below, and in <a href="#metadata">table 5</a>, are some other important metadata of the NHANES dataset.</p>
+<p>This dataset contains data from two collection periods, 2009-2010 and 2011-2012. Some attributes weres collected during period 1, but not in period 2, or they were collected in different ways. Therefore the dataset contains many NULL values just because of this. Moreover some attributes are valid only for women (“nBabies”), and other features such as “HeadCirc” (head circumference), were only collected for babies and children.</p>
 </div>
 <div id="feature-engineering" class="section level4">
 <h4>Feature Engineering</h4>
-<p>These are the feature selection steps I will apply. Some attributes are redundant, for exaample age-in-years, age-in-months and age-decade. Many blood-pressure values are redundant; keep only the average value. First, remove attributes that were collected for babies, children and generally people less than 20 years of age. This leads to the selection of columns, marked by me as “drop” in Table 1 below.</p>
+<p>These are the feature selection steps I will apply. Some attributes are redundant, for exaample age-in-years, age-in-months and age-decade. Many blood-pressure values are redundant; keep only the average value. First, remove attributes that were collected for babies, children and generally people from the youngest age groups, less than 20 years of age. This leads to the selection of columns, marked by me as “drop” in Table 1 below.</p>
 <table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption>
 <span id="tab:tabledef">Table 1: </span>Column names in NHANES data set, and columns that will be dropped
@@ -1603,7 +1603,7 @@ NHANES_imp_qik &lt;- mice (NHANES, pred = quickpred(NHANES, minpuc = 0.25), incl
 NHANES_imp_qik_complete &lt;- mice::complete(NHANES_imp_qik)
 #table(NHANES_imp_qik_complete$PregnantNow, NHANES_imp_qik_complete$Gender)</code></pre>
 <div class="alert alert-danger"><b>NOTE</b>
-                The imputation process with default values onl did not really produce  meaningful values. Moreover, using ~50 columns for imputation is a bit too much.
+                The imputation process with default values did not really produce  meaningful values. Moreover, using ~50 columns is a bit too much, both for modeling as well as for imputation. 
 However  my goal was to try out model selection algorithms, 
 and imputing correctly was less a concern.  
                 </div>
@@ -1612,6 +1612,7 @@ and imputing correctly was less a concern.
 <div id="supplementary-materials" class="section level4">
 <h4>Supplementary Materials</h4>
 <p>These metadata show, for example, the unique distinct values of columns where it makes sense to report them (e.g. male/female for column “gender”).</p>
+<p><a href="#top">Top</a> <a name="metadata"></a></p>
 <table>
 <caption>
 <span id="tab:contents">Table 5: </span>NHANES Column data types, and some values of categorical variables.

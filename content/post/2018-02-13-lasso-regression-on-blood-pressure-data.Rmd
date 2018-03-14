@@ -25,14 +25,15 @@ keywords:
 
 ```{r setup, include=FALSE}
 library(knitr)
-opts_chunk$set(cache = FALSE, warning = FALSE, message = FALSE, 
+opts_chunk$set(cache = TRUE, warning = FALSE, message = FALSE, 
                echo = FALSE, tidy = FALSE, width = 7, fig.width=9)
 options(digits = 3, tibble.print_min = 6)
 options(knitr.table.format = "html") 
 library(kableExtra)
+library(htmltools) # when markdown is not enough
 ```
 
-```{r pkgs1}
+```{r pkgs4calc}
 library(mice)  # imputation
 
 library(NHANES) # Body Shape + related measurements from 10000 US citizens
@@ -47,7 +48,7 @@ theme_set(theme_bw())
 scale_colour_discrete <- function(...) scale_color_brewer(palette="Set1")
 library(ggfortify) # convert glmnet plots to ggplot2-style 
 library(glmnet)    # ridge regrssion and lasso
-library(htmltools) # when markdown is not enough
+
 ```
 
 ####  Introduction 
@@ -85,9 +86,7 @@ Load the preprocessed dataset:
 
 ```{r NHANES_imputed, echo=FALSE, error=TRUE}
 
-NHANES <- NHANES %>% 
-        filter(Age >= 20) %>% 
-        select(setdiff(colnames(NHANES), drop_cols) )
+
 wd <- "content/post"
 if(! str_detect(getwd(), wd)) {
        setwd(wd)
@@ -296,7 +295,7 @@ ggplot(lassos_df, aes(log_lass, rmse)) +
         geom_point() +
         xlab("Log(lambda)") +
         ggtitle("Lasso Regression", 
-                sprintf("%s\nBest lambda: %s", 
+                sprintf("%s\nBest lambda: %0.8f", 
                         "RMSE of training set", lam.best)) +
         theme(legend.position="none")
 
