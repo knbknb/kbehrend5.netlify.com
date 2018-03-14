@@ -26,8 +26,7 @@ library(htmltools) # when markdown is not enough
 
 #### Hugo ![hugo logo](/img/hugo-logo.png){.pull-right}
 
-- [Hugo Documentation:: predefined variables](https://gohugo.io/variables/page/) 
-Click on the link to go to the Hugo Documentation, (predefined variables).
+- [Hugo Documentation: Predefined Variables](https://gohugo.io/variables/page/)
 - [Hugo Documentation: Content Management](https://gohugo.io/content-management/) 
 - [Hugo Shortcodes](https://gohugo.io/content-management/shortcodes/) 
 
@@ -43,7 +42,7 @@ Click on the link to go to the Hugo Documentation, (predefined variables).
 
 - [RMarkdown Cheat Sheet](https://www.rstudio.com/wp-content/uploads/2016/03/rmarkdown-cheatsheet-2.0.pdf) 
 - [Blogdown Book](https://bookdown.org/yihui/blogdown/) 
-
+- [Pandoc User's Guide](https://pandoc.org/MANUAL.html) (Pandoc is a library for converting from one markup format to another)
 
 `r htmltools::HTML('<img class="pull-right" src="/img/gopher-logo.png" width="40px" title="" />')`
 
