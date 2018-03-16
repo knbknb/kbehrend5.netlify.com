@@ -236,7 +236,7 @@ button i.fa {
   width: 150px;
   margin: 50px auto;
   height: 1px;
-
+}
 @media (max-width: 991px) {
   .text-center-sm {
     text-align: center;
