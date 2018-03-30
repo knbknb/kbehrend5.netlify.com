@@ -19,11 +19,17 @@ htmltools::HTML('<div class="alert alert-success"><b>Summary: </b>Just scan the 
 
 This Blog will include musings about my personal interests:  geosciences, datascience, coding, photography, and more.
 
+#### Getting better over time
+
+Just start with something
+
+#### Doing things that interest me
+
 - I've slowly realized that I need to practice to write clearly.
 - Currently, writing is the creative activity I enjoy most. I've realized I can do it seriously, persistently, almost daily. Once started, I can enjoy moments of fun and total immersion. Writing changes the way I read any text.
 - On my hard drive, many older documents and side projects are waiting for fine-tuning, completion and ultimately release. As long as they are not on the net, they are "dead".
 
-#### Purely personal  
+#### Purely for personal use  
 
 I've contributed stuff to a few forums and online exchanges, but in the long-term this is too widely dispersed to have any impact. Sometimes a series of postings really belongs together (to be useful to me), but is incoherently distributed over several sites. Often I cannot recover it myself, when I need it again. So I had to look something up that I once knew in greater detail, and wrote about. For example, my ~5 documents on RPubs.com (the default site where you can publish/upload to, from within the RStudio IDE), for instance, are also not really under version control. In fact they are not under anyone's control. 
 
