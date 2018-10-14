@@ -52,7 +52,7 @@ scale_colour_discrete <- function(...) scale_color_brewer(palette="Set1")
 ```{r abstr}
 
 htmltools::HTML('<div class="alert alert-info"><b>Playing with multi-variable imputation on anonymized data from 10000 people representing the general US Population</b>. 
-This is not a tutorial, but more a personal learning experience, and work in progress.
+This is not a tutorial, but more a personal learning experience. I am learning to work with medical datasets, and how to establish a build workflow, from R to the web.
 <div>
 This blogpost contains preprocessing steps for another blogpost  about lasso-regression, also still unfinished.
 <br>

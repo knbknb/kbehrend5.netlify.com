@@ -10,6 +10,8 @@ output:
     css: styles.css
     fig_caption: yes
     keep_md: no
+    code_folding: show
+    df_print: kable
 image: /static/img/football.png
 banner: img/post/thumb/football.png
 categories:

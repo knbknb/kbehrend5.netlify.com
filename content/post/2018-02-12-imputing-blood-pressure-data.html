@@ -1,32 +1,10 @@
----
-title: Imputing Blood Pressure Data
-author: Knut Behrends
-date: 2018-02-12
-slug: bloodpressure-imputing
-categories: [health]
-tags: [health, medicine, variable-imputation]
-draft: yes
-output:
-  html_document:
-    toc: no
-    css: styles.css
-    fig_caption: yes
-    keep_md: no
-image: /static/img/post/thumb/lasso-1-350.png
-banner: img/post/thumb/lasso-1-150.png
-summary: ''
-keywords:
-  - personal-Blog
-  - rstats
-  - health
----
-
+<script src="2018-02-12-imputing-blood-pressure-data_files/kePrint-0.0.1/kePrint.js"></script>
 
 
 <div id="feature-engineering-and-variable-imputation" class="section level4">
 <h4>Feature engineering and variable imputation</h4>
 <div class="alert alert-info"><b>Playing with multi-variable imputation on anonymized data from 10000 people representing the general US Population</b>. 
-This is not a tutorial, but more a personal learning experience, and work in progress.
+This is not a tutorial, but more a personal learning experience. I am learning to work with medical datasets, and how to establish a build workflow, from R to the web.
 <div>
 This blogpost contains preprocessing steps for another blogpost  about lasso-regression, also still unfinished.
 <br>
@@ -1433,6 +1411,7 @@ PregnantNow
 <h4>Variable imputation</h4>
 <p>Imputation is done with the <a href="http://stefvanbuuren.github.io/mice/">MICE method</a>: “Multiple Imputation by Chained Equations”.</p>
 <p>The MICE method removes all NA values by guessing intelligently. Here I have called the <code>mice()</code> function with default parameters. This is why it created nonsensical values in places, e.g. pregnant fathers., see below.</p>
+<p><img src="2018-02-12-imputing-blood-pressure-data_files/figure-html/cols_nas-1.png" width="864" /></p>
 <table>
 <caption>
 <span id="tab:pregnant">Table 3: </span>Column ‘PregnantNow’, Before Imputation:
